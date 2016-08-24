@@ -1,0 +1,5 @@
+-e git+https://github.com/openai/gym#egg=gym
+numpy==1.11.1
+pyglet==1.2.4
+requests==2.11.1
+six==1.10.0
