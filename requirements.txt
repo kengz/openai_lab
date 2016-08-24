@@ -1,5 +1,7 @@
--e git+https://github.com/openai/gym#egg=gym
+gym==0.2.4
 numpy==1.11.1
+Pillow==3.3.1
 pyglet==1.2.4
 requests==2.11.1
 six==1.10.0
+tflearn==0.2.2
