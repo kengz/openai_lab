@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# models
+*checkpoint*
+*.tflearn
+*.meta

@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tflearn
 
+###############################################
 # Logical NOT operator
 X = [[0.], [1.]]
 Y = [[1.], [0.]]
@@ -17,10 +18,14 @@ with tf.Graph().as_default():
   # Train
   m = tflearn.DNN(g)
   m.fit(X, Y, n_epoch=1000, snapshot_epoch=False)
+  # visualization: tensorboard --logdir='/tmp/tflearn_logs'
+  m.save('logical.tflearn')
+  # m.load('logical.tflearn')
 
   print('Testing NOT operator')
   print('Prediction', m.predict(X))
   print('Target Result', Y)
 
-# also try to draw tensorboard
-# safe load models
+
+###############################################
+# Logical OR operator
