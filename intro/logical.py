@@ -3,7 +3,7 @@ import tflearn
 
 
 # train a model, given a graph g, data X, Y
-def train_model(g, X, Y, model_name='sample_model.tflearn'):
+def train_model(g, X, Y, model_name='sample_model.tfl'):
     m = tflearn.DNN(g)
     m.fit(X, Y, n_epoch=1000, snapshot_epoch=False)
     m.save(model_name)

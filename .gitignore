@@ -90,5 +90,6 @@ ENV/
 
 # models
 *checkpoint*
-*.tflearn
+*.tfl
 *.meta
+mnist/
