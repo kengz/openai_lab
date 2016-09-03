@@ -1,9 +1,12 @@
+import os
 import tensorflow as tf
 import tflearn
 
 
 # train a model, given a graph g, data X, Y
-def train_model(g, X, Y, model_name='sample_model.tfl'):
+def train_model(g, X, Y, model_name='models/sample_model.tfl'):
+    if not os.path.isdir('models'):
+        os.mkdir('models')
     m = tflearn.DNN(g)
     m.fit(X, Y, n_epoch=1000, snapshot_epoch=False)
     m.save(model_name)

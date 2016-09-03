@@ -1,3 +1,4 @@
+import os
 import tflearn
 import tensorflow as tf
 import tflearn.datasets.mnist as mnist
@@ -14,7 +15,9 @@ def run_mnist():
         learning_rate=0.001,
         loss='categorical_crossentropy')
 
-    m = tflearn.DNN(g, checkpoint_path='model.tfl.ckpt')
+    if not os.path.isdir('models'):
+        os.mkdir('models')
+    m = tflearn.DNN(g, checkpoint_path='models/model.tfl.ckpt')
     m.fit(X, Y, n_epoch=1,
           validation_set=(testX, testY),
           show_metric=True,
@@ -23,11 +26,11 @@ def run_mnist():
           # Snapshot (save & evalaute) model every 500 steps.
           snapshot_step=500,
           run_id='model_and_weights')
-    m.save('mnist.tfl')
+    m.save('models/mnist.tfl')
 
     # load from file or ckpt and continue training
-    m.load('mnist.tfl')
-    # m.load('mnist.tfl.ckpt-500')
+    m.load('models/mnist.tfl')
+    # m.load('models/mnist.tfl.ckpt-500')
     m.fit(X, Y, n_epoch=1,
           validation_set=(testX, testY),
           show_metric=True,

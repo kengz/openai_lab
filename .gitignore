@@ -88,6 +88,8 @@ ENV/
 # Rope project settings
 .ropeproject
 
+.DS_Store
+
 # models
 *checkpoint*
 *.tfl*
