@@ -12,6 +12,7 @@ def train_model(g, X, Y, model_name='sample_model.tfl'):
     print('Testing operator')
     print('Prediction', m.predict(X))
     print('Target Result', Y)
+    return m
 
 
 # Logical NOT operator
@@ -101,8 +102,9 @@ def run_combo_XOR():
 
     g_xor = tflearn.merge([g_nand, g_or], mode='elemwise_mul')
 
-    train_model(g_xor, X, [Y_nand, Y_or])
-    sess = tf.Session()  # separate from DNN session
+    m = train_model(g_xor, X, [Y_nand, Y_or])
+    # sess = tf.Session()  # separate from DNN session
+    sess = m.session  # separate from DNN session
     print(
         sess.run(tflearn.merge([Y_nand, Y_or], mode='elemwise_mul')))
 
