@@ -3,7 +3,7 @@ Working out at the (OpenAI) gym
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl)
 
-# Installation
+## Installation
 
 ```shell
 git clone https://github.com/kengz/openai_gym.git
@@ -25,7 +25,14 @@ pip freeze > requirements.txt
 ```
 
 
-# Roadmap
+## Usage
+
+Run each file in the folders.
+
+To view **Tensorboard**, do `tensorboard --logdir='/tmp/tflearn_logs/'`
+
+
+## Roadmap
 
 - use the pip install override, try. Fit all into `python setup.py install`
 - try some simple algos on simple env (CartPole)
