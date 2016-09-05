@@ -23,7 +23,9 @@ testY = to_categorical(testY, nb_classes=2)
 # words -> vocab id transform -> embedding
 def run():
     net = tflearn.input_data([None, 100])
+    # embed int vector to compact real vector
     net = tflearn.embedding(net, input_dim=10000, output_dim=128)
+    # fucking magic of rnn
     net = tflearn.lstm(net, 128, dropout=0.8)
     net = tflearn.fully_connected(net, 2, activation='softmax')
     net = tflearn.regression(net, optimizer='adam',
@@ -33,5 +35,6 @@ def run():
     m = tflearn.DNN(net)
     m.fit(trainX, trainY, validation_set=(testX, testY),
           show_metric=True, batch_size=32)
+    m.save('models/lstm.tfl')
 
 run()
