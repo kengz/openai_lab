@@ -29,7 +29,8 @@ encoder = tflearn.data_utils.VocabularyProcessor(
 trainX = encoder.fit_transform(str_trainX)
 testX = encoder.fit_transform(str_testX)
 encoder.save(VOCAB_PATH)
-
+# the dictionary
+print(encoder.vocabulary_._mapping)
 # encoder.restore(VOCAB_PATH)
 # trainX = encoder.transform(str_trainX)
 # testX = encoder.transform(str_testX)
