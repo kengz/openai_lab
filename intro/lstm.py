@@ -22,7 +22,9 @@ def run():
     # embed int vector to compact real vector
     net = tflearn.embedding(net, input_dim=10000, output_dim=128)
     # fucking magic of rnn
-    net = tflearn.lstm(net, 128, dropout=0.8)
+    # if dynamic lstm, backprop thru time till the seq ends,
+    # but padding is needed to feed input dim; tail not used
+    net = tflearn.lstm(net, 128, dropout=0.8, dynamic=True)
     net = tflearn.fully_connected(net, 2, activation='softmax')
     net = tflearn.regression(net, optimizer='adam',
      learning_rate=0.001,
