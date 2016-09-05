@@ -50,14 +50,13 @@ def run_mnist():
         print(tflearn.variables.get_value(dense1_vars[1]))
 
     # or can even retrieve using attr `W` or `b`!
-    # print('Dense2 layer weights:')
-    # # dense2 = tflearn.variables.get_layer('dense2')
-    # dense2 = tf.get_collection(tf.GraphKeys.LAYER_TENSOR+'/dense2')
-    # print(dense2)
-    # print(m.get_weights(dense2.W))
-    # print('Dense2 layer biases:')
-    # with m.session.as_default():
-    #     print(tflearn.variables.get_value(dense2.b))
+    print('Dense2 layer weights:')
+    dense2 = tflearn.get_layer_by_name('dense2')
+    print(dense2)
+    print(m.get_weights(dense2.W))
+    print('Dense2 layer biases:')
+    with m.session.as_default():
+        print(tflearn.variables.get_value(dense2.b))
 
 
 run_mnist()
