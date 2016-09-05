@@ -1,12 +1,25 @@
+import pip
 import os
 import sys
 import multiprocessing
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
-from pip.req import parse_requirements
-# generate by: pip3 freeze > requirements.txt
-install_reqs = parse_requirements('./requirements.txt', session=False)
-reqs = [str(ir.req) for ir in install_reqs]
+from setuptools.command.install import install
+reqs = open('./requirements.txt', 'r').read().split('\n')
+
+
+class OverrideInstall(install):
+
+    """
+    Emulate sequential install of pip install -r requirements.txt
+    To fix numpy bug in scipy, scikit in py2
+    """
+
+    def run(self):
+        for req in reqs:
+            if req:
+                pip.main(["install", "-U", req])
+
 
 # # explicitly config
 # test_args = [
@@ -50,7 +63,7 @@ setup(
     packages=[],
     zip_safe=False,
     include_package_data=True,
-    install_requires=reqs,
+    install_requires=[],
     dependency_links=[],
     extras_require={
         'dev': [],
@@ -60,5 +73,5 @@ setup(
     classifiers=[],
     tests_require=[],
     # test_suite='tests',
-    # cmdclass={'test': PyTest}
+    cmdclass={'install': OverrideInstall}
 )
