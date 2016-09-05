@@ -14,14 +14,15 @@ python setup.py install
 It essentially performs the following (use only when you're resetting requirements.txt):
 
 ```shell
-pip install h5py numpy scipy pandas
-pip install scikit-learn
-export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/tensorflow-0.9.0-py3-none-any.whl
+pip3 install h5py numpy scipy pandas
+pip3 install scikit-learn
+# choose the right distribution for ur machine
+export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.10.0rc0-py3-none-any.whl
 sudo pip3 install $TF_BINARY_URL
-pip install git+https://github.com/tflearn/tflearn.git
-pip install git+https://github.com/openai/gym.git
+pip3 install git+https://github.com/tflearn/tflearn.git
+pip3 install git+https://github.com/openai/gym.git
 # generates requirements.txt
-pip freeze > requirements.txt
+pip3 freeze > requirements.txt
 ```
 
 
