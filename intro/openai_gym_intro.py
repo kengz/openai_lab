@@ -1,6 +1,10 @@
 import gym
 env = gym.make('CartPole-v0')
 env.reset()
+# sampling for debugging
+# reward is always float, to be maximized
+print(env.action_space.sample())
+print(env.observation_space.sample())
 # for _ in range(10):
 #   env.render()
 #   step = env.step(env.action_space.sample())
