@@ -5,9 +5,11 @@ from tabular_q_learner import QLearner
 
 env = gym.make('CartPole-v0')
 
-MAX_EPISODES = 100
+MAX_EPISODES = 10000
 MAX_STEPS = 200
+DONE_MEAN_REWARDS = 195.0
 episode_history = deque(maxlen=100)
+MODEL_PATH = './models/tabular_ql_cartpole.npy'
 
 
 def pixelate_state_space(env, coarse_grain=10):
@@ -25,6 +27,8 @@ state_dim = COARSE_GRAIN ** env.observation_space.shape[0]
 num_actions = env.action_space.n
 
 q_learner = QLearner(state_dim, num_actions)
+# load saved model
+# q_learner.load(MODEL_PATH)
 
 
 # use to biject a state space pixel coor to int
@@ -66,8 +70,9 @@ def update_history(total_rewards, ep, total_t):
 def run():
     for ep in range(MAX_EPISODES):
         mean_rewards = run_episode(env, ep)
-        if mean_rewards >= 195.0:
+        if mean_rewards >= DONE_MEAN_REWARDS:
             print('Environment solved after {} episodes'.format(ep+1))
+            q_learner.save(MODEL_PATH)
             break
 
 run()

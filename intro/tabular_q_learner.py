@@ -64,3 +64,11 @@ class QLearner(object):
             (self.anneal_steps - self.train_iteration)/float(self.anneal_steps), 0)
         self.exploration = self.final_exp + \
             ratio * (self.init_exp - self.final_exp)
+
+    def save(self, model_path):
+        return np.save(model_path, self.qtable)
+
+    def load(self, model_path):
+        self.qtable = np.load(model_path)
+        return self.qtable
+
