@@ -130,6 +130,7 @@ class ReplayMemory(object):
         self.state = init_state
         self.memory = []
         self.batch_size = batch_size
+        self.memory_size = len(self.memory)
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -141,11 +142,9 @@ class ReplayMemory(object):
                        [self.state, action, reward, next_state]))
         # store and move the pointer
         self.memory.append(exp)
+        self.memory_size = len(self.memory)
         self.state = next_state
         return exp
-
-    def memory_size():
-        return len(self.memory)
 
     def get_exp(index):
         return deepcopy(self.memory[index])
@@ -154,7 +153,12 @@ class ReplayMemory(object):
         '''
         get a minibatch of randon exp for training
         '''
-        rand_inds = np.random.randint(self.memory_size(), size=self.batch_size)
+        if self.memory_size <= self.batch_size:
+            # to prevent repetition and initial overfitting
+            rand_inds = np.random.permutation(self.memory_size)
+        else:
+            rand_inds = np.random.randint(
+                self.memory_size, size=self.batch_size)
         exp_batch = [self.get_exp(i) for i in rand_inds]
         return exp_batch
 
