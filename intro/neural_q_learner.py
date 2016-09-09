@@ -77,22 +77,51 @@ env = gym.make('CartPole-v0')
 # need state_dim, output_dim, also range, bounds
 
 
-def deep_q_learn(env):
-    q = dqn(some_dim)
-    next_state = env.reset()
-    total_rewards = 0
-    replay_memory = ReplayMemory.new(next_state)
-    for t in range(MAX_STEPS):
-        env.render()
-        action = q.select_action(next_state)
-        next_state, reward, done, info = env.step(action)
-        replay_memory.add_exp(action, reward, next_state)
-        rand_exp_batch = replay_memory.rand_exp_batch()
-        q.train(rand_exp_batch)  # calc target, shits, train backprop
-        total_rewards += reward
-        if done:
-            break
-    return
+def get_env_dims(env):
+    '''
+    helper to get the env dimensions
+    '''
+    return {
+        'state_dim': env.observation_space.shape[0],
+        'state_bounds': np.transpose(
+            [env.observation_space.low, env.observation_space.high]),
+        'action_dim': env.action_space.n
+    }
+
+
+class DQN(object):
+
+    def __init__(self, env):
+        env_dims = get_env_dims(env)
+        self.state_dim = env_dims['state_dim']
+        self.action_dim = env_dims['action_dim']
+        self.learning_rate = 0.001
+
+    def build(self, loss):
+        net = tflearn.input_data(shape=[None, self.state_dim])
+        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(
+            net, self.action_dim, activation='softmax')
+        net = tflearn.regression(net, optimizer='rmsprop',
+                                 loss=loss, learning_rate=self.learning_rate)
+        # prolly need to use tf.placeholder for Y of loss
+        self.net = net
+        return self.net
+
+    # def train(X, Y):
+    #     # also it shd be step wise, epxosed
+    #     m = tflearn.DNN(net, tensorboard_verbose=3)
+    #     m.fit(X, Y)  # self-batching, set Y on the fly, etc
+    #     m.save('models/dqn.tfl')
+
+# print(DQN(env).state_dim)
 
 
 class ReplayMemory(object):
@@ -128,3 +157,21 @@ class ReplayMemory(object):
         rand_inds = np.random.randint(self.memory_size(), size=self.batch_size)
         exp_batch = [self.get_exp(i) for i in rand_inds]
         return exp_batch
+
+
+def deep_q_learn(env):
+    # q = DQN(env)
+    next_state = env.reset()
+    total_rewards = 0
+    replay_memory = ReplayMemory.new(next_state)
+    for t in range(MAX_STEPS):
+        env.render()
+        # action = q.select_action(next_state)
+        next_state, reward, done, info = env.step(action)
+        replay_memory.add_exp(action, reward, next_state)
+        rand_exp_batch = replay_memory.rand_exp_batch()
+        # q.train(rand_exp_batch)  # calc target, shits, train backprop
+        total_rewards += reward
+        if done:
+            break
+    return
