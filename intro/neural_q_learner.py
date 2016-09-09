@@ -92,13 +92,12 @@ def get_env_dims(env):
 class DQN(object):
 
     def __init__(self, env):
-        env_dims = get_env_dims(env)
-        self.state_dim = env_dims['state_dim']
-        self.action_dim = env_dims['action_dim']
+        self.env_dims = get_env_dims(env)
         self.learning_rate = 0.001
 
     def build(self, loss):
-        net = tflearn.input_data(shape=[None, self.state_dim])
+        # see extending tensorflow cnn for placeholder usage
+        net = tflearn.input_data(shape=[None, self.env_dims['state_dim']])
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 64, 2, activation='relu')
@@ -108,20 +107,32 @@ class DQN(object):
         net = tflearn.fully_connected(net, 256, activation='relu')
         net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
-            net, self.action_dim, activation='softmax')
+            net, self.env_dims['action_dim'], activation='softmax')
         net = tflearn.regression(net, optimizer='rmsprop',
                                  loss=loss, learning_rate=self.learning_rate)
+        m = tflearn.DNN(self.net, tensorboard_verbose=3)
         # prolly need to use tf.placeholder for Y of loss
-        self.net = net
-        return self.net
+        self.m = m
+        return self.m
 
-    # def train(X, Y):
-    #     # also it shd be step wise, epxosed
-    #     m = tflearn.DNN(net, tensorboard_verbose=3)
-    #     m.fit(X, Y)  # self-batching, set Y on the fly, etc
-    #     m.save('models/dqn.tfl')
+    def e_greedy_action():
+        return
 
-# print(DQN(env).state_dim)
+    def select_action(next_state):
+        '''
+        step 1 of algo
+        '''
+        return
+
+    def train(exp, rand_exp_batch):
+        '''
+        step 2,3,4 of algo
+        '''
+        # also it shd be step wise, epxosed
+        self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
+        # self.m.save('models/dqn.tfl')
+
+# print(DQN(env).env_dims['state_dim'])
 
 
 class ReplayMemory(object):
@@ -130,7 +141,7 @@ class ReplayMemory(object):
         self.state = init_state
         self.memory = []
         self.batch_size = batch_size
-        self.memory_size = len(self.memory)
+        self.memory_size = 0
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -139,10 +150,10 @@ class ReplayMemory(object):
         form an experience tuple <s, a, r, s'>
         '''
         exp = dict(zip(['state', 'action', 'reward', 'next_state'],
-                       [self.state, action, reward, next_state]))
+                       [deepcopy(self.state), action, reward, next_state]))
         # store and move the pointer
         self.memory.append(exp)
-        self.memory_size = len(self.memory)
+        self.memory_size += 1
         self.state = next_state
         return exp
 
@@ -172,9 +183,9 @@ def deep_q_learn(env):
         env.render()
         # action = q.select_action(next_state)
         next_state, reward, done, info = env.step(action)
-        replay_memory.add_exp(action, reward, next_state)
+        exp = replay_memory.add_exp(action, reward, next_state)
         rand_exp_batch = replay_memory.rand_exp_batch()
-        # q.train(rand_exp_batch)  # calc target, shits, train backprop
+        # q.train(exp, rand_exp_batch)  # calc target, shits, train backprop
         total_rewards += reward
         if done:
             break
