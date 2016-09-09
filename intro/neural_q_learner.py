@@ -66,35 +66,39 @@ until terminated
 p/s there are more tricks, target network, error clipping, reward clipping etc.
 '''
 
+# next:
+# - build e-greedy action and e-update rule
+# - net with placeholders, loss
+# - DQN.select_action
+# - DQN.train
 
 import gym
 import tflearn
 import tensorflow as tf
 import numpy as np
 from copy import deepcopy
+from collections import deque
+
+MAX_STEPS = 200
+SOLVED_MEAN_REWARD = 195.0
+MAX_EPISODES = 1000
+MAX_HISTORY = 100
+episode_history = deque(maxlen=MAX_HISTORY)
+BATCH_SIZE = 32
 
 env = gym.make('CartPole-v0')
-# need state_dim, output_dim, also range, bounds
-
-
-def get_env_spec(env):
-    '''
-    helper to get the env specs: dims, actions
-    '''
-    return {
-        'state_dim': env.observation_space.shape[0],
-        'state_bounds': np.transpose(
-            [env.observation_space.low, env.observation_space.high]),
-        'action_dim': env.action_space.n,
-        'actions': list(range(env.action_space.n))
-    }
 
 
 class DQN(object):
 
-    def __init__(self, env):
-        self.env_specs = get_env_spec(env)
+    def __init__(self, env_specs):
+        self.env_specs = env_specs
+        self.e = 1.0
         self.learning_rate = 0.001
+        # this can be inferred from replay memory, or not. replay memory shall
+        # be over all episodes,
+
+    # !need to get episode, and game step of current episode
 
     def build(self, loss):
         # see extending tensorflow cnn for placeholder usage
@@ -116,7 +120,15 @@ class DQN(object):
         self.m = m
         return self.m
 
+    def update_e(self):
+        '''
+        strategy to update epsilon
+        '''
+        self.e
+        return
+
     def e_greedy_action():
+        # need a decay policy for ep
         return
 
     def select_action(next_state):
@@ -125,10 +137,12 @@ class DQN(object):
         '''
         return
 
-    def train(exp, rand_exp_batch):
+    def train(replay_memory):
         '''
         step 2,3,4 of algo
         '''
+        rand_mini_batch = replay_memory.rand_exp_batch()
+        # replay_memory used to guide annealing too
         # also it shd be step wise, epxosed
         self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
         # self.m.save('models/dqn.tfl')
@@ -136,13 +150,32 @@ class DQN(object):
 # print(DQN(env).env_specs['state_dim'])
 
 
+def get_env_spec(env):
+    '''
+    return the env specs: dims, actions
+    '''
+    return {
+        'state_dim': env.observation_space.shape[0],
+        'state_bounds': np.transpose(
+            [env.observation_space.low, env.observation_space.high]),
+        'action_dim': env.action_space.n,
+        'actions': list(range(env.action_space.n))
+    }
+
+
 class ReplayMemory(object):
 
-    def __init__(self, init_state, batch_size):
-        self.state = init_state
+    def __init__(self):
         self.memory = []
-        self.batch_size = batch_size
         self.memory_size = 0
+        self.batch_size = BATCH_SIZE
+        self.state = None
+
+    def reset_state(self, init_state):
+        '''
+        reset the state of ReplayMemory per episode env.reset()
+        '''
+        self.state = init_state
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -158,7 +191,7 @@ class ReplayMemory(object):
         self.state = next_state
         return exp
 
-    def get_exp(index):
+    def get_exp(self, index):
         return deepcopy(self.memory[index])
 
     def rand_exp_batch(self):
@@ -175,19 +208,51 @@ class ReplayMemory(object):
         return exp_batch
 
 
-def deep_q_learn(env):
-    # q = DQN(env)
-    next_state = env.reset()
+# update the hisory, max len = MAX_HISTORY
+# @return [bool] solved
+def update_history(total_rewards, ep, total_t):
+    episode_history.append(total_rewards)
+    mean_rewards = np.mean(episode_history)
+    logs = [
+        'Episode {}'.format(ep),
+        'Finished after {} timesteps'.format(total_t+1),
+        'Average reward for the last {} episodes: {}'.format(
+            MAX_HISTORY, mean_rewards),
+        'Reward for this episode: {}'. format(total_rewards)
+    ]
+    print(logs.join('\n'))
+    solved = mean_rewards >= SOLVED_MEAN_REWARD
+    return solved
+
+
+# run an episode
+# @return [bool] if the problem is solved by this episode
+def run_episode(ep, env, replay_memory, q):
     total_rewards = 0
-    replay_memory = ReplayMemory.new(next_state)
+    next_state = env.reset()
+    replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
         env.render()
-        # action = q.select_action(next_state)
+        action = q.select_action(next_state)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state)
-        rand_exp_batch = replay_memory.rand_exp_batch()
-        # q.train(exp, rand_exp_batch)  # calc target, shits, train backprop
+        # q.train(replay_memory)  # calc target, shits, train backprop
         total_rewards += reward
         if done:
             break
-    return
+    solved = update_history(total_rewards, ep, t)
+    return solved
+
+
+# the primary method to run
+# @return [bool] if the problem is solved
+def deep_q_learn(env):
+    env_spec = get_env_spec(env)
+    replay_memory = ReplayMemory()
+    q = DQN(env_spec)
+    for ep in range(MAX_EPISODES):
+        solved = run_episode(ep, env, replay_memory, q)
+        if solved:
+            break
+    print('Problem solved? {}'.format(solved))
+    return solved
