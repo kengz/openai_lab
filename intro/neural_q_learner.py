@@ -77,22 +77,23 @@ env = gym.make('CartPole-v0')
 # need state_dim, output_dim, also range, bounds
 
 
-def get_env_dims(env):
+def get_env_spec(env):
     '''
-    helper to get the env dimensions
+    helper to get the env specs: dims, actions
     '''
     return {
         'state_dim': env.observation_space.shape[0],
         'state_bounds': np.transpose(
             [env.observation_space.low, env.observation_space.high]),
-        'action_dim': env.action_space.n
+        'action_dim': env.action_space.n,
+        'actions': list(range(env.action_space.n))
     }
 
 
 class DQN(object):
 
     def __init__(self, env):
-        self.env_dims = get_env_dims(env)
+        self.env_dims = get_env_spec(env)
         self.learning_rate = 0.001
 
     def build(self, loss):
