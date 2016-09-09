@@ -65,3 +65,36 @@ until terminated
 
 p/s there are more tricks, target network, error clipping, reward clipping etc.
 '''
+
+
+import tflearn
+import tensorflow as tf
+import numpy as np
+from copy import deepcopy
+
+
+class ReplayMemory(object):
+
+    def __init__(self, init_state):
+        self.state = init_state
+        self.memory = []
+
+    def add_exp(self, state, action, reward, next_state):
+        '''
+        form an experience tuple <s, a, r, s'>
+        '''
+        exp = dict(zip(['state', 'action', 'reward', 'next_state'],
+                       [state, action, reward, next_state]))
+        # store and move the pointer
+        self.memory.append(exp)
+        self.state = next_state
+        return exp
+
+    def get_rand_exp(self):
+        '''
+        get a copy of random exp in memory
+        '''
+        memory_size = len(self.memory)
+        rand_ind = np.random.randint(0, memory_size)
+        return deepcopy(self.memory[rand_ind])
+
