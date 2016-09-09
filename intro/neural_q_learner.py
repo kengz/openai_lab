@@ -93,12 +93,12 @@ def get_env_spec(env):
 class DQN(object):
 
     def __init__(self, env):
-        self.env_dims = get_env_spec(env)
+        self.env_specs = get_env_spec(env)
         self.learning_rate = 0.001
 
     def build(self, loss):
         # see extending tensorflow cnn for placeholder usage
-        net = tflearn.input_data(shape=[None, self.env_dims['state_dim']])
+        net = tflearn.input_data(shape=[None, self.env_specs['state_dim']])
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 64, 2, activation='relu')
@@ -108,7 +108,7 @@ class DQN(object):
         net = tflearn.fully_connected(net, 256, activation='relu')
         net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
-            net, self.env_dims['action_dim'], activation='softmax')
+            net, self.env_specs['action_dim'], activation='softmax')
         net = tflearn.regression(net, optimizer='rmsprop',
                                  loss=loss, learning_rate=self.learning_rate)
         m = tflearn.DNN(self.net, tensorboard_verbose=3)
@@ -133,7 +133,7 @@ class DQN(object):
         self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
         # self.m.save('models/dqn.tfl')
 
-# print(DQN(env).env_dims['state_dim'])
+# print(DQN(env).env_specs['state_dim'])
 
 
 class ReplayMemory(object):
