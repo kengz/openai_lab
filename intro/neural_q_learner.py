@@ -67,17 +67,40 @@ p/s there are more tricks, target network, error clipping, reward clipping etc.
 '''
 
 
+import gym
 import tflearn
 import tensorflow as tf
 import numpy as np
 from copy import deepcopy
 
+env = gym.make('CartPole-v0')
+# need state_dim, output_dim, also range, bounds
+
+
+def deep_q_learn(env):
+    q = dqn(some_dim)
+    next_state = env.reset()
+    total_rewards = 0
+    replay_memory = ReplayMemory.new(next_state)
+    for t in range(MAX_STEPS):
+        env.render()
+        action = q.select_action(next_state)
+        next_state, reward, done, info = env.step(action)
+        replay_memory.add_exp(action, reward, next_state)
+        rand_exp_batch = replay_memory.rand_exp_batch()
+        q.train(rand_exp_batch)  # calc target, shits, train backprop
+        total_rewards += reward
+        if done:
+            break
+    return
+
 
 class ReplayMemory(object):
 
-    def __init__(self, init_state):
+    def __init__(self, init_state, batch_size):
         self.state = init_state
         self.memory = []
+        self.batch_size = batch_size
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -92,10 +115,16 @@ class ReplayMemory(object):
         self.state = next_state
         return exp
 
-    def get_rand_exp(self):
+    def memory_size():
+        return len(self.memory)
+
+    def get_exp(index):
+        return deepcopy(self.memory[index])
+
+    def rand_exp_batch(self):
         '''
-        get a copy of random exp in memory
+        get a minibatch of randon exp for training
         '''
-        memory_size = len(self.memory)
-        rand_ind = np.random.randint(0, memory_size)
-        return deepcopy(self.memory[rand_ind])
+        rand_inds = np.random.randint(self.memory_size(), size=self.batch_size)
+        exp_batch = [self.get_exp(i) for i in rand_inds]
+        return exp_batch
