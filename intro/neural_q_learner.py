@@ -79,12 +79,14 @@ class ReplayMemory(object):
         self.state = init_state
         self.memory = []
 
-    def add_exp(self, state, action, reward, next_state):
+    def add_exp(self, action, reward, next_state):
         '''
+        after the env.step(a) that returns s', r,
+        using the previously stored state for the s,
         form an experience tuple <s, a, r, s'>
         '''
         exp = dict(zip(['state', 'action', 'reward', 'next_state'],
-                       [state, action, reward, next_state]))
+                       [self.state, action, reward, next_state]))
         # store and move the pointer
         self.memory.append(exp)
         self.state = next_state
@@ -97,4 +99,3 @@ class ReplayMemory(object):
         memory_size = len(self.memory)
         rand_ind = np.random.randint(0, memory_size)
         return deepcopy(self.memory[rand_ind])
-
