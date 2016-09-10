@@ -82,6 +82,13 @@ BATCH_SIZE = 32
 env = gym.make('CartPole-v0')
 
 
+# next:
+# - build e-greedy action and e-update rule
+# - net with placeholders, loss
+# - DQN.select_action
+# - DQN.train
+
+
 def get_env_spec(env):
     '''
     return the env specs: dims, actions
@@ -100,14 +107,16 @@ class ReplayMemory(object):
     def __init__(self):
         self.memory = []
         self.state = None
-        self.ep = 0
+        self.epi = 0
+        self.t = 0
 
     def reset_state(self, init_state):
         '''
         reset the state of ReplayMemory per episode env.reset()
         '''
         self.state = init_state
-        self.ep += 1
+        self.epi += 1
+        self.t = 0
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -120,6 +129,7 @@ class ReplayMemory(object):
         # store and move the pointer
         self.memory.append(exp)
         self.state = next_state
+        self.t += 1
         return exp
 
     def get_exp(self, index):
@@ -129,7 +139,7 @@ class ReplayMemory(object):
         '''
         return the number of episode recorded so far
         '''
-        return self.ep
+        return self.epi
 
     def rand_exp_batch(self):
         '''
@@ -146,13 +156,85 @@ class ReplayMemory(object):
         return exp_batch
 
 
+
+
+class DQN(object):
+
+    def __init__(self, env_specs):
+        self.env_specs = env_specs
+        self.init_e = 1.0
+        self.final_e = 0.1
+        self.e = self.init_e
+        self.learning_rate = 0.001
+        # this can be inferred from replay memory, or not. replay memory shall
+        # be over all episodes,
+
+    # !need to get episode, and game step of current episode
+
+    def build(self, loss):
+        # see extending tensorflow cnn for placeholder usage
+        net = tflearn.input_data(shape=[None, self.env_specs['state_dim']])
+        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(
+            net, self.env_specs['action_dim'], activation='softmax')
+        net = tflearn.regression(net, optimizer='rmsprop',
+                                 loss=loss, learning_rate=self.learning_rate)
+        m = tflearn.DNN(self.net, tensorboard_verbose=3)
+        # prolly need to use tf.placeholder for Y of loss
+        self.m = m
+        return self.m
+
+    def update_e(self, epi, t):
+        '''
+        strategy to update epsilon
+        '''
+        # epi = replay_memory.epi
+        # t = replay_memory.t
+        cur_e = self.e
+        local_del_e = (self.final_e - self.init_e)/float(MAX_STEPS)*float(t)
+        global_del_e = (self.final_e - self.init_e)/float(MAX_EPISODES)*float(epi)
+        del_e = abs(local_del_e * global_del_e)
+        cur_e -= del_e
+        return
+
+    def e_greedy_action():
+        # need a decay policy for epi
+        return
+
+    def select_action(next_state):
+        '''
+        step 1 of algo
+        '''
+        return
+
+    def train(replay_memory):
+        '''
+        step 2,3,4 of algo
+        '''
+        rand_mini_batch = replay_memory.rand_exp_batch()
+        epi = replay_memory.get_ep()
+        # replay_memory used to guide annealing too
+        # also it shd be step wise, epxosed
+        self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
+        # self.m.save('models/dqn.tfl')
+
+print(DQN(get_env_spec(env)).env_specs['state_dim'])
+
+
 # update the hisory, max len = MAX_HISTORY
 # @return [bool] solved
-def update_history(total_rewards, ep, total_t):
+def update_history(total_rewards, epi, total_t):
     episode_history.append(total_rewards)
     mean_rewards = np.mean(episode_history)
     logs = [
-        'Episode {}'.format(ep),
+        'Episode {}'.format(epi),
         'Finished after {} timesteps'.format(total_t),
         'Average reward for the last {} episodes: {}'.format(
             MAX_HISTORY, mean_rewards),
@@ -166,7 +248,7 @@ def update_history(total_rewards, ep, total_t):
 # run an episode
 # t starts from 1 to MAX_STEPS (inclusive)
 # @return [bool] if the problem is solved by this episode
-def run_episode(ep, env, replay_memory, q):
+def run_episode(epi, env, replay_memory, q):
     total_rewards = 0
     next_state = env.reset()
     replay_memory.reset_state(next_state)
@@ -179,19 +261,19 @@ def run_episode(ep, env, replay_memory, q):
         total_rewards += reward
         if done:
             break
-    solved = update_history(total_rewards, ep, t)
+    solved = update_history(total_rewards, epi, t)
     return solved
 
 
 # the primary method to run
-# ep starts from 1 to MAX_EPISODES (inclusive)
+# epi starts from 1 to MAX_EPISODES (inclusive)
 # @return [bool] if the problem is solved
 def deep_q_learn(env):
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory()
     q = DQN(env_spec)
-    for ep in range(1, MAX_EPISODES+1):
-        solved = run_episode(ep, env, replay_memory, q)
+    for epi in range(1, MAX_EPISODES+1):
+        solved = run_episode(epi, env, replay_memory, q)
         if solved:
             break
     print('Problem solved? {}'.format(solved))
