@@ -83,7 +83,8 @@ env = gym.make('CartPole-v0')
 
 
 # next:
-# - build e-greedy action and e-update rule
+# / e-update rule
+# - build e-greedy action and
 # - net with placeholders, loss
 # - DQN.select_action
 # - DQN.train
@@ -159,8 +160,8 @@ class ReplayMemory(object):
 
 class DQN(object):
 
-    def __init__(self, env_specs):
-        self.env_specs = env_specs
+    def __init__(self, env_spec):
+        self.env_spec = env_spec
         self.INIT_E = 1.0
         self.FINAL_E = 0.1
         self.e = self.INIT_E
@@ -174,7 +175,7 @@ class DQN(object):
 
     def build(self, loss):
         # see extending tensorflow cnn for placeholder usage
-        net = tflearn.input_data(shape=[None, self.env_specs['state_dim']])
+        net = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 64, 2, activation='relu')
@@ -184,7 +185,7 @@ class DQN(object):
         net = tflearn.fully_connected(net, 256, activation='relu')
         net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
-            net, self.env_specs['action_dim'], activation='softmax')
+            net, self.env_spec['action_dim'], activation='softmax')
         net = tflearn.regression(net, optimizer='rmsprop',
                                  loss=loss, learning_rate=self.learning_rate)
         m = tflearn.DNN(self.net, tensorboard_verbose=3)
@@ -209,17 +210,20 @@ class DQN(object):
         self.e = compound_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
         return self.e
 
-    def e_greedy_action():
-        # need a decay policy for epi
-        return
+    def best_action(self, state):
+        return False
 
-    def select_action(next_state):
+    def select_action(self, next_state):
         '''
         step 1 of algo
         '''
-        return
+        if self.e > np.random.rand():
+            action = np.random.choice(self.env_spec['actions'])
+        else:
+            action = self.best_action(state)
+        return action
 
-    def train(replay_memory):
+    def train(self, replay_memory):
         '''
         step 2,3,4 of algo
         '''
@@ -231,10 +235,11 @@ class DQN(object):
         # self.m.save('models/dqn.tfl')
 
 q = DQN(get_env_spec(env))
-print(q.env_specs['state_dim'])
-epi = 30
-t = 60
-e = q.update_e(epi, t)
+# print(q.env_spec['state_dim'])
+# epi = 30
+# t = 60
+# e = q.update_e(epi, t)
+e = q.select_action(2)
 print(e)
 
 
