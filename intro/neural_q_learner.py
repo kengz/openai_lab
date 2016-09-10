@@ -161,9 +161,11 @@ class DQN(object):
 
     def __init__(self, env_specs):
         self.env_specs = env_specs
-        self.init_e = 1.0
-        self.final_e = 0.1
-        self.e = self.init_e
+        self.INIT_E = 1.0
+        self.FINAL_E = 0.1
+        self.e = self.INIT_E
+        self.EPI_HALF_LIFE = 20.
+        self.T_HALF_LIFE = float(MAX_STEPS)/6.
         self.learning_rate = 0.001
         # this can be inferred from replay memory, or not. replay memory shall
         # be over all episodes,
@@ -199,15 +201,12 @@ class DQN(object):
         local_e = the e in this episode
         global_e = the global scaling e
         '''
-        global_half_life = 5.
-        local_half_life = 10.
-        # local_e = self.init_e * math.exp(-.693/float(half_life*t))
-        global_e = self.init_e * math.exp(-.693/global_half_life*float(epi))
-        local_e = self.init_e * math.exp(-.693/local_half_life*float(t))
+        global_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(epi))
+        local_e = self.INIT_E * math.exp(-.693/self.T_HALF_LIFE*float(t))
         compound_e = local_e * global_e
         # rescaled, translated
         print(local_e, global_e, compound_e)
-        self.e = compound_e*abs(self.init_e - self.final_e) + self.final_e
+        self.e = compound_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
         return self.e
 
     def e_greedy_action():
@@ -233,8 +232,8 @@ class DQN(object):
 
 q = DQN(get_env_spec(env))
 print(q.env_specs['state_dim'])
-epi = 0
-t = 0
+epi = 30
+t = 60
 e = q.update_e(epi, t)
 print(e)
 
