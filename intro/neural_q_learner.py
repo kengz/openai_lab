@@ -66,8 +66,8 @@ until terminated
 p/s there are more tricks, target network, error clipping, reward clipping etc.
 '''
 
-
 import gym
+import math
 import numpy as np
 from copy import deepcopy
 from collections import deque
@@ -107,8 +107,9 @@ class ReplayMemory(object):
     def __init__(self):
         self.memory = []
         self.state = None
-        self.epi = 0
-        self.t = 0
+        # set to -1 so the first post-increment calc can use val = 0
+        self.epi = -1
+        self.t = -1
 
     def reset_state(self, init_state):
         '''
@@ -116,7 +117,7 @@ class ReplayMemory(object):
         '''
         self.state = init_state
         self.epi += 1
-        self.t = 0
+        self.t = -1
 
     def add_exp(self, action, reward, next_state):
         '''
@@ -156,8 +157,6 @@ class ReplayMemory(object):
         return exp_batch
 
 
-
-
 class DQN(object):
 
     def __init__(self, env_specs):
@@ -194,15 +193,22 @@ class DQN(object):
     def update_e(self, epi, t):
         '''
         strategy to update epsilon
+        sawtooth wave pattern that decreases in an apisode, and across episodes
+        epi = replay_memory.epi
+        t = replay_memory.t
+        local_e = the e in this episode
+        global_e = the global scaling e
         '''
-        # epi = replay_memory.epi
-        # t = replay_memory.t
-        cur_e = self.e
-        local_del_e = (self.final_e - self.init_e)/float(MAX_STEPS)*float(t)
-        global_del_e = (self.final_e - self.init_e)/float(MAX_EPISODES)*float(epi)
-        del_e = abs(local_del_e * global_del_e)
-        cur_e -= del_e
-        return
+        global_half_life = 5.
+        local_half_life = 10.
+        # local_e = self.init_e * math.exp(-.693/float(half_life*t))
+        global_e = self.init_e * math.exp(-.693/global_half_life*float(epi))
+        local_e = self.init_e * math.exp(-.693/local_half_life*float(t))
+        compound_e = local_e * global_e
+        # rescaled, translated
+        print(local_e, global_e, compound_e)
+        self.e = compound_e*abs(self.init_e - self.final_e) + self.final_e
+        return self.e
 
     def e_greedy_action():
         # need a decay policy for epi
@@ -225,7 +231,12 @@ class DQN(object):
         self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
         # self.m.save('models/dqn.tfl')
 
-print(DQN(get_env_spec(env)).env_specs['state_dim'])
+q = DQN(get_env_spec(env))
+print(q.env_specs['state_dim'])
+epi = 0
+t = 0
+e = q.update_e(epi, t)
+print(e)
 
 
 # update the hisory, max len = MAX_HISTORY
@@ -235,7 +246,7 @@ def update_history(total_rewards, epi, total_t):
     mean_rewards = np.mean(episode_history)
     logs = [
         'Episode {}'.format(epi),
-        'Finished after {} timesteps'.format(total_t),
+        'Finished at t={}'.format(total_t),
         'Average reward for the last {} episodes: {}'.format(
             MAX_HISTORY, mean_rewards),
         'Reward for this episode: {}'. format(total_rewards)
@@ -246,13 +257,12 @@ def update_history(total_rewards, epi, total_t):
 
 
 # run an episode
-# t starts from 1 to MAX_STEPS (inclusive)
 # @return [bool] if the problem is solved by this episode
 def run_episode(epi, env, replay_memory, q):
     total_rewards = 0
     next_state = env.reset()
     replay_memory.reset_state(next_state)
-    for t in range(1, MAX_STEPS+1):
+    for t in range(MAX_STEPS):
         env.render()
         action = q.select_action(next_state)
         next_state, reward, done, info = env.step(action)
@@ -272,7 +282,7 @@ def deep_q_learn(env):
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory()
     q = DQN(env_spec)
-    for epi in range(1, MAX_EPISODES+1):
+    for epi in range(MAX_EPISODES):
         solved = run_episode(epi, env, replay_memory, q)
         if solved:
             break
