@@ -176,29 +176,32 @@ class DQN(object):
     # !need to get episode, and game step of current episode
 
     def build_net(self):
-        X = tf.placeholder(tf.float32, shape=[None, self.env_spec['state_dim']], name='X')
-        X = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
-        net = tflearn.conv_1d(X, 32, 2, activation='relu')
+        X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
+        # reshape into 3D tensor for conv
+        net = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        net = tflearn.fully_connected(net, 256, activation='relu')
-        net = tflearn.dropout(net, 0.5)
-        net = tflearn.fully_connected(net, 256, activation='relu')
-        net = tflearn.dropout(net, 0.5)
+        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        # net = tflearn.fully_connected(net, 256, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
+        # net = tflearn.fully_connected(net, 256, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'], activation='softmax')
         # aight output is the q_values
+        self.net = net
+        self.X = X
         return net
 
     def build_graph(self):
         net = self.build_net()
         # boolean at index as action number
         a = tf.placeholder(
-            tf.float32, [None, self.env_spec['action_dim']], name='a')
+            tf.float32, [None, self.env_spec['action_dim']])
         # a is boolean, reduce to single Q value
         action_q_values = tf.reduce_sum(tf.mul(net, a), reduction_indices=1)
-        Y = tf.placeholder(tf.float32, [None], name='y')
+        Y = tf.placeholder(tf.float32, [None])
         loss = tflearn.mean_square(action_q_values, Y)
         optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         accuracy = tf.reduce_mean(tf.cast(
@@ -230,7 +233,11 @@ class DQN(object):
         return self.e
 
     def best_action(self, state):
-        return False
+        # compute feedforward
+        Y = self.net.eval(feed_dict={X: state})
+        print(Y)
+        print(tf.argmax(Y, 1))
+        return tf.argmax(Y, 1)
 
     def select_action(self, next_state):
         '''
@@ -253,16 +260,30 @@ class DQN(object):
         self.trainer.fit({X: trainX, Y: trainY})  # self-batching, set Y on the fly, etc
         # self.m.save('models/dqn.tfl')
 
-q = DQN(get_env_spec(env))
-# print(q.env_spec['state_dim'])
+
+sess = tf.InteractiveSession()
+dqn = DQN(get_env_spec(env))
+net = dqn.build_net()
+init = tf.initialize_all_variables()
+sess.run(init)
+
+s_sample = env.observation_space.sample()
+out = net.eval(feed_dict={dqn.X: [s_sample]}, session=sess)
+print(out)
+
+# print(dqn.env_spec['state_dim'])
 # epi = 30
 # t = 60
-# e = q.update_e(epi, t)
-e = q.select_action(2)
-print(e)
-# g = q.build_net()
-g = q.build_graph()
-print(g)
+# e = dqn.update_e(epi, t)
+# e = dqn.select_action(2)
+# print(e)
+# # g = dqn.build_net()
+# g = dqn.build_graph()
+# tf.initialize_all_variables()
+# print(g)
+# print(tf.trainable_variables())
+# print(env.observation_space.sample())
+# dqn.best_action(env.observation_space.sample())
 
 
 # update the hisory, max len = MAX_HISTORY
@@ -290,10 +311,10 @@ def run_episode(epi, env, replay_memory, q):
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
         env.render()
-        action = q.select_action(next_state)
+        action = dqn.select_action(next_state)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state)
-        # q.train(replay_memory)  # calc target, shits, train backprop
+        # dqn.train(replay_memory)  # calc target, shits, train backprop
         total_rewards += reward
         if done:
             break
