@@ -122,14 +122,14 @@ class ReplayMemory(object):
         self.epi += 1
         self.t = -1
 
-    def add_exp(self, action, reward, next_state):
+    def add_exp(self, action, reward, next_state, terminal):
         '''
         after the env.step(a) that returns s', r,
         using the previously stored state for the s,
         form an experience tuple <s, a, r, s'>
         '''
-        exp = dict(zip(['state', 'action', 'reward', 'next_state'],
-                       [deepcopy(self.state), action, reward, next_state]))
+        exp = dict(zip(['state', 'action', 'reward', 'next_state', 'terminal'],
+                       [deepcopy(self.state), action, reward, next_state, terminal]))
         # store and move the pointer
         self.memory.append(exp)
         self.state = next_state
@@ -267,10 +267,11 @@ class DQN(object):
         actions = [self.blowup_action(mem['action']) for mem in rand_mini_batch]
         rewards = [mem['reward'] for mem in rand_mini_batch]
         next_states = [mem['next_state'] for mem in rand_mini_batch]
+        terminals = np.array([mem['terminal'] for mem in rand_mini_batch])
         Q_target = self.net.eval(feed_dict={self.X: next_states})
         Q_target_max = np.amax(Q_target, axis=1)
-        # Q_target_terminal = (1-terminals)*Q_target_max
-        Q_target_gamma = self.gamma*Q_target_max
+        Q_target_terminal = (1-terminals)*Q_target_max
+        Q_target_gamma = self.gamma*Q_target_terminal
         targets = rewards + Q_target_gamma
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
           self.a: actions,
@@ -344,7 +345,7 @@ def run_episode(epi, env, replay_memory, dqn):
         # env.render()
         action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
-        exp = replay_memory.add_exp(action, reward, next_state)
+        exp = replay_memory.add_exp(action, reward, next_state, int(done))
         dqn.train(replay_memory)  # calc target, shits, train backprop
         total_rewards += reward
         if done:
