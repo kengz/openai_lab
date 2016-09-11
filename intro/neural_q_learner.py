@@ -177,13 +177,13 @@ class DQN(object):
         # reshape into 3D tensor for conv
         net = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        # net = tflearn.fully_connected(net, 256, activation='relu')
-        # net = tflearn.dropout(net, 0.5)
-        # net = tflearn.fully_connected(net, 256, activation='relu')
-        # net = tflearn.dropout(net, 0.5)
+        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(net, 256, activation='relu')
+        net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'], activation='softmax')
         # aight output is the q_values
