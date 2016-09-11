@@ -68,6 +68,8 @@ p/s there are more tricks, target network, error clipping, reward clipping etc.
 
 import gym
 import math
+import tflearn
+import tensorflow as tf
 import numpy as np
 from copy import deepcopy
 from collections import deque
@@ -84,7 +86,7 @@ env = gym.make('CartPole-v0')
 
 # next:
 # / e-update rule
-# - build e-greedy action and
+# / build e-greedy action and
 # - net with placeholders, loss
 # - DQN.select_action
 # - DQN.train
@@ -173,10 +175,10 @@ class DQN(object):
 
     # !need to get episode, and game step of current episode
 
-    def build(self, loss):
-        # see extending tensorflow cnn for placeholder usage
-        net = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
-        net = tflearn.conv_1d(net, 32, 2, activation='relu')
+    def build_net(self):
+        X = tf.placeholder(tf.float32, shape=[None, self.env_spec['state_dim']], name='X')
+        X = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
+        net = tflearn.conv_1d(X, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 32, 2, activation='relu')
         net = tflearn.conv_1d(net, 64, 2, activation='relu')
         net = tflearn.conv_1d(net, 64, 2, activation='relu')
@@ -186,12 +188,29 @@ class DQN(object):
         net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'], activation='softmax')
-        net = tflearn.regression(net, optimizer='rmsprop',
-                                 loss=loss, learning_rate=self.learning_rate)
-        m = tflearn.DNN(self.net, tensorboard_verbose=3)
-        # prolly need to use tf.placeholder for Y of loss
-        self.m = m
-        return self.m
+        # aight output is the q_values
+        return net
+
+    def build_graph(self):
+        net = self.build_net()
+        # boolean at index as action number
+        a = tf.placeholder(
+            tf.float32, [None, self.env_spec['action_dim']], name='a')
+        # a is boolean, reduce to single Q value
+        action_q_values = tf.reduce_sum(tf.mul(net, a), reduction_indices=1)
+        Y = tf.placeholder(tf.float32, [None], name='y')
+        loss = tflearn.mean_square(action_q_values, Y)
+        optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
+        accuracy = tf.reduce_mean(tf.cast(
+            tf.equal(tf.argmax(net, 1), tf.argmax(Y, 1)),
+            tf.float32), name='acc')
+        # min_op = optimizer.minimize(loss, var_list=network_params)
+
+        trainop = tflearn.TrainOp(loss=loss, optimizer=optimizer, metric=accuracy, batch_size=BATCH_SIZE)
+        trainer = tflearn.Trainer(train_ops=trainop, tensorboard_verbose=3)
+        self.trainer = trainer
+        return self.trainer
+
 
     def update_e(self, epi, t):
         '''
@@ -231,7 +250,7 @@ class DQN(object):
         epi = replay_memory.get_ep()
         # replay_memory used to guide annealing too
         # also it shd be step wise, epxosed
-        self.m.fit(X, Y)  # self-batching, set Y on the fly, etc
+        self.trainer.fit({X: trainX, Y: trainY})  # self-batching, set Y on the fly, etc
         # self.m.save('models/dqn.tfl')
 
 q = DQN(get_env_spec(env))
@@ -241,6 +260,9 @@ q = DQN(get_env_spec(env))
 # e = q.update_e(epi, t)
 e = q.select_action(2)
 print(e)
+# g = q.build_net()
+g = q.build_graph()
+print(g)
 
 
 # update the hisory, max len = MAX_HISTORY
