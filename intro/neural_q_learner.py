@@ -76,7 +76,7 @@ from collections import deque
 
 MAX_STEPS = 200
 SOLVED_MEAN_REWARD = 195.0
-MAX_EPISODES = 50
+MAX_EPISODES = 1000
 MAX_HISTORY = 100
 episode_history = deque(maxlen=MAX_HISTORY)
 BATCH_SIZE = 32
@@ -85,12 +85,8 @@ env = gym.make('CartPole-v0')
 
 
 # next:
-# / e-update rule
-# / build e-greedy action and
-# - net with placeholders, loss
-# - DQN.select_action
-# - DQN.train
-
+# - deep is bad for cartpole. Convolution is even shittier
+# - need a hyperparam selection
 
 def get_env_spec(env):
     '''
@@ -160,10 +156,10 @@ class DQN(object):
         self.env_spec = env_spec
         self.session = session
         self.INIT_E = 1.0
-        self.FINAL_E = 0.1
+        self.FINAL_E = 0.05
         self.e = self.INIT_E
         self.EPI_HALF_LIFE = 20.
-        self.T_HALF_LIFE = 8.
+        self.T_HALF_LIFE = 10.
         self.learning_rate = 0.1
         self.gamma = 0.95
         # this can be inferred from replay memory, or not. replay memory shall
@@ -173,20 +169,18 @@ class DQN(object):
     # !need to get episode, and game step of current episode
 
     def build_net(self):
-        X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
+        # X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
         # reshape into 3D tensor for conv
         # net = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
-        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        # net = tflearn.fully_connected(net, 256, activation='relu')
+        # net = tflearn.conv_1d(net, 8, 2, activation='relu')
+        # net = tflearn.fully_connected(net, 16, activation='relu')
         # net = tflearn.dropout(net, 0.5)
-        # net = tflearn.fully_connected(net, 256, activation='relu')
-        # net = tflearn.dropout(net, 0.5)
+        # no conv
+        X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
         net = tflearn.fully_connected(X, 8, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
         # net = tflearn.fully_connected(net, 8, activation='relu')
-        # net = tflearn.fully_connected(net, 8, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'])
         # aight output is the q_values
@@ -347,7 +341,7 @@ def run_episode(epi, env, replay_memory, dqn):
     next_state = env.reset()
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
-        env.render()
+        # env.render()
         action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
