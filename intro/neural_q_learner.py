@@ -162,10 +162,10 @@ class DQN(object):
         self.INIT_E = 1.0
         self.FINAL_E = 0.1
         self.e = self.INIT_E
-        self.EPI_HALF_LIFE = 20.
-        self.T_HALF_LIFE = float(MAX_STEPS)/6.
-        self.learning_rate = 0.001
-        self.gamma = 0.01
+        self.EPI_HALF_LIFE = 2.
+        self.T_HALF_LIFE = float(MAX_STEPS)/20.
+        self.learning_rate = 0.1
+        self.gamma = 0.1
         # this can be inferred from replay memory, or not. replay memory shall
         # be over all episodes,
         self.build_net()
@@ -175,17 +175,19 @@ class DQN(object):
     def build_net(self):
         X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
         # reshape into 3D tensor for conv
-        net = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
-        net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        net = tflearn.conv_1d(net, 32, 2, activation='relu')
-        net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        net = tflearn.conv_1d(net, 64, 2, activation='relu')
-        net = tflearn.fully_connected(net, 256, activation='relu')
-        net = tflearn.dropout(net, 0.5)
-        net = tflearn.fully_connected(net, 256, activation='relu')
-        net = tflearn.dropout(net, 0.5)
+        # net = tf.reshape(X, [-1, self.env_spec['state_dim'], 1])
+        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        # net = tflearn.conv_1d(net, 32, 2, activation='relu')
+        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        # net = tflearn.conv_1d(net, 64, 2, activation='relu')
+        # net = tflearn.fully_connected(net, 256, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
+        # net = tflearn.fully_connected(net, 256, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
+        net = tflearn.fully_connected(X, 8, activation='relu')
+        # net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(
-            net, self.env_spec['action_dim'], activation='softmax')
+            net, self.env_spec['action_dim'])
         # aight output is the q_values
         self.net = net
         self.X = X
@@ -194,7 +196,8 @@ class DQN(object):
         self.a = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.Y = tf.placeholder("float", [None])
         action_q_values = tf.reduce_sum(tf.mul(self.net, self.a), reduction_indices=1)
-        self.loss = tflearn.mean_square(action_q_values, self.Y)
+        self.loss = tf.reduce_mean(tf.square(action_q_values - self.Y))
+        # self.loss = tflearn.mean_square(action_q_values, self.Y)
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
         return net
@@ -273,6 +276,7 @@ class DQN(object):
         Q_target_terminal = (1-terminals)*Q_target_max
         Q_target_gamma = self.gamma*Q_target_terminal
         targets = rewards + Q_target_gamma
+        # for other actions, set targets as same as the first feedforward
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
           self.a: actions,
           self.Y: targets,
@@ -346,7 +350,8 @@ def run_episode(epi, env, replay_memory, dqn):
         action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
-        dqn.train(replay_memory)  # calc target, shits, train backprop
+        loss = dqn.train(replay_memory)  # calc target, shits, train backprop
+        # print('loss', loss)
         total_rewards += reward
         if done:
             print('done. total_reward', total_rewards)
