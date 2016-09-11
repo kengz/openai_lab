@@ -76,7 +76,7 @@ from collections import deque
 
 MAX_STEPS = 200
 SOLVED_MEAN_REWARD = 195.0
-MAX_EPISODES = 1000
+MAX_EPISODES = 50
 MAX_HISTORY = 100
 episode_history = deque(maxlen=MAX_HISTORY)
 BATCH_SIZE = 32
@@ -185,7 +185,8 @@ class DQN(object):
         # net = tflearn.fully_connected(net, 256, activation='relu')
         # net = tflearn.dropout(net, 0.5)
         net = tflearn.fully_connected(X, 8, activation='relu')
-        # net = tflearn.dropout(net, 0.5)
+        # net = tflearn.fully_connected(net, 8, activation='relu')
+        # net = tflearn.fully_connected(net, 8, activation='relu')
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'])
         # aight output is the q_values
@@ -346,7 +347,7 @@ def run_episode(epi, env, replay_memory, dqn):
     next_state = env.reset()
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
