@@ -184,7 +184,7 @@ class DQN(object):
         # net = tflearn.dropout(net, 0.5)
         # net = tflearn.fully_connected(net, 256, activation='relu')
         # net = tflearn.dropout(net, 0.5)
-        net = tflearn.fully_connected(X, 8, activation='relu')
+        net = tflearn.fully_connected(X, 4, activation='relu')
         # net = tflearn.fully_connected(net, 8, activation='relu')
         # net = tflearn.fully_connected(net, 8, activation='relu')
         net = tflearn.fully_connected(
