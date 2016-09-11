@@ -341,13 +341,14 @@ def run_episode(epi, env, replay_memory, dqn):
     next_state = env.reset()
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
-        env.render()
+        # env.render()
         action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state)
         dqn.train(replay_memory)  # calc target, shits, train backprop
         total_rewards += reward
         if done:
+            print('done. total_reward', total_rewards)
             break
     solved = update_history(total_rewards, epi, t)
     return solved
