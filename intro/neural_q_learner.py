@@ -165,7 +165,7 @@ class DQN(object):
         self.EPI_HALF_LIFE = 2.
         self.T_HALF_LIFE = float(MAX_STEPS)/20.
         self.learning_rate = 0.1
-        self.gamma = 0.1
+        self.gamma = 0.95
         # this can be inferred from replay memory, or not. replay memory shall
         # be over all episodes,
         self.build_net()
