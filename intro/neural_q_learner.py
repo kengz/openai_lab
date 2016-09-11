@@ -162,8 +162,9 @@ class ReplayMemory(object):
 
 class DQN(object):
 
-    def __init__(self, env_spec):
+    def __init__(self, env_spec, session):
         self.env_spec = env_spec
+        self.session = session
         self.INIT_E = 1.0
         self.FINAL_E = 0.1
         self.e = self.INIT_E
@@ -234,10 +235,9 @@ class DQN(object):
 
     def best_action(self, state):
         # compute feedforward
-        Y = self.net.eval(feed_dict={X: state})
-        print(Y)
-        print(tf.argmax(Y, 1))
-        return tf.argmax(Y, 1)
+        Y = self.net.eval(feed_dict={self.X: [state]}, session=self.session)
+        action = self.session.run(tf.argmax(Y, 1))[0]
+        return action
 
     def select_action(self, next_state):
         '''
@@ -262,14 +262,16 @@ class DQN(object):
 
 
 sess = tf.InteractiveSession()
-dqn = DQN(get_env_spec(env))
+dqn = DQN(get_env_spec(env), sess)
 net = dqn.build_net()
 init = tf.initialize_all_variables()
 sess.run(init)
-
+# set self.sess
 s_sample = env.observation_space.sample()
 out = net.eval(feed_dict={dqn.X: [s_sample]}, session=sess)
 print(out)
+print(sess.run(tf.argmax(out, 1)))
+print(dqn.best_action(s_sample))
 
 # print(dqn.env_spec['state_dim'])
 # epi = 30
