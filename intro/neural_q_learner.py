@@ -139,12 +139,6 @@ class ReplayMemory(object):
     def get_exp(self, index):
         return deepcopy(self.memory[index])
 
-    def get_ep(self):
-        '''
-        return the number of episode recorded so far
-        '''
-        return self.epi
-
     def rand_exp_batch(self):
         '''
         get a minibatch of randon exp for training
@@ -195,26 +189,25 @@ class DQN(object):
         self.X = X
         return net
 
-    def build_graph(self):
-        net = self.build_net()
-        # boolean at index as action number
-        a = tf.placeholder(
-            tf.float32, [None, self.env_spec['action_dim']])
-        # a is boolean, reduce to single Q value
-        action_q_values = tf.reduce_sum(tf.mul(net, a), reduction_indices=1)
-        Y = tf.placeholder(tf.float32, [None])
-        loss = tflearn.mean_square(action_q_values, Y)
-        optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
-        accuracy = tf.reduce_mean(tf.cast(
-            tf.equal(tf.argmax(net, 1), tf.argmax(Y, 1)),
-            tf.float32), name='acc')
-        # min_op = optimizer.minimize(loss, var_list=network_params)
+    # def build_graph(self):
+    #     net = self.build_net()
+    #     # boolean at index as action number
+    #     a = tf.placeholder(
+    #         tf.float32, [None, self.env_spec['action_dim']])
+    #     # a is boolean, reduce to single Q value
+    #     action_q_values = tf.reduce_sum(tf.mul(net, a), reduction_indices=1)
+    #     Y = tf.placeholder(tf.float32, [None])
+    #     loss = tflearn.mean_square(action_q_values, Y)
+    #     optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
+    #     accuracy = tf.reduce_mean(tf.cast(
+    #         tf.equal(tf.argmax(net, 1), tf.argmax(Y, 1)),
+    #         tf.float32), name='acc')
+    #     # min_op = optimizer.minimize(loss, var_list=network_params)
 
-        trainop = tflearn.TrainOp(loss=loss, optimizer=optimizer, metric=accuracy, batch_size=BATCH_SIZE)
-        trainer = tflearn.Trainer(train_ops=trainop, tensorboard_verbose=3)
-        self.trainer = trainer
-        return self.trainer
-
+    #     trainop = tflearn.TrainOp(loss=loss, optimizer=optimizer, metric=accuracy, batch_size=BATCH_SIZE)
+    #     trainer = tflearn.Trainer(train_ops=trainop, tensorboard_verbose=3)
+    #     self.trainer = trainer
+    #     return self.trainer
 
     def update_e(self, epi, t):
         '''
@@ -239,14 +232,15 @@ class DQN(object):
         action = self.session.run(tf.argmax(Y, 1))[0]
         return action
 
-    def select_action(self, next_state):
+    def select_action(self, next_state, epi, t):
         '''
         step 1 of algo
         '''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
         else:
-            action = self.best_action(state)
+            action = self.best_action(next_state)
+        self.update_e(epi, t)
         return action
 
     def train(self, replay_memory):
@@ -254,10 +248,10 @@ class DQN(object):
         step 2,3,4 of algo
         '''
         rand_mini_batch = replay_memory.rand_exp_batch()
-        epi = replay_memory.get_ep()
         # replay_memory used to guide annealing too
         # also it shd be step wise, epxosed
-        self.trainer.fit({X: trainX, Y: trainY})  # self-batching, set Y on the fly, etc
+        # self-batching, set Y on the fly, etc
+        self.trainer.fit({X: trainX, Y: trainY})
         # self.m.save('models/dqn.tfl')
 
 
@@ -267,11 +261,16 @@ net = dqn.build_net()
 init = tf.initialize_all_variables()
 sess.run(init)
 # set self.sess
-s_sample = env.observation_space.sample()
-out = net.eval(feed_dict={dqn.X: [s_sample]}, session=sess)
+next_state = env.observation_space.sample()
+out = net.eval(feed_dict={dqn.X: [next_state]}, session=sess)
 print(out)
 print(sess.run(tf.argmax(out, 1)))
-print(dqn.best_action(s_sample))
+print(dqn.best_action(next_state))
+epi = 0
+t = 0
+action = dqn.select_action(next_state, epi, t)
+next_state, reward, done, info = env.step(action)
+print(next_state, reward)
 
 # print(dqn.env_spec['state_dim'])
 # epi = 30
@@ -313,7 +312,7 @@ def run_episode(epi, env, replay_memory, q):
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
         env.render()
-        action = dqn.select_action(next_state)
+        action = dqn.select_action(next_state, epi, t)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state)
         # dqn.train(replay_memory)  # calc target, shits, train backprop
