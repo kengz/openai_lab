@@ -162,8 +162,8 @@ class DQN(object):
         self.INIT_E = 1.0
         self.FINAL_E = 0.1
         self.e = self.INIT_E
-        self.EPI_HALF_LIFE = 2.
-        self.T_HALF_LIFE = float(MAX_STEPS)/20.
+        self.EPI_HALF_LIFE = 20.
+        self.T_HALF_LIFE = 8.
         self.learning_rate = 0.1
         self.gamma = 0.95
         # this can be inferred from replay memory, or not. replay memory shall
@@ -184,7 +184,7 @@ class DQN(object):
         # net = tflearn.dropout(net, 0.5)
         # net = tflearn.fully_connected(net, 256, activation='relu')
         # net = tflearn.dropout(net, 0.5)
-        net = tflearn.fully_connected(X, 4, activation='relu')
+        net = tflearn.fully_connected(X, 8, activation='relu')
         # net = tflearn.fully_connected(net, 8, activation='relu')
         # net = tflearn.fully_connected(net, 8, activation='relu')
         net = tflearn.fully_connected(
@@ -277,7 +277,7 @@ class DQN(object):
         Q_target_terminal = (1-terminals)*Q_target_max
         Q_target_gamma = self.gamma*Q_target_terminal
         targets = rewards + Q_target_gamma
-        # for other actions, set targets as same as the first feedforward
+        # !for other actions, set targets as same as the first feedforward
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
           self.a: actions,
           self.Y: targets,
