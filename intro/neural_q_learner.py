@@ -274,18 +274,24 @@ class DQN(object):
         '''
         step 2,3,4 of algo
         '''
+        # ['states', 'actions', 'rewards', 'next_states', 'terminals']
         self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch()
-        # ['states', 'actions', 'rewards', 'next_states', 'terminals']
-        Q_target = self.net.eval(feed_dict={self.X: minibatch['next_states']})
-        Q_target_max = np.amax(Q_target, axis=1)
-        Q_target_terminal = (1-minibatch['terminals'])*Q_target_max
-        Q_target_gamma = self.gamma*Q_target_terminal
-        targets = minibatch['rewards'] + Q_target_gamma
+        # also need step 1 for setting error 0 on rest
+        # algo step 1
+        Q_states = self.net.eval(feed_dict={self.X: minibatch['states']})
+        # algo step 2
+        Q_next_states = self.net.eval(feed_dict={self.X: minibatch['next_states']})
+        Q_next_states_max = np.amax(Q_next_states, axis=1)
+        # take each, mult by actions array
+        Q_targets_unred = minibatch['rewards'] + (1 - minibatch['terminals']) * self.gamma *  Q_next_states_max
+        # Q_targets = tf.mul
+        Q_targets = Q_targets_unred
+        # targets = minibatch['actions'] * targets
         # !for other actions, set targets as same as the first feedforward
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
             self.a: minibatch['actions'],
-            self.Y: targets,
+            self.Y: Q_targets,
             self.X: minibatch['states'],
         })
         return loss
