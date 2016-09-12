@@ -103,7 +103,8 @@ def get_env_spec(env):
 
 class ReplayMemory(object):
 
-    def __init__(self):
+    def __init__(self, env_spec):
+        self.env_spec = env_spec
         self.memory = []
         self.state = None
         # set to -1 so the first post-increment calc can use val = 0
@@ -124,9 +125,10 @@ class ReplayMemory(object):
         using the previously stored state for the s,
         form an experience tuple <s, a, r, s'>
         '''
-        exp = dict(zip(['state', 'action', 'reward', 'next_state', 'terminal'],
-                       [deepcopy(self.state), action, reward, next_state, terminal]))
-        # store and move the pointer
+        exp = dict(zip(
+            ['state', 'action', 'reward', 'next_state', 'terminal'],
+            [deepcopy(self.state), action, reward, next_state, terminal]))
+        # store exp, update state and time
         self.memory.append(exp)
         self.state = next_state
         self.t += 1
@@ -135,9 +137,31 @@ class ReplayMemory(object):
     def get_exp(self, index):
         return deepcopy(self.memory[index])
 
-    def rand_exp_batch(self):
+    def one_hot_action(self, action):
+        action_arr = np.zeros(self.env_spec['action_dim'])
+        action_arr[action] = 1
+        return action_arr
+
+    def format_minibatch(self, exp_batch):
         '''
-        get a minibatch of randon exp for training
+        transpose, transform the minibatch into useful form
+        '''
+        minibatch = dict(zip(
+            ['states', 'actions', 'rewards', 'next_states', 'terminals'],
+            [
+                np.array([exp['state'] for exp in exp_batch]),
+                np.array([self.one_hot_action(exp['action'])
+                          for exp in exp_batch]),
+                np.array([exp['reward'] for exp in exp_batch]),
+                np.array([exp['next_state'] for exp in exp_batch]),
+                np.array([exp['terminal'] for exp in exp_batch])
+            ]
+        ))
+        return minibatch
+
+    def rand_minibatch(self):
+        '''
+        get a minibatch of random exp for training
         '''
         memory_size = len(self.memory)
         if memory_size <= BATCH_SIZE:
@@ -147,7 +171,8 @@ class ReplayMemory(object):
             rand_inds = np.random.randint(
                 memory_size, size=BATCH_SIZE)
         exp_batch = [self.get_exp(i) for i in rand_inds]
-        return exp_batch
+        minibatch = self.format_minibatch(exp_batch)
+        return minibatch
 
 
 class DQN(object):
@@ -165,8 +190,6 @@ class DQN(object):
         # this can be inferred from replay memory, or not. replay memory shall
         # be over all episodes,
         self.build_net()
-
-    # !need to get episode, and game step of current episode
 
     def build_net(self):
         # X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
@@ -190,10 +213,12 @@ class DQN(object):
         # move out later
         self.a = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.Y = tf.placeholder("float", [None])
-        action_q_values = tf.reduce_sum(tf.mul(self.net, self.a), reduction_indices=1)
+        action_q_values = tf.reduce_sum(
+            tf.mul(self.net, self.a), reduction_indices=1)
         self.loss = tf.reduce_mean(tf.square(action_q_values - self.Y))
         # self.loss = tflearn.mean_square(action_q_values, self.Y)
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
+        # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
         return net
 
@@ -220,23 +245,17 @@ class DQN(object):
     def update_e(self, replay_memory):
         '''
         strategy to update epsilon
-        sawtooth wave pattern that decreases in an apisode, and across episodes
-        epi = replay_memory.epi
-        t = replay_memory.t
-        local_e = the e in this episode
-        global_e = the global scaling e
         '''
-        # global_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(epi))
-        # local_e = self.INIT_E * math.exp(-.693/self.T_HALF_LIFE*float(t))
-        # compound_e = local_e * global_e
-        compound_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(len(replay_memory.memory)))
-        # rescaled, translated
-        # print(local_e, global_e, compound_e)
-        self.e = compound_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
+        unscaled_e = self.INIT_E * \
+            math.exp(-.693/self.EPI_HALF_LIFE*float(len(replay_memory.memory)))
+        # rescale to fit in 0.1 to 1.0, translated + 0.1
+        self.e = unscaled_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
         return self.e
 
     def best_action(self, state):
-        # compute feedforward
+        '''
+        compute feedforward: algo step 1
+        '''
         Y = self.net.eval(feed_dict={self.X: [state]}, session=self.session)
         action = self.session.run(tf.argmax(Y, 1))[0]
         return action
@@ -251,33 +270,24 @@ class DQN(object):
             action = self.best_action(next_state)
         return action
 
-    def blowup_action(self, action):
-        action_arr = np.zeros(self.env_spec['action_dim'])
-        action_arr[action] = 1
-        return action_arr
-
     def train(self, replay_memory):
         '''
         step 2,3,4 of algo
         '''
         self.update_e(replay_memory)
-        rand_mini_batch = replay_memory.rand_exp_batch()
-        states = [mem['state'] for mem in rand_mini_batch]
-        actions = [self.blowup_action(mem['action']) for mem in rand_mini_batch]
-        rewards = [mem['reward'] for mem in rand_mini_batch]
-        next_states = [mem['next_state'] for mem in rand_mini_batch]
-        terminals = np.array([mem['terminal'] for mem in rand_mini_batch])
-        Q_target = self.net.eval(feed_dict={self.X: next_states})
+        minibatch = replay_memory.rand_minibatch()
+        # ['states', 'actions', 'rewards', 'next_states', 'terminals']
+        Q_target = self.net.eval(feed_dict={self.X: minibatch['next_states']})
         Q_target_max = np.amax(Q_target, axis=1)
-        Q_target_terminal = (1-terminals)*Q_target_max
+        Q_target_terminal = (1-minibatch['terminals'])*Q_target_max
         Q_target_gamma = self.gamma*Q_target_terminal
-        targets = rewards + Q_target_gamma
+        targets = minibatch['rewards'] + Q_target_gamma
         # !for other actions, set targets as same as the first feedforward
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
-          self.a: actions,
-          self.Y: targets,
-          self.X: states,
-          })
+            self.a: minibatch['actions'],
+            self.Y: targets,
+            self.X: minibatch['states'],
+        })
         return loss
         # replay_memory used to guide annealing too
         # also it shd be step wise, epxosed
@@ -342,7 +352,7 @@ def run_episode(epi, env, replay_memory, dqn):
     next_state = env.reset()
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(next_state)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
@@ -362,7 +372,7 @@ def run_episode(epi, env, replay_memory, dqn):
 def deep_q_learn(env):
     sess = tf.InteractiveSession()
     env_spec = get_env_spec(env)
-    replay_memory = ReplayMemory()
+    replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess)
     init = tf.initialize_all_variables()
     sess.run(init)
@@ -375,8 +385,3 @@ def deep_q_learn(env):
 
 
 deep_q_learn(env)
-# replay_memory = ReplayMemory()
-# next_state = env.reset()
-# replay_memory.reset_state(next_state)
-# mat = [[[1,1,1,1],2,3,4], [[5,5,5,5],6,7,8]]
-# print(np.transpose(mat))
