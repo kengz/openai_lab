@@ -158,7 +158,7 @@ class DQN(object):
         self.INIT_E = 1.0
         self.FINAL_E = 0.05
         self.e = self.INIT_E
-        self.EPI_HALF_LIFE = 20.
+        self.EPI_HALF_LIFE = 100.
         self.T_HALF_LIFE = 10.
         self.learning_rate = 0.1
         self.gamma = 0.95
@@ -217,7 +217,7 @@ class DQN(object):
     #     self.trainer = trainer
     #     return self.trainer
 
-    def update_e(self, epi, t):
+    def update_e(self, replay_memory):
         '''
         strategy to update epsilon
         sawtooth wave pattern that decreases in an apisode, and across episodes
@@ -226,9 +226,10 @@ class DQN(object):
         local_e = the e in this episode
         global_e = the global scaling e
         '''
-        global_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(epi))
-        local_e = self.INIT_E * math.exp(-.693/self.T_HALF_LIFE*float(t))
-        compound_e = local_e * global_e
+        # global_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(epi))
+        # local_e = self.INIT_E * math.exp(-.693/self.T_HALF_LIFE*float(t))
+        # compound_e = local_e * global_e
+        compound_e = self.INIT_E * math.exp(-.693/self.EPI_HALF_LIFE*float(len(replay_memory.memory)))
         # rescaled, translated
         # print(local_e, global_e, compound_e)
         self.e = compound_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
@@ -240,7 +241,7 @@ class DQN(object):
         action = self.session.run(tf.argmax(Y, 1))[0]
         return action
 
-    def select_action(self, next_state, epi, t):
+    def select_action(self, next_state):
         '''
         step 1 of algo
         '''
@@ -248,7 +249,6 @@ class DQN(object):
             action = np.random.choice(self.env_spec['actions'])
         else:
             action = self.best_action(next_state)
-        self.update_e(epi, t)
         return action
 
     def blowup_action(self, action):
@@ -260,6 +260,7 @@ class DQN(object):
         '''
         step 2,3,4 of algo
         '''
+        self.update_e(replay_memory)
         rand_mini_batch = replay_memory.rand_exp_batch()
         states = [mem['state'] for mem in rand_mini_batch]
         actions = [self.blowup_action(mem['action']) for mem in rand_mini_batch]
@@ -298,7 +299,7 @@ class DQN(object):
 # print(dqn.best_action(next_state))
 # epi = 0
 # t = 0
-# action = dqn.select_action(next_state, epi, t)
+# action = dqn.select_action(next_state)
 # next_state, reward, done, info = env.step(action)
 # print(next_state, reward)
 
@@ -342,7 +343,7 @@ def run_episode(epi, env, replay_memory, dqn):
     replay_memory.reset_state(next_state)
     for t in range(MAX_STEPS):
         # env.render()
-        action = dqn.select_action(next_state, epi, t)
+        action = dqn.select_action(next_state)
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
         loss = dqn.train(replay_memory)  # calc target, shits, train backprop
