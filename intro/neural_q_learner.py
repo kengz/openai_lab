@@ -76,11 +76,11 @@ from collections import deque
 
 MAX_STEPS = 200
 SOLVED_MEAN_REWARD = 195.0
-MAX_EPISODES = 3
+MAX_EPISODES = 30
 MAX_HISTORY = 100
 episode_history = deque(maxlen=MAX_HISTORY)
 BATCH_SIZE = 32
-MODEL_PATH = 'models/dqn.ckpt'
+MODEL_PATH = 'models/dqn.tfl'
 
 env = gym.make('CartPole-v0')
 
@@ -287,6 +287,10 @@ class DQN(object):
         # train_ops=trainop, tensorboard_verbose=3, session=self.session)
     # return trainer.save(model_path, global_step=len(replay_memory.memory))
 
+    def restore(self, model_path):
+        self.saver = tf.train.Saver(tf.trainable_variables())
+        self.saver.restore(self.session, model_path)
+
 
 # update the hisory, max len = MAX_HISTORY
 # @return [bool] solved
@@ -313,7 +317,7 @@ def run_episode(epi, env, replay_memory, dqn):
     state = env.reset()
     replay_memory.reset_state(state)
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, int(done))
@@ -335,12 +339,13 @@ def deep_q_learn(env):
     replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess)
     sess.run(tf.initialize_all_variables())
+    dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
         solved = run_episode(epi, env, replay_memory, dqn)
         if solved:
             break
-        if epi:
-            dqn.save(MODEL_PATH, epi)
+        # if epi % 10 == 0:
+        #     dqn.save(MODEL_PATH, epi)
     print('Problem solved? {}'.format(solved))
     return solved
 
