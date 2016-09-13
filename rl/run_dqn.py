@@ -12,8 +12,20 @@ MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
 episode_history = deque(maxlen=MAX_HISTORY)
-env = gym.make('CartPole-v0')
+# env = gym.make('CartPole-v0')
 
+
+def foo(a, b, c):
+    print(a, b, c)
+
+print(dir(foo))
+# d1 = {'b': 'b', 'c': 'c'}
+# print(*d1)
+# foo('a', d1)
+
+
+# also each config that runs over history, needs also be averaged over
+# many runs (the instability effects)
 
 # Hyper param outline:
 # make multiple envs, init new mem, try a dqn config
@@ -22,6 +34,26 @@ env = gym.make('CartPole-v0')
 # gamma, learning_rate, e_anneal_steps, net config
 # feed as dict, spread as named param into DQN()
 # do parallel matrix select
+
+# output metrics:
+# - if solved, solved_in_epi = (epi-MAX_HISTORY). use solved_avg/solved_in_epi
+# - else unsolved, avg (all must hit MAX_EPISODES). use avg/MAX_EPISODES
+
+# solved_avg > avg
+# solved_in_epi < MAX_EPISODES
+# ok so ordering is ensured
+
+# use avg/epi is sufficient for each hisotry of a config
+# do multiple history runs of the same config, take average of that val
+# pick the max config
+
+# borrow SkFlow/scikit to enum config dict matrix
+# for each config (parallelize):
+#   for H times:
+#       deep_q_learn(config), return metric, append list
+#       update average of metric, terminate if avg too shitty
+#    return its avg_metric
+#  select the config that yields the max avg metric
 
 
 def get_env_spec(env):
@@ -99,5 +131,5 @@ def deep_q_learn(env):
     return solved
 
 
-if __name__ == '__main__':
-    deep_q_learn(env)
+# if __name__ == '__main__':
+#     deep_q_learn(env)
