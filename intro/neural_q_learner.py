@@ -211,7 +211,6 @@ class DQN(object):
         self.X = X
 
         # move out later
-        self.a = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.Y = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.loss = tf.reduce_mean(tf.square(self.net - self.Y))
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
@@ -290,9 +289,8 @@ class DQN(object):
             (1 - minibatch['actions']) * Q_states
         # !for other actions, set targets as same as the first feedforward
         _, loss = self.session.run([self.train_op, self.loss], feed_dict={
-            self.a: minibatch['actions'],
-            self.Y: Q_targets,
             self.X: minibatch['states'],
+            self.Y: Q_targets,
         })
         return loss
         # replay_memory used to guide annealing too
