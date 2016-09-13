@@ -180,7 +180,6 @@ class DQN(object):
         self.FINAL_E = 0.05
         self.e = self.INIT_E
         self.EPI_HALF_LIFE = 100.
-        self.T_HALF_LIFE = 10.
         self.learning_rate = 0.1
         self.gamma = 0.95
         self.build_graph()
@@ -251,22 +250,16 @@ class DQN(object):
         self.e = unscaled_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
         return self.e
 
-    def best_action(self, state):
+    def select_action(self, state):
         '''
-        compute feedforward: algo step 1
-        '''
-        Y = self.net.eval(feed_dict={self.X: [state]}, session=self.session)
-        action = self.session.run(tf.argmax(Y, 1))[0]
-        return action
-
-    def select_action(self, next_state):
-        '''
-        step 1 of algo
+        step 1 of algo, feedforward
         '''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
         else:
-            action = self.best_action(next_state)
+            Q_state = self.net.eval(
+                feed_dict={self.X: [state]}, session=self.session)
+            action = self.session.run(tf.argmax(Q_state, 1))[0]
         return action
 
 
@@ -292,14 +285,15 @@ def update_history(total_rewards, epi, total_t):
 # @return [bool] if the problem is solved by this episode
 def run_episode(epi, env, replay_memory, dqn):
     total_rewards = 0
-    next_state = env.reset()
-    replay_memory.reset_state(next_state)
+    state = env.reset()
+    replay_memory.reset_state(state)
     for t in range(MAX_STEPS):
         env.render()
-        action = dqn.select_action(next_state)
+        action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
-        exp = replay_memory.add_exp(action, reward, next_state, int(done))
-        loss = dqn.train(replay_memory)  # calc target, shits, train backprop
+        replay_memory.add_exp(action, reward, next_state, int(done))
+        dqn.train(replay_memory)
+        state = next_state
         total_rewards += reward
         if done:
             break
