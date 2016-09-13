@@ -76,7 +76,7 @@ from collections import deque
 
 MAX_STEPS = 200
 SOLVED_MEAN_REWARD = 195.0
-MAX_EPISODES = 100
+MAX_EPISODES = 3
 MAX_HISTORY = 100
 episode_history = deque(maxlen=MAX_HISTORY)
 BATCH_SIZE = 32
@@ -187,7 +187,6 @@ class DQN(object):
         self.learning_rate = 0.1
         self.gamma = 0.95
         self.build_graph()
-        self.saver = tf.train.Saver(tf.all_variables(), max_to_keep=5)
 
     def build_net(self):
         # X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
@@ -227,10 +226,11 @@ class DQN(object):
         self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch()
         # algo step 1
-        Q_states = self.net.eval(feed_dict={self.X: minibatch['states']})
+        Q_states = self.net.eval(
+            feed_dict={self.X: minibatch['states']}, session=self.session)
         # algo step 2
         Q_next_states = self.net.eval(
-            feed_dict={self.X: minibatch['next_states']})
+            feed_dict={self.X: minibatch['next_states']}, session=self.session)
         Q_next_states_max = np.amax(Q_next_states, axis=1)
         # Q targets for batch-actions a;
         # with terminal to make future reward 0 if end
@@ -270,6 +270,15 @@ class DQN(object):
         return action
 
     def save(self, model_path, global_step):
+        self.saver = tf.train.Saver(tf.trainable_variables())
+        # print(len(tf.trainable_variables()))
+        # print(len(tf.all_variables()))
+        # for v in tf.trainable_variables():
+        # for v in tf.all_variables():
+        #     print(v.name)
+        #     print(v.value)
+        #     print(dir(v))
+        #     print(self.session.run(v))
         return self.saver.save(
             self.session, model_path, global_step=global_step)
         # proxy used for saving model
@@ -304,7 +313,7 @@ def run_episode(epi, env, replay_memory, dqn):
     state = env.reset()
     replay_memory.reset_state(state)
     for t in range(MAX_STEPS):
-        env.render()
+        # env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, int(done))
@@ -321,12 +330,11 @@ def run_episode(epi, env, replay_memory, dqn):
 # epi starts from 1 to MAX_EPISODES (inclusive)
 # @return [bool] if the problem is solved
 def deep_q_learn(env):
-    sess = tf.InteractiveSession()
+    sess = tf.Session()
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess)
-    init = tf.initialize_all_variables()
-    sess.run(init)
+    sess.run(tf.initialize_all_variables())
     for epi in range(MAX_EPISODES):
         solved = run_episode(epi, env, replay_memory, dqn)
         if solved:
