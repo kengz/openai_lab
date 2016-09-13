@@ -189,7 +189,7 @@ class DQN(object):
         self.gamma = 0.95
         # this can be inferred from replay memory, or not. replay memory shall
         # be over all episodes,
-        self.build_net()
+        self.build_graph()
 
     def build_net(self):
         # X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
@@ -207,37 +207,18 @@ class DQN(object):
         net = tflearn.fully_connected(
             net, self.env_spec['action_dim'])
         # aight output is the q_values
-        self.net = net
         self.X = X
+        self.net = net
+        return net
 
-        # move out later
+    def build_graph(self):
+        net = self.build_net()
         self.Y = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.loss = tf.reduce_mean(tf.square(self.net - self.Y))
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
-        # !how do you know which weight to adjust during backprop?
-        return net
-
-    # def build_graph(self):
-    #     net = self.build_net()
-    #     # boolean at index as action number
-    #     a = tf.placeholder(
-    #         tf.float32, [None, self.env_spec['action_dim']])
-    #     # a is boolean, reduce to single Q value
-    #     action_q_values = tf.reduce_sum(tf.mul(net, a), reduction_indices=1)
-    #     Y = tf.placeholder(tf.float32, [None])
-    #     loss = tflearn.mean_square(action_q_values, Y)
-    #     optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
-    #     accuracy = tf.reduce_mean(tf.cast(
-    #         tf.equal(tf.argmax(net, 1), tf.argmax(Y, 1)),
-    #         tf.float32), name='acc')
-    #     # min_op = optimizer.minimize(loss, var_list=network_params)
-
-    #     trainop = tflearn.TrainOp(loss=loss, optimizer=optimizer, metric=accuracy, batch_size=BATCH_SIZE)
-    #     trainer = tflearn.Trainer(train_ops=trainop, tensorboard_verbose=3)
-    #     self.trainer = trainer
-    #     return self.trainer
+        return self.train_op
 
     def update_e(self, replay_memory):
         '''
@@ -287,12 +268,13 @@ class DQN(object):
         # as from algo step 1
         Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
             (1 - minibatch['actions']) * Q_states
-        # !for other actions, set targets as same as the first feedforward
+
         _, loss = self.session.run([self.train_op, self.loss], feed_dict={
             self.X: minibatch['states'],
             self.Y: Q_targets,
         })
         return loss
+
         # replay_memory used to guide annealing too
         # also it shd be step wise, epxosed
         # self-batching, set Y on the fly, etc
