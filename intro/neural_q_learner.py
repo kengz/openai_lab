@@ -84,10 +84,6 @@ BATCH_SIZE = 32
 env = gym.make('CartPole-v0')
 
 
-# next:
-# - deep is bad for cartpole. Convolution is even shittier
-# - need a hyperparam selection
-
 def get_env_spec(env):
     '''
     return the env specs: dims, actions
@@ -187,8 +183,6 @@ class DQN(object):
         self.T_HALF_LIFE = 10.
         self.learning_rate = 0.1
         self.gamma = 0.95
-        # this can be inferred from replay memory, or not. replay memory shall
-        # be over all episodes,
         self.build_graph()
 
     def build_net(self):
@@ -220,6 +214,33 @@ class DQN(object):
         self.train_op = self.optimizer.minimize(self.loss)
         return self.train_op
 
+    def train(self, replay_memory):
+        '''
+        step 1,2,3,4 of algo
+        '''
+        self.update_e(replay_memory)
+        minibatch = replay_memory.rand_minibatch()
+        # algo step 1
+        Q_states = self.net.eval(feed_dict={self.X: minibatch['states']})
+        # algo step 2
+        Q_next_states = self.net.eval(
+            feed_dict={self.X: minibatch['next_states']})
+        Q_next_states_max = np.amax(Q_next_states, axis=1)
+        # Q targets for batch-actions a;
+        # with terminal to make future reward 0 if end
+        Q_targets_a = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * Q_next_states_max
+        # set Q_targets of a as above, and the non-action units' Q_targets to
+        # as from algo step 1
+        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
+            (1 - minibatch['actions']) * Q_states
+
+        _, loss = self.session.run([self.train_op, self.loss], feed_dict={
+            self.X: minibatch['states'],
+            self.Y: Q_targets,
+        })
+        return loss
+
     def update_e(self, replay_memory):
         '''
         strategy to update epsilon
@@ -248,71 +269,6 @@ class DQN(object):
             action = self.best_action(next_state)
         return action
 
-    def train(self, replay_memory):
-        '''
-        step 1,2,3,4 of algo
-        '''
-        self.update_e(replay_memory)
-        minibatch = replay_memory.rand_minibatch()
-        # algo step 1
-        Q_states = self.net.eval(feed_dict={self.X: minibatch['states']})
-        # algo step 2
-        Q_next_states = self.net.eval(
-            feed_dict={self.X: minibatch['next_states']})
-        Q_next_states_max = np.amax(Q_next_states, axis=1)
-        # Q targets for batch-actions a;
-        # with terminal to make future reward 0 if end
-        Q_targets_a = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * Q_next_states_max
-        # set Q_targets of a as above, and the non-action units' Q_targets to
-        # as from algo step 1
-        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
-            (1 - minibatch['actions']) * Q_states
-
-        _, loss = self.session.run([self.train_op, self.loss], feed_dict={
-            self.X: minibatch['states'],
-            self.Y: Q_targets,
-        })
-        return loss
-
-        # replay_memory used to guide annealing too
-        # also it shd be step wise, epxosed
-        # self-batching, set Y on the fly, etc
-        # self.trainer.fit({X: trainX, Y: trainY})
-        # self.m.save('models/dqn.tfl')
-
-
-# sess = tf.InteractiveSession()
-# dqn = DQN(get_env_spec(env), sess)
-# net = dqn.build_net()
-# init = tf.initialize_all_variables()
-# sess.run(init)
-# # set self.sess
-# next_state = env.observation_space.sample()
-# out = net.eval(feed_dict={dqn.X: [next_state]}, session=sess)
-# print(out)
-# print(sess.run(tf.argmax(out, 1)))
-# print(dqn.best_action(next_state))
-# epi = 0
-# t = 0
-# action = dqn.select_action(next_state)
-# next_state, reward, done, info = env.step(action)
-# print(next_state, reward)
-
-# print(dqn.env_spec['state_dim'])
-# epi = 30
-# t = 60
-# e = dqn.update_e(epi, t)
-# e = dqn.select_action(2)
-# print(e)
-# # g = dqn.build_net()
-# g = dqn.build_graph()
-# tf.initialize_all_variables()
-# print(g)
-# print(tf.trainable_variables())
-# print(env.observation_space.sample())
-# dqn.best_action(env.observation_space.sample())
-
 
 # update the hisory, max len = MAX_HISTORY
 # @return [bool] solved
@@ -320,6 +276,7 @@ def update_history(total_rewards, epi, total_t):
     episode_history.append(total_rewards)
     mean_rewards = np.mean(episode_history)
     logs = [
+        '{:->20}'.format(''),
         'Episode {}'.format(epi),
         'Finished at t={}'.format(total_t),
         'Average reward for the last {} episodes: {}'.format(
@@ -343,10 +300,8 @@ def run_episode(epi, env, replay_memory, dqn):
         next_state, reward, done, info = env.step(action)
         exp = replay_memory.add_exp(action, reward, next_state, int(done))
         loss = dqn.train(replay_memory)  # calc target, shits, train backprop
-        # print('loss', loss)
         total_rewards += reward
         if done:
-            print('done. total_reward', total_rewards)
             break
     solved = update_history(total_rewards, epi, t)
     return solved
@@ -370,4 +325,5 @@ def deep_q_learn(env):
     return solved
 
 
-deep_q_learn(env)
+if __name__ == '__main__':
+    deep_q_learn(env)
