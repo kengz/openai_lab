@@ -212,14 +212,16 @@ class DQN(object):
 
         # move out later
         self.a = tf.placeholder("float", [None, self.env_spec['action_dim']])
-        self.Y = tf.placeholder("float", [None])
-        action_q_values = tf.reduce_sum(
-            tf.mul(self.net, self.a), reduction_indices=1)
-        self.loss = tf.reduce_mean(tf.square(action_q_values - self.Y))
-        # self.loss = tflearn.mean_square(action_q_values, self.Y)
+        self.Y = tf.placeholder("float", [None, self.env_spec['action_dim']])
+        action_q_values = self.net
+        # action_q_value = tf.reduce_sum(
+        #     tf.mul(self.net, self.a), reduction_indices=1)
+        self.loss = tf.reduce_mean(tf.square(tf.sub(action_q_values, self.Y)))
+        # self.loss = tflearn.mean_square(action_q_value, self.Y)
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
+        # !how do you know which weight to adjust during backprop?
         return net
 
     # def build_graph(self):
@@ -272,22 +274,24 @@ class DQN(object):
 
     def train(self, replay_memory):
         '''
-        step 2,3,4 of algo
+        step 1,2,3,4 of algo
         '''
-        # ['states', 'actions', 'rewards', 'next_states', 'terminals']
         self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch()
-        # also need step 1 for setting error 0 on rest
         # algo step 1
         Q_states = self.net.eval(feed_dict={self.X: minibatch['states']})
         # algo step 2
-        Q_next_states = self.net.eval(feed_dict={self.X: minibatch['next_states']})
+        Q_next_states = self.net.eval(
+            feed_dict={self.X: minibatch['next_states']})
         Q_next_states_max = np.amax(Q_next_states, axis=1)
-        # take each, mult by actions array
-        Q_targets_unred = minibatch['rewards'] + (1 - minibatch['terminals']) * self.gamma *  Q_next_states_max
-        # Q_targets = tf.mul
-        Q_targets = Q_targets_unred
-        # targets = minibatch['actions'] * targets
+        # Q targets for batch-actions a;
+        # with terminal to make future reward 0 if end
+        Q_targets_a = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * Q_next_states_max
+        # set Q_targets of a as above, and the non-action units' Q_targets to
+        # as from algo step 1
+        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
+            (1 - minibatch['actions']) * Q_states
         # !for other actions, set targets as same as the first feedforward
         result, loss = self.session.run([self.train_op, self.loss], feed_dict={
             self.a: minibatch['actions'],
