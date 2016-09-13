@@ -7,7 +7,7 @@ from dqn import DQN
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
-MAX_EPISODES = 30
+MAX_EPISODES = 40
 MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
@@ -15,9 +15,18 @@ episode_history = deque(maxlen=MAX_HISTORY)
 env = gym.make('CartPole-v0')
 
 
+# Hyper param outline:
+# make multiple envs, init new mem, try a dqn config
+# optimize for scores
+# dqn params:
+# gamma, learning_rate, e_anneal_steps, net config
+# feed as dict, spread as named param into DQN()
+# do parallel matrix select
+
+
 def get_env_spec(env):
     '''
-    return the env specs: dims, actions
+    Helper: return the env specs: dims, actions
     '''
     return {
         'state_dim': env.observation_space.shape[0],
@@ -28,9 +37,11 @@ def get_env_spec(env):
     }
 
 
-# update the hisory, max len = MAX_HISTORY
-# @return [bool] solved
 def update_history(total_rewards, epi, total_t):
+    '''
+    Helper: update the hisory, max len = MAX_HISTORY
+    return [bool] solved
+    '''
     episode_history.append(total_rewards)
     mean_rewards = np.mean(episode_history)
     logs = [
@@ -46,9 +57,11 @@ def update_history(total_rewards, epi, total_t):
     return solved
 
 
-# run an episode
-# @return [bool] if the problem is solved by this episode
 def run_episode(epi, env, replay_memory, dqn):
+    '''
+    run an episode
+    return [bool] if the problem is solved by this episode
+    '''
     total_rewards = 0
     state = env.reset()
     replay_memory.reset_state(state)
@@ -66,10 +79,10 @@ def run_episode(epi, env, replay_memory, dqn):
     return solved
 
 
-# the primary method to run
-# epi starts from 1 to MAX_EPISODES (inclusive)
-# @return [bool] if the problem is solved
 def deep_q_learn(env):
+    '''
+    primary method
+    '''
     sess = tf.Session()
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
@@ -80,8 +93,8 @@ def deep_q_learn(env):
         solved = run_episode(epi, env, replay_memory, dqn)
         if solved:
             break
-        # if epi % 10 == 0:
-        #     dqn.save(MODEL_PATH, epi)
+        if epi % 10 == 0:
+            dqn.save(MODEL_PATH, epi)
     print('Problem solved? {}'.format(solved))
     return solved
 
