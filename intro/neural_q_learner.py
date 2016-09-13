@@ -213,11 +213,7 @@ class DQN(object):
         # move out later
         self.a = tf.placeholder("float", [None, self.env_spec['action_dim']])
         self.Y = tf.placeholder("float", [None, self.env_spec['action_dim']])
-        action_q_values = self.net
-        # action_q_value = tf.reduce_sum(
-        #     tf.mul(self.net, self.a), reduction_indices=1)
-        self.loss = tf.reduce_mean(tf.square(tf.sub(action_q_values, self.Y)))
-        # self.loss = tflearn.mean_square(action_q_value, self.Y)
+        self.loss = tf.reduce_mean(tf.square(self.net - self.Y))
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
@@ -293,7 +289,7 @@ class DQN(object):
         Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
             (1 - minibatch['actions']) * Q_states
         # !for other actions, set targets as same as the first feedforward
-        result, loss = self.session.run([self.train_op, self.loss], feed_dict={
+        _, loss = self.session.run([self.train_op, self.loss], feed_dict={
             self.a: minibatch['actions'],
             self.Y: Q_targets,
             self.X: minibatch['states'],
