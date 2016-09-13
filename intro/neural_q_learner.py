@@ -76,10 +76,11 @@ from collections import deque
 
 MAX_STEPS = 200
 SOLVED_MEAN_REWARD = 195.0
-MAX_EPISODES = 1000
+MAX_EPISODES = 100
 MAX_HISTORY = 100
 episode_history = deque(maxlen=MAX_HISTORY)
 BATCH_SIZE = 32
+MODEL_PATH = 'models/dqn.ckpt'
 
 env = gym.make('CartPole-v0')
 
@@ -133,6 +134,9 @@ class ReplayMemory(object):
     def get_exp(self, index):
         return deepcopy(self.memory[index])
 
+    def size(self):
+        return len(self.memory)
+
     def one_hot_action(self, action):
         action_arr = np.zeros(self.env_spec['action_dim'])
         action_arr[action] = 1
@@ -159,7 +163,7 @@ class ReplayMemory(object):
         '''
         get a minibatch of random exp for training
         '''
-        memory_size = len(self.memory)
+        memory_size = self.size()
         if memory_size <= BATCH_SIZE:
             # to prevent repetition and initial overfitting
             rand_inds = np.random.permutation(memory_size)
@@ -183,6 +187,7 @@ class DQN(object):
         self.learning_rate = 0.1
         self.gamma = 0.95
         self.build_graph()
+        self.saver = tf.train.Saver(tf.all_variables(), max_to_keep=5)
 
     def build_net(self):
         # X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
@@ -206,7 +211,8 @@ class DQN(object):
 
     def build_graph(self):
         net = self.build_net()
-        self.Q_target = tf.placeholder("float", [None, self.env_spec['action_dim']])
+        self.Q_target = tf.placeholder(
+            "float", [None, self.env_spec['action_dim']])
         # target Y - predicted Y, do rms loss
         self.loss = tf.reduce_mean(tf.square(self.Q_target - self.net))
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
@@ -246,7 +252,7 @@ class DQN(object):
         strategy to update epsilon
         '''
         unscaled_e = self.INIT_E * \
-            math.exp(-.693/self.EPI_HALF_LIFE*float(len(replay_memory.memory)))
+            math.exp(-.693/self.EPI_HALF_LIFE*float(replay_memory.size()))
         # rescale to fit in 0.1 to 1.0, translated + 0.1
         self.e = unscaled_e*abs(self.INIT_E - self.FINAL_E) + self.FINAL_E
         return self.e
@@ -262,6 +268,15 @@ class DQN(object):
                 feed_dict={self.X: [state]}, session=self.session)
             action = self.session.run(tf.argmax(Q_state, 1))[0]
         return action
+
+    def save(self, model_path, global_step):
+        return self.saver.save(
+            self.session, model_path, global_step=global_step)
+        # proxy used for saving model
+        # trainop = tflearn.TrainOp(loss=self.loss, optimizer=self.optimizer)
+        # trainer = tflearn.Trainer(
+        # train_ops=trainop, tensorboard_verbose=3, session=self.session)
+    # return trainer.save(model_path, global_step=len(replay_memory.memory))
 
 
 # update the hisory, max len = MAX_HISTORY
@@ -316,6 +331,8 @@ def deep_q_learn(env):
         solved = run_episode(epi, env, replay_memory, dqn)
         if solved:
             break
+        if epi:
+            dqn.save(MODEL_PATH, epi)
     print('Problem solved? {}'.format(solved))
     return solved
 
