@@ -279,6 +279,7 @@ class DQN(object):
         #     print(v.value)
         #     print(dir(v))
         #     print(self.session.run(v))
+        # !set global_step None to save model without -N
         return self.saver.save(
             self.session, model_path, global_step=global_step)
         # proxy used for saving model
@@ -344,8 +345,8 @@ def deep_q_learn(env):
         solved = run_episode(epi, env, replay_memory, dqn)
         if solved:
             break
-        # if epi % 10 == 0:
-        #     dqn.save(MODEL_PATH, epi)
+        if epi % 10 == 0:
+            dqn.save(MODEL_PATH, epi)
     print('Problem solved? {}'.format(solved))
     return solved
 
