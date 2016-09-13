@@ -206,8 +206,9 @@ class DQN(object):
 
     def build_graph(self):
         net = self.build_net()
-        self.Y = tf.placeholder("float", [None, self.env_spec['action_dim']])
-        self.loss = tf.reduce_mean(tf.square(self.net - self.Y))
+        self.Q_target = tf.placeholder("float", [None, self.env_spec['action_dim']])
+        # target Y - predicted Y, do rms loss
+        self.loss = tf.reduce_mean(tf.square(self.Q_target - self.net))
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
@@ -215,7 +216,7 @@ class DQN(object):
 
     def train(self, replay_memory):
         '''
-        step 1,2,3,4 of algo
+        step 1,2,3,4 of algo. plural for batch's multiple values
         '''
         self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch()
@@ -236,7 +237,7 @@ class DQN(object):
 
         _, loss = self.session.run([self.train_op, self.loss], feed_dict={
             self.X: minibatch['states'],
-            self.Y: Q_targets,
+            self.Q_target: Q_targets,
         })
         return loss
 
