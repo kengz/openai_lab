@@ -7,7 +7,7 @@ from dqn import DQN
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
-MAX_EPISODES = 40
+MAX_EPISODES = 30
 MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
@@ -129,6 +129,7 @@ def deep_q_learn(env):
             break
         if epi % 10 == 0:
             dqn.save(MODEL_PATH, epi)
+    dqn.save(MODEL_PATH)  # save final model
     print('Problem solved? {}'.format(solved))
     return solved
 

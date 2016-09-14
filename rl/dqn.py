@@ -109,7 +109,7 @@ class DQN(object):
             action = self.session.run(tf.argmax(Q_state, 1))[0]
         return action
 
-    def save(self, model_path, global_step):
+    def save(self, model_path, global_step=None):
         self.saver = tf.train.Saver(tf.trainable_variables())
         # print(len(tf.trainable_variables()))
         # print(len(tf.all_variables()))
