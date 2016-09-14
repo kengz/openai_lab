@@ -55,11 +55,6 @@ class ReplayMemory(object):
         get a minibatch of random exp for training
         '''
         memory_size = self.size()
-        if memory_size <= size:
-            # to prevent repetition and initial overfitting
-            rand_inds = np.random.permutation(memory_size)
-        else:
-            rand_inds = np.random.randint(
-                memory_size, size=size)
+        rand_inds = np.random.randint(memory_size, size=size)
         minibatch = self.get_exp(rand_inds)
         return minibatch
