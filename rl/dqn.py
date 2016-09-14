@@ -12,7 +12,7 @@ class DQN(object):
 
     def __init__(self, env_spec, session,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_steps=200,
+                 init_e=1.0, final_e=0.1, e_anneal_steps=1000,
                  batch_size=64, n_epoch=2):
         self.env_spec = env_spec
         self.session = session
@@ -21,7 +21,7 @@ class DQN(object):
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
-        self.e_half_life = e_anneal_steps
+        self.e_anneal_steps = e_anneal_steps
         self.batch_size = batch_size
         self.n_epoch = n_epoch
         self.build_graph()
@@ -62,7 +62,6 @@ class DQN(object):
         step 1,2,3,4 of algo. plural for batch's multiple values
         replay_memory is provided externally
         '''
-        self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch(self.batch_size)
         for epoch in range(self.n_epoch):
             # algo step 1
@@ -89,15 +88,13 @@ class DQN(object):
             })
         return loss
 
-    def update_e(self, replay_memory):
+    def update_e(self):
         '''
         strategy to update epsilon
         '''
-        global_time_step = replay_memory.size()
-        unscaled_e = self.init_e * \
-            math.exp(-.693/self.e_half_life*float(global_time_step))
-        # rescale to fit in 0.1 to 1.0, translated + 0.1
-        self.e = unscaled_e*abs(self.init_e - self.final_e) + self.final_e
+        self.e = max(self.e -
+                     (self.init_e - self.final_e)/float(self.e_anneal_steps),
+                     self.final_e)
         return self.e
 
     def select_action(self, state):
@@ -110,19 +107,12 @@ class DQN(object):
             Q_state = self.net.eval(
                 feed_dict={self.X: [state]}, session=self.session)
             action = self.session.run(tf.argmax(Q_state, 1))[0]
+        self.update_e()
         return action
 
     def save(self, model_path, global_step=None):
         print('Saving model checkpoint')
         self.saver = tf.train.Saver(tf.trainable_variables())
-        # print(len(tf.trainable_variables()))
-        # print(len(tf.all_variables()))
-        # for v in tf.trainable_variables():
-        # for v in tf.all_variables():
-        #     print(v.name)
-        #     print(v.value)
-        #     print(dir(v))
-        #     print(self.session.run(v))
         # !set global_step None to save model without -N
         return self.saver.save(
             self.session, model_path, global_step=global_step)
