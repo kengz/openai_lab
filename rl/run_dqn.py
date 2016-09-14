@@ -12,13 +12,15 @@ MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
 episode_history = deque(maxlen=MAX_HISTORY)
-# env = gym.make('CartPole-v0')
+env = gym.make('CartPole-v0')
 
+# print(dir(env))
+# print(env.step)
 
-def foo(a, b, c):
-    print(a, b, c)
+# def foo(a, b, c):
+#     print(a, b, c)
 
-print(dir(foo))
+# print(dir(foo))
 # d1 = {'b': 'b', 'c': 'c'}
 # print(*d1)
 # foo('a', d1)
@@ -131,5 +133,5 @@ def deep_q_learn(env):
     return solved
 
 
-# if __name__ == '__main__':
-#     deep_q_learn(env)
+if __name__ == '__main__':
+    deep_q_learn(env)

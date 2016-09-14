@@ -34,7 +34,8 @@ class DQN(object):
         # net = tflearn.fully_connected(net, 16, activation='relu')
         # net = tflearn.dropout(net, 0.5)
         # no conv
-        X = tflearn.input_data(shape=[None, self.env_spec['state_dim']])
+        X = tf.placeholder(
+            "float", [None, self.env_spec['state_dim']])
         net = tflearn.fully_connected(X, 8, activation='relu')
         # net = tflearn.dropout(net, 0.5)
         # net = tflearn.fully_connected(net, 8, activation='relu')
