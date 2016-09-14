@@ -7,7 +7,7 @@ from dqn import DQN
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
-MAX_EPISODES = 1000
+MAX_EPISODES = 200
 MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
@@ -33,7 +33,7 @@ env = gym.make('CartPole-v0')
 # make multiple envs, init new mem, try a dqn config
 # optimize for scores
 # dqn params:
-# gamma, learning_rate, e_anneal_steps, net config
+# gamma, learning_rate, e_anneal_steps, n_epoch? net config
 # feed as dict, spread as named param into DQN()
 # do parallel matrix select
 
@@ -100,7 +100,7 @@ def run_episode(epi, env, replay_memory, dqn):
     state = env.reset()
     replay_memory.reset_state(state)
     for t in range(MAX_STEPS):
-        env.render()
+        # env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)

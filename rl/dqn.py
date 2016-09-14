@@ -12,8 +12,8 @@ class DQN(object):
 
     def __init__(self, env_spec, session,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_steps=100,
-                 batch_size=64):
+                 init_e=1.0, final_e=0.1, e_anneal_steps=200,
+                 batch_size=64, n_epoch=2):
         self.env_spec = env_spec
         self.session = session
         self.gamma = gamma
@@ -23,6 +23,7 @@ class DQN(object):
         self.e = self.init_e
         self.e_half_life = e_anneal_steps
         self.batch_size = batch_size
+        self.n_epoch = n_epoch
         self.build_graph()
 
     def build_net(self):
@@ -63,26 +64,29 @@ class DQN(object):
         '''
         self.update_e(replay_memory)
         minibatch = replay_memory.rand_minibatch(self.batch_size)
-        # algo step 1
-        Q_states = self.net.eval(
-            feed_dict={self.X: minibatch['states']}, session=self.session)
-        # algo step 2
-        Q_next_states = self.net.eval(
-            feed_dict={self.X: minibatch['next_states']}, session=self.session)
-        Q_next_states_max = np.amax(Q_next_states, axis=1)
-        # Q targets for batch-actions a;
-        # with terminal to make future reward 0 if end
-        Q_targets_a = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * Q_next_states_max
-        # set Q_targets of a as above, and the non-action units' Q_targets to
-        # as from algo step 1
-        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
-            (1 - minibatch['actions']) * Q_states
+        for epoch in range(self.n_epoch):
+            # algo step 1
+            Q_states = self.net.eval(
+                feed_dict={self.X: minibatch['states']},
+                session=self.session)
+            # algo step 2
+            Q_next_states = self.net.eval(
+                feed_dict={self.X: minibatch['next_states']},
+                session=self.session)
+            Q_next_states_max = np.amax(Q_next_states, axis=1)
+            # Q targets for batch-actions a;
+            # with terminal to make future reward 0 if end
+            Q_targets_a = minibatch['rewards'] + self.gamma * \
+                (1 - minibatch['terminals']) * Q_next_states_max
+            # set Q_targets of a as above, and the non-action units' Q_targets to
+            # as from algo step 1
+            Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
+                (1 - minibatch['actions']) * Q_states
 
-        _, loss = self.session.run([self.train_op, self.loss], feed_dict={
-            self.X: minibatch['states'],
-            self.Q_target: Q_targets,
-        })
+            _, loss = self.session.run([self.train_op, self.loss], feed_dict={
+                self.X: minibatch['states'],
+                self.Q_target: Q_targets,
+            })
         return loss
 
     def update_e(self, replay_memory):
