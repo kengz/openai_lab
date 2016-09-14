@@ -2,6 +2,7 @@ import gym
 import tensorflow as tf
 import numpy as np
 from collections import deque
+from time import time
 from replay_memory import ReplayMemory
 from dqn import DQN
 
@@ -71,20 +72,21 @@ def get_env_spec(env):
     }
 
 
-def update_history(total_rewards, epi, total_t):
+def update_history(total_rewards, epi, total_t, epi_time):
     '''
     Helper: update the hisory, max len = MAX_HISTORY
     return [bool] solved
     '''
     episode_history.append(total_rewards)
     mean_rewards = np.mean(episode_history)
+    avg_speed = float(epi_time)/float(total_t)
     logs = [
         '{:->20}'.format(''),
         'Episode {}'.format(epi),
-        'Finished at t={}'.format(total_t),
-        'Average reward for the last {} episodes: {}'.format(
+        'Finished at t={}, reward={}'.format(total_t, total_rewards),
+        'Average reward for the last {} episodes: {:.4f}'.format(
             MAX_HISTORY, mean_rewards),
-        'Reward for this episode: {}'. format(total_rewards)
+        'Average time per step {:.4f} s/step'.format(avg_speed)
     ]
     print('\n'.join(logs))
     solved = mean_rewards >= SOLVED_MEAN_REWARD
@@ -97,6 +99,7 @@ def run_episode(epi, env, replay_memory, dqn):
     return [bool] if the problem is solved by this episode
     '''
     total_rewards = 0
+    start_time = time()
     state = env.reset()
     replay_memory.reset_state(state)
     for t in range(MAX_STEPS):
@@ -109,7 +112,8 @@ def run_episode(epi, env, replay_memory, dqn):
         total_rewards += reward
         if done:
             break
-    solved = update_history(total_rewards, epi, t)
+    epi_time = time() - start_time
+    solved = update_history(total_rewards, epi, t, epi_time)
     return solved
 
 
