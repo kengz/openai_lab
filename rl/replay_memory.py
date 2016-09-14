@@ -10,7 +10,9 @@ class ReplayMemory(object):
 
     def __init__(self, env_spec):
         self.env_spec = env_spec
-        self.memory = []
+        self.memory_keys = [
+            'states', 'actions', 'rewards', 'next_states', 'terminals']
+        self.memory = {k: [] for k in self.memory_keys}
         self.state = None
 
     def reset_state(self, init_state):
@@ -19,47 +21,34 @@ class ReplayMemory(object):
         '''
         self.state = init_state
 
+    def one_hot_action(self, action):
+        action_arr = np.zeros(self.env_spec['action_dim'])
+        action_arr[action] = 1
+        return action_arr
+
     def add_exp(self, action, reward, next_state, terminal):
         '''
         after the env.step(a) that returns s', r,
         using the previously stored state for the s,
         form an experience tuple <s, a, r, s'>
         '''
-        exp = dict(zip(
-            ['state', 'action', 'reward', 'next_state', 'terminal'],
-            [self.state, action, reward, next_state, terminal]))
-        # store exp, update state and time
-        self.memory.append(exp)
+        self.memory['states'].append(self.state)
+        self.memory['actions'].append(self.one_hot_action(action))
+        self.memory['rewards'].append(reward)
+        self.memory['next_states'].append(next_state)
+        self.memory['terminals'].append(int(terminal))
         self.state = next_state
-        return exp
 
-    def get_exp(self, index):
-        return self.memory[index]
+    def _get_exp(self, exp_name, inds):
+        return np.array([self.memory[exp_name][i] for i in inds])
+
+    def get_exp(self, inds):
+        # change to get by indices en-masse
+        # pick it up directly by dict, so no need to transpose
+        return {k: self._get_exp(k, inds) for k in self.memory_keys}
 
     def size(self):
-        return len(self.memory)
-
-    def one_hot_action(self, action):
-        action_arr = np.zeros(self.env_spec['action_dim'])
-        action_arr[action] = 1
-        return action_arr
-
-    def format_minibatch(self, exp_batch):
-        '''
-        transpose, transform the minibatch into useful form
-        '''
-        minibatch = dict(zip(
-            ['states', 'actions', 'rewards', 'next_states', 'terminals'],
-            [
-                np.array([exp['state'] for exp in exp_batch]),
-                np.array([self.one_hot_action(exp['action'])
-                          for exp in exp_batch]),
-                np.array([exp['reward'] for exp in exp_batch]),
-                np.array([exp['next_state'] for exp in exp_batch]),
-                np.array([exp['terminal'] for exp in exp_batch])
-            ]
-        ))
-        return minibatch
+        return len(self.memory['rewards'])
 
     def rand_minibatch(self, size):
         '''
@@ -72,6 +61,5 @@ class ReplayMemory(object):
         else:
             rand_inds = np.random.randint(
                 memory_size, size=size)
-        exp_batch = [self.get_exp(i) for i in rand_inds]
-        minibatch = self.format_minibatch(exp_batch)
+        minibatch = self.get_exp(rand_inds)
         return minibatch
