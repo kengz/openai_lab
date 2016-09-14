@@ -10,9 +10,9 @@ class ReplayMemory(object):
 
     def __init__(self, env_spec):
         self.env_spec = env_spec
-        self.memory_keys = [
+        self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
-        self.memory = {k: [] for k in self.memory_keys}
+        self.exp = {k: [] for k in self.exp_keys}
         self.state = None
 
     def reset_state(self, init_state):
@@ -32,23 +32,23 @@ class ReplayMemory(object):
         using the previously stored state for the s,
         form an experience tuple <s, a, r, s'>
         '''
-        self.memory['states'].append(self.state)
-        self.memory['actions'].append(self.one_hot_action(action))
-        self.memory['rewards'].append(reward)
-        self.memory['next_states'].append(next_state)
-        self.memory['terminals'].append(int(terminal))
+        self.exp['states'].append(self.state)
+        self.exp['actions'].append(self.one_hot_action(action))
+        self.exp['rewards'].append(reward)
+        self.exp['next_states'].append(next_state)
+        self.exp['terminals'].append(int(terminal))
         self.state = next_state
 
     def _get_exp(self, exp_name, inds):
-        return np.array([self.memory[exp_name][i] for i in inds])
+        return np.array([self.exp[exp_name][i] for i in inds])
 
     def get_exp(self, inds):
         # change to get by indices en-masse
         # pick it up directly by dict, so no need to transpose
-        return {k: self._get_exp(k, inds) for k in self.memory_keys}
+        return {k: self._get_exp(k, inds) for k in self.exp_keys}
 
     def size(self):
-        return len(self.memory['rewards'])
+        return len(self.exp['rewards'])
 
     def rand_minibatch(self, size):
         '''

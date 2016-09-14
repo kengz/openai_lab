@@ -109,6 +109,7 @@ class DQN(object):
         return action
 
     def save(self, model_path, global_step=None):
+        print('Saving model checkpoint')
         self.saver = tf.train.Saver(tf.trainable_variables())
         # print(len(tf.trainable_variables()))
         # print(len(tf.all_variables()))
