@@ -1,5 +1,4 @@
 import numpy as np
-from copy import deepcopy
 from collections import deque
 
 
@@ -28,14 +27,14 @@ class ReplayMemory(object):
         '''
         exp = dict(zip(
             ['state', 'action', 'reward', 'next_state', 'terminal'],
-            [deepcopy(self.state), action, reward, next_state, terminal]))
+            [self.state, action, reward, next_state, terminal]))
         # store exp, update state and time
         self.memory.append(exp)
         self.state = next_state
         return exp
 
     def get_exp(self, index):
-        return deepcopy(self.memory[index])
+        return self.memory[index]
 
     def size(self):
         return len(self.memory)
