@@ -55,6 +55,7 @@ class DQN(object):
         self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         # self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
+        self.session.run(tf.initialize_all_variables())
         return self.train_op
 
     def train(self, replay_memory):

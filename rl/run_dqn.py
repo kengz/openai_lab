@@ -12,19 +12,14 @@ MAX_EPISODES = 200
 MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
-episode_history = deque(maxlen=MAX_HISTORY)
-env = gym.make('CartPole-v0')
-
-# print(dir(env))
-# print(env.step)
-
-# def foo(a, b, c):
-#     print(a, b, c)
-
-# print(dir(foo))
-# d1 = {'b': 'b', 'c': 'c'}
-# print(*d1)
-# foo('a', d1)
+config = {
+    'gamma': 0,
+    'learning_rate': 0,
+    'e_anneal_steps': 0,
+    'n_epoch': 0
+}
+# will make a matrix that enumerates these configs
+# find numpy method
 
 
 # also each config that runs over history, needs also be averaged over
@@ -53,7 +48,7 @@ env = gym.make('CartPole-v0')
 # borrow SkFlow/scikit to enum config dict matrix
 # for each config (parallelize):
 #   for H times:
-#       deep_q_learn(config), return metric, append list
+#       run_session(config), return metric, append list
 #       update average of metric, terminate if avg too shitty
 #    return its avg_metric
 #  select the config that yields the max avg metric
@@ -72,13 +67,13 @@ def get_env_spec(env):
     }
 
 
-def update_history(total_rewards, epi, total_t, epi_time):
+def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     '''
     Helper: update the hisory, max len = MAX_HISTORY
     return [bool] solved
     '''
-    episode_history.append(total_rewards)
-    mean_rewards = np.mean(episode_history)
+    epi_history.append(total_rewards)
+    mean_rewards = np.mean(epi_history)
     avg_speed = float(epi_time)/float(total_t)
     logs = [
         '{:->20}'.format(''),
@@ -93,7 +88,7 @@ def update_history(total_rewards, epi, total_t, epi_time):
     return solved
 
 
-def run_episode(epi, env, replay_memory, dqn):
+def run_episode(epi_history, env, replay_memory, dqn, epi):
     '''
     run an episode
     return [bool] if the problem is solved by this episode
@@ -102,6 +97,7 @@ def run_episode(epi, env, replay_memory, dqn):
     start_time = time()
     state = env.reset()
     replay_memory.reset_state(state)
+
     for t in range(MAX_STEPS):
         # env.render()
         action = dqn.select_action(state)
@@ -112,23 +108,26 @@ def run_episode(epi, env, replay_memory, dqn):
         total_rewards += reward
         if done:
             break
+
     epi_time = time() - start_time
-    solved = update_history(total_rewards, epi, t, epi_time)
+    solved = update_history(epi_history, total_rewards, epi, t, epi_time)
     return solved
 
 
-def deep_q_learn(env):
+def run_session(config={}):
     '''
     primary method
     '''
-    sess = tf.Session()
+    epi_history = deque(maxlen=MAX_HISTORY)
+    env = gym.make('CartPole-v0')
     env_spec = get_env_spec(env)
+    sess = tf.Session()
+
     replay_memory = ReplayMemory(env_spec)
-    dqn = DQN(env_spec, sess)
-    sess.run(tf.initialize_all_variables())
+    dqn = DQN(env_spec, sess, **config)
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
-        solved = run_episode(epi, env, replay_memory, dqn)
+        solved = run_episode(epi_history, env, replay_memory, dqn, epi)
         if solved:
             break
         if epi % 50 == 0:
@@ -139,4 +138,4 @@ def deep_q_learn(env):
 
 
 if __name__ == '__main__':
-    deep_q_learn(env)
+    run_session()
