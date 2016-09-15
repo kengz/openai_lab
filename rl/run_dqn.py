@@ -21,7 +21,11 @@ param_sets = {
 }
 param_grid = list(ParameterGrid(param_sets))
 print(len(param_grid))
-# print(param_grid)
+print(param_grid)
+# {'learning_rate': 1.0,
+#  'n_epoch': 1,
+#  'gamma': 0.99,
+#  'e_anneal_steps': 1000}
 # param = {
 #     'gamma': 0,
 #     'learning_rate': 0,
@@ -50,10 +54,13 @@ print(len(param_grid))
 # solved_avg > avg
 # solved_in_epi < MAX_EPISODES
 # ok so ordering is ensured
-
+#
 # use avg/epi is sufficient for each hisotry of a param
 # do multiple history runs of the same param, take average of that val
 # pick the max param
+
+# also need to see if it's already solved
+# also need an early-giveup mechanism
 
 # borrow SkFlow/scikit to enum param dict matrix
 # for each param (parallelize):
@@ -80,6 +87,7 @@ def get_env_spec(env):
 def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     '''
     Helper: update the hisory, max len = MAX_HISTORY
+    report status
     return [bool] solved
     '''
     epi_history.append(total_rewards)
@@ -93,9 +101,11 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
             MAX_HISTORY, mean_rewards),
         'Average time per step {:.4f} s/step'.format(avg_speed)
     ]
-    print('\n'.join(logs))
     solved = mean_rewards >= SOLVED_MEAN_REWARD
-    return solved
+    print('\n'.join(logs))
+    if solved or (epi == MAX_EPISODES - 1):
+        print('Problem solved? {}'.format(solved))
+    return mean_rewards, solved
 
 
 def run_episode(epi_history, env, replay_memory, dqn, epi):
@@ -132,19 +142,18 @@ def run_session(param={}):
     env = gym.make('CartPole-v0')
     env_spec = get_env_spec(env)
     sess = tf.Session()
-
     replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess, **param)
+
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
-        solved = run_episode(epi_history, env, replay_memory, dqn, epi)
+        mean_rewards, solved = run_episode(
+            epi_history, env, replay_memory, dqn, epi)
         if solved:
             break
-        if epi % 50 == 0:
-            dqn.save(MODEL_PATH, epi)
     dqn.save(MODEL_PATH)  # save final model
-    print('Problem solved? {}'.format(solved))
-    return solved
+    param_score = mean_rewards/float(epi)
+    return param_score
 
 
 # if __name__ == '__main__':
