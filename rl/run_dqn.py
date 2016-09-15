@@ -102,10 +102,12 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
         'Average time per step {:.4f} s/step'.format(avg_speed)
     ]
     solved = mean_rewards >= SOLVED_MEAN_REWARD
+    early_exit = bool(
+        epi > float(MAX_EPISODES)/2. and mean_rewards < SOLVED_MEAN_REWARD/2.)
     print('\n'.join(logs))
     if solved or (epi == MAX_EPISODES - 1):
         print('Problem solved? {}'.format(solved))
-    return mean_rewards, solved
+    return mean_rewards, solved, early_exit
 
 
 def run_episode(epi_history, env, replay_memory, dqn, epi):
@@ -130,8 +132,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
             break
 
     epi_time = time() - start_time
-    solved = update_history(epi_history, total_rewards, epi, t, epi_time)
-    return solved
+    return update_history(epi_history, total_rewards, epi, t, epi_time)
 
 
 def run_session(param={}):
@@ -147,13 +148,14 @@ def run_session(param={}):
 
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
-        mean_rewards, solved = run_episode(
+        mean_rewards, solved, early_exit = run_episode(
             epi_history, env, replay_memory, dqn, epi)
-        if solved:
+        if solved or early_exit:
             break
-    dqn.save(MODEL_PATH)  # save final model
+
+    # dqn.save(MODEL_PATH)  # save final model
     param_score = mean_rewards/float(epi)
-    return param_score
+    return solved, param_score
 
 
 # if __name__ == '__main__':
