@@ -11,6 +11,7 @@ SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
 MAX_EPISODES = 200
 MAX_HISTORY = 100
+SESSIONS_PER_PARAM = 5
 MODEL_PATH = 'models/dqn.tfl'
 
 param_sets = {
@@ -69,6 +70,20 @@ print(param_grid)
 #       update average of metric, terminate if avg too shitty
 #    return its avg_metric
 #  select the param that yields the max avg metric
+
+
+# def param_selection(param_grid):
+    
+
+def run_average_session(param={}):
+    param_score_history = []
+    for i in range(SESSIONS_PER_PARAM):
+        solved, param_score = run_session(param)
+        param_score_history.append(param_score)
+        mean_param_score = np.mean(param_score_history)
+        if not solved:
+            break
+    return mean_param_score
 
 
 def get_env_spec(env):
