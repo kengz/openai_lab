@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from collections import deque
 from time import time
+from sklearn.grid_search import ParameterGrid
 from replay_memory import ReplayMemory
 from dqn import DQN
 
@@ -12,24 +13,33 @@ MAX_EPISODES = 200
 MAX_HISTORY = 100
 MODEL_PATH = 'models/dqn.tfl'
 
-config = {
-    'gamma': 0,
-    'learning_rate': 0,
-    'e_anneal_steps': 0,
-    'n_epoch': 0
+param_sets = {
+    'gamma': [0.99, 0.95, 0.90],
+    'learning_rate': [1., 0.1],
+    'e_anneal_steps': [1000, 10000],
+    'n_epoch': [1, 2]
 }
-# will make a matrix that enumerates these configs
+param_grid = list(ParameterGrid(param_sets))
+print(len(param_grid))
+# print(param_grid)
+# param = {
+#     'gamma': 0,
+#     'learning_rate': 0,
+#     'e_anneal_steps': 0,
+#     'n_epoch': 0
+# }
+# will make a matrix that enumerates these params
 # find numpy method
 
 
-# also each config that runs over history, needs also be averaged over
+# also each param that runs over history, needs also be averaged over
 # many runs (the instability effects)
 
 # Hyper param outline:
-# make multiple envs, init new mem, try a dqn config
+# make multiple envs, init new mem, try a dqn param
 # optimize for scores
 # dqn params:
-# gamma, learning_rate, e_anneal_steps, n_epoch? net config
+# gamma, learning_rate, e_anneal_steps, n_epoch? net param
 # feed as dict, spread as named param into DQN()
 # do parallel matrix select
 
@@ -41,17 +51,17 @@ config = {
 # solved_in_epi < MAX_EPISODES
 # ok so ordering is ensured
 
-# use avg/epi is sufficient for each hisotry of a config
-# do multiple history runs of the same config, take average of that val
-# pick the max config
+# use avg/epi is sufficient for each hisotry of a param
+# do multiple history runs of the same param, take average of that val
+# pick the max param
 
-# borrow SkFlow/scikit to enum config dict matrix
-# for each config (parallelize):
+# borrow SkFlow/scikit to enum param dict matrix
+# for each param (parallelize):
 #   for H times:
-#       run_session(config), return metric, append list
+#       run_session(param), return metric, append list
 #       update average of metric, terminate if avg too shitty
 #    return its avg_metric
-#  select the config that yields the max avg metric
+#  select the param that yields the max avg metric
 
 
 def get_env_spec(env):
@@ -114,7 +124,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     return solved
 
 
-def run_session(config={}):
+def run_session(param={}):
     '''
     primary method
     '''
@@ -124,7 +134,7 @@ def run_session(config={}):
     sess = tf.Session()
 
     replay_memory = ReplayMemory(env_spec)
-    dqn = DQN(env_spec, sess, **config)
+    dqn = DQN(env_spec, sess, **param)
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
         solved = run_episode(epi_history, env, replay_memory, dqn, epi)
@@ -137,5 +147,5 @@ def run_session(config={}):
     return solved
 
 
-if __name__ == '__main__':
-    run_session()
+# if __name__ == '__main__':
+#     run_session()
