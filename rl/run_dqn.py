@@ -115,8 +115,6 @@ def run_session(param={}):
     replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess, **param)
 
-    logger.info(
-        'Running session with param = {}'.format(json.dumps(param, indent=2)))
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
         mean_rewards, solved, early_exit = run_episode(
@@ -134,6 +132,9 @@ def run_average_session(param={}):
     run SESSIONS_PER_PARAM sessions for a param
     get the mean param score for them
     '''
+    logger.info(
+        'Running average session with param = {}'.format(
+            json.dumps(param, indent=2)))
     param_score_history = []
     for i in range(SESSIONS_PER_PARAM):
         solved, param_score = run_session(param)
@@ -141,6 +142,9 @@ def run_average_session(param={}):
         mean_param_score = np.mean(param_score_history)
         if not solved:
             break
+    logger.info(
+        'Average param score: ' + json.dumps(
+            [mean_param_score, param], indent=2))
     return mean_param_score, param
 
 
