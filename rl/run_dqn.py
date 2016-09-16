@@ -1,4 +1,5 @@
 import gym
+import logging
 import tensorflow as tf
 import numpy as np
 from collections import deque
@@ -30,78 +31,13 @@ param_sets = {
     'n_epoch': [1]
 }
 param_grid = list(ParameterGrid(param_sets))
-print(len(param_grid))
-print(param_grid)
 
-# {'learning_rate': 1.0,
-#  'n_epoch': 1,
-#  'gamma': 0.99,
-#  'e_anneal_steps': 1000}
-# param = {
-#     'gamma': 0,
-#     'learning_rate': 0,
-#     'e_anneal_steps': 0,
-#     'n_epoch': 0
-# }
-# will make a matrix that enumerates these params
-# find numpy method
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s : %(levelname)s : %(message)s')
 
-
-# also each param that runs over history, needs also be averaged over
-# many runs (the instability effects)
-
-# Hyper param outline:
-# make multiple envs, init new mem, try a dqn param
-# optimize for scores
-# dqn params:
-# gamma, learning_rate, e_anneal_steps, n_epoch? net param
-# feed as dict, spread as named param into DQN()
-# do parallel matrix select
-
-# output metrics:
-# - if solved, solved_in_epi = (epi-MAX_HISTORY). use solved_avg/solved_in_epi
-# - else unsolved, avg (all must hit MAX_EPISODES). use avg/MAX_EPISODES
-
-# solved_avg > avg
-# solved_in_epi < MAX_EPISODES
-# ok so ordering is ensured
-#
-# use avg/epi is sufficient for each hisotry of a param
-# do multiple history runs of the same param, take average of that val
-# pick the max param
-
-# also need to see if it's already solved
-# also need an early-giveup mechanism
-
-# borrow SkFlow/scikit to enum param dict matrix
-# for each param (parallelize):
-#   for H times:
-#       run_session(param), return metric, append list
-#       update average of metric, terminate if avg too shitty
-#    return its avg_metric
-#  select the param that yields the max avg metric
-
-
-def param_selection(param_grid):
-    num_cores = cpu_count()
-    param_score_pairs = Parallel(n_jobs=num_cores)(
-        delayed(run_average_session)(param) for param in param_grid)
-    param_score_pairs.sort(key=lambda pair: pair[1])
-
-    for pair in param_score_pairs:
-        print(pair[0])
-        print(pair[1])
-
-
-def run_average_session(param={}):
-    param_score_history = []
-    for i in range(SESSIONS_PER_PARAM):
-        solved, param_score = run_session(param)
-        param_score_history.append(param_score)
-        mean_param_score = np.mean(param_score_history)
-        if not solved:
-            break
-    return param, mean_param_score
+logging.error(len(param_grid))
+# logging.info(param_grid)
 
 
 def get_env_spec(env):
@@ -127,6 +63,7 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     mean_rewards = np.mean(epi_history)
     avg_speed = float(epi_time)/float(total_t)
     logs = [
+        '',
         '{:->20}'.format(''),
         'Episode {}'.format(epi),
         'Finished at t={}, reward={}'.format(total_t, total_rewards),
@@ -138,9 +75,9 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     early_exit = bool(
         epi > float(MAX_EPISODES)/2. and mean_rewards < SOLVED_MEAN_REWARD/2.)
 
-    print('\n'.join(logs))
+    logging.error('\n'.join(logs))
     if solved or (epi == MAX_EPISODES - 1):
-        print('Problem solved? {}'.format(solved))
+        logging.error('Problem solved? {}'.format(solved))
     return mean_rewards, solved, early_exit
 
 
@@ -171,7 +108,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
 
 def run_session(param={}):
     '''
-    primary method
+    primary singular method
     '''
     epi_history = deque(maxlen=MAX_HISTORY)
     env = gym.make('CartPole-v0')
@@ -192,6 +129,37 @@ def run_session(param={}):
     return solved, param_score
 
 
+def run_average_session(param={}):
+    '''
+    run SESSIONS_PER_PARAM sessions for a param
+    get the mean param score for them
+    '''
+    param_score_history = []
+    for i in range(SESSIONS_PER_PARAM):
+        solved, param_score = run_session(param)
+        param_score_history.append(param_score)
+        mean_param_score = np.mean(param_score_history)
+        if not solved:
+            break
+    return param, mean_param_score
+
+
+def select_best_param(param_grid):
+    '''
+    Parameter selection by taking each param in param_grid
+    do run_average_session in parallel
+    collect (param, mean_param_score) and sort by highest
+    '''
+    num_cores = cpu_count()
+    ranked_params = Parallel(n_jobs=num_cores)(
+        delayed(run_average_session)(param) for param in param_grid)
+    ranked_params.sort(key=lambda pair: pair[1], reverse=True)
+
+    for pair in ranked_params:
+        logging.info(pair[0])
+        logging.info(pair[1])
+    return ranked_params[0]
+
+
 if __name__ == '__main__':
-    # run_session()
-    param_selection(param_grid)
+    select_best_param(param_grid)
