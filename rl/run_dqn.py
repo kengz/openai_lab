@@ -4,8 +4,11 @@ import numpy as np
 from collections import deque
 from time import time
 from sklearn.grid_search import ParameterGrid
+from multiprocessing import cpu_count
+from joblib import Parallel, delayed
 from replay_memory import ReplayMemory
 from dqn import DQN
+
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
@@ -14,15 +17,22 @@ MAX_HISTORY = 100
 SESSIONS_PER_PARAM = 5
 MODEL_PATH = 'models/dqn.tfl'
 
+# param_sets = {
+#     'gamma': [0.99, 0.95, 0.90],
+#     'learning_rate': [1., 0.1],
+#     'e_anneal_steps': [1000, 10000],
+#     'n_epoch': [1, 2]
+# }
 param_sets = {
-    'gamma': [0.99, 0.95, 0.90],
-    'learning_rate': [1., 0.1],
-    'e_anneal_steps': [1000, 10000],
-    'n_epoch': [1, 2]
+    'gamma': [0.99, 0.95],
+    'learning_rate': [0.1],
+    'e_anneal_steps': [1000],
+    'n_epoch': [1]
 }
 param_grid = list(ParameterGrid(param_sets))
 print(len(param_grid))
 print(param_grid)
+
 # {'learning_rate': 1.0,
 #  'n_epoch': 1,
 #  'gamma': 0.99,
@@ -72,8 +82,16 @@ print(param_grid)
 #  select the param that yields the max avg metric
 
 
-# def param_selection(param_grid):
-    
+def param_selection(param_grid):
+    num_cores = cpu_count()
+    param_score_pairs = Parallel(n_jobs=num_cores)(
+        delayed(run_average_session)(param) for param in param_grid)
+    param_score_pairs.sort(key=lambda pair: pair[1])
+
+    for pair in param_score_pairs:
+        print(pair[0])
+        print(pair[1])
+
 
 def run_average_session(param={}):
     param_score_history = []
@@ -83,7 +101,7 @@ def run_average_session(param={}):
         mean_param_score = np.mean(param_score_history)
         if not solved:
             break
-    return mean_param_score
+    return param, mean_param_score
 
 
 def get_env_spec(env):
@@ -119,6 +137,7 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     solved = mean_rewards >= SOLVED_MEAN_REWARD
     early_exit = bool(
         epi > float(MAX_EPISODES)/2. and mean_rewards < SOLVED_MEAN_REWARD/2.)
+
     print('\n'.join(logs))
     if solved or (epi == MAX_EPISODES - 1):
         print('Problem solved? {}'.format(solved))
@@ -173,5 +192,6 @@ def run_session(param={}):
     return solved, param_score
 
 
-# if __name__ == '__main__':
-#     run_session()
+if __name__ == '__main__':
+    # run_session()
+    param_selection(param_grid)
