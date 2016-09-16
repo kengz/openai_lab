@@ -1,5 +1,9 @@
-import gym
 import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s: %(message)s')
+import gym
+import json
 import tensorflow as tf
 import numpy as np
 from collections import deque
@@ -10,6 +14,8 @@ from joblib import Parallel, delayed
 from replay_memory import ReplayMemory
 from dqn import DQN
 
+logger = logging.getLogger()
+logger.handlers.pop()  # fuck off the gym's handler
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
@@ -18,26 +24,19 @@ MAX_HISTORY = 100
 SESSIONS_PER_PARAM = 5
 MODEL_PATH = 'models/dqn.tfl'
 
-# param_sets = {
-#     'gamma': [0.99, 0.95, 0.90],
-#     'learning_rate': [1., 0.1],
-#     'e_anneal_steps': [1000, 10000],
-#     'n_epoch': [1, 2]
-# }
 param_sets = {
-    'gamma': [0.99, 0.95],
-    'learning_rate': [0.1],
-    'e_anneal_steps': [1000],
-    'n_epoch': [1]
+    'gamma': [0.99, 0.95, 0.90],
+    'learning_rate': [1., 0.1],
+    'e_anneal_steps': [1000, 10000],
+    'n_epoch': [1, 2]
 }
+# param_sets = {
+#     'gamma': [0.99, 0.95],
+#     'learning_rate': [0.1],
+#     'e_anneal_steps': [1000],
+#     'n_epoch': [1]
+# }
 param_grid = list(ParameterGrid(param_sets))
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s : %(levelname)s : %(message)s')
-
-logging.error(len(param_grid))
-# logging.info(param_grid)
 
 
 def get_env_spec(env):
@@ -62,22 +61,21 @@ def update_history(epi_history, total_rewards, epi, total_t, epi_time):
     epi_history.append(total_rewards)
     mean_rewards = np.mean(epi_history)
     avg_speed = float(epi_time)/float(total_t)
-    logs = [
-        '',
-        '{:->20}'.format(''),
-        'Episode {}'.format(epi),
-        'Finished at t={}, reward={}'.format(total_t, total_rewards),
-        'Average reward for the last {} episodes: {:.4f}'.format(
-            MAX_HISTORY, mean_rewards),
-        'Average time per step {:.4f} s/step'.format(avg_speed)
-    ]
     solved = mean_rewards >= SOLVED_MEAN_REWARD
     early_exit = bool(
         epi > float(MAX_EPISODES)/2. and mean_rewards < SOLVED_MEAN_REWARD/2.)
-
-    logging.error('\n'.join(logs))
+    logs = [
+        '',
+        'Episode: {}, total t: {}, reward: {}'.format(
+            epi, total_t, total_rewards),
+        'Average reward / last {} episodes: {:.4f}'.format(
+            MAX_HISTORY, mean_rewards),
+        'Average time per step {:.4f} s/step'.format(avg_speed),
+        '{:->20}'.format(''),
+    ]
+    logger.debug('\n'.join(logs))
     if solved or (epi == MAX_EPISODES - 1):
-        logging.error('Problem solved? {}'.format(solved))
+        logger.info('Problem solved? {}'.format(solved))
     return mean_rewards, solved, early_exit
 
 
@@ -117,6 +115,8 @@ def run_session(param={}):
     replay_memory = ReplayMemory(env_spec)
     dqn = DQN(env_spec, sess, **param)
 
+    logger.info(
+        'Running session with param = {}'.format(json.dumps(param, indent=2)))
     # dqn.restore(MODEL_PATH+'-30')
     for epi in range(MAX_EPISODES):
         mean_rewards, solved, early_exit = run_episode(
@@ -141,7 +141,7 @@ def run_average_session(param={}):
         mean_param_score = np.mean(param_score_history)
         if not solved:
             break
-    return param, mean_param_score
+    return mean_param_score, param
 
 
 def select_best_param(param_grid):
@@ -153,13 +153,13 @@ def select_best_param(param_grid):
     num_cores = cpu_count()
     ranked_params = Parallel(n_jobs=num_cores)(
         delayed(run_average_session)(param) for param in param_grid)
-    ranked_params.sort(key=lambda pair: pair[1], reverse=True)
+    ranked_params.sort(key=lambda pair: pair[0], reverse=True)
 
     for pair in ranked_params:
-        logging.info(pair[0])
-        logging.info(pair[1])
+        logger.debug(json.dumps(list(pair), indent=2))
     return ranked_params[0]
 
 
 if __name__ == '__main__':
-    select_best_param(param_grid)
+    best_param = select_best_param(param_grid)
+    logger.info(best_param)
