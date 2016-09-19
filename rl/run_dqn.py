@@ -1,6 +1,6 @@
 import logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='[%(asctime)s] %(levelname)s: %(message)s')
 import gym
 import json
@@ -19,7 +19,7 @@ logger.handlers.pop()  # fuck off the gym's handler
 
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
-MAX_EPISODES = 200
+MAX_EPISODES = 500
 MAX_HISTORY = 100
 SESSIONS_PER_PARAM = 5
 MODEL_PATH = 'models/dqn.tfl'
@@ -30,11 +30,12 @@ param_sets = {
     'e_anneal_steps': [1000, 10000],
     'n_epoch': [1, 2]
 }
+# (0.96207920792079205, {'e_anneal_steps': 1000, 'learning_rate': 0.1, 'n_epoch': 2, 'gamma': 0.95})
 # param_sets = {
-#     'gamma': [0.99, 0.95],
+#     'gamma': [0.95],
 #     'learning_rate': [0.1],
 #     'e_anneal_steps': [1000],
-#     'n_epoch': [1]
+#     'n_epoch': [2]
 # }
 param_grid = list(ParameterGrid(param_sets))
 
@@ -90,7 +91,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     replay_memory.reset_state(state)
 
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
@@ -165,5 +166,10 @@ def select_best_param(param_grid):
 
 
 if __name__ == '__main__':
-    best_param = select_best_param(param_grid)
-    logger.info(best_param)
+    run_session(
+        param={'e_anneal_steps': 1000,
+               'learning_rate': 0.1,
+               'n_epoch': 2,
+               'gamma': 0.95})
+    # best_param = select_best_param(param_grid)
+    # logger.info(best_param)
