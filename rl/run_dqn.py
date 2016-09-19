@@ -91,7 +91,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     replay_memory.reset_state(state)
 
     for t in range(MAX_STEPS):
-        env.render()
+        # env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
