@@ -21,7 +21,7 @@ logger.handlers.pop()  # fuck off the gym's handler
 GYM_ENV_NAME='CartPole-v0'
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
-MAX_EPISODES = 500
+MAX_EPISODES = 5000
 MAX_HISTORY = 100
 SESSIONS_PER_PARAM = 5
 MODEL_PATH = 'models/dqn.tfl'
@@ -169,9 +169,9 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 1000,
+        param={'e_anneal_steps': 5000,
                'learning_rate': 0.1,
-               'n_epoch': 40,
-               'gamma': 0.95})
+               'n_epoch': 20,
+               'gamma': 0.99})
     # best_param = select_best_param(param_grid)
     # logger.info(best_param)

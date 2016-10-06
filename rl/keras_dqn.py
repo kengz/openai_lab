@@ -111,10 +111,12 @@ class DQN(object):
         '''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
+            print('random act')
         else:
             Q_state = self.net.eval(
                 feed_dict={self.X: [state]}, session=self.session)
             action = self.session.run(tf.argmax(Q_state, 1))[0]
+            print('---')
         self.update_e()
         return action
 
