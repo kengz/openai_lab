@@ -12,7 +12,8 @@ from sklearn.grid_search import ParameterGrid
 from multiprocessing import cpu_count
 from joblib import Parallel, delayed
 from replay_memory import ReplayMemory
-from dqn import DQN
+# from dqn import DQN
+from keras_dqn import DQN
 
 logger = logging.getLogger()
 logger.handlers.pop()  # fuck off the gym's handler
@@ -91,7 +92,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     replay_memory.reset_state(state)
 
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
@@ -167,9 +168,9 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 1000,
-               'learning_rate': 0.1,
-               'n_epoch': 2,
+        param={'e_anneal_steps': 10000,
+               'learning_rate': 0.2,
+               'n_epoch': 40,
                'gamma': 0.95})
     # best_param = select_best_param(param_grid)
     # logger.info(best_param)
