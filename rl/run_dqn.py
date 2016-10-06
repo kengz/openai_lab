@@ -169,7 +169,7 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 10000,
+        param={'e_anneal_steps': 1000,
                'learning_rate': 0.1,
                'n_epoch': 40,
                'gamma': 0.95})
