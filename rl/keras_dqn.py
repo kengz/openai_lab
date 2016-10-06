@@ -7,6 +7,7 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout
 from keras.optimizers import SGD
 from keras.regularizers import l1, l2
+from keras.constraints import maxnorm
 from keras.objectives import categorical_crossentropy
 from keras.optimizers import SGD
 
@@ -36,17 +37,19 @@ class DQN(object):
 
     def build_net(self):
         X = tf.placeholder(tf.float32, shape=(None, self.env_spec['state_dim']))
-        net = Sequential()
-        net.add(Dense(512, input_shape=(self.env_spec['state_dim'],), activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # net.add(Dense(256, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # net.add(Dropout(0.2)) # will break wtf
-        net.add(Dense(128, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # net.add(Dense(64, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # net.add(Dropout(0.2))
-        net.add(Dense(32, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        net.add(Dense(self.env_spec['action_dim'], activation='softmax', init='lecun_uniform', W_regularizer=l2(0.01)))
-        net = net(X)
+        model = Sequential()
+        model.add(Dense(256, input_shape=(self.env_spec['state_dim'],), activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
+        model.add(Dense(256, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
+        # model.add(Dropout(0.2)) # will break wtf
+        # model.add(Dense(128, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
+        # model.add(Dense(64, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
+        # model.add(Dropout(0.2))
+        # model.add(Dense(32, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
+        model.add(Dense(self.env_spec['action_dim'], activation='softmax', init='lecun_uniform', W_regularizer=l2(0.01)))
+        model.summary()
+        net = model(X)
         self.X = X
+        self.model = model
         self.net = net
         return net
 
@@ -55,6 +58,7 @@ class DQN(object):
         self.Q_target = tf.placeholder(tf.float32, shape=(None, self.env_spec['action_dim']))
         # target Y - predicted Y, do rms loss
         self.loss = tf.reduce_mean(categorical_crossentropy(self.Q_target, self.net))
+        # self.optimizer = tf.train.GradientDescentOptimizer(self.learning_rate)
         # self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
         self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
@@ -115,18 +119,8 @@ class DQN(object):
         return action
 
     def save(self, model_path, global_step=None):
-        # TODO: save models properly, config and weights
         print('Saving model checkpoint')
-        self.saver = tf.train.Saver(tf.trainable_variables())
-        # !set global_step None to save model without -N
-        return self.saver.save(
-            self.session, model_path, global_step=global_step)
-        # proxy used for saving model
-        # trainop = tflearn.TrainOp(loss=self.loss, optimizer=self.optimizer)
-        # trainer = tflearn.Trainer(
-        # train_ops=trainop, tensorboard_verbose=3, session=self.session)
-    # return trainer.save(model_path, global_step=len(replay_memory.memory))
+        self.model.save_weights(model_path)
 
     def restore(self, model_path):
-        self.saver = tf.train.Saver(tf.trainable_variables())
-        self.saver.restore(self.session, model_path)
+        self.model.load_weights(model_path, by_name=False)

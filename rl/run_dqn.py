@@ -124,7 +124,7 @@ def run_session(param={}):
         if solved or early_exit:
             break
 
-    # dqn.save(MODEL_PATH)  # save final model
+    dqn.save(MODEL_PATH)  # save final model
     param_score = mean_rewards/float(epi)
     return solved, param_score
 
@@ -168,8 +168,8 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 10000,
-               'learning_rate': 0.2,
+        param={'e_anneal_steps': 5000,
+               'learning_rate': 0.1,
                'n_epoch': 40,
                'gamma': 0.95})
     # best_param = select_best_param(param_grid)
