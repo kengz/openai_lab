@@ -33,5 +33,10 @@ m.fit(X, Y, batch_size=128, nb_epoch=20, validation_split=0.2, verbose=2)
 # 
 # loss = mse, mae, mape, msle, squared_hinge, binary_crossentropy, categorical_crossentropy, sparse_categorical_crossentropy, kld, posson, cosine_proximity
 # 
+# saving the architecture
+# from models import model_from_json
+# json_string = model.to_json()
+# model = model_from_json(json_string)
+# 
 # model.save_weights(filepath)
 # model.load_weights(filepath, by_name=False)
