@@ -18,6 +18,7 @@ from keras_dqn import DQN
 logger = logging.getLogger()
 logger.handlers.pop()  # fuck off the gym's handler
 
+GYM_ENV_NAME='CartPole-v0'
 SOLVED_MEAN_REWARD = 195.0
 MAX_STEPS = 200
 MAX_EPISODES = 500
@@ -111,7 +112,7 @@ def run_session(param={}):
     primary singular method
     '''
     epi_history = deque(maxlen=MAX_HISTORY)
-    env = gym.make('CartPole-v0')
+    env = gym.make(GYM_ENV_NAME)
     env_spec = get_env_spec(env)
     sess = tf.Session()
     replay_memory = ReplayMemory(env_spec)
