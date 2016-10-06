@@ -89,7 +89,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     '''
     total_rewards = 0
     start_time = time()
-    state = env.reset()
+    # state = env.reset()
     replay_memory.reset_state(state)
 
     for t in range(MAX_STEPS):
@@ -169,7 +169,7 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 5000,
+        param={'e_anneal_steps': 10000,
                'learning_rate': 0.1,
                'n_epoch': 40,
                'gamma': 0.95})
