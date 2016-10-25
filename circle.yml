@@ -1,0 +1,15 @@
+machine:
+  python:
+    version: 3.5.1
+  environment:
+    CODECLIMATE_REPO_TOKEN: 082d5472ff9fad9fcd560b16b714a312093ce064107094d07f23975601f050ab
+
+dependencies:
+  override:
+    - pip install h5py numpy scipy
+    - pip install pandas matplotlib
+    - export TF_BINARY_URL=export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
+    - pip install $TF_BINARY_URL
+    - pip install git+https://github.com/tflearn/tflearn.git
+    - pip install keras
+    - pip install git+https://github.com/openai/gym.git

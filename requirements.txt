@@ -1,6 +1,5 @@
 git+https://github.com/openai/gym.git
 h5py==2.6.0
-joblib==0.10.2
 Keras==1.1.0
 matplotlib==1.5.2
 numpy==1.11.1
@@ -11,7 +10,6 @@ pyglet==1.2.4
 python-dateutil==2.5.3
 pytz==2016.6.1
 requests==2.11.1
-scikit-learn==0.17.1
 scipy==0.18.0
 six==1.10.0
 https://storage.googleapis.com/tensorflow/mac/tensorflow-0.9.0-py3-none-any.whl

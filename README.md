@@ -11,11 +11,12 @@ cd openai_gym
 python setup.py install
 ```
 
-It essentially performs the following (use only when you're resetting requirements.txt):
+It essentially performs the following (use only when you're resetting requirements.txt). 
+
+Additionally, you may want to install the correct distribution of Tensorflow yourself.
 
 ```shell
-pip3 install h5py numpy scipy pandas joblib matplotlib
-pip3 install scikit-learn
+pip3 install h5py numpy scipy pandas matplotlib
 # choose the right distribution for ur machine
 export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.10.0rc0-py3-none-any.whl
 sudo pip3 install $TF_BINARY_URL
