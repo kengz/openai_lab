@@ -5,11 +5,21 @@ machine:
     CODECLIMATE_REPO_TOKEN: 082d5472ff9fad9fcd560b16b714a312093ce064107094d07f23975601f050ab
 
 dependencies:
+  pre:
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
   override:
-    - pip install h5py numpy scipy
-    - pip install pandas matplotlib
+    - pip install -U h5py
+    - pip install -U numpy
+    - pip install -U scipy
+    - pip install -U pandas matplotlib
+    - pip install -U pytest-cov
     - export TF_BINARY_URL=export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
     - pip install $TF_BINARY_URL
     - pip install git+https://github.com/tflearn/tflearn.git
     - pip install keras
     - pip install git+https://github.com/openai/gym.git
+
+test:
+  override:
+    - python setup.py test
