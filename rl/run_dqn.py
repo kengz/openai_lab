@@ -8,9 +8,9 @@ import tensorflow as tf
 import numpy as np
 from collections import deque
 from time import time
-from sklearn.grid_search import ParameterGrid
+# from sklearn.grid_search import ParameterGrid
 from multiprocessing import cpu_count
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
 from replay_memory import ReplayMemory
 # from dqn import DQN
 from keras_dqn import DQN
@@ -39,7 +39,7 @@ param_sets = {
 #     'e_anneal_steps': [1000],
 #     'n_epoch': [2]
 # }
-param_grid = list(ParameterGrid(param_sets))
+# param_grid = list(ParameterGrid(param_sets))
 
 
 def get_env_spec(env):
@@ -93,7 +93,7 @@ def run_episode(epi_history, env, replay_memory, dqn, epi):
     replay_memory.reset_state(state)
 
     for t in range(MAX_STEPS):
-        # env.render()
+        env.render()
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)

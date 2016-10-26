@@ -38,14 +38,14 @@ class DQN(object):
     def build_net(self):
         X = tf.placeholder(tf.float32, shape=(None, self.env_spec['state_dim']))
         model = Sequential()
-        model.add(Dense(256, input_shape=(self.env_spec['state_dim'],), activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        model.add(Dense(256, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # model.add(Dropout(0.2)) # will break wtf
-        # model.add(Dense(128, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # model.add(Dense(64, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        # model.add(Dropout(0.2))
-        # model.add(Dense(32, activation='relu', init='lecun_uniform', W_regularizer=l2(0.01)))
-        model.add(Dense(self.env_spec['action_dim'], activation='softmax', init='lecun_uniform', W_regularizer=l2(0.01)))
+        model.add(Dense(4, input_shape=(self.env_spec['state_dim'],), init='lecun_uniform'))
+        model.add(Dense(2, init='lecun_uniform'))
+        # model.add(Dropout(0.5)) # will break wtf
+        # model.add(Dense(128, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
+        # model.add(Dense(64, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
+        # model.add(Dropout(0.5))
+        # model.add(Dense(32, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
+        model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         net = model(X)
         self.X = X
@@ -111,6 +111,7 @@ class DQN(object):
         '''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
+            # hmm maybe flip by ep?
             print('random act')
         else:
             Q_state = self.net.eval(

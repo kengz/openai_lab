@@ -1,7 +1,8 @@
 # OpenAI Gym
-Working out at the (OpenAI) gym
-
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl)
+
+Working out at the (OpenAI) gym. **Note this is still under development, but will be ready before Nov 5**
+
 
 ## Installation
 
@@ -11,30 +12,34 @@ cd openai_gym
 python setup.py install
 ```
 
-It essentially performs the following (use only when you're resetting requirements.txt). 
-
-Additionally, you may want to install the correct distribution of Tensorflow yourself.
+*Note that by default it installs Tensorflow for Python3 on MacOS. [Choose the correct binary to install from TF.](https://www.tensorflow.org/versions/r0.11/get_started/os_setup.html#pip-installation)*
 
 ```shell
-pip3 install h5py numpy scipy pandas matplotlib
-# choose the right distribution for ur machine
-export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.10.0rc0-py3-none-any.whl
-sudo pip3 install $TF_BINARY_URL
-pip3 install git+https://github.com/tflearn/tflearn.git
-pip3 install keras
-pip3 install git+https://github.com/openai/gym.git
-# generates requirements.txt
-pip3 freeze > requirements.txt
+# for example, TF for Python2, MacOS
+export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.11.0rc1-py2-none-any.whl
+sudo pip install --upgrade $TF_BINARY_URL
 ```
-
 
 ## Usage
 
-Run each file in the folders.
+Run the scripts inside the `rl/` folder. It will contain:
+- a tour of the OpenAI gym
+- a tabular q-learner
+- a NN-based q-learner
 
 To view **Tensorboard**, do `tensorboard --logdir='/tmp/tflearn_logs/'`
 
 
 ## Roadmap
 
-- try some simple algos on simple env (CartPole)
+- get the gym tour done
+- clear the DQN class off the TF code, to make it backend-agnostic
+- correct the basic q-learning algorithm (feels wrong)
+- get the tabular q-learner working
+- get NN q-learner working and solve the cartpole problem
+
+
+## Authors
+
+- Wah Loon Keng
+- Laura Graesser
