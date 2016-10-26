@@ -26,7 +26,7 @@ test_args = [
     '--cov-report=term',
     '--cov-report=html',
     '--cov=rl',
-    'tests'
+    'test'
 ]
 
 
@@ -72,6 +72,6 @@ setup(
     },
     classifiers=[],
     tests_require=[],
-    test_suite='tests',
+    test_suite='test',
     cmdclass={'install': OverrideInstall}
 )
