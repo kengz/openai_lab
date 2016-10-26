@@ -11,8 +11,8 @@ dependencies:
     - pip install -U h5py
     - pip install -U numpy
     - pip install -U scipy
-    # - pip install -U pandas
-    # - pip install -U matplotlib
+    - pip install -U pandas
+    - pip install -U matplotlib
   override:
     - echo "skip"
     # - pip install -U pytest-cov
