@@ -1,6 +1,4 @@
 import numpy as np
-np.random.seed(42)
-
 import tensorflow as tf
 from keras import backend as K
 from keras.models import Sequential
@@ -36,15 +34,14 @@ class DQN(object):
         self.build_graph()
 
     def build_net(self):
-        X = tf.placeholder(tf.float32, shape=(None, self.env_spec['state_dim']))
+        X = tf.placeholder(
+            tf.float32, shape=(None, self.env_spec['state_dim']))
         model = Sequential()
-        model.add(Dense(4, input_shape=(self.env_spec['state_dim'],), init='lecun_uniform'))
+        model.add(
+            Dense(4,
+                  input_shape=(self.env_spec['state_dim'],),
+                  init='lecun_uniform'))
         model.add(Dense(2, init='lecun_uniform'))
-        # model.add(Dropout(0.5)) # will break wtf
-        # model.add(Dense(128, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
-        # model.add(Dense(64, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
-        # model.add(Dropout(0.5))
-        # model.add(Dense(32, activation='relu', init='lecun_uniform', W_regularizer=l1(0.01)))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         net = model(X)
@@ -55,11 +52,11 @@ class DQN(object):
 
     def build_graph(self):
         net = self.build_net()
-        self.Q_target = tf.placeholder(tf.float32, shape=(None, self.env_spec['action_dim']))
+        self.Q_target = tf.placeholder(
+            tf.float32, shape=(None, self.env_spec['action_dim']))
         # target Y - predicted Y, do rms loss
-        self.loss = tf.reduce_mean(categorical_crossentropy(self.Q_target, self.net))
-        # self.optimizer = tf.train.GradientDescentOptimizer(self.learning_rate)
-        # self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate)
+        self.loss = tf.reduce_mean(
+            categorical_crossentropy(self.Q_target, self.net))
         self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = self.optimizer.minimize(self.loss)
         self.session.run(tf.initialize_all_variables())
@@ -85,7 +82,8 @@ class DQN(object):
             # with terminal to make future reward 0 if end
             Q_targets_a = minibatch['rewards'] + self.gamma * \
                 (1 - minibatch['terminals']) * Q_next_states_max
-            # set Q_targets of a as above, and the non-action units' Q_targets to
+            # set Q_targets of a as above,
+            # and the non-action units' Q_targets to
             # as from algo step 1
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states

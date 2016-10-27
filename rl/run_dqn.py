@@ -5,7 +5,6 @@ from replay_memory import ReplayMemory
 from keras_dqn import DQN
 
 import tensorflow as tf  # to be removed
-# TODO: implement param grid too
 
 
 # rl sys configs, need to implement the required_sys_keys in util

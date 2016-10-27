@@ -20,3 +20,4 @@ ratings:
 exclude_paths:
 - test/
 - nn/
+- rl/run_gym_tour.py
