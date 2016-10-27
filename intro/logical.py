@@ -49,19 +49,19 @@ def run_OR():
     train_model(g, X, Y)
 
 
-# Logical AND operator
-def run_AND():
-    X = [[0., 0.], [0., 1.], [1., 0.], [1., 1.]]
-    Y = [[0.], [0.], [0.], [1.]]
+# # Logical AND operator
+# def run_AND():
+#     X = [[0., 0.], [0., 1.], [1., 0.], [1., 1.]]
+#     Y = [[0.], [0.], [0.], [1.]]
 
-    g = tflearn.input_data(shape=[None, 2])
-    g = tflearn.fully_connected(g, 128, activation='linear')
-    g = tflearn.fully_connected(g, 128, activation='linear')
-    g = tflearn.fully_connected(g, 1, activation='sigmoid')
-    g = tflearn.regression(
-        g, optimizer='sgd', learning_rate=2., loss='mean_square')
+#     g = tflearn.input_data(shape=[None, 2])
+#     g = tflearn.fully_connected(g, 128, activation='linear')
+#     g = tflearn.fully_connected(g, 128, activation='linear')
+#     g = tflearn.fully_connected(g, 1, activation='sigmoid')
+#     g = tflearn.regression(
+#         g, optimizer='sgd', learning_rate=2., loss='mean_square')
 
-    train_model(g, X, Y)
+#     train_model(g, X, Y)
 
 
 # Logical XOR operator

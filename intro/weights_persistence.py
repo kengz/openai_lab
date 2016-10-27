@@ -28,17 +28,17 @@ def run_mnist():
           run_id='model_and_weights')
     m.save('models/mnist.tfl')
 
-    # load from file or ckpt and continue training
-    m.load('models/mnist.tfl')
-    # m.load('models/mnist.tfl.ckpt-500')
-    m.fit(X, Y, n_epoch=1,
-          validation_set=(testX, testY),
-          show_metric=True,
-          # Snapshot (save & evaluate) model every epoch.
-          snapshot_epoch=True,
-          # Snapshot (save & evalaute) model every 500 steps.
-          snapshot_step=500,
-          run_id='model_and_weights')
+    # # load from file or ckpt and continue training
+    # m.load('models/mnist.tfl')
+    # # m.load('models/mnist.tfl.ckpt-500')
+    # m.fit(X, Y, n_epoch=1,
+    #       validation_set=(testX, testY),
+    #       show_metric=True,
+    #       # Snapshot (save & evaluate) model every epoch.
+    #       snapshot_epoch=True,
+    #       # Snapshot (save & evalaute) model every 500 steps.
+    #       snapshot_step=500,
+    #       run_id='model_and_weights')
 
     # retrieve layer by name, print weights
     dense1_vars = tflearn.variables.get_layer_variables_by_name('dense1')
