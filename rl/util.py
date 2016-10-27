@@ -2,6 +2,7 @@
 import pprint
 import logging
 import numpy as np
+from collections import deque
 
 pp = pprint.PrettyPrinter(indent=2)
 logging.basicConfig(
@@ -28,6 +29,16 @@ def check_sys_vars(sys_vars):
     '''ensure the requried RL system vars are specified'''
     sys_keys = sys_vars.keys()
     assert all(k in sys_keys for k in required_sys_keys)
+
+
+def reset_sys_vars(sys_vars):
+    '''reset and check RL system vars before each new session'''
+    sys_vars['epi'] = 0
+    sys_vars['history'] = deque(maxlen=sys_vars.get('MAX_HISTORY'))
+    sys_vars['mean_rewards'] = 0
+    sys_vars['solved'] = False
+    check_sys_vars(sys_vars)
+    return sys_vars
 
 
 def get_env_spec(env):

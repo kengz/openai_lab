@@ -1,27 +1,16 @@
 import util
 import gym
 from util import *
-from collections import deque
 from replay_memory import ReplayMemory
 from keras_dqn import DQN
 
-import tensorflow as tf
+import tensorflow as tf  # to be removed
+# TODO: implement param grid too
 
-# import util
-# import gym
-# import json
-# import numpy as np
-# from util import *
-# from collections import deque
-# from time import time
-# # from sklearn.grid_search import ParameterGrid
-# from multiprocessing import cpu_count
-# # from joblib import Parallel, delayed
-# from replay_memory import ReplayMemory
-# # from dqn import DQN
-# from keras_dqn import DQN
 
-# rl sys configs, need to implement the keys as shown in util
+# rl sys configs, need to implement the required_sys_keys in util
+# only implement constants here,
+# on reset will add vars: {epi, history, mean_rewards, solved}
 sys_vars = {
     'RENDER': True,
     'GYM_ENV_NAME': 'CartPole-v0',
@@ -30,14 +19,8 @@ sys_vars = {
     'MAX_EPISODES': 5000,
     'MAX_HISTORY': 100
 }
-sys_vars.update({
-    'epi': 0,  # episode variable
-    # total rewards over eoisodes
-    'history': deque(maxlen=sys_vars.get('MAX_HISTORY')),
-    'mean_rewards': 0,  # mean of history
-    'solved': False
-})
 
+SESSIONS_PER_PARAM = 10
 MODEL_PATH = 'models/dqn.tfl'
 
 param_sets = {
@@ -82,7 +65,7 @@ def run_episode(env, dqn, replay_memory):
 
 def run_session(param={}):
     '''run a session of dqn (like a tf session)'''
-    check_sys_vars(sys_vars)
+    reset_sys_vars(sys_vars)  # reset sys_vars per session
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
@@ -98,40 +81,39 @@ def run_session(param={}):
     return sys_vars
 
 
-def run_average_session(param={}):
+def run_session_average(param={}):
     '''
-    run SESSIONS_PER_PARAM sessions for a param
-    get the mean param score for them
+    run session multiple times for a param
+    then average the mean_rewards from them
     '''
     logger.info(
         'Running average session with param = {}'.format(pp.pformat(param)))
-    param_score_history = []
+    mean_rewards_history = []
     for i in range(SESSIONS_PER_PARAM):
-        solved, param_score = run_session(param)
-        param_score_history.append(param_score)
-        mean_param_score = np.mean(param_score_history)
-        if not solved:
+        run_session(param)
+        mean_rewards_history.append(sys_vars['mean_rewards'])
+        sessions_mean_rewards = np.mean(mean_rewards_history)
+        if sys_vars['solved']:
             break
     logger.info(
-        'Average param score: ' + pp.pformat(
-            [mean_param_score, param]))
-    return mean_param_score, param
+        'Sessions mean rewards: {}'.format(sessions_mean_rewards))
+    return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
 
 
 def select_best_param(param_grid):
     '''
-    Parameter selection by taking each param in param_grid
-    do run_average_session in parallel
-    collect (param, mean_param_score) and sort by highest
+    Parameter selection 
+    by running session average for each param parallel
+    then sort by highest sessions_mean_rewards first
+    return the best
     '''
-    num_cores = cpu_count()
-    ranked_params = Parallel(n_jobs=num_cores)(
-        delayed(run_average_session)(param) for param in param_grid)
-    ranked_params.sort(key=lambda pair: pair[0], reverse=True)
-
-    for pair in ranked_params:
-        logger.debug(pp.pformat(list(pair)))
-    return ranked_params[0]
+    NUM_CORES = multiprocessing.cpu_count()
+    p = multiprocessing.Pool(NUM_CORES)
+    params_means = p.map(run_session_average, param_grid)
+    params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
+    for pm in params_means:
+        logger.debug(pp.pformat(pm))
+    return params_means[0]
 
 
 if __name__ == '__main__':
@@ -142,4 +124,4 @@ if __name__ == '__main__':
                'gamma': 0.99})
 
     # best_param = select_best_param(param_grid)
-    # logger.info(best_param)
+    # logger.info(pp.pformat(best_param))

@@ -5,7 +5,10 @@ from util import *
 from collections import deque
 from replay_memory import ReplayMemory
 
-# rl sys configs, need to implement the keys as shown in util
+
+# rl sys configs, need to implement the required_sys_keys in util
+# only implement constants here,
+# on reset will add vars: {epi, history, mean_rewards, solved}
 sys_vars = {
     'RENDER': True,
     'GYM_ENV_NAME': 'CartPole-v0',
@@ -14,13 +17,6 @@ sys_vars = {
     'MAX_EPISODES': 5000,
     'MAX_HISTORY': 100
 }
-sys_vars.update({
-    'epi': 0,  # episode variable
-    # total rewards over eoisodes
-    'history': deque(maxlen=sys_vars.get('MAX_HISTORY')),
-    'mean_rewards': 0,  # mean of history
-    'solved': False
-})
 
 
 def run_episode(env, dqn, replay_memory):
@@ -50,7 +46,7 @@ def run_episode(env, dqn, replay_memory):
 
 def run_session(param={}):
     '''run a session of dqn (like a tf session)'''
-    check_sys_vars(sys_vars)
+    reset_sys_vars(sys_vars)  # reset sys_vars per session
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
@@ -68,6 +64,6 @@ def run_session(param={}):
 if __name__ == '__main__':
     run_session(
         param={'e_anneal_steps': 5000,
-                   'learning_rate': 0.1,
-                   'n_epoch': 20,
-                   'gamma': 0.99})
+               'learning_rate': 0.1,
+               'n_epoch': 20,
+               'gamma': 0.99})

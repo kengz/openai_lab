@@ -24,17 +24,19 @@ sudo pip install --upgrade $TF_BINARY_URL
 ## Usage
 
 Run the scripts inside the `rl/` folder. It will contain:
-- a tour of the OpenAI gym
-- a tabular q-learner
-- a NN-based q-learner
+- `gym_tour.py`: a tour of the OpenAI gym
+- `run_tabular_q.py`: a tabular q-learner
+- `run_dqn.py`: a NN-based q-learner
 
 To view **Tensorboard**, do `tensorboard --logdir='/tmp/tflearn_logs/'`
 
 
 ## Roadmap
 
-- get the gym tour done
+-[x] get the gym tour done
+-[x] add `util.py`, refactor system
 - clear the DQN class off the TF code, to make it backend-agnostic
+-[x] add and build test code
 - correct the basic q-learning algorithm (feels wrong)
 - get the tabular q-learner working
 - get NN q-learner working and solve the cartpole problem
