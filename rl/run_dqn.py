@@ -80,14 +80,14 @@ def run_episode(env, dqn, replay_memory):
     return sys_vars
 
 
-def run_session(dqn_param={}):
+def run_session(param={}):
     '''run a session of dqn (like a tf session)'''
     check_sys_vars(sys_vars)
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
     sess = tf.Session()
-    dqn = DQN(env_spec, sess, **dqn_param)
+    dqn = DQN(env_spec, sess, **param)
 
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
@@ -136,7 +136,7 @@ def select_best_param(param_grid):
 
 if __name__ == '__main__':
     run_session(
-        dqn_param={'e_anneal_steps': 5000,
+        param={'e_anneal_steps': 5000,
                'learning_rate': 0.1,
                'n_epoch': 20,
                'gamma': 0.99})

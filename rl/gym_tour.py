@@ -48,7 +48,7 @@ def run_episode(env, dqn, replay_memory):
     return sys_vars
 
 
-def run_session(dqn_param={}):
+def run_session(param={}):
     '''run a session of dqn (like a tf session)'''
     check_sys_vars(sys_vars)
     env = gym.make(sys_vars['GYM_ENV_NAME'])
@@ -67,7 +67,7 @@ def run_session(dqn_param={}):
 
 if __name__ == '__main__':
     run_session(
-        dqn_param={'e_anneal_steps': 5000,
+        param={'e_anneal_steps': 5000,
                    'learning_rate': 0.1,
                    'n_epoch': 20,
                    'gamma': 0.99})
