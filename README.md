@@ -24,7 +24,7 @@ sudo pip install --upgrade $TF_BINARY_URL
 ## Usage
 
 Run the scripts inside the `rl/` folder. It will contain:
-- `gym_tour.py`: a tour of the OpenAI gym
+- `run_gym_tour.py`: a tour of the OpenAI gym
 - `run_tabular_q.py`: a tabular q-learner
 - `run_dqn.py`: a NN-based q-learner
 
