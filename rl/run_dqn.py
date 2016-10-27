@@ -5,10 +5,11 @@ from collections import deque
 from replay_memory import ReplayMemory
 from keras_dqn import DQN
 
+import tensorflow as tf
+
 # import util
 # import gym
 # import json
-# import tensorflow as tf
 # import numpy as np
 # from util import *
 # from collections import deque
@@ -103,8 +104,7 @@ def run_average_session(param={}):
     get the mean param score for them
     '''
     logger.info(
-        'Running average session with param = {}'.format(
-            json.dumps(param, indent=2)))
+        'Running average session with param = {}'.format(pp.pformat(param)))
     param_score_history = []
     for i in range(SESSIONS_PER_PARAM):
         solved, param_score = run_session(param)
@@ -113,8 +113,8 @@ def run_average_session(param={}):
         if not solved:
             break
     logger.info(
-        'Average param score: ' + json.dumps(
-            [mean_param_score, param], indent=2))
+        'Average param score: ' + pp.pformat(
+            [mean_param_score, param]))
     return mean_param_score, param
 
 
@@ -130,7 +130,7 @@ def select_best_param(param_grid):
     ranked_params.sort(key=lambda pair: pair[0], reverse=True)
 
     for pair in ranked_params:
-        logger.debug(json.dumps(list(pair), indent=2))
+        logger.debug(pp.pformat(list(pair)))
     return ranked_params[0]
 
 

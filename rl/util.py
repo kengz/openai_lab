@@ -1,13 +1,14 @@
 # everything shall start from 0
+import pprint
 import logging
 import numpy as np
 
+pp = pprint.PrettyPrinter(indent=2)
 logging.basicConfig(
     level=logging.DEBUG,
     format='[%(asctime)s] %(levelname)s: %(message)s')
 logger = logging.getLogger()
 logger.handlers.pop()  # override the gym's handler
-
 
 required_sys_keys = {
     'RENDER',
