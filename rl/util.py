@@ -1,8 +1,11 @@
 # everything shall start from 0
 import pprint
 import logging
+import itertools
+import multiprocessing
 import numpy as np
 from collections import deque
+from functools import partial
 
 pp = pprint.PrettyPrinter(indent=2)
 logging.basicConfig(
@@ -84,3 +87,54 @@ def update_history(sys_vars,
     if solved or (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1):
         logger.info('Problem solved? {}'.format(solved))
     return sys_vars
+
+
+# convert a dict of param ranges into
+# a list of cartesian products of param_range
+# e.g. {'a': [1,2], 'b': [3]} into
+# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
+def param_product(param_range):
+    keys = param_range.keys()
+    range_vals = param_range.values()
+    return [dict(zip(keys, vals)) for vals in itertools.product(*range_vals)]
+
+
+# advanced, experimental code for parallelization
+def run_session_average(run_session, sys_vars, param={}):
+    '''
+    executes the defined run_session function with sys_vars
+    run session multiple times for a param
+    then average the mean_rewards from them
+    '''
+    SESSIONS_PER_PARAM = 10
+    logger.info(
+        'Running average session with param = {}'.format(pp.pformat(param)))
+    mean_rewards_history = []
+    for i in range(SESSIONS_PER_PARAM):
+        run_session(param)
+        mean_rewards_history.append(sys_vars['mean_rewards'])
+        sessions_mean_rewards = np.mean(mean_rewards_history)
+        if sys_vars['solved']:
+            break
+    logger.info(
+        'Sessions mean rewards: {}'.format(sessions_mean_rewards))
+    return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
+
+
+def select_best_param(run_session, sys_vars, param_grid):
+    '''
+    Parameter selection
+    by running session average for each param parallel
+    executes the defined run_session function with sys_vars
+    then sort by highest sessions_mean_rewards first
+    return the best
+    '''
+    NUM_CORES = multiprocessing.cpu_count()
+    p = multiprocessing.Pool(NUM_CORES)
+    params_means = p.map(
+        partial(run_session_average, run_session, sys_vars),
+        param_grid)
+    params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
+    for pm in params_means:
+        logger.debug(pp.pformat(pm))
+    return params_means[0]

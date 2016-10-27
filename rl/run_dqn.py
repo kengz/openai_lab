@@ -12,7 +12,7 @@ import tensorflow as tf  # to be removed
 # only implement constants here,
 # on reset will add vars: {epi, history, mean_rewards, solved}
 sys_vars = {
-    'RENDER': True,
+    'RENDER': False,
     'GYM_ENV_NAME': 'CartPole-v0',
     'SOLVED_MEAN_REWARD': 195.0,
     'MAX_STEPS': 200,
@@ -20,23 +20,13 @@ sys_vars = {
     'MAX_HISTORY': 100
 }
 
-SESSIONS_PER_PARAM = 10
-MODEL_PATH = 'models/dqn.tfl'
-
-param_sets = {
+param_range = {
     'gamma': [0.99, 0.95, 0.90],
     'learning_rate': [1., 0.1],
     'e_anneal_steps': [1000, 10000],
     'n_epoch': [1, 2]
 }
-# (0.96207920792079205, {'e_anneal_steps': 1000, 'learning_rate': 0.1, 'n_epoch': 2, 'gamma': 0.95})
-# param_sets = {
-#     'gamma': [0.95],
-#     'learning_rate': [0.1],
-#     'e_anneal_steps': [1000],
-#     'n_epoch': [2]
-# }
-# param_grid = list(ParameterGrid(param_sets))
+param_grid = param_product(param_range)
 
 
 def run_episode(env, dqn, replay_memory):
@@ -81,41 +71,6 @@ def run_session(param={}):
     return sys_vars
 
 
-def run_session_average(param={}):
-    '''
-    run session multiple times for a param
-    then average the mean_rewards from them
-    '''
-    logger.info(
-        'Running average session with param = {}'.format(pp.pformat(param)))
-    mean_rewards_history = []
-    for i in range(SESSIONS_PER_PARAM):
-        run_session(param)
-        mean_rewards_history.append(sys_vars['mean_rewards'])
-        sessions_mean_rewards = np.mean(mean_rewards_history)
-        if sys_vars['solved']:
-            break
-    logger.info(
-        'Sessions mean rewards: {}'.format(sessions_mean_rewards))
-    return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
-
-
-def select_best_param(param_grid):
-    '''
-    Parameter selection 
-    by running session average for each param parallel
-    then sort by highest sessions_mean_rewards first
-    return the best
-    '''
-    NUM_CORES = multiprocessing.cpu_count()
-    p = multiprocessing.Pool(NUM_CORES)
-    params_means = p.map(run_session_average, param_grid)
-    params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
-    for pm in params_means:
-        logger.debug(pp.pformat(pm))
-    return params_means[0]
-
-
 if __name__ == '__main__':
     run_session(
         param={'e_anneal_steps': 5000,
@@ -123,5 +78,6 @@ if __name__ == '__main__':
                'n_epoch': 20,
                'gamma': 0.99})
 
-    # best_param = select_best_param(param_grid)
+    # # advanced parallel param selection from util
+    # best_param = select_best_param(run_session, sys_vars, param_grid)
     # logger.info(pp.pformat(best_param))
