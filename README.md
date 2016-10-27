@@ -35,8 +35,10 @@ To view **Tensorboard**, do `tensorboard --logdir='/tmp/tflearn_logs/'`
 
 -[x] get the gym tour done
 -[x] add `util.py`, refactor system
-- clear the DQN class off the TF code, to make it backend-agnostic
 -[x] add and build test code
+- clear the DQN class off the TF code, to make it backend-agnostic
+- tag memory to indicate if it's from random action
+- mute the printing of rand act
 - correct the basic q-learning algorithm (feels wrong)
 - get the tabular q-learner working
 - get NN q-learner working and solve the cartpole problem

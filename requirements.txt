@@ -6,3 +6,5 @@ https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.11.0rc1-py3-none-
 git+https://github.com/tflearn/tflearn.git
 Keras==1.1.0
 git+https://github.com/openai/gym.git
+codeclimate-test-reporter=0.1.2
+pytest-cov=2.4.0
