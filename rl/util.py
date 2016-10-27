@@ -9,6 +9,26 @@ logger = logging.getLogger()
 logger.handlers.pop()  # override the gym's handler
 
 
+required_sys_keys = {
+    'RENDER',
+    'GYM_ENV_NAME',
+    'SOLVED_MEAN_REWARD',
+    'MAX_STEPS',
+    'MAX_EPISODES',
+    'MAX_HISTORY',
+    'epi',
+    'history',
+    'mean_rewards',
+    'solved'
+}
+
+
+def check_sys_vars(sys_vars):
+    '''ensure the requried RL system vars are specified'''
+    sys_keys = sys_vars.keys()
+    assert all(k in sys_keys for k in required_sys_keys)
+
+
 def get_env_spec(env):
     '''Helper: return the env specs: dims, actions, reward range'''
     return {
@@ -19,10 +39,6 @@ def get_env_spec(env):
         'actions': list(range(env.action_space.n)),
         'reward_range': env.reward_range
     }
-
-
-def check_sys_vars(sys_vars):
-    return
 
 
 def report_speed(real_time, total_t):
