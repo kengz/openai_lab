@@ -1,5 +1,5 @@
 import unittest
-
+from rl import *
 
 class SampleTest(unittest.TestCase):
 
