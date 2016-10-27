@@ -1,21 +1,26 @@
 import util
 import gym
-import json
-import tensorflow as tf
-import numpy as np
 from util import *
 from collections import deque
-from time import time
-# from sklearn.grid_search import ParameterGrid
-from multiprocessing import cpu_count
-# from joblib import Parallel, delayed
 from replay_memory import ReplayMemory
-# from dqn import DQN
 from keras_dqn import DQN
 
-# need a default and checker
+# import util
+# import gym
+# import json
+# import tensorflow as tf
+# import numpy as np
+# from util import *
+# from collections import deque
+# from time import time
+# # from sklearn.grid_search import ParameterGrid
+# from multiprocessing import cpu_count
+# # from joblib import Parallel, delayed
+# from replay_memory import ReplayMemory
+# # from dqn import DQN
+# from keras_dqn import DQN
 
-# sys configs
+# rl sys configs, need to implement the keys as shown in util
 sys_vars = {
     'RENDER': True,
     'GYM_ENV_NAME': 'CartPole-v0',
@@ -31,7 +36,6 @@ sys_vars.update({
     'mean_rewards': 0,  # mean of history
     'solved': False
 })
-
 
 MODEL_PATH = 'models/dqn.tfl'
 
@@ -77,20 +81,19 @@ def run_episode(env, dqn, replay_memory):
 
 def run_session(dqn_param={}):
     '''run a session of dqn (like a tf session)'''
+    check_sys_vars(sys_vars)
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
     sess = tf.Session()
     dqn = DQN(env_spec, sess, **dqn_param)
 
-    # dqn.restore(MODEL_PATH+'-30')
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
         run_episode(env, dqn, replay_memory)
         if sys_vars['solved']:
             break
 
-    dqn.save(MODEL_PATH)  # save final model
     return sys_vars
 
 

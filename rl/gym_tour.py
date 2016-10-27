@@ -5,7 +5,7 @@ from util import *
 from collections import deque
 from replay_memory import ReplayMemory
 
-# rl sys configs
+# rl sys configs, need to implement the keys as shown in util
 sys_vars = {
     'RENDER': True,
     'GYM_ENV_NAME': 'CartPole-v0',
