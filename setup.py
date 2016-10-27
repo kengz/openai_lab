@@ -73,5 +73,5 @@ setup(
     classifiers=[],
     tests_require=[],
     test_suite='test',
-    cmdclass={'install': OverrideInstall}
+    cmdclass={'test': PyTest, 'install': OverrideInstall}
 )
