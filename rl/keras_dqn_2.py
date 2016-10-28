@@ -53,6 +53,7 @@ class DQN(object):
         step 1,2,3,4 of algo. plural for batch's multiple values
         replay_memory is provided externally
         '''
+        loss_total = 0
         minibatch = replay_memory.rand_minibatch(self.batch_size)
         for epoch in range(self.n_epoch):
             # algo step 1
@@ -70,8 +71,13 @@ class DQN(object):
             # as from algo step 1
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
+
+            # print("minibatch actions: {}\n Q_targets_a (reshapes): {}\n Q_states: {}\n Q_targets: {}\n\n".format(
+            #                minibatch['actions'], Q_targets_a[:, np.newaxis], Q_states, Q_targets))
+
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
-        return loss
+            loss_total += loss
+        return loss_total
 
     def update_e(self):
         '''
@@ -91,7 +97,8 @@ class DQN(object):
             # hmm maybe flip by ep?
             # print('random act')
         else:
-            state = np.reshape(state, (1, 4))
+            #print("state shape: {}".format(state.shape))
+            state = np.reshape(state, (1, state.shape[0]))
             Q_state = self.model.predict(state)
             action = np.argmax(Q_state)
             # print('---')
