@@ -32,7 +32,7 @@ class DQN(object):
     def build_net(self):
         model = Sequential()
         # Not clear how much better the algorithm is with regularization
-        model.add(Dense(4,
+        model.add(Dense(self.env_spec['state_dim'],
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
         #model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))

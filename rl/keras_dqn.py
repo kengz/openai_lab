@@ -38,7 +38,7 @@ class DQN(object):
             tf.float32, shape=(None, self.env_spec['state_dim']))
         model = Sequential()
         model.add(
-            Dense(4,
+            Dense(self.env_spec['state_dim'],
                   input_shape=(self.env_spec['state_dim'],),
                   init='lecun_uniform'))
         model.add(Dense(2, init='lecun_uniform'))
