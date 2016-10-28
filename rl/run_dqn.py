@@ -30,8 +30,10 @@ def run_episode(env, dqn, replay_memory):
     state = env.reset()
     replay_memory.reset_state(state)
     total_rewards = 0
-    print("DQN params: e: {} learning_rate: {} batch size: {} num_epochs: {}".format(dqn.e, 
-                                            dqn.learning_rate, dqn.batch_size, dqn.n_epoch))
+    print("DQN params: e: {} learning_rate: "
+          "{} batch size: {} num_epochs: {}".format(
+              dqn.e,
+              dqn.learning_rate, dqn.batch_size, dqn.n_epoch))
 
     for t in range(sys_vars.get('MAX_STEPS')):
         if sys_vars.get('RENDER'):

@@ -35,7 +35,7 @@ class DQN(object):
         model.add(Dense(self.env_spec['state_dim'],
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
-        #model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
+        # model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         self.model = model
@@ -89,12 +89,12 @@ class DQN(object):
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
             # hmm maybe flip by ep?
-            #print('random act')
+            # print('random act')
         else:
-            state = np.reshape(state, (1,4))
+            state = np.reshape(state, (1, 4))
             Q_state = self.model.predict(state)
             action = np.argmax(Q_state)
-            #print('---')
+            # print('---')
         self.update_e()
         return action
 
