@@ -5,16 +5,20 @@ import logging
 import multiprocessing
 import pprint
 import numpy as np
-from os import path
+from os import path, environ
 from collections import deque
 from functools import partial
 
+# Goddam python logger
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+handler.setFormatter(
+    logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+logger.propagate = False
+
 pp = pprint.PrettyPrinter(indent=2)
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] %(levelname)s: %(message)s')
-logger = logging.getLogger()
-logger.handlers.pop()  # override the gym's handler
 
 PROBLEMS = json.loads(open(
     path.join(path.dirname(__file__), 'assets', 'problems.json')).read())
@@ -43,6 +47,9 @@ def init_sys_vars(problem_name='CartPole-v0'):
     on reset will add vars: {epi, history, mean_rewards, solved}
     '''
     sys_vars = PROBLEMS[problem_name]
+    if environ.get('CI'):
+        sys_vars['RENDER'] = False
+        sys_vars['MAX_EPISODES'] = 2
     reset_sys_vars(sys_vars)
     return sys_vars
 

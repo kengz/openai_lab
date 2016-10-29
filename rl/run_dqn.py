@@ -1,11 +1,10 @@
 import gym
-import util
 from util import *
 from replay_memory import ReplayMemory
 from keras_dqn import DQN
 
 # rl sys variables - see util.py for info
-sys_vars = init_sys_vars('MountainCar-v0')
+sys_vars = init_sys_vars('CartPole-v0')
 
 
 def run_episode(env, dqn, replay_memory):
