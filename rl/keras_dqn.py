@@ -64,7 +64,7 @@ class DQN(object):
 
     def train(self, replay_memory):
         '''
-        step 1,2,3,4 of algo. plural for batch's multiple values
+        step 1,2,3,4 of algo.
         replay_memory is provided externally
         '''
         minibatch = replay_memory.rand_minibatch(self.batch_size)
