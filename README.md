@@ -18,6 +18,8 @@ python setup.py install
 ```shell
 # for example, TF for Python2, MacOS
 export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.11.0rc1-py2-none-any.whl
+# or Linux CPU-only, Python3.5
+export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
 sudo pip install --upgrade $TF_BINARY_URL
 ```
 
@@ -28,20 +30,19 @@ Run the scripts inside the `rl/` folder. It will contain:
 - `run_tabular_q.py`: a tabular q-learner
 - `run_dqn.py`: a NN-based q-learner
 
-To view **Tensorboard**, do `tensorboard --logdir='/tmp/tflearn_logs/'`
-
 
 ## Roadmap
 
--[x] get the gym tour done
--[x] add `util.py`, refactor system
--[x] add and build test code
-- clear the DQN class off the TF code, to make it backend-agnostic
+- [x]get the gym tour done
+- [x]add `util.py`, refactor system
+- [x]add and build test code
+- [x]clear the DQN class off the TF code, to make it backend-agnostic
 - tag memory to indicate if it's from random action
-- mute the printing of rand act
-- correct the basic q-learning algorithm (feels wrong)
+- solve the problem caused by having majority of random experience
+- recheck the basic q-learning algorithm (feels wrong)
 - get the tabular q-learner working
-- get NN q-learner working and solve the cartpole problem
+- [x]YAYY. get NN q-learner working and solve the cartpole problem
+- add visualization: average reward, loss
 
 
 ## Authors
