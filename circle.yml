@@ -14,7 +14,7 @@ dependencies:
     - pip install -U matplotlib
   override:
     - export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
-    - pip install $TF_BINARY_URL
+    - pip3 install --ignore-installed --upgrade $TF_BINARY_URL
     - python -c 'import os; import inspect; import tensorflow; print(os.path.dirname(inspect.getfile(tensorflow)))'
     - pip install -U git+https://github.com/tflearn/tflearn.git
     - pip install -U keras
