@@ -7,7 +7,6 @@ machine:
 
 dependencies:
   pre:
-    - sudo rm -rf /var/cache/apt/archives && sudo ln -s ~/.apt-cache /var/cache/apt/archives && mkdir -p ~/.apt-cache/partial
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
     - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev
     - pip install -U pip
@@ -22,8 +21,6 @@ dependencies:
     - pip install git+https://github.com/openai/gym.git
     - pip install codeclimate-test-reporter
     - pip install pytest-cov
-  cache_directories:
-    - "~/.apt-cache"
 
 test:
   override:
