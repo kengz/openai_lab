@@ -82,7 +82,7 @@ class DQN(object):
 
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
-        return loss_total
+        return loss_total / self.n_epoch
 
     def update_e(self):
         '''strategy to update epsilon'''
