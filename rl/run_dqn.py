@@ -2,7 +2,7 @@ import gym
 import util
 from util import *
 from replay_memory import ReplayMemory
-from keras_dqn_2 import DQN
+from keras_dqn import DQN
 
 # rl sys variables - see util.py for info
 sys_vars = init_sys_vars('MountainCar-v0')
