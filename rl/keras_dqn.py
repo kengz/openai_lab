@@ -1,28 +1,26 @@
 import numpy as np
-import tensorflow as tf
-from keras import backend as K
+from util import logger
 from keras.models import Sequential
-from keras.layers.core import Dense, Dropout
+from keras.layers.core import Dense
 from keras.optimizers import SGD
-from keras.regularizers import l1, l2
-from keras.constraints import maxnorm
-from keras.objectives import categorical_crossentropy
-from keras.optimizers import SGD
+# from keras.regularizers import l1, l2
+# from keras.constraints import maxnorm
+# from keras.objectives import mse
 
 
 class DQN(object):
 
     '''
-    The simplest deep Q network. See DQN.md
+    The simplest deep Q network, 
+    with e-greedy method and 
+    Bellman equation for value, using neural net.
     '''
 
-    def __init__(self, env_spec, session,
+    def __init__(self, env_spec,
                  gamma=0.95, learning_rate=0.1,
                  init_e=1.0, final_e=0.1, e_anneal_steps=1000,
-                 batch_size=64, n_epoch=2):
+                 batch_size=16, n_epoch=1):
         self.env_spec = env_spec
-        self.session = session
-        K.set_session(session)
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.init_e = init_e
@@ -34,49 +32,37 @@ class DQN(object):
         self.build_graph()
 
     def build_net(self):
-        X = tf.placeholder(
-            tf.float32, shape=(None, self.env_spec['state_dim']))
         model = Sequential()
-        model.add(
-            Dense(self.env_spec['state_dim'],
-                  input_shape=(self.env_spec['state_dim'],),
-                  init='lecun_uniform'))
-        model.add(Dense(2, init='lecun_uniform'))
+        # Not clear how much better the algorithm is with regularization
+        model.add(Dense(4,
+                        input_shape=(self.env_spec['state_dim'],),
+                        init='lecun_uniform', activation='sigmoid'))
+        # model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
-        net = model(X)
-        self.X = X
         self.model = model
-        self.net = net
-        return net
+        return model
 
     def build_graph(self):
-        net = self.build_net()
-        self.Q_target = tf.placeholder(
-            tf.float32, shape=(None, self.env_spec['action_dim']))
-        # target Y - predicted Y, do rms loss
-        self.loss = tf.reduce_mean(
-            categorical_crossentropy(self.Q_target, self.net))
-        self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
-        self.train_op = self.optimizer.minimize(self.loss)
-        self.session.run(tf.initialize_all_variables())
-        return self.train_op
+        self.build_net()
+        self.optimizer = SGD(lr=self.learning_rate)
+        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
+        logger.info("Model built and compiled")
+        return self.model
 
     def train(self, replay_memory):
         '''
         step 1,2,3,4 of algo.
         replay_memory is provided externally
         '''
+        loss_total = 0
         minibatch = replay_memory.rand_minibatch(self.batch_size)
         for epoch in range(self.n_epoch):
             # algo step 1
-            Q_states = self.net.eval(
-                feed_dict={self.X: minibatch['states']},
-                session=self.session)
+            Q_states = self.model.predict(minibatch['states'])
             # algo step 2
-            Q_next_states = self.net.eval(
-                feed_dict={self.X: minibatch['next_states']},
-                session=self.session)
+            Q_next_states = self.model.predict(minibatch['next_states'])
+            # batch x num_actions
             Q_next_states_max = np.amax(Q_next_states, axis=1)
             # Q targets for batch-actions a;
             # with terminal to make future reward 0 if end
@@ -88,39 +74,39 @@ class DQN(object):
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
 
-            _, loss = self.session.run([self.train_op, self.loss], feed_dict={
-                self.X: minibatch['states'],
-                self.Q_target: Q_targets,
-            })
-        return loss
+            # logger.info("minibatch actions: {}\n Q_targets_a (reshapes): {}"
+            #             "\n Q_states: {}\n Q_targets: {}\n\n".format(
+            #                 minibatch['actions'], Q_targets_a[
+            #                     :, np.newaxis], Q_states,
+            #                 Q_targets))
+
+            loss = self.model.train_on_batch(minibatch['states'], Q_targets)
+            loss_total += loss
+        return loss_total
 
     def update_e(self):
-        '''
-        strategy to update epsilon
-        '''
+        '''strategy to update epsilon'''
         self.e = max(self.e -
                      (self.init_e - self.final_e)/float(self.e_anneal_steps),
                      self.final_e)
         return self.e
 
     def select_action(self, state):
-        '''
-        step 1 of algo, feedforward
-        '''
+        '''epsilon-greedy method'''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
-            # hmm maybe flip by ep?
-            print('random act')
+            # print('random act')
         else:
-            Q_state = self.net.eval(
-                feed_dict={self.X: [state]}, session=self.session)
-            action = self.session.run(tf.argmax(Q_state, 1))[0]
-            print('---')
+            # print("state shape: {}".format(state.shape))
+            state = np.reshape(state, (1, state.shape[0]))
+            Q_state = self.model.predict(state)
+            action = np.argmax(Q_state)
+            # print('---')
         self.update_e()
         return action
 
     def save(self, model_path, global_step=None):
-        print('Saving model checkpoint')
+        logger.info('Saving model checkpoint')
         self.model.save_weights(model_path)
 
     def restore(self, model_path):
