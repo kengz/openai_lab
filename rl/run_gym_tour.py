@@ -1,22 +1,11 @@
 # A tour of the gym
-import util
 import gym
 from util import *
-from collections import deque
 from replay_memory import ReplayMemory
+from keras_dqn import DQN
 
-
-# rl sys configs, need to implement the required_sys_keys in util
-# only implement constants here,
-# on reset will add vars: {epi, history, mean_rewards, solved}
-sys_vars = {
-    'RENDER': True,
-    'GYM_ENV_NAME': 'CartPole-v0',
-    'SOLVED_MEAN_REWARD': 195.0,
-    'MAX_STEPS': 200,
-    'MAX_EPISODES': 5000,
-    'MAX_HISTORY': 100
-}
+# rl sys variables - see util.py for info
+sys_vars = init_sys_vars('CartPole-v0')
 
 
 def run_episode(env, dqn, replay_memory):
