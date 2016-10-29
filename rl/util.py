@@ -98,7 +98,7 @@ def update_history(sys_vars,
     '''
     # Perhaps something up with the way append happens and queue is at capacity
     # Simple fix: Removing earliest item first if queue at capacity
-    if (len(sys_vars['history']) == 200):
+    if (len(sys_vars['history']) == sys_vars.get('MAX_HISTORY')):
         sys_vars['history'].popleft()
     sys_vars['history'].append(total_rewards)
     mean_rewards = np.mean(sys_vars['history'])
