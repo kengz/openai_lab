@@ -17,8 +17,6 @@ dependencies:
     - pip install -U matplotlib
   override:
     - pip install -U $TF_BINARY_URL
-    - pip list
-    - python -c 'import os; import inspect; import tensorflow; print(os.path.dirname(inspect.getfile(tensorflow)))'
     - pip install -U git+https://github.com/tflearn/tflearn.git
     - pip install -U keras
     - pip install -U git+https://github.com/openai/gym.git
