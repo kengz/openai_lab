@@ -1,7 +1,6 @@
 import pip
 import os
 import sys
-import multiprocessing
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 from setuptools.command.install import install
@@ -71,7 +70,7 @@ setup(
         'testing': []
     },
     classifiers=[],
-    tests_require=[],
+    tests_require=['pytest', 'pytest-cov'],
     test_suite='test',
     cmdclass={'test': PyTest, 'install': OverrideInstall}
 )
