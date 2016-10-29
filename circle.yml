@@ -11,17 +11,17 @@ dependencies:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
     - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev
     - pip install -U pip
-    - pip install -U h5py
-    - pip install -U numpy
-    - pip install -U scipy
-    - pip install -U matplotlib
+    - pip install h5py
+    - pip install numpy
+    - pip install scipy
+    - pip install matplotlib
   override:
-    - pip install -U $TF_BINARY_URL
-    - pip install -U git+https://github.com/tflearn/tflearn.git
-    - pip install -U keras
-    - pip install -U git+https://github.com/openai/gym.git
-    - pip install -U codeclimate-test-reporter
-    - pip install -U pytest-cov
+    - pip install $TF_BINARY_URL
+    - pip install git+https://github.com/tflearn/tflearn.git
+    - pip install keras
+    - pip install git+https://github.com/openai/gym.git
+    - pip install codeclimate-test-reporter
+    - pip install pytest-cov
   cache_directories:
     - "~/.apt-cache"
 
