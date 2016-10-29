@@ -22,3 +22,4 @@ exclude_paths:
 - test/
 - nn/
 - rl/run_gym_tour.py
+- rl/__init__.py

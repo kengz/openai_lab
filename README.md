@@ -37,6 +37,7 @@ Run the scripts inside the `rl/` folder. It will contain:
 - [x]add `util.py`, refactor system
 - [x]add and build test code
 - [x]clear the DQN class off the TF code, to make it backend-agnostic
+- [x] faster CI builds, with real runs of rl in test
 - tag memory to indicate if it's from random action
 - solve the problem caused by having majority of random experience
 - recheck the basic q-learning algorithm (feels wrong)
