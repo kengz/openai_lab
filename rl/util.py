@@ -1,9 +1,11 @@
 # everything shall start from 0
-import pprint
-import logging
 import itertools
+import json
+import logging
 import multiprocessing
+import pprint
 import numpy as np
+from os import path
 from collections import deque
 from functools import partial
 
@@ -14,6 +16,12 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.handlers.pop()  # override the gym's handler
 
+PROBLEMS = json.loads(open(
+    path.join('assets', 'problems.json')).read())
+
+# the keys need to be implemented by a sys_var
+# the constants (capitalized) are problem configs,
+# set in assets/problems.json
 required_sys_keys = {
     'RENDER',
     'GYM_ENV_NAME',
@@ -28,10 +36,15 @@ required_sys_keys = {
 }
 
 
-def check_sys_vars(sys_vars):
-    '''ensure the requried RL system vars are specified'''
-    sys_keys = sys_vars.keys()
-    assert all(k in sys_keys for k in required_sys_keys)
+def init_sys_vars(problem_name='CartPole-v0'):
+    '''
+    init the sys vars for a problem by reading from
+    assets/problems.json, then reset the other sys vars
+    on reset will add vars: {epi, history, mean_rewards, solved}
+    '''
+    sys_vars = PROBLEMS[problem_name]
+    reset_sys_vars(sys_vars)
+    return sys_vars
 
 
 def reset_sys_vars(sys_vars):
@@ -42,6 +55,12 @@ def reset_sys_vars(sys_vars):
     sys_vars['solved'] = False
     check_sys_vars(sys_vars)
     return sys_vars
+
+
+def check_sys_vars(sys_vars):
+    '''ensure the requried RL system vars are specified'''
+    sys_keys = sys_vars.keys()
+    assert all(k in sys_keys for k in required_sys_keys)
 
 
 def get_env_spec(env):

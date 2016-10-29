@@ -1,28 +1,11 @@
-import util
 import gym
+import util
 from util import *
 from replay_memory import ReplayMemory
 from keras_dqn_2 import DQN
 
-# rl sys configs, need to implement the required_sys_keys in util
-# only implement constants here,
-# on reset will add vars: {epi, history, mean_rewards, solved}
-sys_vars = {
-    'RENDER': True,
-    'GYM_ENV_NAME': 'MountainCar-v0',
-    'SOLVED_MEAN_REWARD': -110.0,
-    'MAX_STEPS': 1500,
-    'MAX_EPISODES': 5000,
-    'MAX_HISTORY': 100
-}
-
-param_range = {
-    'gamma': [0.99, 0.95, 0.90],
-    'learning_rate': [1., 0.1],
-    'e_anneal_steps': [1000, 10000],
-    'n_epoch': [1, 2]
-}
-param_grid = param_product(param_range)
+# rl sys variables - see util.py for info
+sys_vars = init_sys_vars('MountainCar-v0')
 
 
 def run_episode(env, dqn, replay_memory):
@@ -30,10 +13,10 @@ def run_episode(env, dqn, replay_memory):
     state = env.reset()
     replay_memory.reset_state(state)
     total_rewards = 0
-    print("DQN params: e: {} learning_rate: "
-          "{} batch size: {} num_epochs: {}".format(
-              dqn.e,
-              dqn.learning_rate, dqn.batch_size, dqn.n_epoch))
+    print("DQN params: e: {} learning_rate: {} "
+          "batch size: {} num_epochs: {}".format(
+              dqn.e, dqn.learning_rate,
+              dqn.batch_size, dqn.n_epoch))
 
     for t in range(sys_vars.get('MAX_STEPS')):
         if sys_vars.get('RENDER'):
@@ -53,19 +36,18 @@ def run_episode(env, dqn, replay_memory):
 
 
 def run_session(param={}):
-    '''run a session of dqn (like a tf session)'''
+    '''run a session of dqn'''
     reset_sys_vars(sys_vars)  # reset sys_vars per session
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
-    #sess = tf.Session()
-    #dqn = DQN(env_spec, sess, **param)
     dqn = DQN(env_spec, **param)
 
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
         run_episode(env, dqn, replay_memory)
         # Best so far, increment num epochs every 2 up to a max of 5
+        # TODO: eh? absorb?
         if (dqn.n_epoch < 5 and epi % 2 == 0):
             dqn.n_epoch += 1
         if sys_vars['solved']:
@@ -82,5 +64,14 @@ if __name__ == '__main__':
                'gamma': 0.99})
 
     # # advanced parallel param selection from util
+    # # for hyper-param selection
+    # param_range = {
+    #     'gamma': [0.99, 0.95, 0.90],
+    #     'learning_rate': [1., 0.1],
+    #     'e_anneal_steps': [1000, 10000],
+    #     'n_epoch': [1, 2]
+    # }
+    # param_grid = param_product(param_range)
+
     # best_param = select_best_param(run_session, sys_vars, param_grid)
     # logger.info(pp.pformat(best_param))

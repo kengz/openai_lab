@@ -1,0 +1,18 @@
+{
+  "CartPole-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "CartPole-v0",
+    "SOLVED_MEAN_REWARD": 195.0,
+    "MAX_STEPS": 200,
+    "MAX_EPISODES": 5000,
+    "MAX_HISTORY": 100
+  },
+  "MountainCar-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "MountainCar-v0",
+    "SOLVED_MEAN_REWARD": -110.0,
+    "MAX_STEPS": 1500,
+    "MAX_EPISODES": 5000,
+    "MAX_HISTORY": 100
+  }
+}
