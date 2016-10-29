@@ -17,7 +17,7 @@ logger = logging.getLogger()
 logger.handlers.pop()  # override the gym's handler
 
 PROBLEMS = json.loads(open(
-    path.join('assets', 'problems.json')).read())
+    path.join(path.dirname(__file__), 'assets', 'problems.json')).read())
 
 # the keys need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
