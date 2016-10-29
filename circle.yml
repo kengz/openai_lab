@@ -3,6 +3,7 @@ machine:
     version: 3.5.1
   environment:
     CODECLIMATE_REPO_TOKEN: 082d5472ff9fad9fcd560b16b714a312093ce064107094d07f23975601f050ab
+    TF_BINARY_URL: https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
 
 dependencies:
   pre:
@@ -15,8 +16,7 @@ dependencies:
     - pip install -U scipy
     - pip install -U matplotlib
   override:
-    - export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
-    - pip install --ignore-installed --upgrade $TF_BINARY_URL
+    - pip install -U $TF_BINARY_URL
     - pip list
     - python -c 'import os; import inspect; import tensorflow; print(os.path.dirname(inspect.getfile(tensorflow)))'
     - pip install -U git+https://github.com/tflearn/tflearn.git
