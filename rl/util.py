@@ -8,6 +8,7 @@ import numpy as np
 from os import path, environ
 from collections import deque
 from functools import partial
+import matplotlib.pyplot as plt
 
 # Goddam python logger
 logger = logging.getLogger(__name__)
@@ -19,6 +20,9 @@ logger.addHandler(handler)
 logger.propagate = False
 
 pp = pprint.PrettyPrinter(indent=2)
+
+plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
+plotters = {}  # hash of matplotlib objects for live-plot
 
 PROBLEMS = json.loads(open(
     path.join(path.dirname(__file__), 'assets', 'problems.json')).read())
@@ -51,7 +55,31 @@ def init_sys_vars(problem_name='CartPole-v0'):
         sys_vars['RENDER'] = False
         sys_vars['MAX_EPISODES'] = 2
     reset_sys_vars(sys_vars)
+    init_plotter(sys_vars)
     return sys_vars
+
+
+def init_plotter(sys_vars):
+    fig, = plt.plot([], [])
+    plotters['history'] = fig
+    ax = plt.gca()
+    ax.set_xlabel('episode')
+    ax.set_ylabel('total rewards')
+    ax.set_title('history')
+    ax.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
+    plt.ion()  # for live plot
+
+
+def live_plot(sys_vars):
+    fig = plotters['history']
+    total_rewards = sys_vars['history'][-1]
+    fig.set_xdata(np.arange(len(fig.get_xdata()) + 1))
+    fig.set_ydata(np.append(fig.get_ydata(), total_rewards))
+    ax = plt.gca()
+    ax.relim()
+    ax.autoscale_view(tight=False, scalex=True, scaley=True)
+    plt.draw()
+    plt.pause(0.01)
 
 
 def reset_sys_vars(sys_vars):
@@ -105,6 +133,8 @@ def update_history(sys_vars,
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
     sys_vars['solved'] = solved
+    live_plot(sys_vars)
+
     logs = [
         '',
         'Episode: {}, total t: {}, total reward: {}'.format(
