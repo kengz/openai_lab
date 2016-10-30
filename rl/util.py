@@ -130,20 +130,18 @@ def init_plotter(sys_vars):
     # initialize the plotters
     fig = plt.figure(facecolor='white')
 
-    ax1 = fig.add_subplot(211)
+    ax1 = fig.add_subplot(211,
+                          frame_on=False,
+                          title='total rewards per episode',
+                          ylabel='total rewards')
     p1, = ax1.plot([], [])
-    ax1.set_title('total rewards per episode')
-    # ax1.set_xlabel('episode')
-    ax1.set_ylabel('total rewards')
-    ax1.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
     plotters['total rewards'] = (ax1, p1)
 
-    ax2 = fig.add_subplot(212)
+    ax2 = fig.add_subplot(212,
+                          frame_on=False,
+                          title='mean rewards over last 100 episodes',
+                          ylabel='mean rewards')
     p2, = ax2.plot([], [])
-    ax2.set_title('mean rewards over last 100 episodes')
-    # ax2.set_xlabel('episode')
-    ax2.set_ylabel('mean rewards')
-    ax2.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
     plotters['mean rewards'] = (ax2, p2)
 
     plt.ion()  # for live plot
@@ -157,13 +155,13 @@ def live_plot(sys_vars):
     p1.set_xdata(np.arange(len(p1.get_xdata()) + 1))
     p1.set_ydata(np.append(p1.get_ydata(), sys_vars['history'][-1]))
     ax1.relim()
-    ax1.autoscale_view(tight=False, scalex=True, scaley=True)
+    ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
     ax2, p2 = plotters['mean rewards']
     p2.set_xdata(np.arange(len(p2.get_xdata()) + 1))
     p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
     ax2.relim()
-    ax2.autoscale_view(tight=False, scalex=True, scaley=True)
+    ax2.autoscale_view(tight=True, scalex=True, scaley=True)
 
     plt.draw()
     plt.pause(0.01)

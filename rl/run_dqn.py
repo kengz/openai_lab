@@ -5,6 +5,7 @@ from keras_dqn import DQN
 
 # rl sys variables - see util.py for info
 sys_vars = init_sys_vars('CartPole-v0')
+# sys_vars = init_sys_vars('MountainCar-v0')  # also need diff params
 
 
 def run_episode(env, dqn, replay_memory):
