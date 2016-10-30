@@ -153,14 +153,14 @@ def live_plot(sys_vars):
     if not sys_vars['RENDER']:
         return
     ax1, p1 = plotters['total rewards']
-    p1.set_xdata(np.arange(len(p1.get_xdata()) + 1))
     p1.set_ydata(np.append(p1.get_ydata(), sys_vars['history'][-1]))
+    p1.set_xdata(np.arange(len(p1.get_ydata())))
     ax1.relim()
     ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
     ax2, p2 = plotters['mean rewards']
-    p2.set_xdata(np.arange(len(p2.get_xdata()) + 1))
     p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
+    p2.set_xdata(np.arange(len(p2.get_ydata())))
     ax2.relim()
     ax2.autoscale_view(tight=True, scalex=True, scaley=True)
 
