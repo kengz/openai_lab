@@ -13,6 +13,9 @@ engines:
       threshold: "C"
   pep8:
     enabled: true
+    checks:
+      E402:
+        enabled: false
 
 ratings:
   paths:
