@@ -68,9 +68,9 @@ class DQN(object):
             # with terminal to make future reward 0 if end
             Q_targets_a = minibatch['rewards'] + self.gamma * \
                 (1 - minibatch['terminals']) * Q_next_states_max
-            # set Q_targets of a as above,
-            # and the non-action units' Q_targets to
-            # as from algo step 1
+            # set Q_targets of a as above
+            # and the non-action units' Q_targets to as-is
+            # minibatch['actions'] is one-hot encoded
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
 
@@ -95,13 +95,10 @@ class DQN(object):
         '''epsilon-greedy method'''
         if self.e > np.random.rand():
             action = np.random.choice(self.env_spec['actions'])
-            # print('random act')
         else:
-            # print("state shape: {}".format(state.shape))
             state = np.reshape(state, (1, state.shape[0]))
             Q_state = self.model.predict(state)
             action = np.argmax(Q_state)
-            # print('---')
         self.update_e()
         return action
 
