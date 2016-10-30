@@ -45,7 +45,10 @@ Run the scripts inside the `rl/` folder. It will contain:
 - recheck the basic q-learning algorithm (just in case)
 - get the tabular q-learner working
 - better parameter selection, to tune for a problem (can use the parallelization in util.py)
-- parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems.
+- parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
+- solve the stability problem - some runs start out bad and end up bad too
+- do policy iteration (ch 4 from text)
+- other more advanced algos
 
 
 ## Authors

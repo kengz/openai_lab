@@ -4,9 +4,10 @@ import json
 import logging
 import matplotlib
 import multiprocessing
+import os
 import pprint
 import numpy as np
-matplotlib.rcParams['backend'] = 'TkAgg'
+matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
 from collections import deque
