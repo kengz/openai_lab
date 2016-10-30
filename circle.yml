@@ -14,8 +14,7 @@ dependencies:
     - pip install h5py
     - pip install numpy
     - pip install scipy
-    - pip uninstall matplotlib
-    - pip install matplotlib
+    - pip install matplotlib --force
   override:
     - pip install $TF_BINARY_URL
     - pip install git+https://github.com/tflearn/tflearn.git
