@@ -22,7 +22,6 @@ logger.propagate = False
 
 pp = pprint.PrettyPrinter(indent=2)
 
-matplotlib.use('Agg')
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 plotters = {}  # hash of matplotlib objects for live-plot
 
