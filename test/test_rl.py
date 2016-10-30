@@ -2,9 +2,6 @@ import unittest
 import pytest
 from os import environ
 environ['CI'] = environ.get('CI') or 'true'
-import matplotlib
-# hack for CI venv cannot pick up tkinter
-matplotlib.rcParams['backend'] = 'agg'
 import rl
 
 

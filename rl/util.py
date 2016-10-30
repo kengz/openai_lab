@@ -6,6 +6,7 @@ import matplotlib
 import multiprocessing
 import pprint
 import numpy as np
+matplotlib.rcParams['backend'] = 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
 from collections import deque
