@@ -2,9 +2,9 @@
 import itertools
 import json
 import logging
+import matplotlib
 import multiprocessing
 import pprint
-import turtle  # fix for ubuntu tkinter bug of matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 from os import path, environ
@@ -22,6 +22,7 @@ logger.propagate = False
 
 pp = pprint.PrettyPrinter(indent=2)
 
+matplotlib.use('Agg')
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 plotters = {}  # hash of matplotlib objects for live-plot
 
