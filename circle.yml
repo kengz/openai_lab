@@ -1,6 +1,6 @@
 machine:
   python:
-    version: 3.5.1
+    version: 3.5.2
   environment:
     CODECLIMATE_REPO_TOKEN: 082d5472ff9fad9fcd560b16b714a312093ce064107094d07f23975601f050ab
     TF_BINARY_URL: https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
