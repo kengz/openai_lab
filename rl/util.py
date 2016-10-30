@@ -4,6 +4,7 @@ import json
 import logging
 import multiprocessing
 import pprint
+import turtle  # fix for ubuntu tkinter bug of matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 from os import path, environ
