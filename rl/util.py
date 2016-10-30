@@ -5,10 +5,10 @@ import logging
 import multiprocessing
 import pprint
 import numpy as np
+import matplotlib.pyplot as plt
 from os import path, environ
 from collections import deque
 from functools import partial
-import matplotlib.pyplot as plt
 
 # Goddam python logger
 logger = logging.getLogger(__name__)

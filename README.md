@@ -37,13 +37,15 @@ Run the scripts inside the `rl/` folder. It will contain:
 - [x]add `util.py`, refactor system
 - [x]add and build test code
 - [x]clear the DQN class off the TF code, to make it backend-agnostic
-- [x] faster CI builds, with real runs of rl in test
-- tag memory to indicate if it's from random action
-- solve the problem caused by having majority of random experience
-- recheck the basic q-learning algorithm (feels wrong)
-- get the tabular q-learner working
+- [x]faster CI builds, with real runs of rl in test
+- [meh]tag memory to indicate if it's from random action
+- [x]memory-decay - solve the problem caused by having majority of random experience
 - [x]YAYY. get NN q-learner working and solve the cartpole problem
-- add visualization: average reward, loss
+- [x]add visualization: average/total reward, loss(we'll see)
+- recheck the basic q-learning algorithm (just in case)
+- get the tabular q-learner working
+- better parameter selection, to tune for a problem (can use the parallelization in util.py)
+- parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems.
 
 
 ## Authors
