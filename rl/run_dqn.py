@@ -57,10 +57,10 @@ def run_session(param={}):
 
 if __name__ == '__main__':
     run_session(
-        param={'e_anneal_steps': 10000,
+        param={'e_anneal_steps': 5000,
                'learning_rate': 0.01,
                'n_epoch': 1,
-               'gamma': 0.99})
+               'gamma': 0.95})
 
     # # advanced parallel param selection from util
     # # for hyper-param selection
