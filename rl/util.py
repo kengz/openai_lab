@@ -59,29 +59,6 @@ def init_sys_vars(problem_name='CartPole-v0'):
     return sys_vars
 
 
-def init_plotter(sys_vars):
-    fig, = plt.plot([], [])
-    plotters['history'] = fig
-    ax = plt.gca()
-    ax.set_xlabel('episode')
-    ax.set_ylabel('total rewards')
-    ax.set_title('history')
-    ax.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
-    plt.ion()  # for live plot
-
-
-def live_plot(sys_vars):
-    fig = plotters['history']
-    total_rewards = sys_vars['history'][-1]
-    fig.set_xdata(np.arange(len(fig.get_xdata()) + 1))
-    fig.set_ydata(np.append(fig.get_ydata(), total_rewards))
-    ax = plt.gca()
-    ax.relim()
-    ax.autoscale_view(tight=False, scalex=True, scaley=True)
-    plt.draw()
-    plt.pause(0.01)
-
-
 def reset_sys_vars(sys_vars):
     '''reset and check RL system vars before each new session'''
     sys_vars['epi'] = 0
@@ -147,6 +124,49 @@ def update_history(sys_vars,
     if solved or (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1):
         logger.info('Problem solved? {}'.format(solved))
     return sys_vars
+
+
+def init_plotter(sys_vars):
+    # initialize the plotters
+    fig = plt.figure(facecolor='white')
+
+    ax1 = fig.add_subplot(211)
+    p1, = ax1.plot([], [])
+    ax1.set_title('total rewards per episode')
+    # ax1.set_xlabel('episode')
+    ax1.set_ylabel('total rewards')
+    ax1.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
+    plotters['total rewards'] = (ax1, p1)
+
+    ax2 = fig.add_subplot(212)
+    p2, = ax2.plot([], [])
+    ax2.set_title('mean rewards over last 100 episodes')
+    # ax2.set_xlabel('episode')
+    ax2.set_ylabel('mean rewards')
+    ax2.set_ylim(ymax=sys_vars['SOLVED_MEAN_REWARD'] + 10)
+    plotters['mean rewards'] = (ax2, p2)
+
+    plt.ion()  # for live plot
+
+
+def live_plot(sys_vars):
+    '''do live plotting'''
+    if not sys_vars['RENDER']:
+        return
+    ax1, p1 = plotters['total rewards']
+    p1.set_xdata(np.arange(len(p1.get_xdata()) + 1))
+    p1.set_ydata(np.append(p1.get_ydata(), sys_vars['history'][-1]))
+    ax1.relim()
+    ax1.autoscale_view(tight=False, scalex=True, scaley=True)
+
+    ax2, p2 = plotters['mean rewards']
+    p2.set_xdata(np.arange(len(p2.get_xdata()) + 1))
+    p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
+    ax2.relim()
+    ax2.autoscale_view(tight=False, scalex=True, scaley=True)
+
+    plt.draw()
+    plt.pause(0.01)
 
 
 # convert a dict of param ranges into
