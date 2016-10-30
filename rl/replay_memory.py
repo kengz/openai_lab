@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import halfnorm
 from collections import deque
 
 
@@ -53,8 +54,20 @@ class ReplayMemory(object):
     def rand_minibatch(self, size):
         '''
         get a minibatch of random exp for training
+        use simple memory decay, i.e. sample with a left tail
+        distribution to draw more from latest memory
+        then append with the most recent, untrained experience
         '''
         memory_size = self.size()
-        rand_inds = np.random.randint(memory_size, size=size)
-        minibatch = self.get_exp(rand_inds)
+        # increase to k if we skip training to every k time steps
+        latest_batch_size = 1
+        new_memory_ind = max(0, memory_size - latest_batch_size)
+        old_memory_ind = max(0, new_memory_ind - 1)
+        latest_inds = np.arange(new_memory_ind, memory_size)
+        random_batch_size = size - latest_batch_size
+        rand_inds = (old_memory_ind - halfnorm.rvs(
+            size=random_batch_size,
+            scale=float(old_memory_ind)*0.37).astype(int))
+        inds = np.concatenate([latest_inds, rand_inds]).clip(0)
+        minibatch = self.get_exp(inds)
         return minibatch
