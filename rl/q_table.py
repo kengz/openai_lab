@@ -63,12 +63,17 @@ class QTable(object):
         last_exp = replay_memory.get_exp([replay_memory.size() - 1])
         state = last_exp['states'][0]
         flat_state = self.flatten_state(state)
+        next_state = last_exp['next_states'][0]
+        next_flat_state = self.flatten_state(next_state)
         action = np.argmax(last_exp['actions'][0])  # from one-hot
         reward = last_exp['rewards'][0]
-        self.qtable[flat_state, action] = (1 - self.learning_rate) * \
-            self.qtable[flat_state, action] + \
-            self.learning_rate * (reward + self.gamma *
-                                  self.qtable[flat_state, action])
+        Q_state_action = self.qtable[flat_state, action]
+        Q_next_state = self.qtable[next_flat_state, :]
+        Q_next_state_max = np.amax(Q_next_state)
+
+        self.qtable[flat_state, action] = Q_state_action + \
+            self.learning_rate * \
+            (reward + self.gamma * Q_next_state_max - Q_state_action)
         return self.qtable
 
     def update_e(self):
@@ -84,6 +89,6 @@ class QTable(object):
             action = np.random.choice(self.env_spec['actions'])
         else:
             flat_state = self.flatten_state(state)
-            action = self.qtable[flat_state].argsort()[-1]
+            action = np.argmax(self.qtable[flat_state, :])
         self.update_e()
         return action
