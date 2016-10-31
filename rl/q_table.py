@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class DQN(object):
+class QTable(object):
 
     '''
     The simplest Q learner - a table,
@@ -11,11 +11,12 @@ class DQN(object):
 
     def __init__(self, env_spec,
                  resolution=10,
-                 gamma=0.95,
+                 gamma=0.95, learning_rate=0.1,
                  init_e=1.0, final_e=0.1, e_anneal_steps=1000):
         self.env_spec = env_spec
         self.resolution = resolution
         self.gamma = gamma
+        self.learning_rate = learning_rate
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
@@ -32,7 +33,8 @@ class DQN(object):
         self.pixelate_state_space(self.resolution)
         flat_state_size = self.resolution ** self.env_spec['state_dim']
         self.qtable = np.random.uniform(
-            low=-1, high=1, size=(flat_state_size, num_actions))
+            low=-1, high=1,
+            size=(flat_state_size, self.env_spec['action_dim']))
         return self.qtable
 
     def pixelate_state_space(self, resolution=10):
@@ -55,19 +57,18 @@ class DQN(object):
 
     def train(self, replay_memory):
         '''
-        step 1,2,3,4 of algo.
         replay_memory is provided externally
+        run the basic bellman equation update
         '''
-        # s,a,r,s'
-        last_exp = replay_memory.get_exp(replay_memory.size() - 1)
+        last_exp = replay_memory.get_exp([replay_memory.size() - 1])
         state = last_exp['states'][0]
         flat_state = self.flatten_state(state)
-        action = last_exp['actions'][0]
+        action = np.argmax(last_exp['actions'][0])  # from one-hot
         reward = last_exp['rewards'][0]
-        self.qtable[flat_state, action] = (1 - self.alpha) * \
+        self.qtable[flat_state, action] = (1 - self.learning_rate) * \
             self.qtable[flat_state, action] + \
-            self.alpha * (reward + self.gamma *
-                          self.qtable[flat_state, action])
+            self.learning_rate * (reward + self.gamma *
+                                  self.qtable[flat_state, action])
         return self.qtable
 
     def update_e(self):
