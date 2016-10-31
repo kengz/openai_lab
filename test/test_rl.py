@@ -18,6 +18,16 @@ class DQNTest(unittest.TestCase):
         assert(isinstance(sys_vars, dict))
         assert(sys_vars['epi'] > 0)
 
+    def test_run_tabular_q(self):
+        param = {'e_anneal_steps': 10000,
+                 'learning_rate': 0.01,
+                 'gamma': 0.99}
+        assert(rl.run_tabular_q.sys_vars['RENDER'] == False)
+        sys_vars = rl.run_tabular_q.run_session(param)
+        # ensure it runs, and returns the sys_vars
+        assert(isinstance(sys_vars, dict))
+        assert(sys_vars['epi'] > 0)
+
     def test_run_dqn(self):
         param = {'e_anneal_steps': 10000,
                  'learning_rate': 0.01,

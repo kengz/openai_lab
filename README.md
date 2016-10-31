@@ -42,13 +42,13 @@ Run the scripts inside the `rl/` folder. It will contain:
 - [x]memory-decay - solve the problem caused by having majority of random experience
 - [x]YAYY. get NN q-learner working and solve the cartpole problem
 - [x]add visualization: average/total reward, loss(we'll see)
-- recheck the basic q-learning algorithm (just in case)
-- get the tabular q-learner working
+- [x]get the tabular q-learner working
 - better parameter selection, to tune for a problem (can use the parallelization in util.py)
 - parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
 - solve the stability problem - some runs start out bad and end up bad too
 - do policy iteration (ch 4 from text)
 - other more advanced algos
+- add some graphs for repo page
 
 
 ## Authors
