@@ -21,7 +21,7 @@ def run_episode(sys_vars, env, dqn, replay_memory):
         action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
-        dqn.train(replay_memory)
+        dqn.train(sys_vars, replay_memory)
         state = next_state
         total_rewards += reward
         if done:
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     run_session(
         problem='CartPole-v0',
         # problem='MountainCar-v0',
-        param={'e_anneal_steps': 5000,
+        param={'e_anneal_steps': 2000,
                'learning_rate': 0.01,
                'n_epoch': 1,
                'gamma': 0.95})

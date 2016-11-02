@@ -19,7 +19,7 @@ def run_episode(sys_vars, env, qtable, replay_memory):
         action = qtable.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
-        qtable.train(replay_memory)
+        qtable.train(sys_vars, replay_memory)
         state = next_state
         total_rewards += reward
         if done:

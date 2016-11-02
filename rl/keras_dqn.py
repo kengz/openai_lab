@@ -50,11 +50,35 @@ class DQN(object):
         logger.info("Model built and compiled")
         return self.model
 
-    def train(self, replay_memory):
+    def select_action(self, state):
+        '''epsilon-greedy method'''
+        if self.e > np.random.rand():
+            action = np.random.choice(self.env_spec['actions'])
+        else:
+            state = np.reshape(state, (1, state.shape[0]))
+            Q_state = self.model.predict(state)
+            action = np.argmax(Q_state)
+        return action
+
+    def update_e(self, sys_vars, replay_memory):
+        '''strategy to update epsilon'''
+        epi = sys_vars['epi']
+        mem_size = replay_memory.size()
+        rise = self.final_e - self.init_e
+        slope = rise / float(self.e_anneal_steps)
+        self.e = max(slope * mem_size + self.init_e, self.final_e)
+        if not (epi % 2) and epi > 15:
+            # drop to 1/3 of the current exploration rate
+            self.e = max(self.e/3., self.final_e)
+        return self.e
+
+    def train(self, sys_vars, replay_memory):
         '''
         step 1,2,3,4 of algo.
         replay_memory is provided externally
         '''
+        self.update_e(sys_vars, replay_memory)
+
         loss_total = 0
         minibatch = replay_memory.rand_minibatch(self.batch_size)
         for epoch in range(self.n_epoch):
@@ -83,24 +107,6 @@ class DQN(object):
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
         return loss_total / self.n_epoch
-
-    def update_e(self):
-        '''strategy to update epsilon'''
-        self.e = max(self.e -
-                     (self.init_e - self.final_e)/float(self.e_anneal_steps),
-                     self.final_e)
-        return self.e
-
-    def select_action(self, state):
-        '''epsilon-greedy method'''
-        if self.e > np.random.rand():
-            action = np.random.choice(self.env_spec['actions'])
-        else:
-            state = np.reshape(state, (1, state.shape[0]))
-            Q_state = self.model.predict(state)
-            action = np.argmax(Q_state)
-        self.update_e()
-        return action
 
     def save(self, model_path, global_step=None):
         logger.info('Saving model checkpoint')

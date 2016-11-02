@@ -19,7 +19,7 @@ def run_episode(sys_vars, env, dqn, replay_memory):
         # action = dqn.select_action(state)
         next_state, reward, done, info = env.step(action)
         replay_memory.add_exp(action, reward, next_state, done)
-        # dqn.train(replay_memory)
+        # dqn.train(sys_vars, replay_memory)
 
         state = next_state
         total_rewards += reward

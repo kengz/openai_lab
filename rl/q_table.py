@@ -55,11 +55,28 @@ class QTable(object):
         flat_state = int("".join([str(ps) for ps in pixel_state]))
         return flat_state
 
-    def train(self, replay_memory):
+    def select_action(self, state):
+        '''epsilon-greedy method'''
+        if self.e > np.random.rand():
+            action = np.random.choice(self.env_spec['actions'])
+        else:
+            flat_state = self.flatten_state(state)
+            action = np.argmax(self.qtable[flat_state, :])
+        return action
+
+    def update_e(self):
+        '''strategy to update epsilon'''
+        self.e = max(self.e -
+                     (self.init_e - self.final_e)/float(self.e_anneal_steps),
+                     self.final_e)
+        return self.e
+
+    def train(self, sys_vars, replay_memory):
         '''
         replay_memory is provided externally
         run the basic bellman equation update
         '''
+        self.update_e()
         last_exp = replay_memory.get_exp([replay_memory.size() - 1])
         state = last_exp['states'][0]
         flat_state = self.flatten_state(state)
@@ -75,20 +92,3 @@ class QTable(object):
             self.learning_rate * \
             (reward + self.gamma * Q_next_state_max - Q_state_action)
         return self.qtable
-
-    def update_e(self):
-        '''strategy to update epsilon'''
-        self.e = max(self.e -
-                     (self.init_e - self.final_e)/float(self.e_anneal_steps),
-                     self.final_e)
-        return self.e
-
-    def select_action(self, state):
-        '''epsilon-greedy method'''
-        if self.e > np.random.rand():
-            action = np.random.choice(self.env_spec['actions'])
-        else:
-            flat_state = self.flatten_state(state)
-            action = np.argmax(self.qtable[flat_state, :])
-        self.update_e()
-        return action
