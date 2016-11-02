@@ -3,10 +3,10 @@ import itertools
 import json
 import logging
 import matplotlib
-import multiprocessing
+import multiprocessing as mp
+import numpy as np
 import os
 import pprint
-import numpy as np
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
@@ -106,10 +106,6 @@ def update_history(sys_vars,
     max len = MAX_HISTORY
     then report status
     '''
-    # Perhaps something up with the way append happens and queue is at capacity
-    # Simple fix: Removing earliest item first if queue at capacity
-    if (len(sys_vars['history']) == sys_vars.get('MAX_HISTORY')):
-        sys_vars['history'].popleft()
     sys_vars['history'].append(total_rewards)
     mean_rewards = np.mean(sys_vars['history'])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
@@ -126,10 +122,18 @@ def update_history(sys_vars,
         '{:->20}'.format(''),
     ]
     logger.info('\n'.join(logs))
-    if solved or (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1):
-        logger.info('Problem solved? {}'.format(solved))
-        plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
+    check_session_ends(sys_vars)
     return sys_vars
+
+
+def check_session_ends(sys_vars):
+    if (sys_vars['solved'] or
+            (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
+        logger.info('Problem solved? {}. Params: {}'.format(
+            solved, pp.pformat(sys_vars['param'])))
+    if not sys_vars['RENDER']:
+        return
+    plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
 
 
 def init_plotter(sys_vars):
@@ -216,8 +220,8 @@ def select_best_param(run_session, problem, param_grid):
     then sort by highest sessions_mean_rewards first
     return the best
     '''
-    NUM_CORES = multiprocessing.cpu_count()
-    p = multiprocessing.Pool(NUM_CORES)
+    NUM_CORES = mp.cpu_count()
+    p = mp.Pool(NUM_CORES)
     params_means = p.map(
         partial(run_session_average, run_session, problem),
         param_grid)
