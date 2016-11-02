@@ -131,8 +131,8 @@ def update_history(sys_vars,
 def check_session_ends(sys_vars):
     if (sys_vars['solved'] or
             (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
-        logger.info('Problem solved? {}. Params: {}'.format(
-            sys_vars['solved'], pp.pformat(sys_vars['param'])))
+        logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
+            sys_vars['solved'], sys_vars['epi'], pp.pformat(sys_vars['param'])))
     if not sys_vars['RENDER']:
         return
     plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
