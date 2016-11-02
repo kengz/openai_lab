@@ -133,6 +133,8 @@ def update_history(sys_vars,
 
 
 def init_plotter(sys_vars):
+    if not sys_vars['RENDER']:
+        return
     # initialize the plotters
     fig = plt.figure(facecolor='white')
 
