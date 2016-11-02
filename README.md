@@ -23,12 +23,19 @@ export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorf
 sudo pip install --upgrade $TF_BINARY_URL
 ```
 
+
 ## Usage
 
 Run the scripts inside the `rl/` folder. It will contain:
 - `run_gym_tour.py`: a tour of the OpenAI gym
 - `run_tabular_q.py`: a tabular q-learner
 - `run_dqn.py`: a NN-based q-learner
+
+To save a log, run like so:
+
+```shell
+python rl/run_dqn.py 2>&1 | tee run.log
+```
 
 
 ## Roadmap

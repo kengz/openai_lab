@@ -58,7 +58,6 @@ if __name__ == '__main__':
     #     # problem='MountainCar-v0',
     #     param={'e_anneal_steps': 2500,
     #            'learning_rate': 0.01,
-    #            'batch_size': 32,
     #            'gamma': 0.95})
 
     # # advanced parallel param selection from util

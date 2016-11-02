@@ -55,6 +55,8 @@ def init_sys_vars(problem='CartPole-v0', param={}):
     on reset will add vars: {param, epi, history, mean_rewards, solved}
     '''
     sys_vars = PROBLEMS[problem]
+    if mp.current_process().name != 'MainProcess':
+        sys_vars['RENDER'] = False  # mute on parallel
     if environ.get('CI'):
         sys_vars['RENDER'] = False
         sys_vars['MAX_EPISODES'] = 2
