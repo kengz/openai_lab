@@ -3,12 +3,8 @@ from util import *
 from replay_memory import ReplayMemory
 from keras_dqn import DQN
 
-# rl sys variables - see util.py for info
-sys_vars = init_sys_vars('CartPole-v0')
-# sys_vars = init_sys_vars('MountainCar-v0')  # also need diff params
 
-
-def run_episode(env, dqn, replay_memory):
+def run_episode(sys_vars, env, dqn, replay_memory):
     '''run ane episode, return sys_vars'''
     state = env.reset()
     replay_memory.reset_state(state)
@@ -35,9 +31,9 @@ def run_episode(env, dqn, replay_memory):
     return sys_vars
 
 
-def run_session(param={}):
+def run_session(problem, param={}):
     '''run a session of dqn'''
-    reset_sys_vars(sys_vars)  # reset sys_vars per session
+    sys_vars = init_sys_vars(problem, param)  # rl system, see util.py
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
@@ -45,7 +41,7 @@ def run_session(param={}):
 
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
-        run_episode(env, dqn, replay_memory)
+        run_episode(sys_vars, env, dqn, replay_memory)
         # Best so far, increment num epochs every 2 up to a max of 5
         # TODO: eh? absorb?
         if (dqn.n_epoch < 5 and epi % 2 == 0):
@@ -58,6 +54,8 @@ def run_session(param={}):
 
 if __name__ == '__main__':
     run_session(
+        problem='CartPole-v0',
+        # problem='MountainCar-v0',
         param={'e_anneal_steps': 5000,
                'learning_rate': 0.01,
                'n_epoch': 1,

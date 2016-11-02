@@ -40,6 +40,7 @@ required_sys_keys = {
     'MAX_STEPS',
     'MAX_EPISODES',
     'MAX_HISTORY',
+    'param',
     'epi',
     'history',
     'mean_rewards',
@@ -47,16 +48,17 @@ required_sys_keys = {
 }
 
 
-def init_sys_vars(problem_name='CartPole-v0'):
+def init_sys_vars(problem='CartPole-v0', param={}):
     '''
     init the sys vars for a problem by reading from
     assets/problems.json, then reset the other sys vars
-    on reset will add vars: {epi, history, mean_rewards, solved}
+    on reset will add vars: {param, epi, history, mean_rewards, solved}
     '''
-    sys_vars = PROBLEMS[problem_name]
+    sys_vars = PROBLEMS[problem]
     if environ.get('CI'):
         sys_vars['RENDER'] = False
         sys_vars['MAX_EPISODES'] = 2
+    sys_vars['param'] = param
     reset_sys_vars(sys_vars)
     init_plotter(sys_vars)
     return sys_vars
@@ -136,7 +138,8 @@ def init_plotter(sys_vars):
 
     ax1 = fig.add_subplot(211,
                           frame_on=False,
-                          title='total rewards per episode',
+                          title=str(sys_vars['param']) +
+                          '\ntotal rewards per episode',
                           ylabel='total rewards')
     p1, = ax1.plot([], [])
     plotters['total rewards'] = (ax1, p1)
