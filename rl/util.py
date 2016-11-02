@@ -193,7 +193,7 @@ def run_session_average(run_session, problem, param={}):
     run session multiple times for a param
     then average the mean_rewards from them
     '''
-    SESSIONS_PER_PARAM = 10
+    SESSIONS_PER_PARAM = 5
     logger.info(
         'Running average session with param = {}'.format(pp.pformat(param)))
     mean_rewards_history = []
