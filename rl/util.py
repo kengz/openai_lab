@@ -126,6 +126,7 @@ def update_history(sys_vars,
     logger.info('\n'.join(logs))
     if solved or (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1):
         logger.info('Problem solved? {}'.format(solved))
+        plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
     return sys_vars
 
 
