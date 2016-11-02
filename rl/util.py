@@ -185,7 +185,7 @@ def param_product(param_range):
 
 
 # advanced, experimental code for parallelization
-def run_session_average(run_session, sys_vars, param={}):
+def run_session_average(run_session, problem, param={}):
     '''
     executes the defined run_session function with sys_vars
     run session multiple times for a param
@@ -196,7 +196,7 @@ def run_session_average(run_session, sys_vars, param={}):
         'Running average session with param = {}'.format(pp.pformat(param)))
     mean_rewards_history = []
     for i in range(SESSIONS_PER_PARAM):
-        run_session(param)
+        sys_vars = run_session(problem, param)
         mean_rewards_history.append(sys_vars['mean_rewards'])
         sessions_mean_rewards = np.mean(mean_rewards_history)
         if sys_vars['solved']:
@@ -206,18 +206,18 @@ def run_session_average(run_session, sys_vars, param={}):
     return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
 
 
-def select_best_param(run_session, sys_vars, param_grid):
+def select_best_param(run_session, problem, param_grid):
     '''
     Parameter selection
     by running session average for each param parallel
-    executes the defined run_session function with sys_vars
+    executes the defined run_session function with problem
     then sort by highest sessions_mean_rewards first
     return the best
     '''
     NUM_CORES = multiprocessing.cpu_count()
     p = multiprocessing.Pool(NUM_CORES)
     params_means = p.map(
-        partial(run_session_average, run_session, sys_vars),
+        partial(run_session_average, run_session, problem),
         param_grid)
     params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
     for pm in params_means:
