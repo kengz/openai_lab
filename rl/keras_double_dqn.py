@@ -105,10 +105,6 @@ class DoubleDQN(object):
             # Evaluate max using model 1
             Q_next_states = self.model1.predict(minibatch['next_states'])
             Q_next_states_max = Q_next_states[:,Q_next_states_max_ind]
-            #print("Q next states select: {}".format(Q_next_states_select))
-            #print("Q next states max ind: {}".format(Q_next_states_max_ind))
-            #print("Q next states: {}".format(Q_next_states))
-            #print("Q next states max: {}".format(Q_next_states_max))
 
             # Q targets for batch-actions a;
             # with terminal to make future reward 0 if end
@@ -131,10 +127,8 @@ class DoubleDQN(object):
 
             # Switch model 1 and model 2
             temp = self.model1    
-            #print("Model 1: {} Model 2: {} Temp: {}".format(self.model1, self.model2, temp))
             self.model1 = self.model2
             self.model2 = temp
-            #print("Model 1: {} Model 2: {} Temp: {}".format(self.model1, self.model2, temp))
 
         return loss_total / self.n_epoch
 
