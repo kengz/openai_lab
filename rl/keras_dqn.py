@@ -80,8 +80,8 @@ class DQN(object):
         self.update_e(sys_vars, replay_memory)
 
         loss_total = 0
-        minibatch = replay_memory.rand_minibatch(self.batch_size)
         for epoch in range(self.n_epoch):
+            minibatch = replay_memory.rand_minibatch(self.batch_size)
             # algo step 1
             Q_states = self.model.predict(minibatch['states'])
             # algo step 2
