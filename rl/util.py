@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 handler.setFormatter(
     logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.propagate = False
 
@@ -123,7 +123,7 @@ def update_history(sys_vars,
             sys_vars['MAX_HISTORY'], mean_rewards),
         '{:->20}'.format(''),
     ]
-    logger.info('\n'.join(logs))
+    logger.debug('\n'.join(logs))
     check_session_ends(sys_vars)
     return sys_vars
 
@@ -210,7 +210,7 @@ def run_session_average(run_session, problem, param={}):
         if sys_vars['solved']:
             break
     logger.info(
-        'Sessions mean rewards: {}'.format(sessions_mean_rewards))
+        'Sessions mean rewards: {} with param = {}'.format(sessions_mean_rewards, pp.pformat(param)))
     return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
 
 
@@ -229,5 +229,5 @@ def select_best_param(run_session, problem, param_grid):
         param_grid)
     params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
     for pm in params_means:
-        logger.debug(pp.pformat(pm))
+        logger.info(pp.pformat(pm))
     return params_means[0]

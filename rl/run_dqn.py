@@ -9,7 +9,7 @@ def run_episode(sys_vars, env, dqn, replay_memory):
     state = env.reset()
     replay_memory.reset_state(state)
     total_rewards = 0
-    print("DQN params: e: {} learning_rate: {} "
+    logger.debug("DQN params: e: {} learning_rate: {} "
           "batch size: {} num_epochs: {}".format(
               dqn.e, dqn.learning_rate,
               dqn.batch_size, dqn.n_epoch))
