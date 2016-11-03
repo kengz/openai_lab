@@ -23,7 +23,7 @@ parser.add_argument("-d", "--debug",
                     dest="loglevel",
                     const=logging.DEBUG,
                     default=logging.INFO)
-args = parser.parse_args()
+args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 
 # Goddam python logger
