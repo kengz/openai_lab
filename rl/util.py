@@ -121,8 +121,13 @@ def update_history(sys_vars,
     max len = MAX_HISTORY
     then report status
     '''
+
     sys_vars['history'].append(total_rewards)
-    mean_rewards = np.mean(sys_vars['history'])
+    # Calculating mean_reward over last 100 episodes
+    if (len(sys_vars['history']) > 200):
+        mean_rewards = np.mean(sys_vars['history'][-200:])
+    else:
+        mean_rewards = np.mean(sys_vars['history'])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
     sys_vars['solved'] = solved
