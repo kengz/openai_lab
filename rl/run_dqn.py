@@ -53,21 +53,21 @@ def run_session(problem, param={}):
 
 
 if __name__ == '__main__':
-    # run_session(
-    #     problem='CartPole-v0',
-    #     # problem='MountainCar-v0',
-    #     param={'e_anneal_steps': 2500,
-    #            'learning_rate': 0.01,
-    #            'gamma': 0.95})
+    run_session(
+        problem='CartPole-v0',
+        # problem='MountainCar-v0',
+        param={'e_anneal_steps': 2500,
+               'learning_rate': 0.01,
+               'gamma': 0.95})
 
     # # advanced parallel param selection from util
     # # for hyper-param selection
-    param_range = {
-        'gamma': [0.99, 0.95, 0.90],
-        'learning_rate': [0.01, 0.02, 0.05],
-        'e_anneal_steps': [2500, 5000]
-    }
-    param_grid = param_product(param_range)
+    # param_range = {
+    #     'gamma': [0.99, 0.95, 0.90],
+    #     'learning_rate': [0.01, 0.02, 0.05],
+    #     'e_anneal_steps': [2500, 5000]
+    # }
+    # param_grid = param_product(param_range)
 
-    best_param = select_best_param(run_session, 'CartPole-v0', param_grid)
-    logger.info(pp.pformat(best_param))
+    # best_param = select_best_param(run_session, 'CartPole-v0', param_grid)
+    # logger.info(pp.pformat(best_param))

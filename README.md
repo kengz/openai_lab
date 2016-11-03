@@ -31,10 +31,12 @@ Run the scripts inside the `rl/` folder. It will contain:
 - `run_tabular_q.py`: a tabular q-learner
 - `run_dqn.py`: a NN-based q-learner
 
-To save a log, run like so:
+**Useful commands:**
 
 ```shell
-python rl/run_dqn.py 2>&1 | tee run.log
+python rl/run_dqn.py # run in normal mode
+python rl/run_dqn.py -d # print debug log
+python rl/run_dqn.py 2>&1 | tee run.log # write to log file
 ```
 
 

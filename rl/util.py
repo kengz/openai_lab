@@ -1,4 +1,5 @@
 # everything shall start from 0
+import argparse
 import itertools
 import json
 import logging
@@ -13,12 +14,24 @@ from os import path, environ
 from collections import deque
 from functools import partial
 
+
+# parse_args to add flag
+parser = argparse.ArgumentParser(description='Set flag for functions')
+parser.add_argument("-d", "--debug",
+                    help="activate debug log",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.DEBUG,
+                    default=logging.INFO)
+args = parser.parse_args()
+
+
 # Goddam python logger
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 handler.setFormatter(
     logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
-logger.setLevel(logging.INFO)
+logger.setLevel(args.loglevel)
 logger.addHandler(handler)
 logger.propagate = False
 
@@ -132,7 +145,8 @@ def check_session_ends(sys_vars):
     if (sys_vars['solved'] or
             (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
         logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
-            sys_vars['solved'], sys_vars['epi'], pp.pformat(sys_vars['param'])))
+            sys_vars['solved'], sys_vars['epi'],
+            pp.pformat(sys_vars['param'])))
     if not sys_vars['RENDER']:
         return
     plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
@@ -210,7 +224,8 @@ def run_session_average(run_session, problem, param={}):
         if sys_vars['solved']:
             break
     logger.info(
-        'Sessions mean rewards: {} with param = {}'.format(sessions_mean_rewards, pp.pformat(param)))
+        'Sessions mean rewards: {} with param = {}'.format(
+            sessions_mean_rewards, pp.pformat(param)))
     return {'param': param, 'sessions_mean_rewards': sessions_mean_rewards}
 
 
