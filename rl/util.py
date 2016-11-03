@@ -237,11 +237,14 @@ def select_best_param(run_session, problem, param_grid):
     then sort by highest sessions_mean_rewards first
     return the best
     '''
-    NUM_CORES = mp.cpu_count()
-    p = mp.Pool(NUM_CORES)
-    params_means = p.map(
+    # NUM_CORES = mp.cpu_count()
+    # p = mp.Pool(NUM_CORES)
+    # params_means = p.map(
+    #     partial(run_session_average, run_session, problem),
+    #     param_grid)
+    params_means = list(map(
         partial(run_session_average, run_session, problem),
-        param_grid)
+        param_grid))
     params_means.sort(key=lambda pm: pm['sessions_mean_rewards'], reverse=True)
     for pm in params_means:
         logger.info(pp.pformat(pm))
