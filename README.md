@@ -39,6 +39,13 @@ python rl/run_dqn.py -d # print debug log
 python rl/run_dqn.py 2>&1 | tee run.log # write to log file
 ```
 
+## Actually running
+
+```shell
+python rl/run_gym_tour.py -d
+python rl/run_tabular_q.py -d
+python rl/run_dqn.py -d
+```
 
 ## Roadmap
 

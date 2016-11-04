@@ -67,9 +67,9 @@ class DQN(object):
         rise = self.final_e - self.init_e
         slope = rise / float(self.e_anneal_steps)
         self.e = max(slope * mem_size + self.init_e, self.final_e)
-        if not (epi % 2) and epi > 15:
-            # drop to 1/3 of the current exploration rate
-            self.e = max(self.e/3., self.final_e)
+        # if not (epi % 2) and epi > 15:
+        #     # drop to 1/3 of the current exploration rate
+        #     self.e = max(self.e/3., self.final_e)
         return self.e
 
     def train(self, sys_vars, replay_memory):

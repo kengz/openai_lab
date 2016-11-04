@@ -51,6 +51,7 @@ if __name__ == '__main__':
     run_session(
         problem='CartPole-v0',
         param={'e_anneal_steps': 5000,
+               'resolution': 10,
                'learning_rate': 0.01,
                'gamma': 0.95})
 
