@@ -55,6 +55,7 @@ required_sys_keys = {
     'MAX_HISTORY',
     'param',
     'epi',
+    't',
     'history',
     'mean_rewards',
     'solved'
@@ -82,6 +83,7 @@ def init_sys_vars(problem='CartPole-v0', param={}):
 def reset_sys_vars(sys_vars):
     '''reset and check RL system vars before each new session'''
     sys_vars['epi'] = 0
+    sys_vars['t'] = 0
     sys_vars['history'] = deque(maxlen=sys_vars.get('MAX_HISTORY'))
     sys_vars['mean_rewards'] = 0
     sys_vars['solved'] = False
