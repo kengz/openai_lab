@@ -34,8 +34,8 @@ class DoubleDQN(object):
     def build_net(self):
         model1 = Sequential()
         model1.add(Dense(8,
-                        input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform', activation='sigmoid'))
+                         input_shape=(self.env_spec['state_dim'],),
+                         init='lecun_uniform', activation='sigmoid'))
         model1.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
         model1.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         print("Model 1 summary")
@@ -44,8 +44,8 @@ class DoubleDQN(object):
 
         model2 = Sequential()
         model2.add(Dense(8,
-                        input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform', activation='sigmoid'))
+                         input_shape=(self.env_spec['state_dim'],),
+                         init='lecun_uniform', activation='sigmoid'))
         model2.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
         model2.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         print("Model 2 summary")
@@ -57,8 +57,10 @@ class DoubleDQN(object):
     def build_graph(self):
         self.build_net()
         self.optimizer = SGD(lr=self.learning_rate)
-        self.model1.compile(loss='mean_squared_error', optimizer=self.optimizer)
-        self.model2.compile(loss='mean_squared_error', optimizer=self.optimizer)
+        self.model1.compile(
+            loss='mean_squared_error', optimizer=self.optimizer)
+        self.model2.compile(
+            loss='mean_squared_error', optimizer=self.optimizer)
         self.model = self.model1
         logger.info("Models built and compiled")
         return self.model1, self.model2
@@ -80,9 +82,9 @@ class DoubleDQN(object):
         rise = self.final_e - self.init_e
         slope = rise / float(self.e_anneal_steps)
         self.e = max(slope * mem_size + self.init_e, self.final_e)
-        #if not (epi % 2) and epi > 15:
-        #    # drop to 1/3 of the current exploration rate
-        #    self.e = max(self.e/3., self.final_e)
+        if not (epi % 3) and epi > 15:
+            # drop to 1/3 of the current exploration rate
+            self.e = max(self.e/3., self.final_e)
         return self.e
 
     def train(self, sys_vars, replay_memory):
@@ -97,17 +99,18 @@ class DoubleDQN(object):
             minibatch = replay_memory.rand_minibatch(self.batch_size)
             # algo step 1
             Q_states = self.model.predict(minibatch['states'])
-            
+
             # algo step 2
             # Select max using model 2
-            Q_next_states_select = self.model2.predict(minibatch['next_states'])
+            Q_next_states_select = self.model2.predict(
+                minibatch['next_states'])
             Q_next_states_max_ind = np.argmax(Q_next_states_select, axis=1)
             # if more than one max, pick 1st
             if (Q_next_states_max_ind.shape[0] > 1):
                 Q_next_states_max_ind = Q_next_states_max_ind[0]
             # Evaluate max using model 1
             Q_next_states = self.model1.predict(minibatch['next_states'])
-            Q_next_states_max = Q_next_states[:,Q_next_states_max_ind]
+            Q_next_states_max = Q_next_states[:, Q_next_states_max_ind]
 
             # Q targets for batch-actions a;
             # with terminal to make future reward 0 if end
@@ -129,7 +132,7 @@ class DoubleDQN(object):
             loss_total += loss
 
             # Switch model 1 and model 2
-            temp = self.model1    
+            temp = self.model1
             self.model1 = self.model2
             self.model2 = temp
 
