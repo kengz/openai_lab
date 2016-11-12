@@ -21,7 +21,7 @@ class Runner(object):
         replay_memory.reset_state(state)
         total_rewards = 0
         logger.debug("DQN Agent param: {}".format(pp.pformat(
-            {k: getattr(agent, k)
+            {k: getattr(agent, k, None)
              for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
         )))
 
