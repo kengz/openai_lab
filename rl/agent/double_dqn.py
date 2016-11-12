@@ -8,6 +8,10 @@ from keras.optimizers import SGD
 
 class DoubleDQN(DQN):
 
+    '''
+    The base class of double DQNs
+    '''
+
     def build_net(self):
         model = Sequential()
         model.add(Dense(8,

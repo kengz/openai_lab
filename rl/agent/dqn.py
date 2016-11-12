@@ -11,7 +11,7 @@ from keras.optimizers import SGD
 class DQN(object):
 
     '''
-    The base class of other DQNs, with the core methods
+    The base class of DQNs, with the core methods
     The simplest deep Q network,
     with epsilon-greedy method and
     Bellman equation for value, using neural net.
