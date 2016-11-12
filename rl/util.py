@@ -58,6 +58,7 @@ required_sys_keys = {
     't',
     'history',
     'mean_rewards',
+    'total_rewards',
     'solved'
 }
 
@@ -86,6 +87,7 @@ def reset_sys_vars(sys_vars):
     sys_vars['t'] = 0
     sys_vars['history'] = deque(maxlen=sys_vars.get('MAX_HISTORY'))
     sys_vars['mean_rewards'] = 0
+    sys_vars['total_rewards'] = 0
     sys_vars['solved'] = False
     check_sys_vars(sys_vars)
     return sys_vars
@@ -132,6 +134,7 @@ def update_history(sys_vars,
         mean_rewards = np.mean(sys_vars['history'])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
+    sys_vars['total_rewards'] = total_rewards
     sys_vars['solved'] = solved
     live_plot(sys_vars)
 

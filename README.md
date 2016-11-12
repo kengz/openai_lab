@@ -58,42 +58,41 @@ python setup.py install
 
 ## Usage
 
-Run the scripts inside the `rl/` folder. It will contain:
-- `run_gym_tour.py`: a tour of the OpenAI gym
-- `run_tabular_q.py`: a tabular q-learner
-- `run_dqn.py`: a NN-based q-learner
-
-**Useful commands:**
+The main scripts are inside the `rl/` folder. Configure your `Agent`, `problem` and `param` in `rl/main.py`, and run
 
 ```shell
-python rl/run_dqn.py # run in normal mode
-python rl/run_dqn.py -d # print debug log
-python rl/run_dqn.py 2>&1 | tee run.log # write to log file
+python rl/main.py # run in normal mode
+python rl/main.py -d # print debug log
+python rl/main.py 2>&1 | tee run.log # write to log file
 ```
 
-## Actually running
+See `rl/runner.py` for the main Runner class. It takes the 3 arguments `Agent, problem, param`.
 
-```shell
-python rl/run_gym_tour.py -d
-python rl/run_tabular_q.py -d
-python rl/run_dqn.py -d
-python rl/run_lunar_dqn.py -d
+You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods:
+
+```python
+def __init__(self, env_spec, ...<etc.>):
+def select_action(self, state):
+def train(self, sys_vars, replay_memory):
 ```
+
+Refer to the following Agents in `rl/agent/` for building your own:
+- `dummy.py`: dummy agent used for a gym tour. Does random actions.
+- `q_table.py`: a tabular q-learner
+- `dqn.py`: agent with a simple Deep Q-Network, forms the base `DQN` class for others to inherit
+- `double_dqn.py`: agent with Double Deep Q-Network, inherits `DQN`
+- `lunar_dqn.py`: agent with deeper network for the Lunar-Lander game, inherits `DQN`
+- `lunar_double_dqn.py`: agent with deeper network for the Lunar-Lander game, inherits `DoubleDQN`
+
 
 ## Roadmap
 
-- [x]get the gym tour done
-- [x]add `util.py`, refactor system
-- [x]add and build test code
-- [x]clear the DQN class off the TF code, to make it backend-agnostic
-- [x]faster CI builds, with real runs of rl in test
-- [meh]tag memory to indicate if it's from random action
-- [x]memory-decay - solve the problem caused by having majority of random experience
-- [x]YAYY. get NN q-learner working and solve the cartpole problem
-- [x]add visualization: average/total reward, loss(we'll see)
-- [x]get the tabular q-learner working
+- [x] major refactoring for more efficient development; standardization of the `Agent` class, and methods it shall implement.
+- [ ] logging of crucial data points, for plotting after runs
 - better parameter selection, to tune for a problem (can use the parallelization in util.py)
-- parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
+- [ ] improve memory selection policy
+- [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
+- [ ] parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
 - solve the stability problem - some runs start out bad and end up bad too
 - do policy iteration (ch 4 from text)
 - other more advanced algos
