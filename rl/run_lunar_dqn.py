@@ -2,8 +2,8 @@ import gym
 import numpy as np
 from util import *
 from replay_memory import ReplayMemory
-from agent.lunar_dqn import DQN
-from agent.lunar_double_dqn import DoubleDQN
+from agent.lunar_dqn import LunarDQN
+# from agent.lunar_double_dqn import DoubleDQN
 
 
 def run_episode(sys_vars, env, dqn, replay_memory):
@@ -40,7 +40,7 @@ def run_session(problem, param={}):
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
-    dqn = DoubleDQN(env_spec, **param)
+    dqn = LunarDQN(env_spec, **param)
 
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
