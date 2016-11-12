@@ -1,5 +1,5 @@
 import numpy as np
-from util import logger
+from util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -48,6 +48,7 @@ class DoubleDQN(object):
         model2.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         print("Model 2 summary")
         model2.summary()
+        logger.info(pp.pformat(self.env_spec))
         self.model2 = model2
         return model1, model2
 
