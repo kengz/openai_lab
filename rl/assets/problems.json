@@ -14,5 +14,13 @@
     "MAX_STEPS": 1500,
     "MAX_EPISODES": 5000,
     "MAX_HISTORY": 100
+  },
+  "LunarLander-v2": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "LunarLander-v2",
+    "SOLVED_MEAN_REWARD": 200,
+    "MAX_STEPS": 200,
+    "MAX_EPISODES": 10000,
+    "MAX_HISTORY": 100
   }
 }

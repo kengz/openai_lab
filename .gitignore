@@ -89,6 +89,7 @@ ENV/
 .ropeproject
 
 .DS_Store
+*.png
 
 # models
 *checkpoint*

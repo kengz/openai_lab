@@ -7,6 +7,8 @@ Working out at the (OpenAI) gym. **Note this is still under development, but wil
 
 ## Installation
 
+### Basic
+
 ```shell
 git clone https://github.com/kengz/openai_gym.git
 cd openai_gym
@@ -21,6 +23,36 @@ export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflo
 # or Linux CPU-only, Python3.5
 export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc1-cp35-cp35m-linux_x86_64.whl
 sudo pip install --upgrade $TF_BINARY_URL
+```
+
+### Complete
+
+To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the [Install Everything](https://github.com/openai/gym#installing-everything) of the repo (which is still broken at the time of writing).
+
+```shell
+brew install cmake boost boost-python sdl2 swig wget
+git clone https://github.com/openai/gym.git
+cd gym
+pip install -e '.[all]'
+```
+
+Try to run a Lunar Lander env, it will break (unless they fix it):
+```python
+import gym
+env = gym.make('LunarLander-v2')
+env.reset()
+env.render()
+```
+
+If it fails, debug as follow (and repeat once more if it fails again, glorious python):
+
+```shell
+pip3 uninstall Box2D box2d-py
+git clone https://github.com/pybox2d/pybox2d
+cd pybox2d/
+python setup.py clean
+python setup.py build
+python setup.py install
 ```
 
 
@@ -45,6 +77,7 @@ python rl/run_dqn.py 2>&1 | tee run.log # write to log file
 python rl/run_gym_tour.py -d
 python rl/run_tabular_q.py -d
 python rl/run_dqn.py -d
+python rl/run_lunar_dqn.py -d
 ```
 
 ## Roadmap
