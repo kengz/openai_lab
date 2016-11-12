@@ -8,6 +8,7 @@ def run_episode(sys_vars, env, dbledqn, replay_memory):
     '''run ane episode, return sys_vars'''
     state = env.reset()
     replay_memory.reset_state(state)
+    dqn.update_n_epoch(sys_vars)
     total_rewards = 0
     logger.debug("Double DQN params: e: {} learning_rate: {} "
           "batch size: {} num_epochs: {}".format(
@@ -43,9 +44,6 @@ def run_session(problem, param={}):
         sys_vars['epi'] = epi
         run_episode(sys_vars, env, dbledqn, replay_memory)
         # Best so far, increment num epochs every 2 up to a max of 5
-        # TODO: eh? absorb?
-        if (dbledqn.n_epoch < 5 and epi % 2 == 0):
-            dbledqn.n_epoch += 1
         if sys_vars['solved']:
             break
 

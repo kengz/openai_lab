@@ -8,11 +8,12 @@ def run_episode(sys_vars, env, dqn, replay_memory):
     '''run ane episode, return sys_vars'''
     state = env.reset()
     replay_memory.reset_state(state)
+    dqn.update_n_epoch(sys_vars)
     total_rewards = 0
     logger.debug("DQN params: e: {} learning_rate: {} "
-          "batch size: {} num_epochs: {}".format(
-              dqn.e, dqn.learning_rate,
-              dqn.batch_size, dqn.n_epoch))
+                 "batch size: {} num_epochs: {}".format(
+                     dqn.e, dqn.learning_rate,
+                     dqn.batch_size, dqn.n_epoch))
 
     for t in range(sys_vars.get('MAX_STEPS')):
         if sys_vars.get('RENDER'):
@@ -40,12 +41,9 @@ def run_session(problem, param={}):
     dqn = DQN(env_spec, **param)
 
     for epi in range(sys_vars['MAX_EPISODES']):
-        sys_vars['epi'] = epi
+        sys_vars['epi'] = epi  # update sys_vars epi
         run_episode(sys_vars, env, dqn, replay_memory)
         # Best so far, increment num epochs every 2 up to a max of 5
-        # TODO: eh? absorb?
-        if (dqn.n_epoch < 5 and epi % 2 == 0):
-            dqn.n_epoch += 1
         if sys_vars['solved']:
             break
 

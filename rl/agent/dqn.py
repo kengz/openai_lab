@@ -109,6 +109,17 @@ class DQN(object):
             loss_total += loss
         return loss_total / self.n_epoch
 
+    def update_n_epoch(self, sys_vars):
+        '''
+        Increase epochs at the beginning of each session,
+        for training for later episodes,
+        once it has more experience
+        Best so far, increment num epochs every 2 up to a max of 5
+        '''
+        if (self.n_epoch < 5 and sys_vars['epi'] % 2 == 0):
+            self.n_epoch += 1
+        return self.n_epoch
+
     def save(self, model_path, global_step=None):
         logger.info('Saving model checkpoint')
         self.model.save_weights(model_path)
