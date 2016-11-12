@@ -11,6 +11,7 @@ from keras.optimizers import SGD
 class DQN(object):
 
     '''
+    The base class of other DQNs, with the core methods
     The simplest deep Q network,
     with epsilon-greedy method and
     Bellman equation for value, using neural net.
@@ -38,7 +39,6 @@ class DQN(object):
         model.add(Dense(4,
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
-        # model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         self.model = model
@@ -68,9 +68,9 @@ class DQN(object):
         rise = self.final_e - self.init_e
         slope = rise / float(self.e_anneal_steps)
         self.e = max(slope * mem_size + self.init_e, self.final_e)
-        if not (epi % 2) and epi > 15:
-            # drop to 1/3 of the current exploration rate
-            self.e = max(self.e/3., self.final_e)
+        # if not (epi % 2) and epi > 15:
+        #     # drop to 1/3 of the current exploration rate
+        #     self.e = max(self.e/3., self.final_e)
         return self.e
 
     def train(self, sys_vars, replay_memory):
