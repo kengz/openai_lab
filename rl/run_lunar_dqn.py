@@ -1,7 +1,7 @@
 import gym
 from util import *
 from replay_memory import ReplayMemory
-from keras_dqn import DQN
+from keras_lunar_dqn import DQN
 
 
 def run_episode(sys_vars, env, dqn, replay_memory):
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         # problem='CartPole-v0',
         # problem='MountainCar-v0',
         problem='LunarLander-v2',
-        param={'e_anneal_steps': 5000,
+        param={'e_anneal_steps': 50000,
                'learning_rate': 0.01,
                'gamma': 0.99})
 
