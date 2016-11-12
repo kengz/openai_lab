@@ -1,4 +1,5 @@
 import gym
+import numpy as np
 from util import *
 from replay_memory import ReplayMemory
 from keras_lunar_dqn import DQN
@@ -33,6 +34,7 @@ def run_episode(sys_vars, env, dqn, replay_memory):
 
 
 def run_session(problem, param={}):
+    total_rewards_tracker = []
     '''run a session of dqn'''
     sys_vars = init_sys_vars(problem, param)  # rl system, see util.py
     env = gym.make(sys_vars['GYM_ENV_NAME'])
@@ -43,12 +45,14 @@ def run_session(problem, param={}):
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
         run_episode(sys_vars, env, dqn, replay_memory)
+        total_rewards_tracker.append(sys_vars['history'][-1])
         # Best so far, increment num epochs every 2 up to a max of 5
         # TODO: eh? absorb?
-        if (dqn.n_epoch < 5 and epi % 2 == 0):
+        if (dqn.n_epoch < 10 and epi % 2 == 0):
             dqn.n_epoch += 1
         if sys_vars['solved']:
             break
+    np.savetxt('./lunar.txt', total_rewards_tracker)
 
     return sys_vars
 
@@ -58,9 +62,9 @@ if __name__ == '__main__':
         # problem='CartPole-v0',
         # problem='MountainCar-v0',
         problem='LunarLander-v2',
-        param={'e_anneal_steps': 100000,
+        param={'e_anneal_steps': 150000,
                'learning_rate': 0.01,
-               'batch_size': 64,
+               'batch_size': 128,
                'gamma': 0.99})
 
     # # advanced parallel param selection from util
