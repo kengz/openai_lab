@@ -2,6 +2,7 @@ import gym
 from util import *
 from replay_memory import ReplayMemory
 from keras_lunar_dqn import DQN
+from keras_lunar_double_dqn import DoubleDQN
 
 
 def run_episode(sys_vars, env, dqn, replay_memory):
@@ -37,7 +38,7 @@ def run_session(problem, param={}):
     env = gym.make(sys_vars['GYM_ENV_NAME'])
     env_spec = get_env_spec(env)
     replay_memory = ReplayMemory(env_spec)
-    dqn = DQN(env_spec, **param)
+    dqn = DoubleDQN(env_spec, **param)
 
     for epi in range(sys_vars['MAX_EPISODES']):
         sys_vars['epi'] = epi
@@ -57,8 +58,9 @@ if __name__ == '__main__':
         # problem='CartPole-v0',
         # problem='MountainCar-v0',
         problem='LunarLander-v2',
-        param={'e_anneal_steps': 50000,
+        param={'e_anneal_steps': 100000,
                'learning_rate': 0.01,
+               'batch_size': 64,
                'gamma': 0.99})
 
     # # advanced parallel param selection from util
