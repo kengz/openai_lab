@@ -41,11 +41,11 @@ plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 plotters = {}  # hash of matplotlib objects for live-plot
 
 PROBLEMS = json.loads(open(
-    path.join(path.dirname(__file__), 'assets', 'problems.json')).read())
+    path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
 
 # the keys need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
-# set in assets/problems.json
+# set in asset/problems.json
 required_sys_keys = {
     'RENDER',
     'GYM_ENV_NAME',
@@ -64,7 +64,7 @@ required_sys_keys = {
 def init_sys_vars(problem='CartPole-v0', param={}):
     '''
     init the sys vars for a problem by reading from
-    assets/problems.json, then reset the other sys vars
+    asset/problems.json, then reset the other sys vars
     on reset will add vars: {param, epi, history, mean_rewards, solved}
     '''
     sys_vars = PROBLEMS[problem]
