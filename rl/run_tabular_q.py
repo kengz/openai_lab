@@ -1,7 +1,7 @@
 import gym
 from util import *
 from replay_memory import ReplayMemory
-from q_table import QTable
+from agent.q_table import QTable
 
 
 def run_episode(sys_vars, env, qtable, replay_memory):

@@ -2,8 +2,8 @@ import gym
 import numpy as np
 from util import *
 from replay_memory import ReplayMemory
-from keras_lunar_dqn import DQN
-from keras_lunar_double_dqn import DoubleDQN
+from agent.lunar_dqn import DQN
+from agent.lunar_double_dqn import DoubleDQN
 
 
 def run_episode(sys_vars, env, dqn, replay_memory):

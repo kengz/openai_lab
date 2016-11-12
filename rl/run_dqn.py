@@ -1,7 +1,7 @@
 import gym
 from util import *
 from replay_memory import ReplayMemory
-from keras_dqn import DQN
+from agent.dqn import DQN
 
 
 def run_episode(sys_vars, env, dqn, replay_memory):
