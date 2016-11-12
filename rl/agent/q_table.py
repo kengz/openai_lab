@@ -21,6 +21,8 @@ class QTable(object):
         self.final_e = final_e
         self.e = self.init_e
         self.e_anneal_steps = e_anneal_steps
+        self.batch_size = None
+        self.n_epoch = None
         self.build_table()
 
     def build_table(self):

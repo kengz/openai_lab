@@ -61,6 +61,19 @@ class DQN(object):
             action = np.argmax(Q_state)
         return action
 
+    def update_n_epoch(self, sys_vars):
+        '''
+        Increase epochs at the beginning of each session,
+        for training for later episodes,
+        once it has more experience
+        Best so far, increment num epochs every 2 up to a max of 5
+        '''
+        if (self.n_epoch < 5 and
+                sys_vars['t'] == 0 and
+                sys_vars['epi'] % 2 == 0):
+            self.n_epoch += 1
+        return self.n_epoch
+
     def update_e(self, sys_vars, replay_memory):
         '''strategy to update epsilon'''
         epi = sys_vars['epi']
@@ -78,6 +91,7 @@ class DQN(object):
         step 1,2,3,4 of algo.
         replay_memory is provided externally
         '''
+        self.update_n_epoch(sys_vars)
         self.update_e(sys_vars, replay_memory)
 
         loss_total = 0
@@ -108,17 +122,6 @@ class DQN(object):
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
         return loss_total / self.n_epoch
-
-    def update_n_epoch(self, sys_vars):
-        '''
-        Increase epochs at the beginning of each session,
-        for training for later episodes,
-        once it has more experience
-        Best so far, increment num epochs every 2 up to a max of 5
-        '''
-        if (self.n_epoch < 5 and sys_vars['epi'] % 2 == 0):
-            self.n_epoch += 1
-        return self.n_epoch
 
     def save(self, model_path, global_step=None):
         logger.info('Saving model checkpoint')

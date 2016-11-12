@@ -50,6 +50,7 @@ class DoubleDQN(DQN):
         step 1,2,3,4 of algo.
         replay_memory is provided externally
         '''
+        self.update_n_epoch(sys_vars)
         self.update_e(sys_vars, replay_memory)
 
         loss_total = 0
