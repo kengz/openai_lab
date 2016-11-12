@@ -20,10 +20,10 @@ class Runner(object):
         state = env.reset()
         replay_memory.reset_state(state)
         total_rewards = 0
-        logger.debug("DQN Agent param: e: {} learning_rate: {} "
-                     "batch size: {} num_epochs: {}".format(
-                         agent.e, agent.learning_rate,
-                         agent.batch_size, agent.n_epoch))
+        logger.debug("DQN Agent param: {}".format(pp.pformat(
+            {k: getattr(agent, k)
+             for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
+        )))
 
         for t in range(sys_vars.get('MAX_STEPS')):
             sys_vars['t'] = t  # update sys_vars t
