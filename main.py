@@ -1,4 +1,5 @@
-from rl.session import run
+from rl.session import sess_specs, run
 
 if __name__ == '__main__':
-    run('mountain_double_dqn')
+    # print(list(sess_specs.keys()))
+    run('dqn')
