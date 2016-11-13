@@ -12,8 +12,8 @@ class MountainDoubleDQN(DoubleDQN):
         model.add(Dense(2,
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
-        model.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(3, init='lecun_uniform', activation='sigmoid'))
+        model.add(Dense(4, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         logger.info("Model 1 summary")
         model.summary()
@@ -23,8 +23,8 @@ class MountainDoubleDQN(DoubleDQN):
         model2.add(Dense(2,
                          input_shape=(self.env_spec['state_dim'],),
                          init='lecun_uniform', activation='sigmoid'))
-        model2.add(Dense(2, init='lecun_uniform', activation='sigmoid'))
         model2.add(Dense(3, init='lecun_uniform', activation='sigmoid'))
+        model2.add(Dense(4, init='lecun_uniform', activation='sigmoid'))
         model2.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         logger.info("Model 2 summary")
         model2.summary()
@@ -35,7 +35,7 @@ class MountainDoubleDQN(DoubleDQN):
         '''strategy to update epsilon'''
         super(MountainDoubleDQN, self).update_e(sys_vars, replay_memory)
         epi = sys_vars['epi']
-        if not (epi % 3) and epi > 15:
+        if not (epi % 3) and epi > 10:
             # drop to 1/3 of the current exploration rate
             self.e = max(self.e/3., self.final_e)
         return self.e
