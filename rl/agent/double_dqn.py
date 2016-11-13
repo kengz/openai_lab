@@ -14,20 +14,18 @@ class DoubleDQN(DQN):
 
     def build_net(self):
         model = Sequential()
-        model.add(Dense(8,
+        model.add(Dense(4,
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
-        model.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         logger.info("Model 1 summary")
         model.summary()
         self.model = model
 
         model2 = Sequential()
-        model2.add(Dense(8,
+        model2.add(Dense(4,
                          input_shape=(self.env_spec['state_dim'],),
                          init='lecun_uniform', activation='sigmoid'))
-        model2.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
         model2.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         logger.info("Model 2 summary")
         model2.summary()
