@@ -88,15 +88,15 @@ Refer to the following Agents in `rl/agent/` for building your own:
 ## Roadmap
 
 - [x] major refactoring for more efficient development; standardization of the `Agent` class, and methods it shall implement.
-- [ ] logging of crucial data points, for plotting after runs
-- better parameter selection, to tune for a problem (can use the parallelization in util.py)
+- [x] logging of crucial data points, for plotting after runs
+- [ ] better parameter selection, to tune for a problem (can use the parallelization in util.py)
 - [ ] improve memory selection policy
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
+- [ ] visualization of NN with tensorboard?
 - [ ] parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
-- solve the stability problem - some runs start out bad and end up bad too
-- do policy iteration (ch 4 from text)
-- other more advanced algos
-- add some graphs for repo page
+- [ ] solve the stability problem - some runs start out bad and end up bad too
+- [ ] do policy iteration (ch 4 from text)
+- [ ] other more advanced algos
 
 
 ## Authors
