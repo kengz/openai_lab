@@ -21,6 +21,12 @@ parser.add_argument("-d", "--debug",
                     dest="loglevel",
                     const=logging.DEBUG,
                     default=logging.INFO)
+parser.add_argument("-b", "--blind",
+                    help="dont render graphics",
+                    action="store_const",
+                    dest="render",
+                    const=False,
+                    default=True)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 
@@ -68,7 +74,7 @@ def init_sys_vars(problem='CartPole-v0', param={}):
     on reset will add vars: {param, epi, history, mean_rewards, solved}
     '''
     sys_vars = PROBLEMS[problem]
-    if mp.current_process().name != 'MainProcess':
+    if (not args.render) or mp.current_process().name != 'MainProcess':
         sys_vars['RENDER'] = False  # mute on parallel
     if environ.get('CI'):
         sys_vars['RENDER'] = False

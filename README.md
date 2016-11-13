@@ -63,6 +63,7 @@ The main scripts are inside the `rl/` folder. Configure your `Agent`, `problem` 
 ```shell
 python rl/main.py # run in normal mode
 python rl/main.py -d # print debug log
+python rl/main.py -b # blind, i.e. don't render graphics
 python rl/main.py 2>&1 | tee run.log # write to log file
 ```
 
