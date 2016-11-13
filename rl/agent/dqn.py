@@ -1,6 +1,7 @@
 import numpy as np
-from base_agent import Agent
-from util import logger, pp
+from rl.agent.base_agent import Agent
+from rl.policy import EpsilonGreedyPolicy
+from rl.util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -23,6 +24,8 @@ class DQN(Agent):
                  init_e=1.0, final_e=0.1, e_anneal_steps=1000,
                  batch_size=16, n_epoch=1):
         super(DQN, self).__init__(env_spec)
+        self.policy = EpsilonGreedyPolicy(self)
+
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.init_e = init_e
@@ -52,16 +55,6 @@ class DQN(Agent):
         logger.info("Model built and compiled")
         return self.model
 
-    def select_action(self, state):
-        '''epsilon-greedy method'''
-        if self.e > np.random.rand():
-            action = np.random.choice(self.env_spec['actions'])
-        else:
-            state = np.reshape(state, (1, state.shape[0]))
-            Q_state = self.model.predict(state)
-            action = np.argmax(Q_state)
-        return action
-
     def update_n_epoch(self, sys_vars):
         '''
         Increase epochs at the beginning of each session,
@@ -75,17 +68,9 @@ class DQN(Agent):
             self.n_epoch += 1
         return self.n_epoch
 
-    def update_e(self, sys_vars, replay_memory):
-        '''strategy to update epsilon'''
-        epi = sys_vars['epi']
-        mem_size = replay_memory.size()
-        rise = self.final_e - self.init_e
-        slope = rise / float(self.e_anneal_steps)
-        self.e = max(slope * mem_size + self.init_e, self.final_e)
-        # if not (epi % 2) and epi > 15:
-        #     # drop to 1/3 of the current exploration rate
-        #     self.e = max(self.e/3., self.final_e)
-        return self.e
+    def select_action(self, state):
+        '''epsilon-greedy method'''
+        return self.policy.select_action(state)
 
     def train(self, sys_vars, replay_memory):
         '''
@@ -93,7 +78,7 @@ class DQN(Agent):
         replay_memory is provided externally
         '''
         self.update_n_epoch(sys_vars)
-        self.update_e(sys_vars, replay_memory)
+        self.policy.update_e(sys_vars, replay_memory)
 
         loss_total = 0
         for epoch in range(self.n_epoch):

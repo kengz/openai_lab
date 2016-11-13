@@ -1,10 +1,16 @@
-from agent.dqn import DQN
-from util import logger, pp
+from rl.agent.dqn import DQN
+from rl.policy import OscillatingEpsilonGreedyPolicy
+from rl.util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
 
 
 class LunarDQN(DQN):
+
+    def __init__(self, *args, **kwargs):
+        super(LunarDQN, self).__init__(*args, **kwargs)
+        # change the policy
+        self.policy = OscillatingEpsilonGreedyPolicy(self)
 
     def build_net(self):
         logger.info(pp.pformat(self.env_spec))
@@ -18,12 +24,3 @@ class LunarDQN(DQN):
         model.summary()
         self.model = model
         return model
-
-    def update_e(self, sys_vars, replay_memory):
-        '''strategy to update epsilon'''
-        super(LunarDQN, self).update_e(sys_vars, replay_memory)
-        epi = sys_vars['epi']
-        if not (epi % 2) and epi > 15:
-            # drop to 1/3 of the current exploration rate
-            self.e = max(self.e/3., self.final_e)
-        return self.e

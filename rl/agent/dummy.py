@@ -1,5 +1,5 @@
 import numpy as np
-from base_agent import Agent
+from rl.agent.base_agent import Agent
 
 
 class Dummy(Agent):

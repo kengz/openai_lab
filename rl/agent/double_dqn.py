@@ -1,6 +1,6 @@
 import numpy as np
-from agent.dqn import DQN
-from util import logger, pp
+from rl.agent.dqn import DQN
+from rl.util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -45,7 +45,7 @@ class DoubleDQN(DQN):
         replay_memory is provided externally
         '''
         self.update_n_epoch(sys_vars)
-        self.update_e(sys_vars, replay_memory)
+        self.policy.update_e(sys_vars, replay_memory)
 
         loss_total = 0
         for epoch in range(self.n_epoch):
