@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import halfnorm
-from collections import deque
 
 
 class ReplayMemory(object):

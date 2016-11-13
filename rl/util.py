@@ -1,4 +1,3 @@
-# everything shall start from 0
 import argparse
 import itertools
 import json
@@ -11,7 +10,6 @@ import pprint
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
-from collections import deque
 from functools import partial
 
 
