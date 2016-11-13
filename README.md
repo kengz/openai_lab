@@ -67,6 +67,11 @@ python main.py -b # blind, i.e. don't render graphics
 python main.py 2>&1 | tee run.log # write to log file
 ```
 
+Per run, it will also write a `<Problem>_history.txt` file that records all the `total_rewards`. If rendering is enabled, it will also save the graph to `<Problem>.png`.
+
+
+## Development
+
 See `rl/session.py` for the main Session class. It takes the 3 arguments `Agent, problem, param`.
 
 You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods:
