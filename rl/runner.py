@@ -25,7 +25,7 @@ class Runner(object):
              for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
         )))
 
-        for t in range(sys_vars.get('MAX_STEPS')):
+        for t in range(sys_vars.get('MAX_TIMESTEPS')):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()

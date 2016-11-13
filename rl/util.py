@@ -50,9 +50,9 @@ required_sys_keys = {
     'RENDER',
     'GYM_ENV_NAME',
     'SOLVED_MEAN_REWARD',
-    'MAX_STEPS',
+    'MAX_TIMESTEPS',
     'MAX_EPISODES',
-    'MAX_HISTORY',
+    'REWARD_MEAN_LEN',
     'param',
     'epi',
     't',
@@ -85,7 +85,7 @@ def reset_sys_vars(sys_vars):
     '''reset and check RL system vars before each new session'''
     sys_vars['epi'] = 0
     sys_vars['t'] = 0
-    sys_vars['history'] = deque(maxlen=sys_vars.get('MAX_HISTORY'))
+    sys_vars['history'] = []
     sys_vars['mean_rewards'] = 0
     sys_vars['total_rewards'] = 0
     sys_vars['solved'] = False
@@ -122,14 +122,15 @@ def update_history(sys_vars,
                    total_rewards):
     '''
     update the hisory (list of total rewards)
-    max len = MAX_HISTORY
+    max len = REWARD_MEAN_LEN
     then report status
     '''
 
     sys_vars['history'].append(total_rewards)
+    avg_len = sys_vars.get('REWARD_MEAN_LEN')
     # Calculating mean_reward over last 100 episodes
-    if (len(sys_vars['history']) > 200):
-        mean_rewards = np.mean(sys_vars['history'][-200:])
+    if (len(sys_vars['history']) > avg_len):
+        mean_rewards = np.mean(sys_vars['history'][-avg_len:])
     else:
         mean_rewards = np.mean(sys_vars['history'])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
@@ -143,7 +144,7 @@ def update_history(sys_vars,
         'Episode: {}, total t: {}, total reward: {}'.format(
             sys_vars['epi'], total_t, total_rewards),
         'Mean rewards over last {} episodes: {:.4f}'.format(
-            sys_vars['MAX_HISTORY'], mean_rewards),
+            sys_vars['REWARD_MEAN_LEN'], mean_rewards),
         '{:->20}'.format(''),
     ]
     logger.debug('\n'.join(logs))

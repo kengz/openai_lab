@@ -3,24 +3,24 @@
     "RENDER": true,
     "GYM_ENV_NAME": "CartPole-v0",
     "SOLVED_MEAN_REWARD": 195.0,
-    "MAX_STEPS": 200,
+    "MAX_TIMESTEPS": 200,
     "MAX_EPISODES": 5000,
-    "MAX_HISTORY": 100
+    "REWARD_MEAN_LEN": 100
   },
   "MountainCar-v0": {
     "RENDER": true,
     "GYM_ENV_NAME": "MountainCar-v0",
     "SOLVED_MEAN_REWARD": -110.0,
-    "MAX_STEPS": 1500,
+    "MAX_TIMESTEPS": 1500,
     "MAX_EPISODES": 5000,
-    "MAX_HISTORY": 100
+    "REWARD_MEAN_LEN": 100
   },
   "LunarLander-v2": {
     "RENDER": true,
     "GYM_ENV_NAME": "LunarLander-v2",
     "SOLVED_MEAN_REWARD": 200,
-    "MAX_STEPS": 300,
+    "MAX_TIMESTEPS": 300,
     "MAX_EPISODES": 10000,
-    "MAX_HISTORY": 100
+    "REWARD_MEAN_LEN": 100
   }
 }
