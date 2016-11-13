@@ -1,7 +1,8 @@
 import numpy as np
+from base_agent import Agent
 
 
-class Dummy(object):
+class Dummy(Agent):
 
     '''
     A dummy agent that does random actions, for demo

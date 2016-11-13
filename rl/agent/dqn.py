@@ -1,4 +1,5 @@
 import numpy as np
+from base_agent import Agent
 from util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -8,7 +9,7 @@ from keras.optimizers import SGD
 # from keras.objectives import mse
 
 
-class DQN(object):
+class DQN(Agent):
 
     '''
     The base class of DQNs, with the core methods

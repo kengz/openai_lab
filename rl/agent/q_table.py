@@ -1,7 +1,8 @@
 import numpy as np
+from base_agent import Agent
 
 
-class QTable(object):
+class QTable(Agent):
 
     '''
     The simplest Q learner - a table,
