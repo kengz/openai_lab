@@ -72,10 +72,16 @@ See `rl/session.py` for the main Session class. It takes the 3 arguments `Agent,
 You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods:
 
 ```python
-def __init__(self, env_spec, ...<etc.>):
-    # internally also do: self.policy = Policy(self)
+# see rl/agent/dqn.py for example
+def __init__(self, env_spec, *args, **kwargs):
+    super(DQN, self).__init__(env_spec)
+    self.policy = Policy(self)
+    # set other params for agent
 def select_action(self, state):
+    self.policy.select_action(state)
 def train(self, sys_vars, replay_memory):
+    self.policy.update(sys_vars, replay_memory)
+    # training code...
 ```
 
 Refer to the following Agents in `rl/agent/` for building your own:
