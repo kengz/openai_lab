@@ -40,7 +40,7 @@ sess_specs = {
     'lunar_double_dqn': {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
-        'param': {'e_anneal_steps': 150000,
+        'param': {'e_anneal_steps': 250000,
                   'learning_rate': 0.01,
                   'batch_size': 128,
                   'gamma': 0.99}
@@ -56,4 +56,4 @@ def run(sess_name):
     return sess_runner.run_session()
 
 if __name__ == '__main__':
-    run('dqn')
+    run('lunar_double_dqn')

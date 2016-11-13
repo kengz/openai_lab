@@ -1,4 +1,7 @@
 from agent.double_dqn import DoubleDQN
+from util import logger, pp
+from keras.models import Sequential
+from keras.layers.core import Dense
 
 
 class LunarDoubleDQN(DoubleDQN):
