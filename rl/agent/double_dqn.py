@@ -13,6 +13,7 @@ class DoubleDQN(DQN):
     '''
 
     def build_net(self):
+        logger.info(pp.pformat(self.env_spec))
         model = Sequential()
         model.add(Dense(4,
                         input_shape=(self.env_spec['state_dim'],),
@@ -30,7 +31,6 @@ class DoubleDQN(DQN):
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2
-        logger.info(pp.pformat(self.env_spec))
         return model, model2
 
     def build_graph(self):

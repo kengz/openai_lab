@@ -29,6 +29,14 @@ sess_specs = {
                   'batch_size': 32,
                   'gamma': 0.97}
     },
+    'mountain_double_dqn': {
+        'Agent': mountain_double_dqn.MountainDoubleDQN,
+        'problem': 'MountainCar-v0',
+        'param': {'e_anneal_steps': 10000,
+                  'learning_rate': 0.01,
+                  'batch_size': 128,
+                  'gamma': 0.97}
+    },
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
@@ -56,4 +64,4 @@ def run(sess_name):
     return sess_runner.run_session()
 
 if __name__ == '__main__':
-    run('lunar_double_dqn')
+    run('mountain_double_dqn')
