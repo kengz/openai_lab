@@ -58,21 +58,22 @@ python setup.py install
 
 ## Usage
 
-The main scripts are inside the `rl/` folder. Configure your `Agent`, `problem` and `param` in `rl/main.py`, and run
+The scripts are inside the `rl/` folder. Configure your `Agent`, `problem` and `param` in `rl/session.py`, and run
 
 ```shell
-python rl/main.py # run in normal mode
-python rl/main.py -d # print debug log
-python rl/main.py -b # blind, i.e. don't render graphics
-python rl/main.py 2>&1 | tee run.log # write to log file
+python main.py # run in normal mode
+python main.py -d # print debug log
+python main.py -b # blind, i.e. don't render graphics
+python main.py 2>&1 | tee run.log # write to log file
 ```
 
-See `rl/runner.py` for the main Runner class. It takes the 3 arguments `Agent, problem, param`.
+See `rl/session.py` for the main Session class. It takes the 3 arguments `Agent, problem, param`.
 
 You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods:
 
 ```python
 def __init__(self, env_spec, ...<etc.>):
+    # internally also do: self.policy = Policy(self)
 def select_action(self, state):
 def train(self, sys_vars, replay_memory):
 ```
@@ -90,6 +91,7 @@ Refer to the following Agents in `rl/agent/` for building your own:
 
 - [x] major refactoring for more efficient development; standardization of the `Agent` class, and methods it shall implement.
 - [x] logging of crucial data points, for plotting after runs
+- [x] complete refactoring of Agent and Policy
 - [ ] better parameter selection, to tune for a problem (can use the parallelization in util.py)
 - [ ] improve memory selection policy
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system

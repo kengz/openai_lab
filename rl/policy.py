@@ -5,14 +5,21 @@ class Policy(object):
 
     '''
     The base class of Policy, with the core methods
-    Acts as a proxy method definition,
-    draws parameters from agent to compute
+    Acts as a proxy policy definition,
+    still draws parameters from agent to compute
     '''
 
     def __init__(self, agent):
+        '''
+        call from Agent.__init__ as:
+        self.policy = Policy(self)
+        '''
         self.agent = agent
 
     def select_action(self, state):
+        raise NotImplementedError()
+
+    def update(self, sys_vars, replay_memory):
         raise NotImplementedError()
 
 
@@ -22,7 +29,7 @@ class EpsilonGreedyPolicy(Policy):
     The Epsilon-greedy policy
     '''
 
-    def update_e(self, sys_vars, replay_memory):
+    def update(self, sys_vars, replay_memory):
         '''strategy to update epsilon in agent'''
         agent = self.agent
         epi = sys_vars['epi']
@@ -52,9 +59,9 @@ class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     the current exploration rate
     '''
 
-    def update_e(self, sys_vars, replay_memory):
+    def update(self, sys_vars, replay_memory):
         '''strategy to update epsilon in agent'''
-        super(OscillatingEpsilonGreedyPolicy, self).update_e(
+        super(OscillatingEpsilonGreedyPolicy, self).update(
             sys_vars, replay_memory)
         agent = self.agent
         epi = sys_vars['epi']

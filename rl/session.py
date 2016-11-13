@@ -7,6 +7,7 @@ from rl.agent import *
 class Session(object):
 
     '''
+    main.py calls this
     The base class for running a session of
     a DQN Agent, at a problem, with agent params
     '''
@@ -134,7 +135,7 @@ sess_specs = {
 
 def run(sess_name):
     '''
-    Wrapper to run session by name pointing to specs
+    Wrapper for main.py to run session by name pointing to specs
     '''
     sess_spec = sess_specs.get(sess_name)
     sess = Session(sess_spec['Agent'],
