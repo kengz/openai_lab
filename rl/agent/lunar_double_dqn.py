@@ -19,13 +19,7 @@ class LunarDoubleDQN(DoubleDQN):
         model.summary()
         self.model = model
 
-        model2 = Sequential()
-        model2.add(Dense(8,
-                         input_shape=(self.env_spec['state_dim'],),
-                         init='lecun_uniform', activation='sigmoid'))
-        model2.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
-        model2.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
-        model2.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
+        model2 = Sequential.from_config(model.get_config())
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2
