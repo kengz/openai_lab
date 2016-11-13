@@ -32,10 +32,10 @@ sess_specs = {
     'mountain_double_dqn': {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
-        'param': {'e_anneal_steps': 10000,
+        'param': {'e_anneal_steps': 100000,
                   'learning_rate': 0.01,
                   'batch_size': 128,
-                  'gamma': 0.97}
+                  'gamma': 0.99}
     },
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
