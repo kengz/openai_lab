@@ -127,7 +127,7 @@ def update_history(sys_vars,
     '''
 
     sys_vars['history'].append(total_rewards)
-    avg_len = sys_vars.get('REWARD_MEAN_LEN')
+    avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
     if (len(sys_vars['history']) > avg_len):
         mean_rewards = np.mean(sys_vars['history'][-avg_len:])
@@ -158,6 +158,8 @@ def check_session_ends(sys_vars):
         logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
             sys_vars['solved'], sys_vars['epi'],
             pp.pformat(sys_vars['param'])))
+    np.savetxt('{}_history.txt'.format(sys_vars['GYM_ENV_NAME']),
+               sys_vars['history'], '%.4f', header='total_rewards')
     if not sys_vars['RENDER']:
         return
     plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
