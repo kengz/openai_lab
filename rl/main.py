@@ -1,4 +1,4 @@
-from runner import Runner
+from session import Session
 from agent import *
 
 sess_specs = {
@@ -58,10 +58,10 @@ sess_specs = {
 
 def run(sess_name):
     sess_spec = sess_specs.get(sess_name)
-    sess_runner = Runner(sess_spec['Agent'],
+    sess = Session(sess_spec['Agent'],
                          problem=sess_spec['problem'],
                          param=sess_spec['param'])
-    return sess_runner.run_session()
+    return sess.run()
 
 if __name__ == '__main__':
     run('mountain_double_dqn')

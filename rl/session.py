@@ -1,9 +1,9 @@
 import gym
 from util import *
-from replay_memory import ReplayMemory
+from memory import ReplayMemory
 
 
-class Runner(object):
+class Session(object):
 
     '''
     The base class for running a session of
@@ -42,7 +42,7 @@ class Runner(object):
         update_history(sys_vars, t, total_rewards)
         return sys_vars
 
-    def run_session(self):
+    def run(self):
         '''run a session of agent'''
         sys_vars = init_sys_vars(
             self.problem, self.param)  # rl system, see util.py
@@ -71,5 +71,5 @@ class Runner(object):
     #     param_grid = param_product(param_range)
 
     #     best_param = select_best_param(
-    #         self.run_session, 'CartPole-v0', param_grid)
+    #         self.run, 'CartPole-v0', param_grid)
     #     logger.info(pp.pformat(best_param))
