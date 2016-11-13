@@ -14,7 +14,7 @@ class QTable(Agent):
                  resolution=10,
                  gamma=0.95, learning_rate=0.1,
                  init_e=1.0, final_e=0.1, e_anneal_steps=1000):
-        self.env_spec = env_spec
+        super(QTable, self).__init__(env_spec)
         self.resolution = resolution
         self.gamma = gamma
         self.learning_rate = learning_rate
