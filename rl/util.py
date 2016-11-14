@@ -133,10 +133,7 @@ def update_history(sys_vars,
     sys_vars['history'].append(total_rewards)
     avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
-    if (len(sys_vars['history']) > avg_len):
-        mean_rewards = np.mean(sys_vars['history'][-avg_len:])
-    else:
-        mean_rewards = np.mean(sys_vars['history'])
+    mean_rewards = np.mean(sys_vars['history'][-avg_len:])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
     sys_vars['total_rewards'] = total_rewards
