@@ -54,7 +54,6 @@ required_sys_keys = {
     'RENDER',
     'GYM_ENV_NAME',
     'SOLVED_MEAN_REWARD',
-    'MAX_TIMESTEPS',
     'MAX_EPISODES',
     'REWARD_MEAN_LEN',
     'param',

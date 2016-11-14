@@ -27,7 +27,7 @@ class Session(object):
              for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
         )))
 
-        for t in range(sys_vars.get('MAX_TIMESTEPS')):
+        for t in range(env.spec.timestep_limit):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
@@ -94,7 +94,7 @@ sess_specs = {
     'dqn': {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
-        'param': {'e_anneal_episodes': 70,
+        'param': {'e_anneal_episodes': 90,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
     },

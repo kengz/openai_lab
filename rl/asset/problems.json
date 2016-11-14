@@ -3,7 +3,6 @@
     "RENDER": true,
     "GYM_ENV_NAME": "CartPole-v0",
     "SOLVED_MEAN_REWARD": 195.0,
-    "MAX_TIMESTEPS": 200,
     "MAX_EPISODES": 5000,
     "REWARD_MEAN_LEN": 100
   },
@@ -11,7 +10,6 @@
     "RENDER": true,
     "GYM_ENV_NAME": "MountainCar-v0",
     "SOLVED_MEAN_REWARD": -110.0,
-    "MAX_TIMESTEPS": 1500,
     "MAX_EPISODES": 5000,
     "REWARD_MEAN_LEN": 100
   },
@@ -19,7 +17,6 @@
     "RENDER": true,
     "GYM_ENV_NAME": "LunarLander-v2",
     "SOLVED_MEAN_REWARD": 200,
-    "MAX_TIMESTEPS": 1000,
     "MAX_EPISODES": 3000,
     "REWARD_MEAN_LEN": 100
   }
