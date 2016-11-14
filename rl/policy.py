@@ -99,5 +99,5 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
             projection_gap > abs(SOLVED_MEAN_REWARD * 0.05))
         agent.e = max(gap_ratio * agent.init_e, agent.final_e)
         if not active_exploration_cycle:
-            agent.e = max(agent.e/3., agent.final_e)
+            agent.e = max(agent.e/2., agent.final_e)
         return agent.e
