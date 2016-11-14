@@ -41,7 +41,7 @@ class Session(object):
             if done:
                 break
 
-        update_history(sys_vars, t, total_rewards)
+        update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
 
     def run(self):

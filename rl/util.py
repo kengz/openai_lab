@@ -61,6 +61,7 @@ required_sys_keys = {
     'epi',
     't',
     'history',
+    'e_history',
     'mean_rewards',
     'total_rewards',
     'solved'
@@ -90,6 +91,7 @@ def reset_sys_vars(sys_vars):
     sys_vars['epi'] = 0
     sys_vars['t'] = 0
     sys_vars['history'] = []
+    sys_vars['e_history'] = []
     sys_vars['mean_rewards'] = 0
     sys_vars['total_rewards'] = 0
     sys_vars['solved'] = False
@@ -121,7 +123,8 @@ def report_speed(real_time, total_t):
     logger.info('Mean speed: {:.4f} s/step'.format(avg_speed))
 
 
-def update_history(sys_vars,
+def update_history(agent,
+                   sys_vars,
                    total_t,
                    total_rewards):
     '''
@@ -131,6 +134,7 @@ def update_history(sys_vars,
     '''
 
     sys_vars['history'].append(total_rewards)
+    sys_vars['e_history'].append(getattr(agent, 'e', 0))
     avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
     mean_rewards = np.mean(sys_vars['history'][-avg_len:])
@@ -180,6 +184,12 @@ def init_plotter(sys_vars):
     p1, = ax1.plot([], [])
     plotters['total rewards'] = (ax1, p1)
 
+    ax1e = ax1.twinx()
+    ax1e.set_ylabel('epsilon').set_color('r')
+    ax1e.set_frame_on(False)
+    p1e, = ax1e.plot([], [], 'r')
+    plotters['e'] = (ax1e, p1e)
+
     ax2 = fig.add_subplot(212,
                           frame_on=False,
                           title='mean rewards over last 100 episodes',
@@ -199,6 +209,12 @@ def live_plot(sys_vars):
     p1.set_xdata(np.arange(len(p1.get_ydata())))
     ax1.relim()
     ax1.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    ax1e, p1e = plotters['e']
+    p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['e_history'][-1]))
+    p1e.set_xdata(np.arange(len(p1e.get_ydata())))
+    ax1e.relim()
+    ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
 
     ax2, p2 = plotters['mean rewards']
     p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
