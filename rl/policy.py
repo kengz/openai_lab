@@ -93,11 +93,12 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         projection_gap = SOLVED_MEAN_REWARD - partial_mean_reward
         worst_gap = SOLVED_MEAN_REWARD - min_reward
         gap_ratio = projection_gap / worst_gap
+        pessimistic_gap_ratio = min(3.*gap_ratio, 1.)
         # if is in odd cycle, and diff is still big, actively explore
         active_exploration_cycle = not bool(
             int(epi/PARTIAL_MEAN_LEN)) and (
-            projection_gap > abs(SOLVED_MEAN_REWARD * 0.10))
-        agent.e = max(gap_ratio * agent.init_e, agent.final_e)
+            projection_gap > abs(SOLVED_MEAN_REWARD * 0.05))
+        agent.e = max(pessimistic_gap_ratio * agent.init_e, agent.final_e)
         if not active_exploration_cycle:
             agent.e = max(agent.e/3., agent.final_e)
         return agent.e
