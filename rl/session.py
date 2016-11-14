@@ -125,7 +125,7 @@ sess_specs = {
     'lunar_double_dqn': {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
-        'param': {'e_anneal_episodes': 1000,
+        'param': {'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
                   'gamma': 0.99}

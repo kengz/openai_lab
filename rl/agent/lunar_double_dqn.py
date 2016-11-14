@@ -28,7 +28,7 @@ class LunarDoubleDQN(DoubleDQN):
         model2.summary()
         self.model2 = model2
 
-        self.optimizer = SGD(lr=self.learning_rate)
+        self.optimizer = SGD(lr=self.learning_rate, momentum=0.1)
         self.model.compile(
             loss='mean_squared_error', optimizer=self.optimizer)
         self.model2.compile(
