@@ -19,7 +19,7 @@
     "RENDER": true,
     "GYM_ENV_NAME": "LunarLander-v2",
     "SOLVED_MEAN_REWARD": 200,
-    "MAX_TIMESTEPS": 400,
+    "MAX_TIMESTEPS": 1000,
     "MAX_EPISODES": 10000,
     "REWARD_MEAN_LEN": 100
   }
