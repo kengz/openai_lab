@@ -1,5 +1,5 @@
 from rl.agent.dqn import DQN
-from rl.policy import OscillatingEpsilonGreedyPolicy
+from rl.policy import TargetedEpsilonGreedyPolicy
 from rl.util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -10,7 +10,7 @@ class LunarDQN(DQN):
     def __init__(self, *args, **kwargs):
         super(LunarDQN, self).__init__(*args, **kwargs)
         # change the policy
-        self.policy = OscillatingEpsilonGreedyPolicy(self)
+        self.policy = TargetedEpsilonGreedyPolicy(self)
 
     def build_net(self):
         logger.info(pp.pformat(self.env_spec))

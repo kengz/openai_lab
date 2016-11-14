@@ -21,7 +21,7 @@ class DQN(Agent):
 
     def __init__(self, env_spec,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_steps=1000,
+                 init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
                  batch_size=16, n_epoch=1):
         super(DQN, self).__init__(env_spec)
         self.policy = EpsilonGreedyPolicy(self)
@@ -31,7 +31,7 @@ class DQN(Agent):
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
-        self.e_anneal_steps = e_anneal_steps
+        self.e_anneal_episodes = e_anneal_episodes
         self.batch_size = batch_size
         self.n_epoch = n_epoch
         self.build_graph()

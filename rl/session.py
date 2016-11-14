@@ -68,7 +68,7 @@ class Session(object):
     #     param_range = {
     #         'gamma': [0.99, 0.95, 0.90],
     #         'learning_rate': [0.01, 0.02, 0.05],
-    #         'e_anneal_steps': [2500, 5000]
+    #         'e_anneal_episodes': [2500, 5000]
     #     }
     #     param_grid = param_product(param_range)
 
@@ -87,21 +87,21 @@ sess_specs = {
     'q_table': {
         'Agent': q_table.QTable,
         'problem': 'CartPole-v0',
-        'param': {'e_anneal_steps': 5000,
+        'param': {'e_anneal_episodes': 200,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
     },
     'dqn': {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
-        'param': {'e_anneal_steps': 5000,
+        'param': {'e_anneal_episodes': 70,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
     },
     'double_dqn': {
         'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
-        'param': {'e_anneal_steps': 2500,
+        'param': {'e_anneal_episodes': 50,
                   'learning_rate': 0.01,
                   'batch_size': 32,
                   'gamma': 0.97}
@@ -109,7 +109,7 @@ sess_specs = {
     'mountain_double_dqn': {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
-        'param': {'e_anneal_steps': 500000,
+        'param': {'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
                   'gamma': 0.99}
@@ -117,17 +117,17 @@ sess_specs = {
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
-        'param': {'e_anneal_steps': 150000,
+        'param': {'e_anneal_episodes': 1000,
                   'learning_rate': 0.01,
-                  'batch_size': 128,
+                  'batch_size': 64,
                   'gamma': 0.99}
     },
     'lunar_double_dqn': {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
-        'param': {'e_anneal_steps': 250000,
+        'param': {'e_anneal_episodes': 1000,
                   'learning_rate': 0.01,
-                  'batch_size': 128,
+                  'batch_size': 64,
                   'gamma': 0.99}
     }
 }

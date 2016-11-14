@@ -33,10 +33,10 @@ class EpsilonGreedyPolicy(Policy):
         '''strategy to update epsilon in agent'''
         agent = self.agent
         epi = sys_vars['epi']
-        mem_size = replay_memory.size()
+        # mem_size = replay_memory.size()
         rise = agent.final_e - agent.init_e
-        slope = rise / float(agent.e_anneal_steps)
-        agent.e = max(slope * mem_size + agent.init_e, agent.final_e)
+        slope = rise / float(agent.e_anneal_episodes)
+        agent.e = max(slope * epi + agent.init_e, agent.final_e)
         return agent.e
 
     def select_action(self, state):
@@ -67,5 +67,37 @@ class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         epi = sys_vars['epi']
         if not (epi % 3) and epi > 15:
             # drop to 1/3 of the current exploration rate
+            agent.e = max(agent.e/3., agent.final_e)
+        return agent.e
+
+
+class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
+
+    '''
+    switch between active and inactive exploration cycles by partial mean rewards and its distance to the target mean rewards
+    '''
+
+    def update(self, sys_vars, replay_memory):
+        '''strategy to update epsilon in agent'''
+        agent = self.agent
+        epi = sys_vars['epi']
+        SOLVED_MEAN_REWARD = sys_vars['SOLVED_MEAN_REWARD']
+        REWARD_MEAN_LEN = sys_vars['REWARD_MEAN_LEN']
+        PARTIAL_MEAN_LEN = int(REWARD_MEAN_LEN * 0.20)
+        if epi < 1:  # corner case when no history to avg
+            return
+        # the partial mean for projection the entire mean
+        partial_mean_reward = np.mean(sys_vars['history'][-PARTIAL_MEAN_LEN:])
+        # difference to target, and its ratio (1 if denominator is 0)
+        min_reward = np.amin(sys_vars['history'])
+        projection_gap = SOLVED_MEAN_REWARD - partial_mean_reward
+        worst_gap = SOLVED_MEAN_REWARD - min_reward
+        gap_ratio = projection_gap / worst_gap
+        # if is in odd cycle, and diff is still big, actively explore
+        active_exploration_cycle = not bool(
+            int(epi/PARTIAL_MEAN_LEN)) and (
+            projection_gap > abs(SOLVED_MEAN_REWARD * 0.10))
+        agent.e = max(gap_ratio * agent.init_e, agent.final_e)
+        if not active_exploration_cycle:
             agent.e = max(agent.e/3., agent.final_e)
         return agent.e
