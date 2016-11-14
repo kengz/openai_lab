@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, pp
+from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -12,8 +12,7 @@ class DoubleDQN(DQN):
     The base class of double DQNs
     '''
 
-    def build_net(self):
-        logger.info(pp.pformat(self.env_spec))
+    def build_model(self):
         model = Sequential()
         model.add(Dense(4,
                         input_shape=(self.env_spec['state_dim'],),
@@ -27,16 +26,14 @@ class DoubleDQN(DQN):
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2
-        return model, model2
 
-    def build_graph(self):
-        self.build_net()
         self.optimizer = SGD(lr=self.learning_rate)
         self.model.compile(
             loss='mean_squared_error', optimizer=self.optimizer)
         self.model2.compile(
             loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Models built and compiled")
+
         return self.model, self.model2
 
     def train(self, sys_vars, replay_memory):

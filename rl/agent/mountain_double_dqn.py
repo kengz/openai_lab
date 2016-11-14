@@ -1,6 +1,6 @@
 from rl.agent.double_dqn import DoubleDQN
 from rl.policy import OscillatingEpsilonGreedyPolicy
-from rl.util import logger, pp
+from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
 
@@ -12,8 +12,7 @@ class MountainDoubleDQN(DoubleDQN):
         # change the policy
         self.policy = OscillatingEpsilonGreedyPolicy(self)
 
-    def build_net(self):
-        logger.info(pp.pformat(self.env_spec))
+    def build_model(self):
         model = Sequential()
         model.add(Dense(2,
                         input_shape=(self.env_spec['state_dim'],),
@@ -29,4 +28,12 @@ class MountainDoubleDQN(DoubleDQN):
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2
-        return model, model2
+
+        self.optimizer = SGD(lr=self.learning_rate)
+        self.model.compile(
+            loss='mean_squared_error', optimizer=self.optimizer)
+        self.model2.compile(
+            loss='mean_squared_error', optimizer=self.optimizer)
+        logger.info("Models built and compiled")
+
+        return self.model, self.model2

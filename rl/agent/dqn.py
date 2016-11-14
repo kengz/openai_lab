@@ -34,10 +34,10 @@ class DQN(Agent):
         self.e_anneal_episodes = e_anneal_episodes
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.build_graph()
-
-    def build_net(self):
         logger.info(pp.pformat(self.env_spec))
+        self.build_model()
+
+    def build_model(self):
         model = Sequential()
         # Not clear how much better the algorithm is with regularization
         model.add(Dense(4,
@@ -46,10 +46,7 @@ class DQN(Agent):
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         self.model = model
-        return model
 
-    def build_graph(self):
-        self.build_net()
         self.optimizer = SGD(lr=self.learning_rate)
         self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Model built and compiled")
