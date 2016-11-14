@@ -37,7 +37,7 @@ class DQNTest(unittest.TestCase):
 
     # def test_run_all(self):
     #     for x in sess_specs.keys():
-    #         sys_vars = run('dummy')
+    #         sys_vars = run(x)
     #         assert(sys_vars['RENDER'] == False)
     #         # ensure it runs, and returns the sys_vars
     #         assert(isinstance(sys_vars, dict))

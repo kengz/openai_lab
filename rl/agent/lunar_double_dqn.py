@@ -3,6 +3,7 @@ from rl.policy import TargetedEpsilonGreedyPolicy
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
+from keras.optimizers import SGD
 
 
 class LunarDoubleDQN(DoubleDQN):
@@ -14,11 +15,9 @@ class LunarDoubleDQN(DoubleDQN):
 
     def build_model(self):
         model = Sequential()
-        model.add(Dense(8,
+        model.add(Dense(100,
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform', activation='sigmoid'))
-        model.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
-        model.add(Dense(6, init='lecun_uniform', activation='sigmoid'))
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         logger.info("Model 1 summary")
         model.summary()

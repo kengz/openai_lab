@@ -3,6 +3,7 @@ from rl.policy import TargetedEpsilonGreedyPolicy
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
+from keras.optimizers import SGD
 
 
 class LunarDQN(DQN):
