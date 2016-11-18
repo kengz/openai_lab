@@ -4,6 +4,67 @@ from rl.memory import ReplayMemory
 from rl.agent import *
 
 
+# Dict of specs runnable on a Session
+game_specs = {
+    'dummy': {
+        'Agent': dummy.Dummy,
+        'problem': 'CartPole-v0',
+        'param': {}
+    },
+    'q_table': {
+        'Agent': q_table.QTable,
+        'problem': 'CartPole-v0',
+        'param': {'e_anneal_episodes': 200,
+                  'learning_rate': 0.01,
+                  'gamma': 0.99}
+    },
+    'dqn': {
+        'Agent': dqn.DQN,
+        'problem': 'CartPole-v0',
+        'param': {'e_anneal_episodes': 90,
+                  'learning_rate': 0.01,
+                  'gamma': 0.99},
+        'param_range': {
+            'e_anneal_episodes': [20, 30],
+            'learning_rate': [0.01],
+            'gamma': [0.99]
+        }
+    },
+    'double_dqn': {
+        'Agent': double_dqn.DoubleDQN,
+        'problem': 'CartPole-v0',
+        'param': {'e_anneal_episodes': 50,
+                  'learning_rate': 0.01,
+                  'batch_size': 32,
+                  'gamma': 0.97}
+    },
+    'mountain_double_dqn': {
+        'Agent': mountain_double_dqn.MountainDoubleDQN,
+        'problem': 'MountainCar-v0',
+        'param': {'e_anneal_episodes': 300,
+                  'learning_rate': 0.01,
+                  'batch_size': 128,
+                  'gamma': 0.99}
+    },
+    'lunar_dqn': {
+        'Agent': lunar_dqn.LunarDQN,
+        'problem': 'LunarLander-v2',
+        'param': {'e_anneal_episodes': 1000,
+                  'learning_rate': 0.01,
+                  'batch_size': 64,
+                  'gamma': 0.99}
+    },
+    'lunar_double_dqn': {
+        'Agent': lunar_double_dqn.LunarDoubleDQN,
+        'problem': 'LunarLander-v2',
+        'param': {'e_anneal_episodes': 500,
+                  'learning_rate': 0.01,
+                  'batch_size': 64,
+                  'gamma': 0.99}
+    }
+}
+
+
 class Session(object):
 
     '''
@@ -56,89 +117,79 @@ class Session(object):
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode(sys_vars, env, agent, replay_memory)
-            # Best so far, increment num epochs every 2 up to a max of 5
             if sys_vars['solved']:
                 break
 
         return sys_vars
 
-    # def run_param_selection_sessions(self):
-    #     # advanced parallel param selection from util
-    #     # for hyper-param selection
-    #     param_range = {
-    #         'gamma': [0.99, 0.95, 0.90],
-    #         'learning_rate': [0.01, 0.02, 0.05],
-    #         'e_anneal_episodes': [2500, 5000]
-    #     }
-    #     param_grid = param_product(param_range)
 
-    #     best_param = select_best_param(
-    #         self.run, 'CartPole-v0', param_grid)
-    #     logger.info(pp.pformat(best_param))
+def run_sess(sess_spec):
+    '''
+    helper: run a Session given a sess_spec from gym_specs
+    '''
+    sess = Session(sess_spec['Agent'],
+                   problem=sess_spec['problem'],
+                   param=sess_spec['param'])
+    sys_vars = sess.run()
+    return sys_vars
 
 
-# Dict of specs runnable on a Session
-sess_specs = {
-    'dummy': {
-        'Agent': dummy.Dummy,
-        'problem': 'CartPole-v0',
-        'param': {}
-    },
-    'q_table': {
-        'Agent': q_table.QTable,
-        'problem': 'CartPole-v0',
-        'param': {'e_anneal_episodes': 200,
-                  'learning_rate': 0.01,
-                  'gamma': 0.99}
-    },
-    'dqn': {
-        'Agent': dqn.DQN,
-        'problem': 'CartPole-v0',
-        'param': {'e_anneal_episodes': 90,
-                  'learning_rate': 0.01,
-                  'gamma': 0.99}
-    },
-    'double_dqn': {
-        'Agent': double_dqn.DoubleDQN,
-        'problem': 'CartPole-v0',
-        'param': {'e_anneal_episodes': 50,
-                  'learning_rate': 0.01,
-                  'batch_size': 32,
-                  'gamma': 0.97}
-    },
-    'mountain_double_dqn': {
-        'Agent': mountain_double_dqn.MountainDoubleDQN,
-        'problem': 'MountainCar-v0',
-        'param': {'e_anneal_episodes': 300,
-                  'learning_rate': 0.01,
-                  'batch_size': 128,
-                  'gamma': 0.99}
-    },
-    'lunar_dqn': {
-        'Agent': lunar_dqn.LunarDQN,
-        'problem': 'LunarLander-v2',
-        'param': {'e_anneal_episodes': 1000,
-                  'learning_rate': 0.01,
-                  'batch_size': 64,
-                  'gamma': 0.99}
-    },
-    'lunar_double_dqn': {
-        'Agent': lunar_double_dqn.LunarDoubleDQN,
-        'problem': 'LunarLander-v2',
-        'param': {'e_anneal_episodes': 500,
-                  'learning_rate': 0.01,
-                  'batch_size': 64,
-                  'gamma': 0.99}
-    }
-}
+def run_sess_avg(sess_spec, times=1):
+    '''
+    helper: run a Session for the number of times specified,
+    then average the 'mean_rewards'
+    Used for hyper param selection
+    '''
+    param = sess_spec['param']
+    logger.info(
+        'Running session average with param = {}'.format(pp.pformat(
+            param)))
+    sess_mean_rewards = []
+    # explicit loop necessary to circumvent TF bug
+    # see https://github.com/tensorflow/tensorflow/issues/3388
+    for i in range(times):
+        sess_mean_rewards.append(run_sess(sess_spec)['mean_rewards'])
+    sess_avg = np.mean(sess_mean_rewards)
+    logger.info(
+        'Session average mean_rewards: {} with param = {}'.format(
+            sess_avg, pp.pformat(param)))
+    return {'param': param, 'sess_avg_mean_rewards': sess_avg}
 
 
 def run(sess_name):
     '''
     Wrapper for main.py to run session by name pointing to specs
     '''
-    sess_spec = sess_specs.get(sess_name)
-    sess = Session(sess_spec['Agent'],
-                   problem=sess_spec['problem'],
-                   param=sess_spec['param'])
-    return sess.run()
+    sess_spec = game_specs.get(sess_name)
+    return run_sess(sess_spec)
+
+
+def run_avg(sess_name):
+    '''
+    Like run(), but calls run_sess_avg() internally
+    '''
+    sess_spec = game_specs.get(sess_name)
+    return run_sess_avg(sess_spec)
+
+
+def run_param_selection(sess_name):
+    '''
+    Run hyper parameter selection with run_sess_avg
+    draws from sess_spec['param_range'] to construct
+    a param_grid, then sess_spec_grid,
+    to run run_sess_avg on each
+    '''
+    sess_spec = game_specs.get(sess_name)
+    param_range = sess_spec.get('param_range')
+    param_grid = param_product(param_range)
+    sess_spec_grid = [{
+        'Agent': sess_spec['Agent'],
+        'problem': sess_spec['problem'],
+        'param': param
+    } for param in param_grid]
+
+    avg_runs = list(map(run_sess_avg, sess_spec_grid))
+    avg_runs.sort(key=lambda pm: pm['sess_avg_mean_rewards'], reverse=True)
+    logger.info('Ranked params, from the best:'
+                ''.format(pp.pformat(avg_runs)))
+    return avg_runs
