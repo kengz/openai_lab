@@ -70,6 +70,17 @@ python main.py 2>&1 | tee run.log # write to log file
 Per run, it will also write a `<Problem>_history.txt` file that records all the `total_rewards`. If rendering is enabled, it will also save the graph to `<Problem>.png`.
 
 
+### Hyperparam Selection
+
+1. Define the `game_specs.<game>.param_range` in `rl/session.py` for hyperparameter selection, which will run using multiprocessing, and return the best param (defined as having the best average session `mean_rewards`).
+
+2. Modify `main.py` to use `run_param_selection(<game>)` instead of `run(<game>)`.
+
+3. Run `python main.py` as before. At the end it will return and print out a ranked (from the best) list of params.
+
+Note that in parallel mode, graphics will not be rendered.
+
+
 ## Development
 
 See `rl/session.py` for the main Session class. It takes the 3 arguments `Agent, problem, param`.
@@ -103,11 +114,10 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [x] major refactoring for more efficient development; standardization of the `Agent` class, and methods it shall implement.
 - [x] logging of crucial data points, for plotting after runs
 - [x] complete refactoring of Agent and Policy
-- [ ] better parameter selection, to tune for a problem (can use the parallelization in util.py)
+- [x] parameter selection with parallelization
 - [ ] improve memory selection policy
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
 - [ ] visualization of NN with tensorboard?
-- [ ] parametrize epsilon anneal steps by MAX_EPISODES etc, so parameter selection can be more automatic across different problems. Use sine x exp decay graph?
 - [ ] solve the stability problem - some runs start out bad and end up bad too
 - [ ] do policy iteration (ch 4 from text)
 - [ ] other more advanced algos

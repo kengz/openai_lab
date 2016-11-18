@@ -1,8 +1,8 @@
 import gym
+import multiprocessing as mp
 from rl.util import *
 from rl.memory import ReplayMemory
 from rl.agent import *
-
 
 # Dict of specs runnable on a Session
 game_specs = {
@@ -25,8 +25,8 @@ game_specs = {
                   'learning_rate': 0.01,
                   'gamma': 0.99},
         'param_range': {
-            'e_anneal_episodes': [20, 30],
-            'learning_rate': [0.01],
+            'e_anneal_episodes': [50, 100],
+            'learning_rate': [0.01, 0.05, 0.1],
             'gamma': [0.99]
         }
     },
@@ -180,7 +180,7 @@ def run_param_selection(sess_name):
     to run run_sess_avg on each
     '''
     sess_spec = game_specs.get(sess_name)
-    param_range = sess_spec.get('param_range')
+    param_range = sess_spec['param_range']
     param_grid = param_product(param_range)
     sess_spec_grid = [{
         'Agent': sess_spec['Agent'],
@@ -188,7 +188,8 @@ def run_param_selection(sess_name):
         'param': param
     } for param in param_grid]
 
-    avg_runs = list(map(run_sess_avg, sess_spec_grid))
+    p = mp.Pool(mp.cpu_count())
+    avg_runs = list(p.map(run_sess_avg, sess_spec_grid))
     avg_runs.sort(key=lambda pm: pm['sess_avg_mean_rewards'], reverse=True)
     logger.info('Ranked params, from the best:'
                 ''.format(pp.pformat(avg_runs)))
