@@ -2,7 +2,7 @@ import unittest
 import pytest
 from os import environ
 environ['CI'] = environ.get('CI') or 'true'
-from rl.session import sess_specs, run
+from rl.session import game_specs, run
 
 
 class DQNTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class DQNTest(unittest.TestCase):
         assert(sys_vars['epi'] > 0)
 
     # def test_run_all(self):
-    #     for x in sess_specs.keys():
+    #     for x in game_specs.keys():
     #         sys_vars = run(x)
     #         assert(sys_vars['RENDER'] == False)
     #         # ensure it runs, and returns the sys_vars
