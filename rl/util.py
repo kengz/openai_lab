@@ -47,23 +47,24 @@ plotters = {}  # hash of matplotlib objects for live-plot
 PROBLEMS = json.loads(open(
     path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
 
-# the keys need to be implemented by a sys_var
+# the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
 # set in asset/problems.json
 required_sys_keys = {
-    'RENDER',
-    'GYM_ENV_NAME',
-    'SOLVED_MEAN_REWARD',
-    'MAX_EPISODES',
-    'REWARD_MEAN_LEN',
-    'param',
-    'epi',
-    't',
-    'total_r_history',
-    'e_history',
-    'mean_rewards',
-    'total_rewards',
-    'solved'
+    'RENDER': None,
+    'GYM_ENV_NAME': None,
+    'SOLVED_MEAN_REWARD': None,
+    'MAX_EPISODES': None,
+    'REWARD_MEAN_LEN': None,
+    'param': None,
+    'epi': 0,
+    't': 0,
+    'loss': [],
+    'total_r_history': [],
+    'e_history': [],
+    'mean_rewards': 0,
+    'total_rewards': 0,
+    'solved': False,
 }
 
 
@@ -87,13 +88,9 @@ def init_sys_vars(problem='CartPole-v0', param={}):
 
 def reset_sys_vars(sys_vars):
     '''reset and check RL system vars before each new session'''
-    sys_vars['epi'] = 0
-    sys_vars['t'] = 0
-    sys_vars['total_r_history'] = []
-    sys_vars['e_history'] = []
-    sys_vars['mean_rewards'] = 0
-    sys_vars['total_rewards'] = 0
-    sys_vars['solved'] = False
+    for k in required_sys_keys:
+        if k.islower():
+            sys_vars[k] = required_sys_keys.get(k)
     check_sys_vars(sys_vars)
     return sys_vars
 
