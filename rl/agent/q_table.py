@@ -88,8 +88,9 @@ class QTable(Agent):
         Q_state_action = self.qtable[flat_state, action]
         Q_next_state = self.qtable[next_flat_state, :]
         Q_next_state_max = np.amax(Q_next_state)
+        loss = (reward + self.gamma * Q_next_state_max - Q_state_action)
+        sys_vars['loss'].append(loss)
 
         self.qtable[flat_state, action] = Q_state_action + \
-            self.learning_rate * \
-            (reward + self.gamma * Q_next_state_max - Q_state_action)
+            self.learning_rate * loss
         return self.qtable

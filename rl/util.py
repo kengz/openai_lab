@@ -56,7 +56,7 @@ required_sys_keys = {
     'SOLVED_MEAN_REWARD': None,
     'MAX_EPISODES': None,
     'REWARD_MEAN_LEN': None,
-    'param': None,
+    'PARAM': None,
     'epi': 0,
     't': 0,
     'loss': [],
@@ -80,14 +80,14 @@ def init_sys_vars(problem='CartPole-v0', param={}):
     if environ.get('CI'):
         sys_vars['RENDER'] = False
         sys_vars['MAX_EPISODES'] = 2
-    sys_vars['param'] = param
+    sys_vars['PARAM'] = param
     reset_sys_vars(sys_vars)
     init_plotter(sys_vars)
     return sys_vars
 
 
 def reset_sys_vars(sys_vars):
-    '''reset and check RL system vars before each new session'''
+    '''reset and check RL system vars (lower case) before each new session'''
     for k in required_sys_keys:
         if k.islower():
             sys_vars[k] = required_sys_keys.get(k)
@@ -158,7 +158,7 @@ def check_session_ends(sys_vars):
             (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
         logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
             sys_vars['solved'], sys_vars['epi'],
-            pp.pformat(sys_vars['param'])))
+            pp.pformat(sys_vars['PARAM'])))
     np.savetxt('{}_total_r_history.txt'.format(sys_vars['GYM_ENV_NAME']),
                sys_vars['total_r_history'], '%.4f', header='total_rewards')
     if not sys_vars['RENDER']:
@@ -174,7 +174,7 @@ def init_plotter(sys_vars):
 
     ax1 = fig.add_subplot(211,
                           frame_on=False,
-                          title=str(sys_vars['param']) +
+                          title=str(sys_vars['PARAM']) +
                           '\ntotal rewards per episode',
                           ylabel='total rewards')
     p1, = ax1.plot([], [])

@@ -47,7 +47,7 @@ class DoubleDQN(DQN):
         loss_total = 0
         for epoch in range(self.n_epoch):
             minibatch = replay_memory.rand_minibatch(self.batch_size)
-            # algo step 1
+            # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
 
             # Select max using model 2
@@ -59,16 +59,13 @@ class DoubleDQN(DQN):
                 Q_next_states_max_ind = Q_next_states_max_ind[0]
             # Evaluate max using model 1
 
-            # algo step 2
             Q_next_states = self.model.predict(minibatch['next_states'])
             Q_next_states_max = Q_next_states[:, Q_next_states_max_ind]
 
-            # Q targets for batch-actions a;
-            # with terminal to make future reward 0 if end
+            # make future reward 0 if exp is terminal
             Q_targets_a = minibatch['rewards'] + self.gamma * \
                 (1 - minibatch['terminals']) * Q_next_states_max
-            # set Q_targets of a as above
-            # and the non-action units' Q_targets to as-is
+            # set batch Q_targets of a as above, the rest as is
             # minibatch['actions'] is one-hot encoded
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
@@ -86,5 +83,9 @@ class DoubleDQN(DQN):
             temp = self.model
             self.model = self.model2
             self.model2 = temp
-
-        return loss_total / self.n_epoch
+            # TODO: Did we mean to put this inside the epoch loop? Or shd we do
+            # the swap per timestep. Of n_epoch is odd, this will cause 1 model
+            # consistency to be trained more than the other
+        avg_loss = loss_total / self.n_epoch
+        sys_vars['loss'].append(avg_loss)
+        return avg_loss

@@ -80,18 +80,14 @@ class DQN(Agent):
         loss_total = 0
         for epoch in range(self.n_epoch):
             minibatch = replay_memory.rand_minibatch(self.batch_size)
-            # algo step 1
+            # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
-            # algo step 2
             Q_next_states = self.model.predict(minibatch['next_states'])
-            # batch x num_actions
             Q_next_states_max = np.amax(Q_next_states, axis=1)
-            # Q targets for batch-actions a;
-            # with terminal to make future reward 0 if end
+            # make future reward 0 if exp is terminal
             Q_targets_a = minibatch['rewards'] + self.gamma * \
                 (1 - minibatch['terminals']) * Q_next_states_max
-            # set Q_targets of a as above
-            # and the non-action units' Q_targets to as-is
+            # set batch Q_targets of a as above, the rest as is
             # minibatch['actions'] is one-hot encoded
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
@@ -104,7 +100,9 @@ class DQN(Agent):
 
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
-        return loss_total / self.n_epoch
+        avg_loss = loss_total / self.n_epoch
+        sys_vars['loss'].append(avg_loss)
+        return avg_loss
 
     def save(self, model_path, global_step=None):
         logger.info('Saving model checkpoint')
