@@ -59,7 +59,7 @@ required_sys_keys = {
     'param',
     'epi',
     't',
-    'history',
+    'total_r_history',
     'e_history',
     'mean_rewards',
     'total_rewards',
@@ -71,7 +71,7 @@ def init_sys_vars(problem='CartPole-v0', param={}):
     '''
     init the sys vars for a problem by reading from
     asset/problems.json, then reset the other sys vars
-    on reset will add vars: {param, epi, history, mean_rewards, solved}
+    on reset will add vars (lower cases, see required_sys_keys)
     '''
     sys_vars = PROBLEMS[problem]
     if (not args.render) or mp.current_process().name != 'MainProcess':
@@ -89,7 +89,7 @@ def reset_sys_vars(sys_vars):
     '''reset and check RL system vars before each new session'''
     sys_vars['epi'] = 0
     sys_vars['t'] = 0
-    sys_vars['history'] = []
+    sys_vars['total_r_history'] = []
     sys_vars['e_history'] = []
     sys_vars['mean_rewards'] = 0
     sys_vars['total_rewards'] = 0
@@ -132,11 +132,11 @@ def update_history(agent,
     then report status
     '''
 
-    sys_vars['history'].append(total_rewards)
+    sys_vars['total_r_history'].append(total_rewards)
     sys_vars['e_history'].append(getattr(agent, 'e', 0))
     avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
-    mean_rewards = np.mean(sys_vars['history'][-avg_len:])
+    mean_rewards = np.mean(sys_vars['total_r_history'][-avg_len:])
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
     sys_vars['total_rewards'] = total_rewards
@@ -162,8 +162,8 @@ def check_session_ends(sys_vars):
         logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
             sys_vars['solved'], sys_vars['epi'],
             pp.pformat(sys_vars['param'])))
-    np.savetxt('{}_history.txt'.format(sys_vars['GYM_ENV_NAME']),
-               sys_vars['history'], '%.4f', header='total_rewards')
+    np.savetxt('{}_total_r_history.txt'.format(sys_vars['GYM_ENV_NAME']),
+               sys_vars['total_r_history'], '%.4f', header='total_rewards')
     if not sys_vars['RENDER']:
         return
     plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
@@ -204,7 +204,7 @@ def live_plot(sys_vars):
     if not sys_vars['RENDER']:
         return
     ax1, p1 = plotters['total rewards']
-    p1.set_ydata(np.append(p1.get_ydata(), sys_vars['history'][-1]))
+    p1.set_ydata(np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
     p1.set_xdata(np.arange(len(p1.get_ydata())))
     ax1.relim()
     ax1.autoscale_view(tight=True, scalex=True, scaley=True)
