@@ -35,10 +35,10 @@ class DQNTest(unittest.TestCase):
         assert(isinstance(sys_vars, dict))
         assert(sys_vars['epi'] > 0)
 
-    def test_run_all(self):
-        for x in game_specs.keys():
-            sys_vars = run(x)
-            assert(sys_vars['RENDER'] == False)
-            # ensure it runs, and returns the sys_vars
-            assert(isinstance(sys_vars, dict))
-            assert(sys_vars['epi'] > 0)
+    # def test_run_all(self):
+    #     for x in game_specs.keys():
+    #         sys_vars = run(x)
+    #         assert(sys_vars['RENDER'] == False)
+    #         # ensure it runs, and returns the sys_vars
+    #         assert(isinstance(sys_vars, dict))
+    #         assert(sys_vars['epi'] > 0)
