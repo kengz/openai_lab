@@ -1,4 +1,5 @@
 import argparse
+import copy
 import itertools
 import json
 import logging
@@ -90,7 +91,7 @@ def reset_sys_vars(sys_vars):
     '''reset and check RL system vars (lower case) before each new session'''
     for k in required_sys_keys:
         if k.islower():
-            sys_vars[k] = required_sys_keys.get(k)
+            sys_vars[k] = copy.copy(required_sys_keys.get(k))
     check_sys_vars(sys_vars)
     return sys_vars
 
