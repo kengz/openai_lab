@@ -74,7 +74,8 @@ class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
 class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
 
     '''
-    switch between active and inactive exploration cycles by partial mean rewards and its distance to the target mean rewards
+    switch between active and inactive exploration cycles by
+    partial mean rewards and its distance to the target mean rewards
     '''
 
     def update(self, sys_vars, replay_memory):
@@ -87,7 +88,8 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         if epi < 1:  # corner case when no total_r_history to avg
             return
         # the partial mean for projection the entire mean
-        partial_mean_reward = np.mean(sys_vars['total_r_history'][-PARTIAL_MEAN_LEN:])
+        partial_mean_reward = np.mean(
+            sys_vars['total_r_history'][-PARTIAL_MEAN_LEN:])
         # difference to target, and its ratio (1 if denominator is 0)
         min_reward = np.amin(sys_vars['total_r_history'])
         projection_gap = SOLVED_MEAN_REWARD - partial_mean_reward

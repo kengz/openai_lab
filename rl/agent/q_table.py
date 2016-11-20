@@ -68,7 +68,8 @@ class QTable(Agent):
     def update_e(self):
         '''strategy to update epsilon'''
         self.e = max(self.e -
-                     (self.init_e - self.final_e)/float(self.e_anneal_episodes),
+                     (self.init_e - self.final_e) /
+                     float(self.e_anneal_episodes),
                      self.final_e)
         return self.e
 
