@@ -115,17 +115,18 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [x] logging of crucial data points, for plotting after runs
 - [x] complete refactoring of Agent and Policy
 - [x] parameter selection with parallelization
-- boltzmann for exploration policy
-- parametrize NN architecture under the key `architecture_grid`, pass as part of hyper-param selection.
-- delay training till more experience is gathered
-- sliding window for memory selection
-- memory weightage, simply, we can just do high vs low weightage per episode first (if episode solved, put in high)
-- oscillating exploration cycles so learn and solve the problem, chunk by chunk. Combine this with the subepisodic, compositional solutions by parts. First do linear decay, till hits the plateau, if still not solved, activate exploration again. Parametrize by partial mean rewards. *Notes* Turn off exploration until you enter a later stage. Can't reliably parameterize with time, need to do so with state. E.g. Reach medium height, if haven't learned how to land from there, explore and learn to fire the engine. This will be the way to do subepisodic exploration.
-- fix advanced dependencies on Ubuntu
-- report and plot loss from keras train_on_batch https://keras.io/models/sequential/ plot for monitoring Q estimates.
+- [x] report and plot loss for Q estimates, seeing weirdly high, rising values
+- [ ] boltzmann for exploration policy
+- [ ] parametrize NN architecture under the key `architecture_grid`, pass as part of hyper-param selection.
+- [ ] delay training till more experience is gathered
+- [ ] sliding window for memory selection
+- [ ] memory weightage, simply, we can just do high vs low weightage per episode first (if episode solved, put in high)
+- [ ] oscillating exploration cycles so learn and solve the problem, chunk by chunk. Combine this with the subepisodic, compositional solutions by parts. First do linear decay, till hits the plateau, if still not solved, activate exploration again. Parametrize by partial mean rewards. *Notes* Turn off exploration until you enter a later stage. Can't reliably parameterize with time, need to do so with state. E.g. Reach medium height, if haven't learned how to land from there, explore and learn to fire the engine. This will be the way to do subepisodic exploration.
+- [ ] fix advanced dependencies on Ubuntu
 - [ ] improve memory selection policy
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
 - [ ] visualization of NN with tensorboard?
+- [ ] try with RNN like the DeepMind deep meta-RL paper
 
 
 ## Authors
