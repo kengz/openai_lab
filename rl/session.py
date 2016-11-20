@@ -1,7 +1,7 @@
 import gym
 import multiprocessing as mp
 from rl.util import *
-from rl.memory import ReplayMemory
+from rl.memory import LinearMemory, LeftTailMemory
 from rl.agent import *
 
 # Dict of specs runnable on a Session
@@ -111,7 +111,7 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         env_spec = get_env_spec(env)
-        replay_memory = ReplayMemory(env_spec)
+        replay_memory = LinearMemory(env_spec)
         agent = self.Agent(env_spec, **self.param)
 
         for epi in range(sys_vars['MAX_EPISODES']):

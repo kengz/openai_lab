@@ -2,7 +2,7 @@ import numpy as np
 from scipy.stats import halfnorm
 
 
-class ReplayMemory(object):
+class LinearMemory(object):
 
     '''
     The replay memory used for random minibatch training
@@ -17,7 +17,7 @@ class ReplayMemory(object):
 
     def reset_state(self, init_state):
         '''
-        reset the state of ReplayMemory per episode env.reset()
+        reset the state of LinearMemory per episode env.reset()
         '''
         self.state = init_state
 
@@ -49,6 +49,22 @@ class ReplayMemory(object):
 
     def size(self):
         return len(self.exp['rewards'])
+
+    def rand_minibatch(self, size):
+        '''
+        plain random sampling
+        '''
+        memory_size = self.size()
+        rand_inds = np.random.randint(memory_size, size=size)
+        minibatch = self.get_exp(rand_inds)
+        return minibatch
+
+
+class LeftTailMemory(LinearMemory):
+
+    '''
+    Memory with sampling via a left-tail distribution
+    '''
 
     def rand_minibatch(self, size):
         '''
