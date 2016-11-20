@@ -171,9 +171,9 @@ def init_plotter(sys_vars):
     if not sys_vars['RENDER']:
         return
     # initialize the plotters
-    fig = plt.figure(facecolor='white')
+    fig = plt.figure(facecolor='white', figsize=(8, 9))
 
-    ax1 = fig.add_subplot(211,
+    ax1 = fig.add_subplot(311,
                           frame_on=False,
                           title=str(sys_vars['PARAM']) +
                           '\ntotal rewards per episode',
@@ -187,13 +187,21 @@ def init_plotter(sys_vars):
     p1e, = ax1e.plot([], [], 'r')
     plotters['e'] = (ax1e, p1e)
 
-    ax2 = fig.add_subplot(212,
+    ax2 = fig.add_subplot(312,
                           frame_on=False,
                           title='mean rewards over last 100 episodes',
                           ylabel='mean rewards')
-    p2, = ax2.plot([], [])
+    p2, = ax2.plot([], [], 'g')
     plotters['mean rewards'] = (ax2, p2)
 
+    ax3 = fig.add_subplot(313,
+                          frame_on=False,
+                          title='loss over time, episode',
+                          ylabel='loss')
+    p3, = ax3.plot([], [])
+    plotters['loss'] = (ax3, p3)
+
+    plt.tight_layout()  # auto-fix spacing
     plt.ion()  # for live plot
 
 
@@ -218,6 +226,12 @@ def live_plot(sys_vars):
     p2.set_xdata(np.arange(len(p2.get_ydata())))
     ax2.relim()
     ax2.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    ax3, p3 = plotters['loss']
+    p3.set_ydata(sys_vars['loss'])
+    p3.set_xdata(np.arange(len(p3.get_ydata())))
+    ax3.relim()
+    ax3.autoscale_view(tight=True, scalex=True, scaley=True)
 
     plt.draw()
     plt.pause(0.01)
