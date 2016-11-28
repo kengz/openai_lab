@@ -15,19 +15,19 @@ class DoubleDQN(DQN):
     def build_model(self):
         model = Sequential()
 
-        if (len(self.hidden_layers) == 1):
-            model.add(Dense(self.hidden_layers[0],
-                            input_shape=(self.env_spec['state_dim'],),
-                            init='lecun_uniform', activation=self.hidden_layers_activation))
-        else:
-            model.add(Dense(self.hidden_layers[0],
-                            input_shape=(self.env_spec['state_dim'],),
-                            init='lecun_uniform', activation=self.hidden_layers_activation))
+        model.add(Dense(self.hidden_layers[0],
+                        input_shape=(self.env_spec['state_dim'],),
+                        init='lecun_uniform',
+                        activation=self.hidden_layers_activation))
+
+        if (len(self.hidden_layers) > 1):
             for i in range(1, len(self.hidden_layers)):
-                model.add(Dense(self.hidden_layers[i], 
-                    init='lecun_uniform', activation=self.hidden_layers_activation))
-                
+                model.add(Dense(self.hidden_layers[i],
+                                init='lecun_uniform',
+                                activation=self.hidden_layers_activation))
+
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
+
         logger.info("Model 1 summary")
         model.summary()
         self.model = model
