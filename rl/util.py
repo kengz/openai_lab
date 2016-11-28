@@ -168,6 +168,7 @@ def check_session_ends(sys_vars):
 
 
 def init_plotter(sys_vars):
+    param = sys_vars['PARAM']
     if not sys_vars['RENDER']:
         return
     # initialize the plotters
@@ -175,10 +176,11 @@ def init_plotter(sys_vars):
 
     ax1 = fig.add_subplot(311,
                           frame_on=False,
-                          title= "e anneal epis: " + str(sys_vars['PARAM']['e_anneal_episodes']) + ", " +
-                          "learning rate: " + str(sys_vars['PARAM']['learning_rate']) + ", " +
-                          "gamma: " + str(sys_vars['PARAM']['gamma']) + 
-                          '\ntotal rewards per episode',
+                          title="e anneal epis: {}, learning rate: {}, "
+                          "gamma: {}\ntotal rewards per episode".format(
+                              str(param['e_anneal_episodes']),
+                              str(param['learning_rate']),
+                              str(param['gamma'])),
                           ylabel='total rewards')
     p1, = ax1.plot([], [])
     plotters['total rewards'] = (ax1, p1)
