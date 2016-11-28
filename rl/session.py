@@ -23,7 +23,9 @@ game_specs = {
         'problem': 'CartPole-v0',
         'param': {'e_anneal_episodes': 90,
                   'learning_rate': 0.01,
-                  'gamma': 0.99},
+                  'gamma': 0.99,
+                  'hidden_layers_shape': [4],
+                  'hidden_layers_activation': 'sigmoid'},
         'param_range': {
             'e_anneal_episodes': [50, 100],
             'learning_rate': [0.01, 0.05, 0.1],
@@ -33,10 +35,12 @@ game_specs = {
     'double_dqn': {
         'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
-        'param': {'e_anneal_episodes': 50,
+        'param': {'e_anneal_episodes': 180,
                   'learning_rate': 0.01,
                   'batch_size': 32,
-                  'gamma': 0.97}
+                  'gamma': 0.99,
+                  'hidden_layers_shape': [4],
+                  'hidden_layers_activation': 'sigmoid'}
     },
     'mountain_double_dqn': {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
@@ -44,7 +48,9 @@ game_specs = {
         'param': {'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
-                  'gamma': 0.99}
+                  'gamma': 0.99,
+                  'hidden_layers_shape': [8, 8],
+                  'hidden_layers_activation': 'sigmoid'}
     },
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
@@ -52,7 +58,9 @@ game_specs = {
         'param': {'e_anneal_episodes': 1000,
                   'learning_rate': 0.01,
                   'batch_size': 64,
-                  'gamma': 0.99}
+                  'gamma': 0.99,
+                  'hidden_layers_shape': [200, 100],
+                  'hidden_layers_activation': 'relu'}
     },
     'lunar_double_dqn': {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
@@ -60,7 +68,9 @@ game_specs = {
         'param': {'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
-                  'gamma': 0.99}
+                  'gamma': 0.99,
+                  'hidden_layers_shape': [200, 100],
+                  'hidden_layers_activation': 'relu'}
     }
 }
 

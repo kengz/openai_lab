@@ -175,7 +175,9 @@ def init_plotter(sys_vars):
 
     ax1 = fig.add_subplot(311,
                           frame_on=False,
-                          title=str(sys_vars['PARAM']) +
+                          title= "e anneal epis: " + str(sys_vars['PARAM']['e_anneal_episodes']) + ", " +
+                          "learning rate: " + str(sys_vars['PARAM']['learning_rate']) + ", " +
+                          "gamma: " + str(sys_vars['PARAM']['gamma']) + 
                           '\ntotal rewards per episode',
                           ylabel='total rewards')
     p1, = ax1.plot([], [])

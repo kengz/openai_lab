@@ -22,7 +22,8 @@ class DQN(Agent):
     def __init__(self, env_spec,
                  gamma=0.95, learning_rate=0.1,
                  init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
-                 batch_size=16, n_epoch=1):
+                 batch_size=16, n_epoch=1, hidden_layers_shape=[4], 
+                 hidden_layers_activation='sigmoid'):
         super(DQN, self).__init__(env_spec)
         self.policy = EpsilonGreedyPolicy(self)
 
@@ -34,15 +35,25 @@ class DQN(Agent):
         self.e_anneal_episodes = e_anneal_episodes
         self.batch_size = batch_size
         self.n_epoch = n_epoch
+        self.hidden_layers = hidden_layers_shape
+        self.hidden_layers_activation = hidden_layers_activation
         logger.info(pp.pformat(self.env_spec))
         self.build_model()
 
     def build_model(self):
         model = Sequential()
-        # Not clear how much better the algorithm is with regularization
-        model.add(Dense(4,
-                        input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform', activation='sigmoid'))
+        if (len(self.hidden_layers) == 1):
+            model.add(Dense(self.hidden_layers[0],
+                            input_shape=(self.env_spec['state_dim'],),
+                            init='lecun_uniform', activation=self.hidden_layers_activation))
+        else:
+            model.add(Dense(self.hidden_layers[0],
+                            input_shape=(self.env_spec['state_dim'],),
+                            init='lecun_uniform', activation=self.hidden_layers_activation))
+            for i in range(1, len(self.hidden_layers)):
+                model.add(Dense(self.hidden_layers[i], 
+                    init='lecun_uniform', activation=self.hidden_layers_activation))
+
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
         model.summary()
         self.model = model
