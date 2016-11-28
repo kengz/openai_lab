@@ -124,7 +124,7 @@ class Session(object):
             action = agent.select_action(state)
             next_state, reward, done, info = env.step(action)
             replay_memory.add_exp(action, reward, next_state, done)
-            agent.update(sys_vars)
+            agent.update(sys_vars, replay_memory)
             # Get n experiences before training model
             if (t != 0 and t % self.num_experiences == 0 or done):
                 agent.train(sys_vars, replay_memory)
