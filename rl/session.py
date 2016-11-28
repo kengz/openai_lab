@@ -1,7 +1,7 @@
 import gym
 import multiprocessing as mp
 from rl.util import *
-from rl.memory import LinearMemory, LeftTailMemory, LinearMemory_wForgetting
+from rl.memory import LinearMemory, LeftTailMemory, LinearMemoryWithForgetting
 from rl.agent import *
 
 # Dict of specs runnable on a Session
@@ -26,7 +26,7 @@ game_specs = {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
         'Num_experiences': 1,
-        'Memory': LinearMemory_wForgetting,
+        'Memory': LinearMemoryWithForgetting,
         'param': {'e_anneal_episodes': 90,
                   'learning_rate': 0.01,
                   'gamma': 0.99,
