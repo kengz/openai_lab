@@ -40,9 +40,10 @@ class DQN(Agent):
         logger.info(pp.pformat(self.env_spec))
         self.build_model()
 
-    def build_model(self):
-        model = Sequential()
-
+    def build_hidden_layers(self, model):
+        '''
+        build the hidden layers into model using parameter self.hidden_layers
+        '''
         model.add(Dense(self.hidden_layers[0],
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform',
@@ -54,6 +55,11 @@ class DQN(Agent):
                                 init='lecun_uniform',
                                 activation=self.hidden_layers_activation))
 
+        return model
+
+    def build_model(self):
+        model = Sequential()
+        self.build_hidden_layers(model)
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
 
         logger.info("Model summary")

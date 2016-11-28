@@ -15,18 +15,7 @@ class MountainDoubleDQN(DoubleDQN):
 
     def build_model(self):
         model = Sequential()
-
-        model.add(Dense(self.hidden_layers[0],
-                        input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform',
-                        activation=self.hidden_layers_activation))
-
-        if (len(self.hidden_layers) > 1):
-            for i in range(1, len(self.hidden_layers)):
-                model.add(Dense(self.hidden_layers[i],
-                                init='lecun_uniform',
-                                activation=self.hidden_layers_activation))
-
+        self.build_hidden_layers(model)
         model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
 
         logger.info("Model 1 summary")
