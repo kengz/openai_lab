@@ -126,15 +126,12 @@ class Session(object):
             replay_memory.add_exp(action, reward, next_state, done)
             agent.update(sys_vars)
             # Get n experiences before training model
-            if (t != 0 and t % self.num_experiences == 0):
+            if (t != 0 and t % self.num_experiences == 0 or done):
                 agent.train(sys_vars, replay_memory)
             state = next_state
             total_rewards += reward
             if done:
                 break
-        # If you didn't just train, train at end of episode to use recent experiences
-        if (not (t != 0 and t % self.num_experiences == 0)): 
-            agent.train(sys_vars, replay_memory)        
         update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
 
