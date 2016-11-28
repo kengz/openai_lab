@@ -126,7 +126,11 @@ class Session(object):
             replay_memory.add_exp(action, reward, next_state, done)
             agent.update(sys_vars, replay_memory)
             # Get n experiences before training model
-            if (t != 0 and t % self.num_experiences == 0 or done):
+            to_train = (
+                (t != 0 and t % self.num_experiences == 0) or
+                t == (env.spec.timestep_limit-1) or
+                done)
+            if to_train:
                 agent.train(sys_vars, replay_memory)
             state = next_state
             total_rewards += reward
