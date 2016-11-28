@@ -221,6 +221,8 @@ def run_param_selection(sess_name):
     sess_spec_grid = [{
         'Agent': sess_spec['Agent'],
         'problem': sess_spec['problem'],
+        'Num_experiences': sess_spec['Num_experiences'],
+        'Memory': sess_spec['Memory'],
         'param': param
     } for param in param_grid]
 
