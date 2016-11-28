@@ -82,9 +82,6 @@ class DoubleDQN(DQN):
             temp = self.model
             self.model = self.model2
             self.model2 = temp
-            # TODO: Did we mean to put this inside the epoch loop? Or shd we do
-            # the swap per timestep. Of n_epoch is odd, this will cause 1 model
-            # consistency to be trained more than the other
         avg_loss = loss_total / self.n_epoch
         sys_vars['loss'].append(avg_loss)
         return avg_loss
