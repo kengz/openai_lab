@@ -27,7 +27,7 @@ game_specs = {
         'problem': 'CartPole-v0',
         'Num_experiences': 1,
         'Memory': LinearMemoryWithForgetting,
-        'param': {'e_anneal_episodes': 90,
+        'param': {'e_anneal_episodes': 80,
                   'learning_rate': 0.01,
                   'gamma': 0.99,
                   'hidden_layers_shape': [4],
@@ -116,47 +116,26 @@ class Session(object):
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
                 ), self.num_experiences, len(replay_memory.exp['states'])))
 
-        # for t in range(env.spec.timestep_limit):
-        #     sys_vars['t'] = t  # update sys_vars t
-        #     if sys_vars.get('RENDER'):
-        #         env.render()
+        for t in range(env.spec.timestep_limit):
+            sys_vars['t'] = t  # update sys_vars t
+            if sys_vars.get('RENDER'):
+                env.render()
 
-        #     action = agent.select_action(state)
-        #     next_state, reward, done, info = env.step(action)
-        #     replay_memory.add_exp(action, reward, next_state, done)
-        #     # Get n experiences before training model
-        #     if (replay_memory.size() > self.num_experiences):
-        #         agent.train(sys_vars, replay_memory)
-        #     state = next_state
-        #     total_rewards += reward
-        #     if done:
-        #         break
-        # update_history(agent, sys_vars, t, total_rewards)
-
-        out_done = False
-        max_steps = env.spec.timestep_limit
-        curr_steps = 0
-        while (curr_steps < max_steps):
+            action = agent.select_action(state)
+            next_state, reward, done, info = env.step(action)
+            replay_memory.add_exp(action, reward, next_state, done)
             # Get n experiences before training model
-            for i in range(self.num_experiences):
-                sys_vars['t'] = curr_steps  # update sys_vars t
-                if sys_vars.get('RENDER'):
-                    env.render()
-
-                action = agent.select_action(state)
-                next_state, reward, done, info = env.step(action)
-                replay_memory.add_exp(action, reward, next_state, done)
-                state = next_state
-                total_rewards += reward
-                curr_steps += 1
-                if done:
-                    out_done = True
-                    break
-            # Train model
-            agent.train(sys_vars, replay_memory)
-            if out_done:
+            if (t != 0 and t % self.num_experiences == 0):
+                agent.train(sys_vars, replay_memory)
+            agent.update_n_epoch(sys_vars)
+            state = next_state
+            total_rewards += reward
+            if done:
                 break
-        update_history(agent, sys_vars, curr_steps, total_rewards)
+        # If you didn't just train, train at end of episode to use recent experiences
+        if (not (t != 0 and t % self.num_experiences == 0)): 
+            agent.train(sys_vars, replay_memory)        
+        update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
 
     def run(self):
