@@ -60,6 +60,24 @@ class LinearMemory(object):
         return minibatch
 
 
+class LinearMemoryWithForgetting(LinearMemory):
+
+    '''
+    Linear memory with uniform sampling, retaining last 20k experiences
+    '''
+
+    def add_exp(self, action, reward, next_state, terminal):
+        '''
+        add exp as usual, but preserve only the recent episodes
+        '''
+        super(LinearMemoryWithForgetting, self).add_exp(
+            action, reward, next_state, terminal)
+
+        if (len(self.exp['states']) >= 20000):
+            for k in self.exp_keys:
+                del self.exp[k][0]
+
+
 class LeftTailMemory(LinearMemory):
 
     '''
@@ -86,31 +104,3 @@ class LeftTailMemory(LinearMemory):
         inds = np.concatenate([latest_inds, rand_inds]).clip(0)
         minibatch = self.get_exp(inds)
         return minibatch
-
-
-class LinearMemory_wForgetting(LinearMemory):
-
-    '''
-    Linear memory with uniform sampling, retaining last 20k experiences
-    '''
-
-    def add_exp(self, action, reward, next_state, terminal):
-        
-        if (len(self.exp['states']) >= 1000):
-            del self.exp['states'][0]
-            del self.exp['actions'][0]
-            del self.exp['rewards'][0]
-            del self.exp['next_states'][0]
-            del self.exp['terminals'][0]
-
-        '''
-        after the env.step(a) that returns s', r,
-        using the previously stored state for the s,
-        form an experience tuple <s, a, r, s'>
-        '''
-        self.exp['states'].append(self.state)
-        self.exp['actions'].append(self.one_hot_action(action))
-        self.exp['rewards'].append(reward)
-        self.exp['next_states'].append(next_state)
-        self.exp['terminals'].append(int(terminal))
-        self.state = next_state
