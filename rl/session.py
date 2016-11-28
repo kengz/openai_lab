@@ -1,7 +1,7 @@
 import gym
 import multiprocessing as mp
 from rl.util import *
-from rl.memory import LinearMemory, LeftTailMemory
+from rl.memory import LinearMemory, LeftTailMemory, LinearMemory_wForgetting
 from rl.agent import *
 
 # Dict of specs runnable on a Session
@@ -10,12 +10,14 @@ game_specs = {
         'Agent': dummy.Dummy,
         'problem': 'CartPole-v0',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {}
     },
     'q_table': {
         'Agent': q_table.QTable,
         'problem': 'CartPole-v0',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {'e_anneal_episodes': 200,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
@@ -23,8 +25,9 @@ game_specs = {
     'dqn': {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
-        'Num_experiences': 2,
-        'param': {'e_anneal_episodes': 180,
+        'Num_experiences': 1,
+        'Memory': LinearMemory_wForgetting,
+        'param': {'e_anneal_episodes': 90,
                   'learning_rate': 0.01,
                   'gamma': 0.99,
                   'hidden_layers_shape': [4],
@@ -39,6 +42,7 @@ game_specs = {
         'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {'e_anneal_episodes': 180,
                   'learning_rate': 0.01,
                   'batch_size': 32,
@@ -50,6 +54,7 @@ game_specs = {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
@@ -61,6 +66,7 @@ game_specs = {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {'e_anneal_episodes': 1000,
                   'learning_rate': 0.01,
                   'batch_size': 64,
@@ -72,6 +78,7 @@ game_specs = {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
         'Num_experiences': 1,
+        'Memory': LinearMemory,
         'param': {'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
@@ -90,21 +97,22 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, Agent, problem, param, num_experiences):
+    def __init__(self, Agent, problem, num_experiences, memory, param):
         self.Agent = Agent
         self.problem = problem
         self.param = param
         self.num_experiences = num_experiences
+        self.memory = memory
 
     def run_episode(self, sys_vars, env, agent, replay_memory):
         '''run ane episode, return sys_vars'''
         state = env.reset()
         replay_memory.reset_state(state)
         total_rewards = 0
-        logger.debug("DQN Agent param: {} Num experiences: {}".format(pp.pformat(
+        logger.debug("DQN Agent param: {} Num experiences: {} Mem size: {}".format(pp.pformat(
             {k: getattr(agent, k, None)
              for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-        ), self.num_experiences))
+        ), self.num_experiences, len(replay_memory.exp['states'])))
 
         out_done = False
         max_steps = env.spec.timestep_limit
@@ -138,7 +146,7 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         env_spec = get_env_spec(env)
-        replay_memory = LinearMemory(env_spec)
+        replay_memory = self.memory(env_spec)
         agent = self.Agent(env_spec, **self.param)
 
         for epi in range(sys_vars['MAX_EPISODES']):
@@ -157,6 +165,7 @@ def run_sess(sess_spec):
     sess = Session(sess_spec['Agent'],
                    problem=sess_spec['problem'],
                    num_experiences=sess_spec['Num_experiences'],
+                   memory=sess_spec['Memory'],
                    param=sess_spec['param'])
     sys_vars = sess.run()
     return sys_vars
