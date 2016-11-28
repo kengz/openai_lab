@@ -73,7 +73,7 @@ class LinearMemoryWithForgetting(LinearMemory):
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
 
-        if (self.size() >= 20000):
+        if (self.size() > 20000):
             for k in self.exp_keys:
                 del self.exp[k][0]
 
