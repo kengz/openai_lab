@@ -15,6 +15,12 @@ class Agent(object):
         self.policy.select_action(state)
         raise NotImplementedError()
 
-    def train(self, sys_vars, replay_memory):
+    def update(self, sys_vars, replay_memory):
+        '''
+        Agent update apart from training the Q function
+        '''
         self.policy.update(sys_vars, replay_memory)
+        raise NotImplementedError()
+
+    def train(self, sys_vars, replay_memory):
         raise NotImplementedError()

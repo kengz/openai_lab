@@ -124,17 +124,18 @@ class Session(object):
             action = agent.select_action(state)
             next_state, reward, done, info = env.step(action)
             replay_memory.add_exp(action, reward, next_state, done)
+            agent.update(sys_vars, replay_memory)
             # Get n experiences before training model
-            if (t != 0 and t % self.num_experiences == 0):
+            to_train = (
+                (t != 0 and t % self.num_experiences == 0) or
+                t == (env.spec.timestep_limit-1) or
+                done)
+            if to_train:
                 agent.train(sys_vars, replay_memory)
-            agent.update_n_epoch(sys_vars)
             state = next_state
             total_rewards += reward
             if done:
                 break
-        # If you didn't just train, train at end of episode to use recent experiences
-        if (not (t != 0 and t % self.num_experiences == 0)): 
-            agent.train(sys_vars, replay_memory)        
         update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
 
@@ -220,6 +221,8 @@ def run_param_selection(sess_name):
     sess_spec_grid = [{
         'Agent': sess_spec['Agent'],
         'problem': sess_spec['problem'],
+        'Num_experiences': sess_spec['Num_experiences'],
+        'Memory': sess_spec['Memory'],
         'param': param
     } for param in param_grid]
 
