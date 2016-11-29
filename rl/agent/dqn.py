@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
-from rl.policy import EpsilonGreedyPolicy
+from rl.policy import EpsilonGreedyPolicy, BoltzmannPolicy
 from rl.util import logger, pp
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -25,7 +25,8 @@ class DQN(Agent):
                  batch_size=16, n_epoch=1, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid'):
         super(DQN, self).__init__(env_spec)
-        self.policy = EpsilonGreedyPolicy(self)
+        # self.policy = EpsilonGreedyPolicy(self)
+        self.policy = BoltzmannPolicy(self)
 
         self.gamma = gamma
         self.learning_rate = learning_rate

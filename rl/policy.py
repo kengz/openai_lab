@@ -29,6 +29,19 @@ class EpsilonGreedyPolicy(Policy):
     The Epsilon-greedy policy
     '''
 
+    def select_action(self, state):
+        '''epsilon-greedy method'''
+        agent = self.agent
+        if agent.e > np.random.rand():
+            action = np.random.choice(agent.env_spec['actions'])
+        else:
+            state = np.reshape(state, (1, state.shape[0]))
+            # extract from batch predict
+            Q_state = agent.model.predict(state)[0]
+            assert Q_state.ndim == 1
+            action = np.argmax(Q_state)
+        return action
+
     def update(self, sys_vars, replay_memory):
         '''strategy to update epsilon in agent'''
         agent = self.agent
@@ -39,16 +52,37 @@ class EpsilonGreedyPolicy(Policy):
         agent.e = max(slope * epi + agent.init_e, agent.final_e)
         return agent.e
 
+
+class BoltzmannPolicy(Policy):
+
+    '''
+    The Boltzmann policy
+    TODO still suffers performance decay after solving it for some epis
+    '''
+
     def select_action(self, state):
-        '''epsilon-greedy method'''
         agent = self.agent
-        if agent.e > np.random.rand():
-            action = np.random.choice(agent.env_spec['actions'])
-        else:
-            state = np.reshape(state, (1, state.shape[0]))
-            Q_state = agent.model.predict(state)
-            action = np.argmax(Q_state)
+        self.tau = agent.e + 0.01  # proxied by e for now
+        self.clip = (-500., 500.)
+        state = np.reshape(state, (1, state.shape[0]))
+        Q_state = agent.model.predict(state)[0]  # extract from batch predict
+        Q_state = Q_state.astype('float64')  # precision for prob sum to 1
+        assert Q_state.ndim == 1
+        exp_values = np.exp(
+            np.clip(Q_state / self.tau, self.clip[0], self.clip[1]))
+        probs = exp_values / np.sum(exp_values)
+        action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
+
+    def update(self, sys_vars, replay_memory):
+        '''strategy to update epsilon in agent'''
+        agent = self.agent
+        epi = sys_vars['epi']
+        # mem_size = replay_memory.size()
+        rise = agent.final_e - agent.init_e
+        slope = rise / float(agent.e_anneal_episodes)
+        agent.e = max(slope * epi + agent.init_e, agent.final_e)
+        return agent.e
 
 
 class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
