@@ -65,12 +65,12 @@ game_specs = {
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
-        'Num_experiences': 1,
-        'Memory': LinearMemory,
-        'param': {'e_anneal_episodes': 1000,
-                  'learning_rate': 0.01,
-                  'batch_size': 64,
-                  'gamma': 0.99,
+        'Num_experiences': 4,
+        'Memory': LinearMemoryWithForgetting,
+        'param': {'e_anneal_episodes': 300,
+                  'learning_rate': 0.001,
+                  'batch_size': 32,
+                  'gamma': 0.98,
                   'hidden_layers_shape': [200, 100],
                   'hidden_layers_activation': 'relu'}
     },

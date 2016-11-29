@@ -1,5 +1,5 @@
 from rl.agent.dqn import DQN
-from rl.policy import TargetedEpsilonGreedyPolicy
+from rl.policy import TargetedEpsilonGreedyPolicy, EpsilonGreedyPolicy
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -11,7 +11,7 @@ class LunarDQN(DQN):
     def __init__(self, *args, **kwargs):
         super(LunarDQN, self).__init__(*args, **kwargs)
         # change the policy
-        self.policy = TargetedEpsilonGreedyPolicy(self)
+        self.policy = EpsilonGreedyPolicy(self)
 
     def build_model(self):
         model = Sequential()
@@ -35,3 +35,16 @@ class LunarDQN(DQN):
         self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Model built and compiled")
         return self.model
+
+    def update_n_epoch(self, sys_vars):
+        '''
+        Increase epochs at the beginning of each session,
+        for training for later episodes,
+        once it has more experience
+        Best so far, increment num epochs every 2 up to a max of 5
+        '''
+        if (self.n_epoch < 10 and
+                sys_vars['t'] == 0 and
+                sys_vars['epi'] % 2 == 0):
+            self.n_epoch += 1
+        return self.n_epoch
