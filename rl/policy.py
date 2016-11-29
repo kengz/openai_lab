@@ -62,16 +62,16 @@ class BoltzmannPolicy(Policy):
     '''
 
     def select_action(self, state):
+        # actually out bolzmann in rand of epsilon
         agent = self.agent
         # TODO need to research proper tau decay and clipping avlues for sure
-        self.tau = agent.e  # proxied by e for now
-        self.clip = (-500., 500.)
+        self.tau = max(5.*agent.e, 1.)  # proxied by e for now
+        # self.tau = 10.
         state = np.reshape(state, (1, state.shape[0]))
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         Q_state = Q_state.astype('float64')  # precision for prob sum to 1
         assert Q_state.ndim == 1
-        exp_values = np.exp(
-            np.clip(Q_state / self.tau, self.clip[0], self.clip[1]))
+        exp_values = np.exp(Q_state / self.tau)
         probs = exp_values / np.sum(exp_values)
         action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
@@ -83,7 +83,7 @@ class BoltzmannPolicy(Policy):
         # mem_size = replay_memory.size()
         rise = agent.final_e - agent.init_e
         slope = rise / float(agent.e_anneal_episodes)
-        agent.e = max(slope * epi + agent.init_e, 0.5)
+        agent.e = max(slope * epi + agent.init_e, agent.final_e)
         return agent.e
 
 
