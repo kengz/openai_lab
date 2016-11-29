@@ -46,7 +46,6 @@ class EpsilonGreedyPolicy(Policy):
         '''strategy to update epsilon in agent'''
         agent = self.agent
         epi = sys_vars['epi']
-        # mem_size = replay_memory.size()
         rise = agent.final_e - agent.init_e
         slope = rise / float(agent.e_anneal_episodes)
         agent.e = max(slope * epi + agent.init_e, agent.final_e)
@@ -57,22 +56,26 @@ class BoltzmannPolicy(Policy):
 
     '''
     The Boltzmann policy
-    TODO still suffers performance decay after solving it for some epis
-    happens when tau drops below 0.2
     '''
 
     def select_action(self, state):
         # actually out bolzmann in rand of epsilon
         agent = self.agent
-        # TODO need to research proper tau decay and clipping avlues for sure
-        self.tau = max(5.*agent.e, 1.)  # proxied by e for now
-        # self.tau = 10.
+        # so tau from 5 to 1. seems ok
+        # or 5 to 0.2 ++
+        agent.init_e = 5.  # init_tau, proxied by e
+        agent.final_e = 1.  # final_tau, proxied by e
+        self.tau = agent.e  # proxied by e for now
         state = np.reshape(state, (1, state.shape[0]))
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
-        Q_state = Q_state.astype('float64')  # precision for prob sum to 1
         assert Q_state.ndim == 1
+        # NAN problem, otherwise shd work
         exp_values = np.exp(Q_state / self.tau)
-        probs = exp_values / np.sum(exp_values)
+        probs = np.array(exp_values / np.sum(exp_values))
+        probs /= probs.sum()  # renormalize for floating pt error
+        print(exp_values)
+        print(probs)
+        print(np.amax(probs))
         action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
 
@@ -80,7 +83,6 @@ class BoltzmannPolicy(Policy):
         '''strategy to update epsilon in agent'''
         agent = self.agent
         epi = sys_vars['epi']
-        # mem_size = replay_memory.size()
         rise = agent.final_e - agent.init_e
         slope = rise / float(agent.e_anneal_episodes)
         agent.e = max(slope * epi + agent.init_e, agent.final_e)
