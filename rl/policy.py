@@ -58,11 +58,13 @@ class BoltzmannPolicy(Policy):
     '''
     The Boltzmann policy
     TODO still suffers performance decay after solving it for some epis
+    happens when tau drops below 0.2
     '''
 
     def select_action(self, state):
         agent = self.agent
-        self.tau = agent.e + 0.01  # proxied by e for now
+        # TODO need to research proper tau decay and clipping avlues for sure
+        self.tau = max(agent.e, 0.21)  # proxied by e for now
         self.clip = (-500., 500.)
         state = np.reshape(state, (1, state.shape[0]))
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
