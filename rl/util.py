@@ -110,7 +110,8 @@ def get_env_spec(env):
             [env.observation_space.low, env.observation_space.high]),
         'action_dim': env.action_space.n,
         'actions': list(range(env.action_space.n)),
-        'reward_range': env.reward_range
+        'reward_range': env.reward_range,
+        'timestep_limit': env.spec.timestep_limit
     }
 
 

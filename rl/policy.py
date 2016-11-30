@@ -76,10 +76,10 @@ class BoltzmannPolicy(Policy):
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
-        print(Q_state)
-        print(exp_values)
-        print(probs)
-        print(np.amax(probs))
+        # print(Q_state)
+        # print(exp_values)
+        # print(probs)
+        # print(np.amax(probs))
         action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
 

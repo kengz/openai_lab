@@ -110,13 +110,11 @@ class Session(object):
         replay_memory.reset_state(state)
         total_rewards = 0
         logger.debug(
-            "DQN Agent param: {} Num experiences: {} Mem size: {}".format(
+            "DQN Agent param: {} Mem size: {}".format(
                 pp.pformat(
                     {k: getattr(agent, k, None)
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-                # ), self.param['min_exp_for_training'],
-                ), 1,
-                len(replay_memory.exp['states'])))
+                ), replay_memory.size()))
 
         for t in range(env.spec.timestep_limit):
             sys_vars['t'] = t  # update sys_vars t
