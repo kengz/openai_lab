@@ -59,20 +59,39 @@ class BoltzmannPolicy(Policy):
     '''
 
     def select_action(self, state):
-        # actually out bolzmann in rand of epsilon
         agent = self.agent
         # so tau from 5 to 1. seems ok
         # or 5 to 0.2 ++
         agent.init_e = 5.  # init_tau, proxied by e
-        agent.final_e = 1.  # final_tau, proxied by e
+        agent.final_e = 0.6  # final_tau, proxied by e
+        # ok need to clip at 80 / 0.5
+        # so divide by max of norm vs
+        # if q under 80, ok,
+        # else, rescale to fit inside 80
+        # /200*80
         self.tau = agent.e  # proxied by e for now
         state = np.reshape(state, (1, state.shape[0]))
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         assert Q_state.ndim == 1
-        # NAN problem, otherwise shd work
+        # TODO notes: peculiar things
+        # q val needs to reach high enough before it can reliably perform, guess it makes sense regarding convergence. typically q > 60
+        # also q val cannot be too high, otherwise the exp_values hence the prob goes crazy. typically < 80
+        # so, for tau ending at 0.5, 60 < q < 80
+        # which after /tau is at 120-160 for np.exp()
+        # TODO for generality, the best way may be to just decay tau by max q, so the rescale the np.exp value to a range, without clipping
+        # TODO or adjust tau with max_q
+        max_q = np.amax(Q_state)
+        if (max_q > 80.):
+            self.tau = self.tau * 80. / max_q
+        if (10. < max_q < 60.): # allow the beginning <10 to explore first
+            self.tau = self.tau * max_q / 60.
+
+        Q_state = Q_state.astype('float64')  # prevent precision overflow
         exp_values = np.exp(Q_state / self.tau)
+        assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize for floating pt error
+        print(Q_state)
         print(exp_values)
         print(probs)
         print(np.amax(probs))
