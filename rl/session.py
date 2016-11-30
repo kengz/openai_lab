@@ -9,25 +9,25 @@ game_specs = {
     'dummy': {
         'Agent': dummy.Dummy,
         'problem': 'CartPole-v0',
-        'Num_experiences': 1,
         'Memory': LinearMemory,
-        'param': {}
+        'param': {'min_exp_for_training': 1
+                  }
     },
     'q_table': {
         'Agent': q_table.QTable,
         'problem': 'CartPole-v0',
-        'Num_experiences': 1,
         'Memory': LinearMemory,
-        'param': {'e_anneal_episodes': 200,
+        'param': {'min_exp_for_training': 1,
+                  'e_anneal_episodes': 200,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
     },
     'dqn': {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
-        'Num_experiences': 1,
         'Memory': LinearMemoryWithForgetting,
-        'param': {'e_anneal_episodes': 10,
+        'param': {'min_exp_for_training': 1,
+                  'e_anneal_episodes': 10,
                   'learning_rate': 0.02,
                   'gamma': 0.99,
                   'hidden_layers_shape': [4],
@@ -41,9 +41,9 @@ game_specs = {
     'double_dqn': {
         'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
-        'Num_experiences': 1,
         'Memory': LinearMemory,
-        'param': {'e_anneal_episodes': 180,
+        'param': {'min_exp_for_training': 1,
+                  'e_anneal_episodes': 180,
                   'learning_rate': 0.01,
                   'batch_size': 32,
                   'gamma': 0.99,
@@ -53,9 +53,9 @@ game_specs = {
     'mountain_double_dqn': {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
-        'Num_experiences': 1,
         'Memory': LinearMemory,
-        'param': {'e_anneal_episodes': 300,
+        'param': {'min_exp_for_training': 1,
+                  'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
                   'gamma': 0.99,
@@ -65,9 +65,9 @@ game_specs = {
     'lunar_dqn': {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
-        'Num_experiences': 4,
         'Memory': LinearMemoryWithForgetting,
-        'param': {'e_anneal_episodes': 300,
+        'param': {'min_exp_for_training': 4,
+                  'e_anneal_episodes': 300,
                   'learning_rate': 0.001,
                   'batch_size': 32,
                   'gamma': 0.98,
@@ -77,9 +77,9 @@ game_specs = {
     'lunar_double_dqn': {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
-        'Num_experiences': 1,
         'Memory': LinearMemory,
-        'param': {'e_anneal_episodes': 500,
+        'param': {'min_exp_for_training': 1,
+                  'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
                   'gamma': 0.99,
@@ -97,11 +97,11 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, Agent, problem, num_experiences, memory, param):
+    def __init__(self, Agent, problem, memory, param):
         self.Agent = Agent
         self.problem = problem
+        del param['min_exp_for_training']
         self.param = param
-        self.num_experiences = num_experiences
         self.memory = memory
 
     def run_episode(self, sys_vars, env, agent, replay_memory):
@@ -114,7 +114,9 @@ class Session(object):
                 pp.pformat(
                     {k: getattr(agent, k, None)
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-                ), self.num_experiences, len(replay_memory.exp['states'])))
+                # ), self.param['min_exp_for_training'],
+                ), 1,
+                len(replay_memory.exp['states'])))
 
         for t in range(env.spec.timestep_limit):
             sys_vars['t'] = t  # update sys_vars t
@@ -127,7 +129,8 @@ class Session(object):
             agent.update(sys_vars, replay_memory)
             # Get n experiences before training model
             to_train = (
-                (t != 0 and t % self.num_experiences == 0) or
+                # (t != 0 and t % self.param['min_exp_for_training'] == 0) or
+                (t != 0 and t % 1 == 0) or
                 t == (env.spec.timestep_limit-1) or
                 done)
             if to_train:
@@ -163,7 +166,6 @@ def run_sess(sess_spec):
     '''
     sess = Session(sess_spec['Agent'],
                    problem=sess_spec['problem'],
-                   num_experiences=sess_spec['Num_experiences'],
                    memory=sess_spec['Memory'],
                    param=sess_spec['param'])
     sys_vars = sess.run()
@@ -216,12 +218,10 @@ def run_param_selection(sess_name):
     to run run_sess_avg on each
     '''
     sess_spec = game_specs.get(sess_name)
-    param_range = sess_spec['param_range']
-    param_grid = param_product(param_range)
+    param_grid = param_product(sess_spec['param'], sess_spec['param_range'])
     sess_spec_grid = [{
         'Agent': sess_spec['Agent'],
         'problem': sess_spec['problem'],
-        'Num_experiences': sess_spec['Num_experiences'],
         'Memory': sess_spec['Memory'],
         'param': param
     } for param in param_grid]

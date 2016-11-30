@@ -245,7 +245,12 @@ def live_plot(sys_vars):
 # a list of cartesian products of param_range
 # e.g. {'a': [1,2], 'b': [3]} into
 # [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(param_range):
+def param_product(default_param, param_range):
     keys = param_range.keys()
     range_vals = param_range.values()
-    return [dict(zip(keys, vals)) for vals in itertools.product(*range_vals)]
+    param_grid = []
+    for vals in itertools.product(*range_vals):
+        param = copy.deepcopy(default_param)
+        param.update(dict(zip(keys, vals)))
+        param_grid.append(param)
+    return param_grid
