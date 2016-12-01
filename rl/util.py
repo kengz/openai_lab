@@ -62,7 +62,7 @@ required_sys_keys = {
     't': 0,
     'loss': [],
     'total_r_history': [],
-    'e_history': [],
+    'explore_history': [],
     'mean_rewards': 0,
     'total_rewards': 0,
     'solved': False,
@@ -132,7 +132,9 @@ def update_history(agent,
     '''
 
     sys_vars['total_r_history'].append(total_rewards)
-    sys_vars['e_history'].append(getattr(agent, 'e', 0))
+    policy = agent.policy
+    sys_vars['explore_history'].append(
+        getattr(policy, 'e', 0) or getattr(policy, 'tau', 0))
     avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
     mean_rewards = np.mean(sys_vars['total_r_history'][-avg_len:])
@@ -186,7 +188,7 @@ def init_plotter(sys_vars):
     plotters['total rewards'] = (ax1, p1)
 
     ax1e = ax1.twinx()
-    ax1e.set_ylabel('epsilon').set_color('r')
+    ax1e.set_ylabel('(epsilon or tau)').set_color('r')
     ax1e.set_frame_on(False)
     p1e, = ax1e.plot([], [], 'r')
     plotters['e'] = (ax1e, p1e)
@@ -220,7 +222,7 @@ def live_plot(sys_vars):
     ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
     ax1e, p1e = plotters['e']
-    p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['e_history'][-1]))
+    p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
     p1e.set_xdata(np.arange(len(p1e.get_ydata())))
     ax1e.relim()
     ax1e.autoscale_view(tight=True, scalex=True, scaley=True)

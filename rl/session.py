@@ -162,6 +162,7 @@ class Session(object):
         memory = self.Memory(**self.param)
         policy = self.Policy(**self.param)
         agent.compile(memory, policy)
+        logger.info('Compiled Agent, Memory, Policy')
 
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
