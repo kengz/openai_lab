@@ -2,23 +2,19 @@ import numpy as np
 from scipy.stats import halfnorm
 
 
-class LinearMemory(object):
+class Memory(object):
 
     '''
-    The replay memory used for random minibatch training
+    The base class of Memory, with the core methods
     '''
 
-    def __init__(self, agent):
+    def __init__(self):
         '''
         Construct externally
-        assign the agent, otherwise it's non useful
         '''
-        self.agent = agent
-        self.env_spec = agent.env_spec
-        self.exp_keys = [
-            'states', 'actions', 'rewards', 'next_states', 'terminals']
-        self.exp = {k: [] for k in self.exp_keys}
+        self.agent = None
         self.state = None
+        return
 
     def reset_state(self, init_state):
         '''
@@ -26,8 +22,44 @@ class LinearMemory(object):
         '''
         self.state = init_state
 
+    def add_exp(self, action, reward, next_state, terminal):
+        '''add an experience'''
+        raise NotImplementedError()
+
+    def get_exp(self, inds):
+        '''get a batch of experiences by indices'''
+        raise NotImplementedError()
+
+    def pop(self):
+        '''get the last experience (batched like get_exp()'''
+        raise NotImplementedError()
+
+    def size(self):
+        '''get a batch of experiences by indices'''
+        raise NotImplementedError()
+
+    def rand_minibatch(self, size):
+        '''get a batch of experiences by indices'''
+        raise NotImplementedError()
+
+
+class LinearMemory(Memory):
+
+    '''
+    The replay memory used for random minibatch training
+    '''
+
+    def __init__(self):
+        '''
+        Construct externally
+        '''
+        super(LinearMemory, self).__init__()
+        self.exp_keys = [
+            'states', 'actions', 'rewards', 'next_states', 'terminals']
+        self.exp = {k: [] for k in self.exp_keys}
+
     def one_hot_action(self, action):
-        action_arr = np.zeros(self.env_spec['action_dim'])
+        action_arr = np.zeros(self.agent.env_spec['action_dim'])
         action_arr[action] = 1
         return action_arr
 
