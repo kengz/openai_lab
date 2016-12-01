@@ -33,7 +33,7 @@ class DQN(Agent):
         self.n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
-        logger.info(pp.pformat(self.env_spec))
+        logger.info('Agent params: {}'.format(pp.pformat(self.__dict__)))
         self.build_model()
 
     def build_hidden_layers(self, model):

@@ -19,25 +19,29 @@ game_specs = {
         'Agent': q_table.QTable,
         'Memory': LinearMemory,
         'Policy': EpsilonGreedyPolicy,
-        'param': {'e_anneal_episodes': 200,
-                  'learning_rate': 0.01,
-                  'gamma': 0.99}
+        'param': {
+            'learning_rate': 0.01,
+            'gamma': 0.99,
+            'anneal_episodes': 200,
+        }
     },
     'dqn': {
         'problem': 'CartPole-v0',
         'Agent': dqn.DQN,
         'Memory': LinearMemoryWithForgetting,
         'Policy': BoltzmannPolicy,
-        'param': {'train_per_n_new_exp': 1,
-                  # 'e_anneal_episodes': 10,
-                  'learning_rate': 0.02,
-                  'gamma': 0.99,
-                  'hidden_layers_shape': [4],
-                  'hidden_layers_activation': 'sigmoid'},
+        'param': {
+            'train_per_n_new_exp': 1,
+            'learning_rate': 0.02,
+            'gamma': 0.99,
+            'hidden_layers_shape': [4],
+            'hidden_layers_activation': 'sigmoid',
+            'anneal_episodes': 10,
+        },
         'param_range': {
-            # 'e_anneal_episodes': [50, 100],
+            'anneal_episodes': [50, 100],
             'learning_rate': [0.01, 0.05, 0.1],
-            'gamma': [0.99]
+            'gamma': [0.99],
         }
     },
     'double_dqn': {
@@ -45,52 +49,60 @@ game_specs = {
         'Agent': double_dqn.DoubleDQN,
         'Memory': LinearMemory,
         'Policy': EpsilonGreedyPolicy,
-        'param': {'train_per_n_new_exp': 1,
-                  # 'e_anneal_episodes': 180,
-                  'learning_rate': 0.01,
-                  'batch_size': 32,
-                  'gamma': 0.99,
-                  'hidden_layers_shape': [4],
-                  'hidden_layers_activation': 'sigmoid'}
+        'param': {
+            'train_per_n_new_exp': 1,
+            'learning_rate': 0.01,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [4],
+            'hidden_layers_activation': 'sigmoid',
+            'anneal_episodes': 180,
+        }
     },
     'mountain_double_dqn': {
         'problem': 'MountainCar-v0',
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'Memory': LinearMemory,
         'Policy': EpsilonGreedyPolicy,
-        'param': {'train_per_n_new_exp': 1,
-                  # 'e_anneal_episodes': 300,
-                  'learning_rate': 0.01,
-                  'batch_size': 128,
-                  'gamma': 0.99,
-                  'hidden_layers_shape': [8, 8],
-                  'hidden_layers_activation': 'sigmoid'}
+        'param': {
+            'train_per_n_new_exp': 1,
+            'learning_rate': 0.01,
+            'batch_size': 128,
+            'gamma': 0.99,
+            'hidden_layers_shape': [8, 8],
+            'hidden_layers_activation': 'sigmoid',
+            'anneal_episodes': 300,
+        }
     },
     'lunar_dqn': {
         'problem': 'LunarLander-v2',
         'Agent': lunar_dqn.LunarDQN,
         'Memory': LinearMemoryWithForgetting,
         'Policy': EpsilonGreedyPolicy,
-        'param': {'train_per_n_new_exp': 4,
-                  # 'e_anneal_episodes': 300,
-                  'learning_rate': 0.001,
-                  'batch_size': 32,
-                  'gamma': 0.98,
-                  'hidden_layers_shape': [200, 100],
-                  'hidden_layers_activation': 'relu'}
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.98,
+            'hidden_layers_shape': [200, 100],
+            'hidden_layers_activation': 'relu',
+            'anneal_episodes': 300,
+        }
     },
     'lunar_double_dqn': {
         'problem': 'LunarLander-v2',
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'Memory': LinearMemory,
         'Policy': EpsilonGreedyPolicy,
-        'param': {'train_per_n_new_exp': 1,
-                  # 'e_anneal_episodes': 500,
-                  'learning_rate': 0.01,
-                  'batch_size': 64,
-                  'gamma': 0.99,
-                  'hidden_layers_shape': [200, 100],
-                  'hidden_layers_activation': 'relu'}
+        'param': {
+            'train_per_n_new_exp': 1,
+            'learning_rate': 0.01,
+            'batch_size': 64,
+            'gamma': 0.99,
+            'hidden_layers_shape': [200, 100],
+            'hidden_layers_activation': 'relu',
+            'anneal_episodes': 500,
+        }
     }
 }
 
@@ -225,7 +237,7 @@ def run_param_selection(sess_name):
         'Agent': sess_spec['Agent'],
         'Memory': sess_spec['Memory'],
         'Policy': sess_spec['Policy'],
-        'param': param
+        'param': param,
     } for param in param_grid]
 
     p = mp.Pool(mp.cpu_count())

@@ -1,4 +1,5 @@
 import numpy as np
+from rl.util import logger, pp
 from scipy.stats import halfnorm
 
 
@@ -55,6 +56,7 @@ class LinearMemory(Memory):
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
+        logger.info('Memory params: {}'.format(pp.pformat(self.__dict__)))
 
     def one_hot_action(self, action):
         action_arr = np.zeros(self.agent.env_spec['action_dim'])

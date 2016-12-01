@@ -13,7 +13,7 @@ class QTable(Agent):
     def __init__(self, env_spec,
                  resolution=10,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
+                 init_e=1.0, final_e=0.1, anneal_episodes=1000,
                  **kwargs):  # absorb generic param without breaking
         super(QTable, self).__init__(env_spec)
         self.resolution = resolution
@@ -22,7 +22,7 @@ class QTable(Agent):
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
-        self.e_anneal_episodes = e_anneal_episodes
+        self.anneal_episodes = anneal_episodes
         self.build_table()
 
     def build_table(self):
@@ -70,7 +70,7 @@ class QTable(Agent):
         '''strategy to update epsilon'''
         self.e = max(self.e -
                      (self.init_e - self.final_e) /
-                     float(self.e_anneal_episodes),
+                     float(self.anneal_episodes),
                      self.final_e)
         return self.e
 

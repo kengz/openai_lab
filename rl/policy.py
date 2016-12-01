@@ -1,4 +1,5 @@
 import numpy as np
+from rl.util import logger, pp
 
 
 class Policy(object):
@@ -35,6 +36,7 @@ class EpsilonGreedyPolicy(Policy):
         self.final_e = final_e
         self.e = self.init_e
         self.anneal_episodes = anneal_episodes
+        logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -122,13 +124,14 @@ class BoltzmannPolicy(Policy):
     '''
 
     def __init__(self,
-                 init_tau=5., final_tau=0.5, anneal_episodes=10,
+                 init_tau=5., final_tau=0.5, anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
         super(BoltzmannPolicy, self).__init__()
-        self.init_tau = 5.
-        self.final_tau = 0.5
+        self.init_tau = init_tau
+        self.final_tau = final_tau
         self.tau = self.init_tau
         self.anneal_episodes = anneal_episodes
+        logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
 
     def select_action(self, state):
         agent = self.agent
