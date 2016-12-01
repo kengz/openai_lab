@@ -5,16 +5,14 @@ class Policy(object):
 
     '''
     The base class of Policy, with the core methods
-    Acts as a proxy policy definition,
-    still draws parameters from agent to compute
     '''
 
-    def __init__(self, agent):
+    def __init__(self):
         '''
         Construct externally
-        assign the agent, otherwise it's non useful
         '''
-        self.agent = agent
+        self.agent = None
+        return
 
     def select_action(self, state):
         raise NotImplementedError()
@@ -29,9 +27,9 @@ class EpsilonGreedyPolicy(Policy):
     The Epsilon-greedy policy
     '''
 
-    def __init__(self, agent,
+    def __init__(self,
                  init_e=1.0, final_e=0.1, anneal_episodes=30):
-        super(EpsilonGreedyPolicy, self).__init__(agent)
+        super(EpsilonGreedyPolicy, self).__init__()
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
@@ -122,9 +120,9 @@ class BoltzmannPolicy(Policy):
     p = exp(Q/tau) / sum(Q[a]/tau)
     '''
 
-    def __init__(self, agent,
+    def __init__(self,
                  init_tau=5., final_tau=0.5, anneal_episodes=10):
-        super(BoltzmannPolicy, self).__init__(agent)
+        super(BoltzmannPolicy, self).__init__()
         self.init_tau = 5.
         self.final_tau = 0.5
         self.tau = self.init_tau

@@ -8,8 +8,12 @@ class Agent(object):
         self.env_spec = env_spec
 
     def compile(self, memory, policy):
+        # set 2 way references
         self.memory = memory
         self.policy = policy
+        # back references
+        setattr(memory, 'agent', self)
+        setattr(policy, 'agent', self)
 
     def select_action(self, state):
         self.policy.select_action(state)
