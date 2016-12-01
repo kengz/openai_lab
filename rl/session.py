@@ -10,14 +10,14 @@ game_specs = {
         'Agent': dummy.Dummy,
         'problem': 'CartPole-v0',
         'Memory': LinearMemory,
-        'param': {'min_exp_for_training': 1
+        'param': {'train_per_n_new_exp': 1
                   }
     },
     'q_table': {
         'Agent': q_table.QTable,
         'problem': 'CartPole-v0',
         'Memory': LinearMemory,
-        'param': {'min_exp_for_training': 1,
+        'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 200,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
@@ -26,7 +26,7 @@ game_specs = {
         'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
         'Memory': LinearMemoryWithForgetting,
-        'param': {'min_exp_for_training': 1,
+        'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 10,
                   'learning_rate': 0.02,
                   'gamma': 0.99,
@@ -42,7 +42,7 @@ game_specs = {
         'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
         'Memory': LinearMemory,
-        'param': {'min_exp_for_training': 1,
+        'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 180,
                   'learning_rate': 0.01,
                   'batch_size': 32,
@@ -54,7 +54,7 @@ game_specs = {
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
         'Memory': LinearMemory,
-        'param': {'min_exp_for_training': 1,
+        'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
@@ -66,7 +66,7 @@ game_specs = {
         'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
         'Memory': LinearMemoryWithForgetting,
-        'param': {'min_exp_for_training': 4,
+        'param': {'train_per_n_new_exp': 4,
                   'e_anneal_episodes': 300,
                   'learning_rate': 0.001,
                   'batch_size': 32,
@@ -78,7 +78,7 @@ game_specs = {
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
         'Memory': LinearMemory,
-        'param': {'min_exp_for_training': 1,
+        'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
@@ -100,7 +100,7 @@ class Session(object):
     def __init__(self, Agent, problem, memory, param):
         self.Agent = Agent
         self.problem = problem
-        del param['min_exp_for_training']
+        # del param['train_per_n_new_exp']
         self.param = param
         self.memory = memory
 
@@ -125,13 +125,7 @@ class Session(object):
             next_state, reward, done, info = env.step(action)
             replay_memory.add_exp(action, reward, next_state, done)
             agent.update(sys_vars, replay_memory)
-            # Get n experiences before training model
-            to_train = (
-                # (t != 0 and t % self.param['min_exp_for_training'] == 0) or
-                (t != 0 and t % 1 == 0) or
-                t == (env.spec.timestep_limit-1) or
-                done)
-            if to_train:
+            if agent.to_train(sys_vars, replay_memory):
                 agent.train(sys_vars, replay_memory)
             state = next_state
             total_rewards += reward

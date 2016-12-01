@@ -20,6 +20,7 @@ class DQN(Agent):
     '''
 
     def __init__(self, env_spec,
+                 train_per_n_new_exp=1,
                  gamma=0.95, learning_rate=0.1,
                  init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
                  batch_size=16, n_epoch=1, hidden_layers_shape=[4],
@@ -28,6 +29,7 @@ class DQN(Agent):
         # self.policy = EpsilonGreedyPolicy(self)
         self.policy = BoltzmannPolicy(self)
 
+        self.train_per_n_new_exp = train_per_n_new_exp
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.init_e = init_e
@@ -95,6 +97,19 @@ class DQN(Agent):
         '''
         self.policy.update(sys_vars, replay_memory)
         self.update_n_epoch(sys_vars)
+
+    def to_train(self, sys_vars, replay_memory):
+        '''
+        return boolean condition if agent should train
+        get n NEW experiences before training model
+        '''
+        t = sys_vars['t']
+        timestep_limit = self.env_spec['timestep_limit']
+        done = replay_memory.pop()['terminals'][0]
+        return bool(
+            (t != 0 and t % self.train_per_n_new_exp == 0) or
+            t == (timestep_limit-1) or
+            done)
 
     def train(self, sys_vars, replay_memory):
         '''

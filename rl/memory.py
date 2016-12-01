@@ -43,9 +43,14 @@ class LinearMemory(object):
         return np.array([self.exp[exp_name][i] for i in inds])
 
     def get_exp(self, inds):
-        # change to get by indices en-masse
-        # pick it up directly by dict, so no need to transpose
         return {k: self._get_exp(k, inds) for k in self.exp_keys}
+
+    def pop(self):
+        '''
+        convenient method to get exp at [last_ind]
+        '''
+        assert self.size() > 0
+        return self.get_exp([self.size() - 1])
 
     def size(self):
         return len(self.exp['rewards'])
