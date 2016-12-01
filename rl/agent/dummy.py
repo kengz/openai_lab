@@ -13,8 +13,11 @@ class Dummy(Agent):
         action = np.random.choice(self.env_spec['actions'])
         return action
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         return
 
-    def train(self, sys_vars, replay_memory):
+    def to_train(self, sys_vars):
+        return True
+
+    def train(self, sys_vars):
         return

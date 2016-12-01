@@ -83,36 +83,35 @@ class DQN(Agent):
         '''epsilon-greedy method'''
         return self.policy.select_action(state)
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         '''
         Agent update apart from training the Q function
         '''
-        self.policy.update(sys_vars, replay_memory)
+        self.policy.update(sys_vars)
         self.update_n_epoch(sys_vars)
 
-    def to_train(self, sys_vars, replay_memory):
+    def to_train(self, sys_vars):
         '''
         return boolean condition if agent should train
         get n NEW experiences before training model
         '''
         t = sys_vars['t']
         timestep_limit = self.env_spec['timestep_limit']
-        done = replay_memory.pop()['terminals'][0]
+        done = self.replay_memory.pop()['terminals'][0]
         return bool(
             (t != 0 and t % self.train_per_n_new_exp == 0) or
             t == (timestep_limit-1) or
             done)
 
-    def train(self, sys_vars, replay_memory):
+    def train(self, sys_vars):
         '''
         Training is for the Q function (NN) only
         otherwise (e.g. policy) see self.update()
         step 1,2,3,4 of algo.
-        replay_memory is provided externally
         '''
         loss_total = 0
         for epoch in range(self.n_epoch):
-            minibatch = replay_memory.rand_minibatch(self.batch_size)
+            minibatch = self.replay_memory.rand_minibatch(self.batch_size)
             # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
             Q_next_states = self.model.predict(minibatch['next_states'])

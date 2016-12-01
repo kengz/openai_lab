@@ -179,8 +179,8 @@ def init_plotter(sys_vars):
                           frame_on=False,
                           title="learning rate: {}, "
                           "gamma: {}\ntotal rewards per episode".format(
-                              str(param['learning_rate']),
-                              str(param['gamma'])),
+                              str(param.get('learning_rate')),
+                              str(param.get('gamma'))),
                           ylabel='total rewards')
     p1, = ax1.plot([], [])
     plotters['total rewards'] = (ax1, p1)

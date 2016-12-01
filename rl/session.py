@@ -11,15 +11,15 @@ game_specs = {
         'problem': 'CartPole-v0',
         'Agent': dummy.Dummy,
         'Memory': LinearMemory,
-        'param': {'train_per_n_new_exp': 1
-                  }
+        'Policy': EpsilonGreedyPolicy,
+        'param': {}
     },
     'q_table': {
         'problem': 'CartPole-v0',
         'Agent': q_table.QTable,
         'Memory': LinearMemory,
-        'param': {'train_per_n_new_exp': 1,
-                  'e_anneal_episodes': 200,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {'e_anneal_episodes': 200,
                   'learning_rate': 0.01,
                   'gamma': 0.99}
     },
@@ -44,8 +44,9 @@ game_specs = {
         'problem': 'CartPole-v0',
         'Agent': double_dqn.DoubleDQN,
         'Memory': LinearMemory,
+        'Policy': EpsilonGreedyPolicy,
         'param': {'train_per_n_new_exp': 1,
-                  'e_anneal_episodes': 180,
+                  # 'e_anneal_episodes': 180,
                   'learning_rate': 0.01,
                   'batch_size': 32,
                   'gamma': 0.99,
@@ -56,8 +57,9 @@ game_specs = {
         'problem': 'MountainCar-v0',
         'Agent': mountain_double_dqn.MountainDoubleDQN,
         'Memory': LinearMemory,
+        'Policy': EpsilonGreedyPolicy,
         'param': {'train_per_n_new_exp': 1,
-                  'e_anneal_episodes': 300,
+                  # 'e_anneal_episodes': 300,
                   'learning_rate': 0.01,
                   'batch_size': 128,
                   'gamma': 0.99,
@@ -68,8 +70,9 @@ game_specs = {
         'problem': 'LunarLander-v2',
         'Agent': lunar_dqn.LunarDQN,
         'Memory': LinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
         'param': {'train_per_n_new_exp': 4,
-                  'e_anneal_episodes': 300,
+                  # 'e_anneal_episodes': 300,
                   'learning_rate': 0.001,
                   'batch_size': 32,
                   'gamma': 0.98,
@@ -80,8 +83,9 @@ game_specs = {
         'problem': 'LunarLander-v2',
         'Agent': lunar_double_dqn.LunarDoubleDQN,
         'Memory': LinearMemory,
+        'Policy': EpsilonGreedyPolicy,
         'param': {'train_per_n_new_exp': 1,
-                  'e_anneal_episodes': 500,
+                  # 'e_anneal_episodes': 500,
                   'learning_rate': 0.01,
                   'batch_size': 64,
                   'gamma': 0.99,
@@ -106,17 +110,17 @@ class Session(object):
         self.policy = policy
         self.param = param
 
-    def run_episode(self, sys_vars, env, agent, replay_memory):
+    def run_episode(self, sys_vars, env, agent):
         '''run ane episode, return sys_vars'''
         state = env.reset()
-        replay_memory.reset_state(state)
+        agent.replay_memory.reset_state(state)
         total_rewards = 0
         logger.debug(
             "DQN Agent param: {} Mem size: {}".format(
                 pp.pformat(
                     {k: getattr(agent, k, None)
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-                ), replay_memory.size()))
+                ), agent.replay_memory.size()))
 
         for t in range(env.spec.timestep_limit):
             sys_vars['t'] = t  # update sys_vars t
@@ -125,10 +129,10 @@ class Session(object):
 
             action = agent.select_action(state)
             next_state, reward, done, info = env.step(action)
-            replay_memory.add_exp(action, reward, next_state, done)
-            agent.update(sys_vars, replay_memory)
-            if agent.to_train(sys_vars, replay_memory):
-                agent.train(sys_vars, replay_memory)
+            agent.replay_memory.add_exp(action, reward, next_state, done)
+            agent.update(sys_vars)
+            if agent.to_train(sys_vars):
+                agent.train(sys_vars)
 
             state = next_state
             total_rewards += reward
@@ -142,15 +146,14 @@ class Session(object):
         sys_vars = init_sys_vars(
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
-        env_spec = get_env_spec(env)
-        agent = self.Agent(env_spec, **self.param)
+        agent = self.Agent(get_env_spec(env), **self.param)
         replay_memory = self.memory(agent)
         policy = self.policy(agent)
         agent.compile(replay_memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
-            self.run_episode(sys_vars, env, agent, replay_memory)
+            self.run_episode(sys_vars, env, agent)
             if sys_vars['solved']:
                 break
 

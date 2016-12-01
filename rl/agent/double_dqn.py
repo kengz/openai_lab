@@ -35,17 +35,16 @@ class DoubleDQN(DQN):
 
         return self.model, self.model2
 
-    def train(self, sys_vars, replay_memory):
+    def train(self, sys_vars):
         '''
         Training is for the Q function (NN) only
         otherwise (e.g. policy) see self.update()
         step 1,2,3,4 of algo.
-        replay_memory is provided externally
         '''
 
         loss_total = 0
         for epoch in range(self.n_epoch):
-            minibatch = replay_memory.rand_minibatch(self.batch_size)
+            minibatch = self.replay_memory.rand_minibatch(self.batch_size)
             # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
 

@@ -73,15 +73,17 @@ class QTable(Agent):
                      self.final_e)
         return self.e
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         self.update_e()
 
-    def train(self, sys_vars, replay_memory):
+    def to_train(self, sys_vars):
+        return True
+
+    def train(self, sys_vars):
         '''
-        replay_memory is provided externally
         run the basic bellman equation update
         '''
-        last_exp = replay_memory.get_exp([replay_memory.size() - 1])
+        last_exp = self.replay_memory.pop()
         state = last_exp['states'][0]
         flat_state = self.flatten_state(state)
         next_state = last_exp['next_states'][0]

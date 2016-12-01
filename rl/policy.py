@@ -19,7 +19,7 @@ class Policy(object):
     def select_action(self, state):
         raise NotImplementedError()
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         raise NotImplementedError()
 
 
@@ -50,7 +50,7 @@ class EpsilonGreedyPolicy(Policy):
             action = np.argmax(Q_state)
         return action
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_e - self.init_e
@@ -67,10 +67,10 @@ class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     the current exploration rate
     '''
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         '''strategy to update epsilon in agent'''
         super(OscillatingEpsilonGreedyPolicy, self).update(
-            sys_vars, replay_memory)
+            sys_vars)
         epi = sys_vars['epi']
         if not (epi % 3) and epi > 15:
             # drop to 1/3 of the current exploration rate
@@ -85,7 +85,7 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     partial mean rewards and its distance to the target mean rewards
     '''
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         SOLVED_MEAN_REWARD = sys_vars['SOLVED_MEAN_REWARD']
@@ -148,7 +148,7 @@ class BoltzmannPolicy(Policy):
         action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
 
-    def update(self, sys_vars, replay_memory):
+    def update(self, sys_vars):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_tau - self.init_tau
