@@ -44,7 +44,7 @@ class DoubleDQN(DQN):
 
         loss_total = 0
         for epoch in range(self.n_epoch):
-            minibatch = self.replay_memory.rand_minibatch(self.batch_size)
+            minibatch = self.memory.rand_minibatch(self.batch_size)
             # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
 

@@ -83,7 +83,7 @@ class QTable(Agent):
         '''
         run the basic bellman equation update
         '''
-        last_exp = self.replay_memory.pop()
+        last_exp = self.memory.pop()
         state = last_exp['states'][0]
         flat_state = self.flatten_state(state)
         next_state = last_exp['next_states'][0]

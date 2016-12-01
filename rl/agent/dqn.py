@@ -97,7 +97,7 @@ class DQN(Agent):
         '''
         t = sys_vars['t']
         timestep_limit = self.env_spec['timestep_limit']
-        done = self.replay_memory.pop()['terminals'][0]
+        done = self.memory.pop()['terminals'][0]
         return bool(
             (t != 0 and t % self.train_per_n_new_exp == 0) or
             t == (timestep_limit-1) or
@@ -111,7 +111,7 @@ class DQN(Agent):
         '''
         loss_total = 0
         for epoch in range(self.n_epoch):
-            minibatch = self.replay_memory.rand_minibatch(self.batch_size)
+            minibatch = self.memory.rand_minibatch(self.batch_size)
             # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
             Q_next_states = self.model.predict(minibatch['next_states'])

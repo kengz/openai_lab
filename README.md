@@ -85,18 +85,20 @@ Note that in parallel mode, graphics will not be rendered.
 
 See `rl/session.py` for the main Session class. It takes the 3 arguments `Agent, problem, param`.
 
-You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods:
+You should implement your `Agent` class in the `rl/agent/` folder. By polymorphism, your `Agent` should implement the methods shown in `rl/agent/base_agent/py`, otherwise it will throw `NotImplementedError`.
 
 ```python
 # see rl/agent/dqn.py for example
 def __init__(self, env_spec, *args, **kwargs):
     super(DQN, self).__init__(env_spec)
-    self.policy = Policy(self)
     # set other params for agent
 def select_action(self, state):
     self.policy.select_action(state)
-def train(self, sys_vars, replay_memory):
-    self.policy.update(sys_vars, replay_memory)
+def update(self, sys_vars):
+    self.policy.update(sys_vars)
+def to_train(self, sys_vars):
+    return True  # if train at every step
+def train(self, sys_vars):
     # training code...
 ```
 

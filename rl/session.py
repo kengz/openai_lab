@@ -113,14 +113,14 @@ class Session(object):
     def run_episode(self, sys_vars, env, agent):
         '''run ane episode, return sys_vars'''
         state = env.reset()
-        agent.replay_memory.reset_state(state)
+        agent.memory.reset_state(state)
         total_rewards = 0
         logger.debug(
             "DQN Agent param: {} Mem size: {}".format(
                 pp.pformat(
                     {k: getattr(agent, k, None)
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-                ), agent.replay_memory.size()))
+                ), agent.memory.size()))
 
         for t in range(env.spec.timestep_limit):
             sys_vars['t'] = t  # update sys_vars t
@@ -129,7 +129,7 @@ class Session(object):
 
             action = agent.select_action(state)
             next_state, reward, done, info = env.step(action)
-            agent.replay_memory.add_exp(action, reward, next_state, done)
+            agent.memory.add_exp(action, reward, next_state, done)
             agent.update(sys_vars)
             if agent.to_train(sys_vars):
                 agent.train(sys_vars)
@@ -147,9 +147,9 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         agent = self.Agent(get_env_spec(env), **self.param)
-        replay_memory = self.memory(agent)
+        memory = self.memory(agent)
         policy = self.policy(agent)
-        agent.compile(replay_memory, policy)
+        agent.compile(memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
