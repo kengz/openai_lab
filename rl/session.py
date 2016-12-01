@@ -147,7 +147,7 @@ class Session(object):
         replay_memory = self.memory(env_spec)
         # replay_memory = self.memory(agent)
         policy = self.policy(agent)
-        agent.set(replay_memory, policy)
+        agent.compile(replay_memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi

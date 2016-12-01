@@ -7,7 +7,7 @@ class Agent(object):
     def __init__(self, env_spec):
         self.env_spec = env_spec
 
-    def set(self, replay_memory, policy):
+    def compile(self, replay_memory, policy):
         self.replay_memory = replay_memory
         self.policy = policy
 
