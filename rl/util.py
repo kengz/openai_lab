@@ -256,3 +256,11 @@ def param_product(default_param, param_range):
         param.update(dict(zip(keys, vals)))
         param_grid.append(param)
     return param_grid
+
+
+def stringify_param_value(value):
+    return value.__name__ if isinstance(value, type) else value
+
+
+def stringify_param(param):
+    return {k: stringify_param_value(param[k]) for k in param}
