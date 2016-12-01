@@ -21,7 +21,6 @@ class DQN(Agent):
     def __init__(self, env_spec,
                  train_per_n_new_exp=1,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
                  batch_size=16, n_epoch=1, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid'):
         super(DQN, self).__init__(env_spec)
@@ -29,10 +28,6 @@ class DQN(Agent):
         self.train_per_n_new_exp = train_per_n_new_exp
         self.gamma = gamma
         self.learning_rate = learning_rate
-        self.init_e = init_e
-        self.final_e = final_e
-        self.e = self.init_e
-        self.e_anneal_episodes = e_anneal_episodes
         self.batch_size = batch_size
         self.n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape

@@ -29,13 +29,13 @@ game_specs = {
         'Memory': LinearMemoryWithForgetting,
         'Policy': BoltzmannPolicy,
         'param': {'train_per_n_new_exp': 1,
-                  'e_anneal_episodes': 10,
+                  # 'e_anneal_episodes': 10,
                   'learning_rate': 0.02,
                   'gamma': 0.99,
                   'hidden_layers_shape': [4],
                   'hidden_layers_activation': 'sigmoid'},
         'param_range': {
-            'e_anneal_episodes': [50, 100],
+            # 'e_anneal_episodes': [50, 100],
             'learning_rate': [0.01, 0.05, 0.1],
             'gamma': [0.99]
         }

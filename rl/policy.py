@@ -30,12 +30,12 @@ class EpsilonGreedyPolicy(Policy):
     '''
 
     def __init__(self, agent,
-                 init_e=1.0, final_e=0.1, e_anneal_episodes=30):
+                 init_e=1.0, final_e=0.1, anneal_episodes=30):
         super(EpsilonGreedyPolicy, self).__init__(agent)
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
-        self.e_anneal_episodes = e_anneal_episodes
+        self.anneal_episodes = anneal_episodes
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -54,7 +54,7 @@ class EpsilonGreedyPolicy(Policy):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_e - self.init_e
-        slope = rise / float(self.e_anneal_episodes)
+        slope = rise / float(self.anneal_episodes)
         self.e = max(slope * epi + self.init_e, self.final_e)
         return self.e
 
@@ -102,7 +102,7 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         worst_gap = SOLVED_MEAN_REWARD - min_reward
         gap_ratio = projection_gap / worst_gap
         envelope = self.init_e + (self.final_e - self.init_e) / 2. * \
-            (float(epi)/float(self.e_anneal_episodes))
+            (float(epi)/float(self.anneal_episodes))
         pessimistic_gap_ratio = envelope * min(2 * gap_ratio, 1)
         # if is in odd cycle, and diff is still big, actively explore
         active_exploration_cycle = not bool(
@@ -123,12 +123,12 @@ class BoltzmannPolicy(Policy):
     '''
 
     def __init__(self, agent,
-                 init_tau=5., final_tau=0.5, tau_anneal_episodes=10):
+                 init_tau=5., final_tau=0.5, anneal_episodes=10):
         super(BoltzmannPolicy, self).__init__(agent)
         self.init_tau = 5.
         self.final_tau = 0.5
         self.tau = self.init_tau
-        self.tau_anneal_episodes = tau_anneal_episodes
+        self.anneal_episodes = anneal_episodes
 
     def select_action(self, state):
         agent = self.agent
@@ -152,6 +152,6 @@ class BoltzmannPolicy(Policy):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_tau - self.init_tau
-        slope = rise / float(self.tau_anneal_episodes)
+        slope = rise / float(self.anneal_episodes)
         self.tau = max(slope * epi + self.init_tau, self.final_tau)
         return self.tau

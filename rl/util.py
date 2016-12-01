@@ -177,9 +177,8 @@ def init_plotter(sys_vars):
 
     ax1 = fig.add_subplot(311,
                           frame_on=False,
-                          title="e anneal epis: {}, learning rate: {}, "
+                          title="learning rate: {}, "
                           "gamma: {}\ntotal rewards per episode".format(
-                              str(param['e_anneal_episodes']),
                               str(param['learning_rate']),
                               str(param['gamma'])),
                           ylabel='total rewards')
