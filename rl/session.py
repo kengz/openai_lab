@@ -22,7 +22,7 @@ game_specs = {
         'param': {
             'learning_rate': 0.01,
             'gamma': 0.99,
-            'anneal_episodes': 200,
+            'exploration_anneal_episodes': 200,
         }
     },
     'dqn': {
@@ -36,12 +36,12 @@ game_specs = {
             'gamma': 0.99,
             'hidden_layers_shape': [4],
             'hidden_layers_activation': 'sigmoid',
-            'anneal_episodes': 10,
+            'exploration_anneal_episodes': 10,
         },
         'param_range': {
-            'anneal_episodes': [50, 100],
             'learning_rate': [0.01, 0.05, 0.1],
             'gamma': [0.99],
+            'exploration_anneal_episodes': [50, 100],
         }
     },
     'double_dqn': {
@@ -56,7 +56,7 @@ game_specs = {
             'gamma': 0.99,
             'hidden_layers_shape': [4],
             'hidden_layers_activation': 'sigmoid',
-            'anneal_episodes': 180,
+            'exploration_anneal_episodes': 180,
         }
     },
     'mountain_double_dqn': {
@@ -71,7 +71,7 @@ game_specs = {
             'gamma': 0.99,
             'hidden_layers_shape': [8, 8],
             'hidden_layers_activation': 'sigmoid',
-            'anneal_episodes': 300,
+            'exploration_anneal_episodes': 300,
         }
     },
     'lunar_dqn': {
@@ -86,7 +86,7 @@ game_specs = {
             'gamma': 0.98,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
-            'anneal_episodes': 300,
+            'exploration_anneal_episodes': 300,
         }
     },
     'lunar_double_dqn': {
@@ -101,7 +101,7 @@ game_specs = {
             'gamma': 0.99,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
-            'anneal_episodes': 500,
+            'exploration_anneal_episodes': 500,
         }
     }
 }

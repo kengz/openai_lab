@@ -29,13 +29,13 @@ class EpsilonGreedyPolicy(Policy):
     '''
 
     def __init__(self,
-                 init_e=1.0, final_e=0.1, anneal_episodes=30,
+                 init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
         super(EpsilonGreedyPolicy, self).__init__()
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
-        self.anneal_episodes = anneal_episodes
+        self.exploration_anneal_episodes = exploration_anneal_episodes
         logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
 
     def select_action(self, state):
@@ -55,7 +55,7 @@ class EpsilonGreedyPolicy(Policy):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_e - self.init_e
-        slope = rise / float(self.anneal_episodes)
+        slope = rise / float(self.exploration_anneal_episodes)
         self.e = max(slope * epi + self.init_e, self.final_e)
         return self.e
 
@@ -103,7 +103,7 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         worst_gap = SOLVED_MEAN_REWARD - min_reward
         gap_ratio = projection_gap / worst_gap
         envelope = self.init_e + (self.final_e - self.init_e) / 2. * \
-            (float(epi)/float(self.anneal_episodes))
+            (float(epi)/float(self.exploration_anneal_episodes))
         pessimistic_gap_ratio = envelope * min(2 * gap_ratio, 1)
         # if is in odd cycle, and diff is still big, actively explore
         active_exploration_cycle = not bool(
@@ -124,13 +124,13 @@ class BoltzmannPolicy(Policy):
     '''
 
     def __init__(self,
-                 init_tau=5., final_tau=0.5, anneal_episodes=20,
+                 init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
         super(BoltzmannPolicy, self).__init__()
         self.init_tau = init_tau
         self.final_tau = final_tau
         self.tau = self.init_tau
-        self.anneal_episodes = anneal_episodes
+        self.exploration_anneal_episodes = exploration_anneal_episodes
         logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
 
     def select_action(self, state):
@@ -155,6 +155,6 @@ class BoltzmannPolicy(Policy):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
         rise = self.final_tau - self.init_tau
-        slope = rise / float(self.anneal_episodes)
+        slope = rise / float(self.exploration_anneal_episodes)
         self.tau = max(slope * epi + self.init_tau, self.final_tau)
         return self.tau
