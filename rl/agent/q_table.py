@@ -13,7 +13,8 @@ class QTable(Agent):
     def __init__(self, env_spec,
                  resolution=10,
                  gamma=0.95, learning_rate=0.1,
-                 init_e=1.0, final_e=0.1, e_anneal_episodes=1000):
+                 init_e=1.0, final_e=0.1, e_anneal_episodes=1000,
+                 **kwargs):  # absorb generic param without breaking
         super(QTable, self).__init__(env_spec)
         self.resolution = resolution
         self.gamma = gamma

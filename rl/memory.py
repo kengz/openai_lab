@@ -8,13 +8,13 @@ class Memory(object):
     The base class of Memory, with the core methods
     '''
 
-    def __init__(self):
+    def __init__(self,
+                 **kwargs):  # absorb generic param without breaking
         '''
-        Construct externally
+        Construct externally, and set at Agent.compile()
         '''
         self.agent = None
         self.state = None
-        return
 
     def reset_state(self, init_state):
         '''
@@ -49,10 +49,8 @@ class LinearMemory(Memory):
     The replay memory used for random minibatch training
     '''
 
-    def __init__(self):
-        '''
-        Construct externally
-        '''
+    def __init__(self,
+                 **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']

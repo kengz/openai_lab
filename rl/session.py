@@ -147,8 +147,8 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         agent = self.Agent(get_env_spec(env), **self.param)
-        memory = self.Memory()
-        policy = self.Policy()
+        memory = self.Memory(**self.param)
+        policy = self.Policy(**self.param)
         agent.compile(memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):

@@ -7,12 +7,12 @@ class Policy(object):
     The base class of Policy, with the core methods
     '''
 
-    def __init__(self):
+    def __init__(self,
+                 **kwargs):  # absorb generic param without breaking
         '''
-        Construct externally
+        Construct externally, and set at Agent.compile()
         '''
         self.agent = None
-        return
 
     def select_action(self, state):
         raise NotImplementedError()
@@ -28,7 +28,8 @@ class EpsilonGreedyPolicy(Policy):
     '''
 
     def __init__(self,
-                 init_e=1.0, final_e=0.1, anneal_episodes=30):
+                 init_e=1.0, final_e=0.1, anneal_episodes=30,
+                 **kwargs):  # absorb generic param without breaking
         super(EpsilonGreedyPolicy, self).__init__()
         self.init_e = init_e
         self.final_e = final_e
@@ -121,7 +122,8 @@ class BoltzmannPolicy(Policy):
     '''
 
     def __init__(self,
-                 init_tau=5., final_tau=0.5, anneal_episodes=10):
+                 init_tau=5., final_tau=0.5, anneal_episodes=10,
+                 **kwargs):  # absorb generic param without breaking
         super(BoltzmannPolicy, self).__init__()
         self.init_tau = 5.
         self.final_tau = 0.5

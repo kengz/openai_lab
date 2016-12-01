@@ -4,7 +4,8 @@ class Agent(object):
     The base class of Agent, with the core methods
     '''
 
-    def __init__(self, env_spec):
+    def __init__(self, env_spec,
+                 **kwargs):  # absorb generic param without breaking
         self.env_spec = env_spec
 
     def compile(self, memory, policy):
