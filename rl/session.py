@@ -144,8 +144,7 @@ class Session(object):
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         env_spec = get_env_spec(env)
         agent = self.Agent(env_spec, **self.param)
-        replay_memory = self.memory(env_spec)
-        # replay_memory = self.memory(agent)
+        replay_memory = self.memory(agent)
         policy = self.policy(agent)
         agent.compile(replay_memory, policy)
 

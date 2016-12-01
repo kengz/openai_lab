@@ -8,8 +8,13 @@ class LinearMemory(object):
     The replay memory used for random minibatch training
     '''
 
-    def __init__(self, env_spec):
-        self.env_spec = env_spec
+    def __init__(self, agent):
+        '''
+        Construct externally
+        assign the agent, otherwise it's non useful
+        '''
+        self.agent = agent
+        self.env_spec = agent.env_spec
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
