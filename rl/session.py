@@ -1,9 +1,9 @@
 import gym
 import multiprocessing as mp
-from rl.util import *
-from rl.memory import LinearMemory, LeftTailMemory, LinearMemoryWithForgetting
-from rl.policy import EpsilonGreedyPolicy, BoltzmannPolicy
 from rl.agent import *
+from rl.memory import *
+from rl.policy import *
+from rl.util import *
 
 # Dict of specs runnable on a Session
 game_specs = {
@@ -103,11 +103,11 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, problem, Agent, memory, policy, param):
+    def __init__(self, problem, Agent, Memory, Policy, param):
         self.problem = problem
         self.Agent = Agent
-        self.memory = memory
-        self.policy = policy
+        self.Memory = Memory
+        self.Policy = Policy
         self.param = param
 
     def run_episode(self, sys_vars, env, agent):
@@ -147,8 +147,8 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         agent = self.Agent(get_env_spec(env), **self.param)
-        memory = self.memory()
-        policy = self.policy()
+        memory = self.Memory()
+        policy = self.Policy()
         agent.compile(memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):
@@ -166,8 +166,8 @@ def run_sess(sess_spec):
     '''
     sess = Session(problem=sess_spec['problem'],
                    Agent=sess_spec['Agent'],
-                   memory=sess_spec['Memory'],
-                   policy=sess_spec['Policy'],
+                   Memory=sess_spec['Memory'],
+                   Policy=sess_spec['Policy'],
                    param=sess_spec['param'])
     sys_vars = sess.run()
     return sys_vars
@@ -221,9 +221,10 @@ def run_param_selection(sess_name):
     sess_spec = game_specs.get(sess_name)
     param_grid = param_product(sess_spec['param'], sess_spec['param_range'])
     sess_spec_grid = [{
-        'Agent': sess_spec['Agent'],
         'problem': sess_spec['problem'],
+        'Agent': sess_spec['Agent'],
         'Memory': sess_spec['Memory'],
+        'Policy': sess_spec['Policy'],
         'param': param
     } for param in param_grid]
 
