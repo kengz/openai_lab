@@ -1,6 +1,3 @@
-from rl.policy import Policy
-
-
 class Agent(object):
 
     '''
@@ -9,7 +6,10 @@ class Agent(object):
 
     def __init__(self, env_spec):
         self.env_spec = env_spec
-        self.policy = Policy(self)
+
+    def set(self, replay_memory, policy):
+        self.replay_memory = replay_memory
+        self.policy = policy
 
     def select_action(self, state):
         self.policy.select_action(state)

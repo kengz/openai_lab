@@ -1,5 +1,4 @@
 from rl.agent.dqn import DQN
-from rl.policy import TargetedEpsilonGreedyPolicy, EpsilonGreedyPolicy
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -10,8 +9,6 @@ class LunarDQN(DQN):
 
     def __init__(self, *args, **kwargs):
         super(LunarDQN, self).__init__(*args, **kwargs)
-        # change the policy
-        self.policy = EpsilonGreedyPolicy(self)
 
     def build_model(self):
         model = Sequential()

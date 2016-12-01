@@ -1,5 +1,4 @@
 from rl.agent.double_dqn import DoubleDQN
-from rl.policy import OscillatingEpsilonGreedyPolicy
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -10,8 +9,6 @@ class MountainDoubleDQN(DoubleDQN):
 
     def __init__(self, *args, **kwargs):
         super(MountainDoubleDQN, self).__init__(*args, **kwargs)
-        # change the policy
-        self.policy = OscillatingEpsilonGreedyPolicy(self)
 
     def build_model(self):
         model = Sequential()

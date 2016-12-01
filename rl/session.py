@@ -2,20 +2,21 @@ import gym
 import multiprocessing as mp
 from rl.util import *
 from rl.memory import LinearMemory, LeftTailMemory, LinearMemoryWithForgetting
+from rl.policy import EpsilonGreedyPolicy, BoltzmannPolicy
 from rl.agent import *
 
 # Dict of specs runnable on a Session
 game_specs = {
     'dummy': {
-        'Agent': dummy.Dummy,
         'problem': 'CartPole-v0',
+        'Agent': dummy.Dummy,
         'Memory': LinearMemory,
         'param': {'train_per_n_new_exp': 1
                   }
     },
     'q_table': {
-        'Agent': q_table.QTable,
         'problem': 'CartPole-v0',
+        'Agent': q_table.QTable,
         'Memory': LinearMemory,
         'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 200,
@@ -23,9 +24,10 @@ game_specs = {
                   'gamma': 0.99}
     },
     'dqn': {
-        'Agent': dqn.DQN,
         'problem': 'CartPole-v0',
+        'Agent': dqn.DQN,
         'Memory': LinearMemoryWithForgetting,
+        'Policy': BoltzmannPolicy,
         'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 10,
                   'learning_rate': 0.02,
@@ -39,8 +41,8 @@ game_specs = {
         }
     },
     'double_dqn': {
-        'Agent': double_dqn.DoubleDQN,
         'problem': 'CartPole-v0',
+        'Agent': double_dqn.DoubleDQN,
         'Memory': LinearMemory,
         'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 180,
@@ -51,8 +53,8 @@ game_specs = {
                   'hidden_layers_activation': 'sigmoid'}
     },
     'mountain_double_dqn': {
-        'Agent': mountain_double_dqn.MountainDoubleDQN,
         'problem': 'MountainCar-v0',
+        'Agent': mountain_double_dqn.MountainDoubleDQN,
         'Memory': LinearMemory,
         'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 300,
@@ -63,8 +65,8 @@ game_specs = {
                   'hidden_layers_activation': 'sigmoid'}
     },
     'lunar_dqn': {
-        'Agent': lunar_dqn.LunarDQN,
         'problem': 'LunarLander-v2',
+        'Agent': lunar_dqn.LunarDQN,
         'Memory': LinearMemoryWithForgetting,
         'param': {'train_per_n_new_exp': 4,
                   'e_anneal_episodes': 300,
@@ -75,8 +77,8 @@ game_specs = {
                   'hidden_layers_activation': 'relu'}
     },
     'lunar_double_dqn': {
-        'Agent': lunar_double_dqn.LunarDoubleDQN,
         'problem': 'LunarLander-v2',
+        'Agent': lunar_double_dqn.LunarDoubleDQN,
         'Memory': LinearMemory,
         'param': {'train_per_n_new_exp': 1,
                   'e_anneal_episodes': 500,
@@ -97,12 +99,12 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, Agent, problem, memory, param):
-        self.Agent = Agent
+    def __init__(self, problem, Agent, memory, policy, param):
         self.problem = problem
-        # del param['train_per_n_new_exp']
-        self.param = param
+        self.Agent = Agent
         self.memory = memory
+        self.policy = policy
+        self.param = param
 
     def run_episode(self, sys_vars, env, agent, replay_memory):
         '''run ane episode, return sys_vars'''
@@ -127,6 +129,7 @@ class Session(object):
             agent.update(sys_vars, replay_memory)
             if agent.to_train(sys_vars, replay_memory):
                 agent.train(sys_vars, replay_memory)
+
             state = next_state
             total_rewards += reward
             if done:
@@ -140,8 +143,11 @@ class Session(object):
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
         env_spec = get_env_spec(env)
-        replay_memory = self.memory(env_spec)
         agent = self.Agent(env_spec, **self.param)
+        replay_memory = self.memory(env_spec)
+        # replay_memory = self.memory(agent)
+        policy = self.policy(agent)
+        agent.set(replay_memory, policy)
 
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
@@ -156,9 +162,10 @@ def run_sess(sess_spec):
     '''
     helper: run a Session given a sess_spec from gym_specs
     '''
-    sess = Session(sess_spec['Agent'],
-                   problem=sess_spec['problem'],
+    sess = Session(problem=sess_spec['problem'],
+                   Agent=sess_spec['Agent'],
                    memory=sess_spec['Memory'],
+                   policy=sess_spec['Policy'],
                    param=sess_spec['param'])
     sys_vars = sess.run()
     return sys_vars
