@@ -190,10 +190,14 @@ def experiment_analytics(data):
     return metrics
 
 
-def log_experiment(data_grid):
+def save_experiment_data(data_grid):
     '''
     log the entire experiment data grid from inside run()
     '''
+    # sort data, best first
+    data_grid.sort(
+        key=lambda data: data['metrics']['experiment_mean'],
+        reverse=True)
     filename = '{}_data_grid.json'.format(datetime.now().date().isoformat())
     # TODO WHAT THE FUCK IS THIS PYTHON CANT SERIALIZE BOOLEAN 'False'?
     del data_grid[0]['sys_vars_array'][0]['solved']
@@ -256,15 +260,13 @@ def run(sess_name, run_param_selection=False, times=1):
         data_grid = list(p.map(
             partial(run_single_exp, times=times),
             sess_spec_grid))
-        data_grid.sort(
-            key=lambda data: data['metrics']['experiment_mean'],
-            reverse=True)
     else:
         data_grid = list(map(
             partial(run_single_exp, times=times),
             sess_spec_grid))
 
-    log_experiment(data_grid)
+    save_experiment_data(data_grid)
     return data_grid
 
 # TODO sort json by ordereddict
+# TODO change to progressively write data per exp done, save from all-fail
