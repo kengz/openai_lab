@@ -11,7 +11,6 @@ import pprint
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
-from functools import partial
 
 
 # parse_args to add flag
@@ -163,8 +162,6 @@ def check_session_ends(sys_vars):
         logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
             sys_vars['solved'], sys_vars['epi'],
             pp.pformat(sys_vars['PARAM'])))
-    np.savetxt('{}_total_r_history.txt'.format(sys_vars['GYM_ENV_NAME']),
-               sys_vars['total_r_history'], '%.4f', header='total_rewards')
     if not sys_vars['RENDER']:
         return
     plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))

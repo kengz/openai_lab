@@ -1,4 +1,5 @@
 import gym
+import json
 import multiprocessing as mp
 from datetime import datetime
 from functools import partial
@@ -175,15 +176,36 @@ class Session(object):
         return sys_vars
 
 
-# given a sess_spec, run k times
-# run from param alone, k times. call run_single_exp(sess_name, times=1)
-# given a param_grid, construct sess_spec_grid, run each sess_spec k times
-# run from param_range, each k times. run_multiple_exp(sess_name, times=1)
+def experiment_analytics(data):
+    '''
+    helper: define the performance metric
+    given data from an experiment
+    '''
+    sys_vars_array = data['sys_vars_array']
+    mean_r_array = [sys_vars['mean_rewards'] for sys_vars in sys_vars_array]
+    metrics = {
+        'experiment_mean': np.mean(mean_r_array),
+        'experiment_std': np.std(mean_r_array),
+    }
+    return metrics
 
-# experimental run
+
+def log_experiment(data_grid):
+    '''
+    log the entire experiment data grid from inside run()
+    '''
+    filename = '{}_data_grid.json'.format(datetime.now().date().isoformat())
+    # TODO WHAT THE FUCK IS THIS PYTHON CANT SERIALIZE BOOLEAN 'False'?
+    del data_grid[0]['sys_vars_array'][0]['solved']
+    with open(filename, 'w') as f:
+        f.write(json.dumps(data_grid))
+    logger.info('Experiments complete, data written to data_grid.json')
+
+
 def run_single_exp(sess_spec, times=1):
     '''
-    helper: run a Session given a sess_spec from gym_specs
+    helper: run a experiment for Session
+    a number of times times given a sess_spec from gym_specs
     '''
     start_time = datetime.now().isoformat()
     sess = Session(problem=sess_spec['problem'],
@@ -195,7 +217,7 @@ def run_single_exp(sess_spec, times=1):
     end_time = datetime.now().isoformat()
     data = {  # experiment data
         'start_time': start_time,
-        'sess_spec': sess_spec,
+        'sess_spec': stringify_param(sess_spec),
         'sys_vars_array': sys_vars_array,
         'metrics': None,
         'end_time': end_time,
@@ -206,58 +228,43 @@ def run_single_exp(sess_spec, times=1):
     return data
 
 
-def run_mutliple_exp(sess_spec, times=1):
-    # ahh fuck I wanna call run_single_exp() on each
+def run(sess_name, run_param_selection=False, times=1):
+    '''
+    primary method:
+    run the experiment (single or multiple)
+    specifying if this should be a param_selection run
+    and run each for a number of times
+    calls run_single_exp internally
+    and employs parallelism whenever possible
+    '''
     sess_spec = game_specs.get(sess_name)
-    param_grid = param_product(sess_spec['param'], sess_spec['param_range'])
-    sess_spec_grid = [{
-        'problem': sess_spec['problem'],
-        'Agent': sess_spec['Agent'],
-        'Memory': sess_spec['Memory'],
-        'Policy': sess_spec['Policy'],
-        'param': param,
-    } for param in param_grid]
+    if run_param_selection:
+        param_grid = param_product(
+            sess_spec['param'], sess_spec['param_range'])
+        sess_spec_grid = [{
+            'problem': sess_spec['problem'],
+            'Agent': sess_spec['Agent'],
+            'Memory': sess_spec['Memory'],
+            'Policy': sess_spec['Policy'],
+            'param': param,
+        } for param in param_grid]
+    else:
+        sess_spec_grid = [sess_spec]
 
-    p = mp.Pool(mp.cpu_count())
-    # partial with the times param
-    data_grid = list(p.map(
-        partial(run_single_exp, times=times),
-        sess_spec_grid))
-    data_grid.sort(key=lambda data: data['metrics']['experiment_mean'],
-                   reverse=True)
+    if run_param_selection or times > 1:
+        p = mp.Pool(mp.cpu_count())
+        data_grid = list(p.map(
+            partial(run_single_exp, times=times),
+            sess_spec_grid))
+        data_grid.sort(
+            key=lambda data: data['metrics']['experiment_mean'],
+            reverse=True)
+    else:
+        data_grid = list(map(
+            partial(run_single_exp, times=times),
+            sess_spec_grid))
+
+    log_experiment(data_grid)
     return data_grid
 
-
-def experiment_analytics(data):
-    sys_vars_array = data['sys_vars_array']
-    mean_r_array = [sys_vars['mean_rewards'] for sys_vars in sys_vars_array]
-    metrics = {
-        'experiment_mean': np.mean(mean_r_array),
-        'experiment_std': np.std(mean_r_array),
-    }
-    return metrics
-
-
-def run(sess_name):
-    '''
-    Wrapper for main.py to run session by name pointing to specs
-    '''
-    sess_spec = game_specs.get(sess_name)
-    return run_single_exp(sess_spec, 1)
-
-
-def run_grid(sess_name):
-    '''
-    Wrapper for main.py to run session by name pointing to specs
-    '''
-    sess_spec = game_specs.get(sess_name)
-    return run_mutliple_exp(sess_spec, 1)
-
-
-# log the entire data output later
-def log_experiment_data():
-    return False
-
-# need to unify method
-# write data with timestamp of exp end
-# nooo but I have to sort grid, also dont wanna produce multi files
+# TODO sort json by ordereddict
