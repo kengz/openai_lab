@@ -202,11 +202,12 @@ def save_experiment_data(data_grid):
     # TODO WHAT THE FUCK IS THIS PYTHON CANT SERIALIZE BOOLEAN 'False'?
     del data_grid[0]['sys_vars_array'][0]['solved']
     with open(filename, 'w') as f:
-        f.write(json.dumps(data_grid))
-    logger.info('Experiments complete, data written to data_grid.json')
+        # TODO or use pp.pformat?
+        f.write(json.dumps(data_grid, indent=2))
+    logger.info('Experiment complete, data written to data_grid.json')
 
 
-def run_single_exp(sess_spec, times=1):
+def run_single_exp(sess_spec, data_grid, times=1):
     '''
     helper: run a experiment for Session
     a number of times times given a sess_spec from gym_specs
@@ -226,9 +227,10 @@ def run_single_exp(sess_spec, times=1):
         'metrics': None,
         'end_time': end_time,
     }
-    data.update({
-        'metrics': experiment_analytics(data),
-    })
+    data.update({'metrics': experiment_analytics(data)})
+    # progressive update of data_grid, write when an exp is done
+    data_grid.append(data)
+    save_experiment_data(data_grid)
     return data
 
 
@@ -242,6 +244,7 @@ def run(sess_name, run_param_selection=False, times=1):
     and employs parallelism whenever possible
     '''
     sess_spec = game_specs.get(sess_name)
+    data_grid = []
     if run_param_selection:
         param_grid = param_product(
             sess_spec['param'], sess_spec['param_range'])
@@ -252,20 +255,16 @@ def run(sess_name, run_param_selection=False, times=1):
             'Policy': sess_spec['Policy'],
             'param': param,
         } for param in param_grid]
+        p = mp.Pool(mp.cpu_count())
+        list(p.map(
+            partial(run_single_exp, data_grid=data_grid, times=times),
+            sess_spec_grid))
     else:
         sess_spec_grid = [sess_spec]
-
-    if run_param_selection or times > 1:
-        p = mp.Pool(mp.cpu_count())
-        data_grid = list(p.map(
-            partial(run_single_exp, times=times),
-            sess_spec_grid))
-    else:
-        data_grid = list(map(
-            partial(run_single_exp, times=times),
+        list(map(
+            partial(run_single_exp, data_grid=data_grid, times=times),
             sess_spec_grid))
 
-    save_experiment_data(data_grid)
     return data_grid
 
 # TODO sort json by ordereddict
