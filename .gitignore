@@ -11,16 +11,12 @@ venv/
 ENV/
 
 .DS_Store
-*.png
-*.txt
 
-# models
 *checkpoint*
 *.tfl*
 *.meta
-mnist/
-17flowers/
 data/
-dbpedia_data/
 models/
+*.png
+*.txt
 *.json
