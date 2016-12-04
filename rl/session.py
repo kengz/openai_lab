@@ -1,5 +1,7 @@
 import gym
 import multiprocessing as mp
+from datetime import datetime
+from functools import partial
 from rl.agent import *
 from rl.memory import *
 from rl.policy import *
@@ -173,64 +175,39 @@ class Session(object):
         return sys_vars
 
 
-def run_sess(sess_spec):
+# given a sess_spec, run k times
+# run from param alone, k times. call run_single_exp(sess_name, times=1)
+# given a param_grid, construct sess_spec_grid, run each sess_spec k times
+# run from param_range, each k times. run_multiple_exp(sess_name, times=1)
+
+# experimental run
+def run_single_exp(sess_spec, times=1):
     '''
     helper: run a Session given a sess_spec from gym_specs
     '''
+    start_time = datetime.now().isoformat()
     sess = Session(problem=sess_spec['problem'],
                    Agent=sess_spec['Agent'],
                    Memory=sess_spec['Memory'],
                    Policy=sess_spec['Policy'],
                    param=sess_spec['param'])
-    sys_vars = sess.run()
-    return sys_vars
+    sys_vars_array = [sess.run() for i in range(times)]
+    end_time = datetime.now().isoformat()
+    data = {  # experiment data
+        'start_time': start_time,
+        'sess_spec': sess_spec,
+        'sys_vars_array': sys_vars_array,
+        'metrics': None,
+        'end_time': end_time,
+    }
+    data.update({
+        'metrics': experiment_analytics(data),
+    })
+    return data
 
 
-def run_sess_avg(sess_spec, times=1):
-    '''
-    helper: run a Session for the number of times specified,
-    then average the 'mean_rewards'
-    Used for hyper param selection
-    '''
-    param = sess_spec['param']
-    logger.info(
-        'Running session average with param = {}'.format(pp.pformat(
-            param)))
-    sess_mean_rewards = []
-    # explicit loop necessary to circumvent TF bug
-    # see https://github.com/tensorflow/tensorflow/issues/3388
-    for i in range(times):
-        sess_mean_rewards.append(run_sess(sess_spec)['mean_rewards'])
-    sess_avg = np.mean(sess_mean_rewards)
-    logger.info(
-        'Session average mean_rewards: {} with param = {}'.format(
-            sess_avg, pp.pformat(param)))
-    return {'param': param, 'sess_avg_mean_rewards': sess_avg}
-
-
-def run(sess_name):
-    '''
-    Wrapper for main.py to run session by name pointing to specs
-    '''
-    sess_spec = game_specs.get(sess_name)
-    return run_sess(sess_spec)
-
-
-def run_avg(sess_name):
-    '''
-    Like run(), but calls run_sess_avg() internally
-    '''
-    sess_spec = game_specs.get(sess_name)
-    return run_sess_avg(sess_spec)
-
-
-def run_param_selection(sess_name):
-    '''
-    Run hyper parameter selection with run_sess_avg
-    draws from sess_spec['param_range'] to construct
-    a param_grid, then sess_spec_grid,
-    to run run_sess_avg on each
-    '''
+def run_mutliple_exp(sess_spec, times=1):
+    # ahh fuck I wanna call run_single_exp() on each
     sess_spec = game_specs.get(sess_name)
     param_grid = param_product(sess_spec['param'], sess_spec['param_range'])
     sess_spec_grid = [{
@@ -242,8 +219,45 @@ def run_param_selection(sess_name):
     } for param in param_grid]
 
     p = mp.Pool(mp.cpu_count())
-    avg_runs = list(p.map(run_sess_avg, sess_spec_grid))
-    avg_runs.sort(key=lambda pm: pm['sess_avg_mean_rewards'], reverse=True)
-    logger.info('Ranked params, from the best:'
-                ''.format(pp.pformat(avg_runs)))
-    return avg_runs
+    # partial with the times param
+    data_grid = list(p.map(
+        partial(run_single_exp, times=times),
+        sess_spec_grid))
+    data_grid.sort(key=lambda data: data['metrics']['experiment_mean'],
+                   reverse=True)
+    return data_grid
+
+
+def experiment_analytics(data):
+    sys_vars_array = data['sys_vars_array']
+    mean_r_array = [sys_vars['mean_rewards'] for sys_vars in sys_vars_array]
+    metrics = {
+        'experiment_mean': np.mean(mean_r_array),
+        'experiment_std': np.std(mean_r_array),
+    }
+    return metrics
+
+
+def run(sess_name):
+    '''
+    Wrapper for main.py to run session by name pointing to specs
+    '''
+    sess_spec = game_specs.get(sess_name)
+    return run_single_exp(sess_spec, 1)
+
+
+def run_grid(sess_name):
+    '''
+    Wrapper for main.py to run session by name pointing to specs
+    '''
+    sess_spec = game_specs.get(sess_name)
+    return run_mutliple_exp(sess_spec, 1)
+
+
+# log the entire data output later
+def log_experiment_data():
+    return False
+
+# need to unify method
+# write data with timestamp of exp end
+# nooo but I have to sort grid, also dont wanna produce multi files
