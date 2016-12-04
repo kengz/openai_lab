@@ -228,6 +228,7 @@ def run_single_exp(sess_spec, data_grid, times=1):
         'end_time': end_time,
     }
     data.update({'metrics': experiment_analytics(data)})
+    # TODO sort that fuck with ordereddict, or do it on the json.dumps level
     # progressive update of data_grid, write when an exp is done
     data_grid.append(data)
     save_experiment_data(data_grid)
@@ -245,6 +246,7 @@ def run(sess_name, run_param_selection=False, times=1):
     '''
     sess_spec = game_specs.get(sess_name)
     data_grid = []
+
     if run_param_selection:
         param_grid = param_product(
             sess_spec['param'], sess_spec['param_range'])
@@ -260,10 +262,7 @@ def run(sess_name, run_param_selection=False, times=1):
             partial(run_single_exp, data_grid=data_grid, times=times),
             sess_spec_grid))
     else:
-        sess_spec_grid = [sess_spec]
-        list(map(
-            partial(run_single_exp, data_grid=data_grid, times=times),
-            sess_spec_grid))
+        run_single_exp(sess_spec, data_grid=data_grid, times=times)
 
     return data_grid
 
