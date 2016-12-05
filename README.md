@@ -58,7 +58,7 @@ python setup.py install
 
 ## Usage
 
-The scripts are inside the `rl/` folder. Configure your `Agent`, `problem` and `param` in `rl/session.py`, and run
+The scripts are inside the `rl/` folder. Configure your `game_specs` in `rl/session.py`, and run
 
 ```shell
 python main.py # run in normal mode
@@ -67,14 +67,14 @@ python main.py -b # blind, i.e. don't render graphics
 python main.py 2>&1 | tee run.log # write to log file
 ```
 
-Per run, it will also write a `<Problem>_history.txt` file that records all the `total_rewards`. If rendering is enabled, it will also save the graph to `<Problem>.png`.
+Each run is an experiment, and data will be collected and written once every experiment is finished to `<date>_data_grid.json`. If rendering is enabled, it will also save the graph to `<Problem>.png`.
 
 
 ### Hyperparam Selection
 
 1. Define the `game_specs.<game>.param_range` in `rl/session.py` for hyperparameter selection, which will run using multiprocessing, and return the best param (defined as having the best average session `mean_rewards`).
 
-2. Modify `main.py` to use `run_param_selection(<game>)` instead of `run(<game>)`.
+2. Modify `main.py` to run single experiment or param selection multi experiments, each for a number of times `run(<game>, run_param_selection=False, times=1)`.
 
 3. Run `python main.py` as before. At the end it will return and print out a ranked (from the best) list of params.
 
@@ -121,6 +121,7 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [x] parametrize NN architecture under the key `architecture_grid`, pass as part of hyper-param selection.
 - [x] introduce LinearMemoryWithForgetting
 - [x] delay training till more experience is gathered
+- [x] experiment setup and data logging
 - [ ] improve memory selection policy
 - [ ] memory weightage, simply, we can just do high vs low weightage per episode first (if episode solved, put in high)
 - [ ] boltzmann for exploration policy
