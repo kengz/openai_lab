@@ -199,11 +199,8 @@ def save_experiment_data(data_grid):
         key=lambda data: data['metrics']['experiment_mean'],
         reverse=True)
     filename = '{}_data_grid.json'.format(datetime.now().date().isoformat())
-    # TODO WHAT THE FUCK IS THIS PYTHON CANT SERIALIZE BOOLEAN 'False'?
-    del data_grid[0]['sys_vars_array'][0]['solved']
     with open(filename, 'w') as f:
-        # TODO or use pp.pformat?
-        f.write(json.dumps(data_grid, indent=2))
+        json.dump(data_grid, f, indent=2, sort_keys=True)
     logger.info('Experiment complete, data written to data_grid.json')
 
 
@@ -228,7 +225,6 @@ def run_single_exp(sess_spec, data_grid, times=1):
         'end_time': end_time,
     }
     data.update({'metrics': experiment_analytics(data)})
-    # TODO sort that fuck with ordereddict, or do it on the json.dumps level
     # progressive update of data_grid, write when an exp is done
     data_grid.append(data)
     save_experiment_data(data_grid)
@@ -265,6 +261,3 @@ def run(sess_name, run_param_selection=False, times=1):
         run_single_exp(sess_spec, data_grid=data_grid, times=times)
 
     return data_grid
-
-# TODO sort json by ordereddict
-# TODO change to progressively write data per exp done, save from all-fail

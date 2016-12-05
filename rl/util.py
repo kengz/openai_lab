@@ -136,7 +136,8 @@ def update_history(agent,
         getattr(policy, 'e', 0) or getattr(policy, 'tau', 0))
     avg_len = sys_vars['REWARD_MEAN_LEN']
     # Calculating mean_reward over last 100 episodes
-    mean_rewards = np.mean(sys_vars['total_r_history'][-avg_len:])
+    # case away from np for json serializable (dumb python)
+    mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
     solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
     sys_vars['mean_rewards'] = mean_rewards
     sys_vars['total_rewards'] = total_rewards
