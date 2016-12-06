@@ -9,7 +9,6 @@ dependencies:
   pre:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
     - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev
-    - sudo apt-get install -y xvfb
     - pip install -U pip
     - pip install h5py
     - pip install numpy
@@ -20,6 +19,7 @@ dependencies:
     - pip install git+https://github.com/tflearn/tflearn.git
     - pip install keras
     - pip install git+https://github.com/openai/gym.git
+    - git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && python setup.py clean && python setup.py build && python setup.py install
     - pip install codeclimate-test-reporter
     - pip install pytest-cov
 
