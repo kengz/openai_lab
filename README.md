@@ -67,6 +67,14 @@ python main.py -b # blind, i.e. don't render graphics
 python main.py 2>&1 | tee run.log # write to log file
 ```
 
+**Ubuntu Debug**: If shits still blow up with `pyglet.canvas.xlib.NoSuchDisplayException: Cannot connect to "None"` even with the `-b` no-render flag, run everything from a new bash:
+
+```shell
+sudo apt-get install -y xvfb
+xvfb-run -s "-screen 0 1400x900x24" bash
+# launch virtualenv, run main.py again
+```
+
 Each run is an experiment, and data will be collected and written once every experiment is finished to `<date>_data_grid.json`. If rendering is enabled, it will also save the graph to `<Problem>.png`.
 
 
@@ -126,7 +134,7 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [ ] memory weightage, simply, we can just do high vs low weightage per episode first (if episode solved, put in high)
 - [ ] boltzmann for exploration policy
 - [ ] oscillating exploration cycles so learn and solve the problem, chunk by chunk. Combine this with the subepisodic, compositional solutions by parts. First do linear decay, till hits the plateau, if still not solved, activate exploration again. Parametrize by partial mean rewards. *Notes* Turn off exploration until you enter a later stage. Can't reliably parameterize with time, need to do so with state. E.g. Reach medium height, if haven't learned how to land from there, explore and learn to fire the engine. This will be the way to do subepisodic exploration.
-- [ ] fix advanced dependencies on Ubuntu
+- [x] fix advanced dependencies on Ubuntu
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
 - [ ] visualization of NN with tensorboard?
 - [ ] try with RNN like the DeepMind deep meta-RL paper
