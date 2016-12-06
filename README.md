@@ -67,12 +67,11 @@ python main.py -b # blind, i.e. don't render graphics
 python main.py 2>&1 | tee run.log # write to log file
 ```
 
-**Ubuntu Debug**: If shits still blow up with `pyglet.canvas.xlib.NoSuchDisplayException: Cannot connect to "None"` even with the `-b` no-render flag, run everything from a new bash:
+**Ubuntu Debug**: If shits still blow up with `pyglet.canvas.xlib.NoSuchDisplayException: Cannot connect to "None"` even with the `-b` no-render flag, prepend a `xvfb-run` command like so:
 
 ```shell
 sudo apt-get install -y xvfb
-xvfb-run -s "-screen 0 1400x900x24" bash
-# launch virtualenv, run main.py again
+xvfb-run -a -s "-screen 0 1400x900x24" -- python main.py -d -b
 ```
 
 Each run is an experiment, and data will be collected and written once every experiment is finished to `<date>_data_grid.json`. If rendering is enabled, it will also save the graph to `<Problem>.png`.

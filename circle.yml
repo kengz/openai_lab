@@ -25,5 +25,5 @@ dependencies:
 
 test:
   override:
-    - xvfb-run python setup.py test
+    - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
     - codeclimate-test-reporter
