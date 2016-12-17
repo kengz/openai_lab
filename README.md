@@ -2,7 +2,9 @@
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl)
 
-Working out at the (OpenAI) gym. **Note this is still under development, but will be ready before Nov 5**
+Working out at the (OpenAI) gym.
+
+This was started from the Eligible Reinforcement Learning event, and we just kept working on it. Checkout the tutorial session videos here: [Part 1](https://youtu.be/qBhLoeijgtA), [Part 2](https://youtu.be/wNSlZJGdodE)
 
 
 ## Installation
