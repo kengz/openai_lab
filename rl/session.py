@@ -1,3 +1,4 @@
+import gc
 import gym
 import json
 import multiprocessing as mp
@@ -177,6 +178,7 @@ class Session(object):
             if sys_vars['solved']:
                 break
 
+        gc.collect() # manual gc to fix TF issue 3388
         return sys_vars
 
 
