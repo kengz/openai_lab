@@ -98,7 +98,7 @@ class LinearMemory(Memory):
         that every exp will be trained at least once
         '''
         memory_size = self.size()
-        new_exp_size = getattr(self.agent, 'train_per_n_new_exp', 1)
+        new_exp_size = self.agent.train_per_n_new_exp
         if memory_size <= size or memory_size <= new_exp_size:
             inds = np.random.randint(memory_size, size=size)
         else:
@@ -110,6 +110,7 @@ class LinearMemory(Memory):
                 old_memory_ind, size=random_batch_size)
             inds = np.concatenate([rand_inds, latest_inds]).astype(int)
         minibatch = self.get_exp(inds)
+        assert len(minibatch['rewards']) == size
         return minibatch
 
 
@@ -145,7 +146,7 @@ class LeftTailMemory(LinearMemory):
         then append with the most recent, untrained experience
         '''
         memory_size = self.size()
-        new_exp_size = getattr(self.agent, 'train_per_n_new_exp', 1)
+        new_exp_size = self.agent.train_per_n_new_exp
         if memory_size <= size or memory_size <= new_exp_size:
             inds = np.random.randint(memory_size, size=size)
         else:
@@ -175,10 +176,11 @@ class RankedMemory(LinearMemory):
                  **kwargs):  # absorb generic param without breaking
         super(RankedMemory, self).__init__()
         # use the old self.exp as buffer, remember to clear
+        self.last_exp = self.exp
         self.epi_memory = []
+        self.n_best_epi = 5
 
     def add_exp(self, action, reward, next_state, terminal):
-        # add to buffer self.exp first
         super(RankedMemory, self).add_exp(
             action, reward, next_state, terminal)
         if terminal:
@@ -188,8 +190,65 @@ class RankedMemory(LinearMemory):
             }
             self.epi_memory.append(epi_exp)
             self.epi_memory.sort(key=lambda epi_exp: epi_exp['total_rewards'])
+            self.last_exp = self.exp
             self.exp = {k: [] for k in self.exp_keys}
 
-    def rand_minibatch(self, size):
+    def pop(self):
+        '''
+        convenient method to get exp at [last_ind]
+        '''
+        buffer_exp = self.exp  # store for restore later
+        self.exp = self.last_exp
+        res = super(RankedMemory, self).pop()
+        self.exp = buffer_exp
+        return res
 
-        return
+    def rand_minibatch(self, size):
+        '''
+        the minibatch composed of minibatches from the best epis
+        guarantee that every exp will be trained at least once
+        so always source the latest from buffer
+        and then the rest from
+        self.n_best_epi best epi_exp in epi_memory
+        pick from buffer the new thing,
+        store buffer, swap, pick for self.n_best_epi of them
+        merge the minibatch
+        set buffer back to original
+        return minibatch
+        '''
+        new_exp_size = self.agent.train_per_n_new_exp
+        if len(self.epi_memory) == 0:   # base case, early exit
+            return super(RankedMemory, self).rand_minibatch(size)
+
+        epi_memory_size = len(self.epi_memory)
+        n_epi_exp = min(self.n_best_epi, epi_memory_size)
+        epi_memory_start_ind = epi_memory_size - n_epi_exp
+        # minibatch size to pick from an epi_exp
+        epi_minibatch_size = max(1, np.int(np.ceil(size/n_epi_exp)))
+        buffer_exp = self.exp  # store for restoration after
+
+        best_epi_memory = []  # all the minibatches from the best epis
+        # set self.exp to last n_best, pick epi_minibatch
+        for i in range(epi_memory_start_ind, epi_memory_size):
+            epi_exp = self.epi_memory[i]['exp']
+            self.exp = epi_exp
+            epi_minibatch = super(RankedMemory, self).rand_minibatch(
+                epi_minibatch_size)
+            best_epi_memory.append(epi_minibatch)
+
+        self.exp = buffer_exp  # set buffer back to original
+        if not self.pop()['terminals'][0]:
+            new_minibatch = super(
+                RankedMemory, self).rand_minibatch(new_exp_size)
+            best_epi_memory.append(new_minibatch)
+
+        # merge all minibatches from best_epi_memory into a minibatch
+        minibatch = {}
+        for k in self.exp_keys:
+            k_exp = np.concatenate(
+                [epi_exp[k] for epi_exp in best_epi_memory]
+            )[-size:]
+            minibatch[k] = k_exp
+        assert len(minibatch['rewards']) == size
+
+        return minibatch

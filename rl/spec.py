@@ -28,7 +28,8 @@ game_specs = {
     'dqn': {
         'problem': 'CartPole-v0',
         'Agent': dqn.DQN,
-        'Memory': LinearMemoryWithForgetting,
+        # 'Memory': LinearMemoryWithForgetting,
+        'Memory': RankedMemory,
         'Policy': BoltzmannPolicy,
         'param': {
             'train_per_n_new_exp': 1,
