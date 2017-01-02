@@ -21,7 +21,7 @@ class DQN(Agent):
     def __init__(self, env_spec,
                  train_per_n_new_exp=1,
                  gamma=0.95, learning_rate=0.1,
-                 batch_size=16, n_epoch=1, hidden_layers_shape=[4],
+                 batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
                  output_layer_activation=None,
                  **kwargs):  # absorb generic param without breaking
