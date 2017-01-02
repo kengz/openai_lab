@@ -164,19 +164,32 @@ class LeftTailMemory(LinearMemory):
 # if batch size too small wrt max timestep, it might not hit every position.
 # rand minibatch needs to include those latest, unused training data
 
-# class RankedMemory(LinearMemory):
-#     '''
-#     Memory with ranking based on good or bad episodes
-#     experiences are grouped episodically
-#     '''
+class RankedMemory(LinearMemory):
 
-#     def __init__(self,
-#                  **kwargs):  # absorb generic param without breaking
-#         super(RankedMemory, self).__init__()
-#         self.epi_memory = []
+    '''
+    Memory with ranking based on good or bad episodes
+    experiences are grouped episodically
+    '''
 
-#         self.exp_keys = [
-#             'states', 'actions', 'rewards', 'next_states', 'terminals']
-#         self.good_exp = {k: [] for k in self.exp_keys}
-#         self.bad_exp = {k: [] for k in self.exp_keys}
-#         logger.info('Memory params: {}'.format(pp.pformat(self.__dict__)))
+    def __init__(self,
+                 **kwargs):  # absorb generic param without breaking
+        super(RankedMemory, self).__init__()
+        # use the old self.exp as buffer, remember to clear
+        self.epi_memory = []
+
+    def add_exp(self, action, reward, next_state, terminal):
+        # add to buffer self.exp first
+        super(RankedMemory, self).add_exp(
+            action, reward, next_state, terminal)
+        if terminal:
+            epi_exp = {
+                'exp': self.exp,
+                'total_rewards': np.sum(self.exp['rewards'])
+            }
+            self.epi_memory.append(epi_exp)
+            self.epi_memory.sort(key=lambda epi_exp: epi_exp['total_rewards'])
+            self.exp = {k: [] for k in self.exp_keys}
+
+    def rand_minibatch(self, size):
+
+        return
