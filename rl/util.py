@@ -182,7 +182,7 @@ def check_session_ends(sys_vars):
             pp.pformat(sys_vars['PARAM'])))
     if not sys_vars['RENDER']:
         return
-    plt.savefig('{}.png'.format(sys_vars['GYM_ENV_NAME']))
+    plt.savefig('./data/{}.png'.format(sys_vars['GYM_ENV_NAME']))
 
 
 def init_plotter(sys_vars):
