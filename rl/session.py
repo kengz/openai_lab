@@ -142,7 +142,7 @@ class Session(object):
                      for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
                 ), agent.memory.size()))
 
-        for t in range(env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')):
+        for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
