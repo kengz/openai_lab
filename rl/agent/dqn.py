@@ -31,7 +31,8 @@ class DQN(Agent):
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        self.n_epoch = n_epoch
+        self.n_epoch = 1
+        self.final_n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
@@ -78,7 +79,7 @@ class DQN(Agent):
         once it has more experience
         Best so far, increment num epochs every 2 up to a max of 5
         '''
-        if (self.n_epoch < 5 and
+        if (self.n_epoch < self.final_n_epoch and
                 sys_vars['t'] == 0 and
                 sys_vars['epi'] % 2 == 0):
             self.n_epoch += 1
