@@ -110,7 +110,8 @@ def get_env_spec(env):
         'action_dim': env.action_space.n,
         'actions': list(range(env.action_space.n)),
         'reward_range': env.reward_range,
-        'timestep_limit': env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
+        'timestep_limit': env.spec.tags.get(
+            'wrapper_config.TimeLimit.max_episode_steps')
     }
 
 
