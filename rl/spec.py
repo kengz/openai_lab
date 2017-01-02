@@ -3,6 +3,9 @@ from rl.memory import *
 from rl.policy import *
 
 # Dict of specs runnable on a Session
+# specify the Class constructors for Agent, Memory, Policy
+# specify any of their parameters under the unified 'param' key
+# specify param_range for hyper param selection (if needed)
 game_specs = {
     'dummy': {
         'problem': 'CartPole-v0',
