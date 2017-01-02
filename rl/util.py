@@ -121,6 +121,26 @@ def report_speed(real_time, total_t):
     logger.info('Mean speed: {:.4f} s/step'.format(avg_speed))
 
 
+def format_obj_dict(obj, keys):
+    if isinstance(obj, dict):
+        return pp.pformat(
+            {k: obj.get(k) for k in keys})
+    else:
+        return pp.pformat(
+            {k: getattr(obj, k, None) for k in keys})
+
+
+def debug_agent_info(agent):
+    logger.debug(
+        "Agent info: {}".format(
+            format_obj_dict(agent, ['learning_rate', 'n_epoch'])))
+    logger.debug(
+        "Memory info: size: {}".format(agent.memory.size()))
+    logger.debug(
+        "Policy info: {}".format(
+            format_obj_dict(agent.policy, ['e'])))
+
+
 def update_history(agent,
                    sys_vars,
                    total_t,
@@ -145,15 +165,11 @@ def update_history(agent,
     sys_vars['solved'] = solved
     live_plot(sys_vars)
 
-    logs = [
-        '',
-        'Episode: {}, total t: {}, total reward: {}'.format(
-            sys_vars['epi'], total_t, total_rewards),
-        'Mean rewards over last {} episodes: {:.4f}'.format(
-            sys_vars['REWARD_MEAN_LEN'], mean_rewards),
-        '{:->20}'.format(''),
-    ]
-    logger.debug('\n'.join(logs))
+    logger.debug(
+        "RL Sys info: {}".format(
+            format_obj_dict(
+                sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
+    logger.debug('{:->30}'.format(''))
     check_session_ends(sys_vars)
     return sys_vars
 

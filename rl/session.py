@@ -28,13 +28,7 @@ class Session(object):
         state = env.reset()
         agent.memory.reset_state(state)
         total_rewards = 0
-        # refactor agent debug
-        logger.debug(
-            "DQN Agent param: {} Mem size: {}".format(
-                pp.pformat(
-                    {k: getattr(agent, k, None)
-                     for k in ['e', 'learning_rate', 'batch_size', 'n_epoch']}
-                ), agent.memory.size()))
+        debug_agent_info(agent)
 
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
