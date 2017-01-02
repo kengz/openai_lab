@@ -166,7 +166,7 @@ class RankedMemory(LinearMemory):
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
         self.epi_memory = []
-        self.n_best_epi = 2
+        self.n_best_epi = 10
 
     def add_exp(self, action, reward, next_state, terminal):
         super(RankedMemory, self).add_exp(
