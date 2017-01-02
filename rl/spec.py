@@ -86,6 +86,7 @@ game_specs = {
             'gamma': 0.98,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
+            'output_layer_activation': 'linear',
             'exploration_anneal_episodes': 300,
         },
         'param_range': {

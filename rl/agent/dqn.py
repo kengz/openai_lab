@@ -23,6 +23,7 @@ class DQN(Agent):
                  gamma=0.95, learning_rate=0.1,
                  batch_size=16, n_epoch=1, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
+                 output_layer_activation=None,
                  **kwargs):  # absorb generic param without breaking
         super(DQN, self).__init__(env_spec)
 
@@ -33,6 +34,7 @@ class DQN(Agent):
         self.n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
+        self.output_layer_activation = output_layer_activation
         logger.info('Agent params: {}'.format(pp.pformat(self.__dict__)))
         self.build_model()
 
@@ -56,7 +58,9 @@ class DQN(Agent):
     def build_model(self):
         model = Sequential()
         self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
+        model.add(Dense(self.env_spec['action_dim'],
+                        init='lecun_uniform',
+                        activation=self.output_layer_activation))
 
         logger.info("Model summary")
         model.summary()
