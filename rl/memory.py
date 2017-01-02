@@ -94,23 +94,11 @@ class LinearMemory(Memory):
 
     def rand_minibatch(self, size):
         '''
-        plain random sampling, with a guarantee
-        that every exp will be trained at least once
+        plain random sampling
         '''
         memory_size = self.size()
-        new_exp_size = self.agent.train_per_n_new_exp
-        if memory_size <= size or memory_size <= new_exp_size:
-            inds = np.random.randint(memory_size, size=size)
-        else:
-            new_memory_ind = max(0, memory_size - new_exp_size)
-            old_memory_ind = max(0, new_memory_ind - 1)
-            latest_inds = np.arange(new_memory_ind, memory_size)
-            random_batch_size = size - new_exp_size
-            rand_inds = np.random.randint(
-                old_memory_ind, size=random_batch_size)
-            inds = np.concatenate([rand_inds, latest_inds]).astype(int)
-        minibatch = self.get_exp(inds)
-        assert len(minibatch['rewards']) == size
+        rand_inds = np.random.randint(memory_size, size=size)
+        minibatch = self.get_exp(rand_inds)
         return minibatch
 
 
@@ -178,7 +166,7 @@ class RankedMemory(LinearMemory):
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
         self.epi_memory = []
-        self.n_best_epi = 5
+        self.n_best_epi = 2
 
     def add_exp(self, action, reward, next_state, terminal):
         super(RankedMemory, self).add_exp(
