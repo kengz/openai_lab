@@ -104,7 +104,7 @@ class DQN(Agent):
         timestep_limit = self.env_spec['timestep_limit']
         done = self.memory.pop()['terminals'][0]
         return bool(
-            (t != 0 and t % self.train_per_n_new_exp == 0) or
+            t % self.train_per_n_new_exp == 0 or
             t == (timestep_limit-1) or
             done)
 
