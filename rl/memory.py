@@ -173,9 +173,11 @@ class RankedMemory(LinearMemory):
     # merge the epi_memory into an exp object
     def merge_exp(self):
         sorted_exp = {}
+        # split epi_memory into better and worse halves
+        half_epi_len = int(float(len(self.epi_memory))/float(2))
         for k in self.exp_keys:
             k_exp = np.concatenate(
-                [epi_exp['exp'][k] for epi_exp in self.epi_memory]
+                [epi_exp['exp'][k] for epi_exp in self.epi_memory[-half_epi_len:]]
             )
             sorted_exp[k] = k_exp
         return sorted_exp
@@ -205,10 +207,10 @@ class RankedMemory(LinearMemory):
         return res
 
     def rand_minibatch(self, size):
-        buffer_exp = self.exp  # store for restoration after
         if len(self.epi_memory) == 0:   # base case, early exit
             return super(RankedMemory, self).rand_minibatch(size)
 
+        buffer_exp = self.exp  # store for restoration after
         self.exp = self.sorted_epi_exp
         minibatch = super(RankedMemory, self).rand_minibatch(size)
         self.exp = buffer_exp  # set buffer back to original
