@@ -144,7 +144,7 @@ class LeftTailMemory(LinearMemory):
             random_batch_size = size - new_exp_size
             rand_inds = (old_memory_ind - halfnorm.rvs(
                 size=random_batch_size,
-                scale=float(old_memory_ind)*0.37).astype(int))
+                scale=float(old_memory_ind)*0.80).astype(int))
             inds = np.concatenate([rand_inds, latest_inds]).clip(0)
         minibatch = self.get_exp(inds)
         return minibatch
