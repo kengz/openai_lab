@@ -56,6 +56,26 @@ game_specs = {
             'exploration_anneal_episodes': 180,
         }
     },
+    # Mountain dqn params don't work yet
+    'mountain_dqn': {
+        'problem': 'MountainCar-v0',
+        'Agent': lunar_dqn.LunarDQN,
+        'Memory': LinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.98,
+            'hidden_layers_shape': [200, 100],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 100,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [200, 100, 50]],
+        }
+    },
     'mountain_double_dqn': {
         'problem': 'MountainCar-v0',
         'Agent': mountain_double_dqn.MountainDoubleDQN,
