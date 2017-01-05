@@ -100,15 +100,15 @@ game_specs = {
             'train_per_n_new_exp': 4,
             'learning_rate': 0.001,
             'batch_size': 32,
-            'gamma': 0.98,
+            'gamma': 0.99,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 300,
-            'epi_change_learning_rate' : 250,
+            'epi_change_learning_rate' : 325,
         },
         'param_range': {
             'learning_rate': [0.001, 0.01],
-            'hidden_layers_shape': [[200, 100], [200, 100, 50]],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
         }
     },
     'lunar_double_dqn': {

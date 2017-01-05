@@ -30,15 +30,32 @@ class Session(object):
         total_rewards = 0
         debug_agent_info(agent)
 
+        temp_exp_mem = []
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
 
-            action = agent.select_action(state)
-            next_state, reward, done, info = env.step(action)
-            agent.memory.add_exp(action, reward, next_state, done)
-            agent.update(sys_vars)
+            # Collect 4 experiences as Atari games need a history of last four states
+            # Is there a problem not training the agent for the first 4 steps?
+            if t == 0:
+                for i in range(4):    
+                    action = agent.select_action(state)
+                    next_state, reward, done, info = env.step(action)
+                    temp_exp_mem.append([action, reward, next_state, done])
+            else:
+                action = agent.select_action(state)
+                next_state, reward, done, info = env.step(action)
+                temp_exp_mem.delete(0)
+                temp_exp_mem.append([action, reward, next_state, done])
+
+            # Call relevant preprocessing function
+            # TODO: refactor correct function call to agent params
+            if (len(temp_exp_mem) != 4):
+                print("ERROR: Wrong temp memory length")
+                exit(0)
+            run_state_processing_none(temp_exp_mem, t)
+
             if agent.to_train(sys_vars):
                 agent.train(sys_vars)
 
@@ -48,6 +65,33 @@ class Session(object):
                 break
         update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
+
+    def run_state_processing_none(self, temp_exp_mem, t):
+        if t == 0:
+            for i in range(len(temp_exp_mem)):
+                agent.memory.add_exp(temp_exp_mem[i][0],
+                                     temp_exp_mem[i][1],
+                                     temp_exp_mem[i][2],
+                                     temp_exp_mem[i][3])
+        else:
+            agent.memory.add_exp(temp_exp_mem[3][0],
+                                     temp_exp_mem[3][1],
+                                     temp_exp_mem[3][2],
+                                     temp_exp_mem[3][3])
+        agent.update(sys_vars)
+
+    def run_state_processing_stack_states(self, temp_exp_mem, t):
+        # Concatenate 2 states
+        pass
+
+    def run_state_processing_diff_states(self, temp_exp_mem, t):
+        # Change in state params, curr_state - last_state
+        pass
+
+    def run_state_processing_atari_processing(self, temp_exp_mem, t):
+        # Convert images to greyscale, crop, then stack 4 states
+        # Input to model is rows * cols * channels (== states)
+        pass
 
     def run(self):
         '''run a session of agent'''
