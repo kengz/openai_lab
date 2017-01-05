@@ -76,7 +76,7 @@ class DQN(Agent):
         self.learning_rate = new_lr
         self.optimizer = SGD(lr=self.learning_rate)
         self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
-        logger.info("Model recompiled with new settings: Learning rate: {}".formate(self.learning_rate))
+        logger.info("Model recompiled with new settings: Learning rate: {}".format(self.learning_rate))
 
     def update_n_epoch(self, sys_vars):
         '''
