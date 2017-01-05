@@ -84,6 +84,7 @@ game_specs = {
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 300,
+            'epi_change_learning_rate' : 250,
         },
         'param_range': {
             'learning_rate': [0.001, 0.01],
