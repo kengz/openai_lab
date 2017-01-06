@@ -195,9 +195,10 @@ def init_plotter(sys_vars):
     ax1 = fig.add_subplot(311,
                           frame_on=False,
                           title="learning rate: {}, "
-                          "gamma: {}\ntotal rewards per episode".format(
+                          "gamma: {}, preproc: {}\ntotal rewards per episode".format(
                               str(param.get('learning_rate')),
-                              str(param.get('gamma'))),
+                              str(param.get('gamma')),
+                              str(param.get('state_preprocessing'))),
                           ylabel='total rewards')
     p1, = ax1.plot([], [])
     plotters['total rewards'] = (ax1, p1)

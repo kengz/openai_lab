@@ -16,16 +16,18 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, problem, Agent, Memory, Policy, param):
+    def __init__(self, problem, Agent, Memory, Policy, param, sess_name):
         self.problem = problem
         self.Agent = Agent
         self.Memory = Memory
         self.Policy = Policy
         self.param = param
+        self.sess_name = sess_name
 
     def run_episode(self, sys_vars, env, agent):
         '''run ane episode, return sys_vars'''
         state = env.reset()
+        print("State shape: {}".format(state.shape))
         agent.memory.reset_state(state)
         total_rewards = 0
         debug_agent_info(agent)
@@ -42,8 +44,20 @@ class Session(object):
             next_state, reward, done, info = env.step(action)
             temp_exp_mem.append([state, action, reward, next_state, done])
 
-            # TODO: Refactor function calls once tested into game specs
-            self.run_state_processing_none(agent, temp_exp_mem, t)
+            # State preprocessing, determined by spec.py
+            if 'state_preprocessing' in game_specs[self.sess_name]['param']:
+                if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'diff'):
+                    self.run_state_processing_diff_states(agent, temp_exp_mem, t)
+                elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
+                    self.run_state_processing_stack_states(agent, temp_exp_mem, t)
+                elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
+                    # To add change when implemented
+                    pass
+                else:
+                    # Default: no processing
+                    self.run_state_processing_none(agent, temp_exp_mem, t)    
+            else:
+                self.run_state_processing_none(agent, temp_exp_mem, t)
             agent.update(sys_vars)
 
             # Buffer currently set to hold last 4 experiences
@@ -75,23 +89,31 @@ class Session(object):
 
     def run_state_processing_stack_states(self, agent, temp_exp_mem, t):
         # Concatenates previous + current states
-        state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
-        action = temp_exp_mem[-1][1]
-        reward = temp_exp_mem[-1][2]
-        next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
-        done = temp_exp_mem[-1][4]
-        agent.memory.add_exp_processed(state, action, reward, 
-                                       next_state, next_state, done)
+        if (t >=1):    
+            state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
+            action = temp_exp_mem[-1][1]
+            reward = temp_exp_mem[-1][2]
+            next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
+            done = temp_exp_mem[-1][4]
+            if (t == 1):
+                print("State shape: {}".format(state.shape))
+                print("Next state shape: {}".format(next_state.shape))
+            agent.memory.add_exp_processed(state, action, reward, 
+                                           next_state, next_state, done)
 
     def run_state_processing_diff_states(self, agent, temp_exp_mem, t):
         # Change in state params, curr_state - last_state
-        state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
-        action = temp_exp_mem[-1][1]
-        reward = temp_exp_mem[-1][2]
-        next_state = temp_exp_mem[-1][3] - temp_exp_mem[-1][0]
-        done = temp_exp_mem[-1][4]
-        agent.memory.add_exp_processed(state, action, reward, 
-                                       next_state, next_state, done)
+        if (t >= 1):
+            state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
+            action = temp_exp_mem[-1][1]
+            reward = temp_exp_mem[-1][2]
+            next_state = temp_exp_mem[-1][3] - temp_exp_mem[-1][0]
+            done = temp_exp_mem[-1][4]
+            if (t == 1):
+                print("State shape: {}".format(state.shape))
+                print("Next state shape: {}".format(next_state.shape))
+            agent.memory.add_exp_processed(state, action, reward, 
+                                           next_state, next_state, done)
 
     def run_state_processing_atari_processing(self, agent, temp_exp_mem, t):
         # Convert images to greyscale, crop, then stack 4 states
@@ -103,7 +125,19 @@ class Session(object):
         sys_vars = init_sys_vars(
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
-        agent = self.Agent(get_env_spec(env), **self.param)
+        
+        ''' 
+        Change state dim in env spec based on type of preprocessing
+        '''
+        env_spec = get_env_spec(env)
+        if 'state_preprocessing' in game_specs[self.sess_name]['param']:
+            if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
+                env_spec['state_dim'] = env_spec['state_dim'] * 2
+            elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
+                # To add change when implemented
+                pass
+
+        agent = self.Agent(env_spec, **self.param)
         memory = self.Memory(**self.param)
         policy = self.Policy(**self.param)
         agent.compile(memory, policy)
@@ -149,7 +183,7 @@ def save_experiment_data(data_grid):
     logger.info('Experiment complete, data written to data_grid.json')
 
 
-def run_single_exp(sess_spec, data_grid, times=1):
+def run_single_exp(sess_spec, data_grid, sess_name, times=1):
     '''
     helper: run a experiment for Session
     a number of times times given a sess_spec from gym_specs
@@ -159,7 +193,8 @@ def run_single_exp(sess_spec, data_grid, times=1):
                    Agent=sess_spec['Agent'],
                    Memory=sess_spec['Memory'],
                    Policy=sess_spec['Policy'],
-                   param=sess_spec['param'])
+                   param=sess_spec['param'],
+                   sess_name=sess_name)
     sys_vars_array = [sess.run() for i in range(times)]
     end_time = datetime.now().isoformat()
     data = {  # experiment data
@@ -200,9 +235,9 @@ def run(sess_name, run_param_selection=False, times=1):
         } for param in param_grid]
         p = mp.Pool(mp.cpu_count())
         list(p.map(
-            partial(run_single_exp, data_grid=data_grid, times=times),
+            partial(run_single_exp, data_grid=data_grid, sess_name=sess_name, times=times),
             sess_spec_grid))
     else:
-        run_single_exp(sess_spec, data_grid=data_grid, times=times)
+        run_single_exp(sess_spec, data_grid=data_grid, sess_name=sess_name, times=times)
 
     return data_grid

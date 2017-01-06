@@ -34,6 +34,7 @@ game_specs = {
             'hidden_layers_shape': [4],
             'hidden_layers_activation': 'sigmoid',
             'exploration_anneal_episodes': 10,
+            'state_preprocessing' : 'none',
         },
         'param_range': {
             'learning_rate': [0.01, 0.05, 0.1],
@@ -54,6 +55,7 @@ game_specs = {
             'hidden_layers_shape': [4],
             'hidden_layers_activation': 'sigmoid',
             'exploration_anneal_episodes': 180,
+            'state_preprocessing' : 'none',
         }
     },
     # Mountain dqn params don't work yet
@@ -63,13 +65,14 @@ game_specs = {
         'Memory': LinearMemoryWithForgetting,
         'Policy': EpsilonGreedyPolicy,
         'param': {
-            'train_per_n_new_exp': 4,
+            'train_per_n_new_exp': 3,
             'learning_rate': 0.001,
             'batch_size': 32,
             'gamma': 0.98,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 100,
+            'state_preprocessing' : 'none',
         },
         'param_range': {
             'learning_rate': [0.001, 0.01],
@@ -89,6 +92,7 @@ game_specs = {
             'hidden_layers_shape': [8, 8],
             'hidden_layers_activation': 'sigmoid',
             'exploration_anneal_episodes': 300,
+            'state_preprocessing' : 'none',
         }
     },
     'lunar_dqn': {
@@ -103,8 +107,9 @@ game_specs = {
             'gamma': 0.98,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
-            'exploration_anneal_episodes': 300,
-            'epi_change_learning_rate' : 325,
+            'exploration_anneal_episodes': 325,
+            'epi_change_learning_rate' : 350,
+            'state_preprocessing' : 'diff',
         },
         'param_range': {
             'learning_rate': [0.001, 0.01],
@@ -124,6 +129,7 @@ game_specs = {
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 500,
+            'state_preprocessing' : 'none',
         }
     }
 }
