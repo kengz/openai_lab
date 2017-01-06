@@ -141,8 +141,9 @@ class LinearMemoryWithForgetting(LinearMemory):
         '''
         add processed exp as usual, but preserve only the recent episodes
         '''
-        super(LinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal)
+        super(LinearMemoryWithForgetting, self).add_exp_processed(
+                    processed_state, action, reward, 
+                    processed_next_state, next_state, terminal)
 
         if (self.size() > 50000):
             for k in self.exp_keys:
