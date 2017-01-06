@@ -139,6 +139,9 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
 - [ ] visualization of NN with tensorboard?
 - [ ] try with RNN like the DeepMind deep meta-RL paper
+- [ ] add state preprocessing
+- [ ] add convolutional agent
+- [ ] implement policy gradient algorithm
 
 
 ## Authors
