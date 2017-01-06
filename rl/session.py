@@ -31,6 +31,10 @@ class Session(object):
         agent.memory.reset_state(state)
         total_rewards = 0
         debug_agent_info(agent)
+        # Dummy previous states, NOTE: only works for 1D shapes
+        previous_state = np.zeros([state.shape[0]])
+        pre_previous_state = np.zeros([state.shape[0]])
+        pre_pre_previous_state = np.zeros([state.shape[0]])
 
         # Temp memory buffer to hold last n experiences
         # Enables data preprocessing, inc. diff and stack
@@ -40,7 +44,20 @@ class Session(object):
             if sys_vars.get('RENDER'):
                 env.render()
 
-            action = agent.select_action(state)
+            # State preprocessing for action selection, determined by spec.py
+            proc_state = state # Default, no processing
+            if 'state_preprocessing' in game_specs[self.sess_name]['param']:
+                if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'diff'):
+                    proc_state = self.action_sel_processing_diff_states(state, previous_state)
+                elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
+                    proc_state = self.action_sel_processing_stack_states(state, previous_state)
+                elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
+                    # To add change when implemented
+                    pass
+            if (t == 0):
+                print("Initial state dim: {}".format(proc_state.shape))
+
+            action = agent.select_action(proc_state)
             next_state, reward, done, info = env.step(action)
             temp_exp_mem.append([state, action, reward, next_state, done])
 
@@ -70,12 +87,23 @@ class Session(object):
             # E.g. If taking the difference of current and previous state can't train until t=1
             if (t >= 1) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
+            
+            pre_pre_previous_state = pre_previous_state
+            pre_previous_state = previous_state
+            previous_state = state
             state = next_state
             total_rewards += reward
+
             if done:
                 break
         update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
+
+    def action_sel_processing_stack_states(self, state, previous_state):
+        return np.concatenate([previous_state, state])
+
+    def action_sel_processing_diff_states(self, state, previous_state):
+        return state - previous_state    
 
     def run_state_processing_none(self, agent, temp_exp_mem, t):
         # No state processing
@@ -90,30 +118,35 @@ class Session(object):
     def run_state_processing_stack_states(self, agent, temp_exp_mem, t):
         # Concatenates previous + current states
         if (t >=1):    
-            state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
+            processed_state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
             action = temp_exp_mem[-1][1]
             reward = temp_exp_mem[-1][2]
-            next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
+            processed_next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
+            next_state = processed_next_state
             done = temp_exp_mem[-1][4]
             if (t == 1):
-                print("State shape: {}".format(state.shape))
-                print("Next state shape: {}".format(next_state.shape))
-            agent.memory.add_exp_processed(state, action, reward, 
-                                           next_state, next_state, done)
+                print("State shape: {}".format(processed_state.shape))
+                print("Next state shape: {}".format(processed_next_state.shape))
+            agent.memory.add_exp_processed(processed_state, action, reward, 
+                                           processed_next_state, next_state, done)
+
+            # for i in range(len(agent.memory.exp['states'])):
+            #     print("INDEX: {}, state shape: {}".format(i, agent.memory.exp['states'][i].shape[0]))
 
     def run_state_processing_diff_states(self, agent, temp_exp_mem, t):
         # Change in state params, curr_state - last_state
         if (t >= 1):
-            state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
+            processed_state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
             action = temp_exp_mem[-1][1]
             reward = temp_exp_mem[-1][2]
-            next_state = temp_exp_mem[-1][3] - temp_exp_mem[-1][0]
+            processed_next_state = temp_exp_mem[-1][3] - temp_exp_mem[-1][0]
+            next_state = processed_next_state
             done = temp_exp_mem[-1][4]
             if (t == 1):
-                print("State shape: {}".format(state.shape))
-                print("Next state shape: {}".format(next_state.shape))
-            agent.memory.add_exp_processed(state, action, reward, 
-                                           next_state, next_state, done)
+                print("State shape: {}".format(processed_state.shape))
+                print("Next state shape: {}".format(processed_next_state.shape))
+            agent.memory.add_exp_processed(processed_state, action, reward, 
+                                           processed_next_state, next_state, done)
 
     def run_state_processing_atari_processing(self, agent, temp_exp_mem, t):
         # Convert images to greyscale, crop, then stack 4 states
