@@ -100,7 +100,7 @@ game_specs = {
             'train_per_n_new_exp': 4,
             'learning_rate': 0.001,
             'batch_size': 32,
-            'gamma': 0.99,
+            'gamma': 0.98,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 300,

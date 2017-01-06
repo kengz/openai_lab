@@ -27,6 +27,10 @@ class Memory(object):
         '''add an experience'''
         raise NotImplementedError()
 
+    def add_exp_processed(self, state, action, reward, next_state, terminal):
+        '''add a processed experience'''
+        raise NotImplementedError()
+
     def get_exp(self, inds):
         '''get a batch of experiences by indices'''
         raise NotImplementedError()
@@ -76,6 +80,19 @@ class LinearMemory(Memory):
         self.exp['terminals'].append(int(terminal))
         self.state = next_state
 
+    def add_exp_processed(self, processed_state, action, reward, 
+                                processed_next_state, next_state, terminal):
+        '''
+        similar to add_exp function but allows for preprocessing raw state input
+        E.g. concatenating states, diffing states, cropping, grayscale and stacking images
+        '''
+        self.exp['states'].append(processed_state)
+        self.exp['actions'].append(self.one_hot_action(action))
+        self.exp['rewards'].append(reward)
+        self.exp['next_states'].append(processed_next_state)
+        self.exp['terminals'].append(int(terminal))
+        self.state = next_state
+
     def _get_exp(self, exp_name, inds):
         return np.array([self.exp[exp_name][i] for i in inds])
 
@@ -105,12 +122,24 @@ class LinearMemory(Memory):
 class LinearMemoryWithForgetting(LinearMemory):
 
     '''
-    Linear memory with uniform sampling, retaining last 20k experiences
+    Linear memory with uniform sampling, retaining last 50k experiences
     '''
 
     def add_exp(self, action, reward, next_state, terminal):
         '''
         add exp as usual, but preserve only the recent episodes
+        '''
+        super(LinearMemoryWithForgetting, self).add_exp(
+            action, reward, next_state, terminal)
+
+        if (self.size() > 50000):
+            for k in self.exp_keys:
+                del self.exp[k][0]
+
+    def add_exp_processed(self, processed_state, action, reward, 
+                                processed_next_state, next_state, terminal):
+        '''
+        add processed exp as usual, but preserve only the recent episodes
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)

@@ -30,35 +30,32 @@ class Session(object):
         total_rewards = 0
         debug_agent_info(agent)
 
+        # Temp memory buffer to hold last n experiences
+        # Enables data preprocessing, inc. diff and stack
         temp_exp_mem = []
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
 
-            # Collect 4 experiences as Atari games need a history of last four states
-            # Is there a problem not training the agent for the first 4 steps?
-            if t == 0:
-                for i in range(4):    
-                    action = agent.select_action(state)
-                    next_state, reward, done, info = env.step(action)
-                    temp_exp_mem.append([action, reward, next_state, done])
-            else:
-                action = agent.select_action(state)
-                next_state, reward, done, info = env.step(action)
-                del temp_exp_mem[0]
-                temp_exp_mem.append([action, reward, next_state, done])
+            action = agent.select_action(state)
+            next_state, reward, done, info = env.step(action)
+            temp_exp_mem.append([state, action, reward, next_state, done])
 
-            # Call relevant preprocessing function
-            # TODO: refactor correct function call to agent params
-            if (len(temp_exp_mem) != 4):
-                print("ERROR: Wrong temp memory length")
-                exit(0)
-            self.run_state_processing_none(agent, sys_vars, temp_exp_mem, t)
+            # TODO: Refactor function calls once tested into game specs
+            self.run_state_processing_none(agent, temp_exp_mem, t)
+            agent.update(sys_vars)
 
-            if agent.to_train(sys_vars):
+            # Buffer currently set to hold last 4 experiences
+            # Amount needed for Atari games preprocessing
+            if (len(temp_exp_mem) > 4):
+                del temp_exp_mem[0]   
+
+            # t comparison indicates when to start training
+            # Ideally should start at 3 so can be used for all tasks
+            # E.g. If taking the difference of current and previous state can't train until t=1
+            if (t >= 1) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
-
             state = next_state
             total_rewards += reward
             if done:
@@ -66,29 +63,37 @@ class Session(object):
         update_history(agent, sys_vars, t, total_rewards)
         return sys_vars
 
-    def run_state_processing_none(self, agent, sys_vars, temp_exp_mem, t):
-        if t == 0:
-            for i in range(len(temp_exp_mem)):
-                agent.memory.add_exp(temp_exp_mem[i][0],
-                                     temp_exp_mem[i][1],
-                                     temp_exp_mem[i][2],
-                                     temp_exp_mem[i][3])
-        else:
-            agent.memory.add_exp(temp_exp_mem[3][0],
-                                     temp_exp_mem[3][1],
-                                     temp_exp_mem[3][2],
-                                     temp_exp_mem[3][3])
-        agent.update(sys_vars)
+    def run_state_processing_none(self, agent, temp_exp_mem, t):
+        # No state processing
+        state = temp_exp_mem[-1][0]
+        action = temp_exp_mem[-1][1]
+        reward = temp_exp_mem[-1][2]
+        next_state = temp_exp_mem[-1][3]
+        done = temp_exp_mem[-1][4]
+        agent.memory.add_exp_processed(state, action, reward, 
+                                       next_state, next_state, done)
 
-    def run_state_processing_stack_states(self, agent, sys_vars, temp_exp_mem, t):
-        # Concatenate 2 states
-        pass
+    def run_state_processing_stack_states(self, agent, temp_exp_mem, t):
+        # Concatenates previous + current states
+        state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
+        action = temp_exp_mem[-1][1]
+        reward = temp_exp_mem[-1][2]
+        next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
+        done = temp_exp_mem[-1][4]
+        agent.memory.add_exp_processed(state, action, reward, 
+                                       next_state, next_state, done)
 
-    def run_state_processing_diff_states(self, agent, sys_vars, temp_exp_mem, t):
+    def run_state_processing_diff_states(self, agent, temp_exp_mem, t):
         # Change in state params, curr_state - last_state
-        pass
+        state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
+        action = temp_exp_mem[-1][1]
+        reward = temp_exp_mem[-1][2]
+        next_state = temp_exp_mem[-1][3] - temp_exp_mem[-1][0]
+        done = temp_exp_mem[-1][4]
+        agent.memory.add_exp_processed(state, action, reward, 
+                                       next_state, next_state, done)
 
-    def run_state_processing_atari_processing(self, agent, sys_vars, temp_exp_mem, t):
+    def run_state_processing_atari_processing(self, agent, temp_exp_mem, t):
         # Convert images to greyscale, crop, then stack 4 states
         # Input to model is rows * cols * channels (== states)
         pass
