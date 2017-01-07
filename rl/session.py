@@ -92,7 +92,7 @@ def save_experiment_data(data_grid):
     data_grid.sort(
         key=lambda data: data['metrics']['experiment_mean'],
         reverse=True)
-    timestamp = '{:%Y-%m-%d_%H:%M:%S}'.format(datetime.now())
+    timestamp = '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
     filename = './data/{}_{}_{}_{}_{}.json'.format(
         data_grid[0]['sess_spec']['problem'],
         data_grid[0]['sess_spec']['Agent'],
