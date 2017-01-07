@@ -9,8 +9,8 @@
   "scripts": {
     "start": "python3 main.py",
     "test": "python3 setup.py test",
-    "posttest": "rm -rf .cache __pycache__ *egg-info",
-    "clear": "rm -rf .cache __pycache__ *egg-info .coverage"
+    "posttest": "rm -rf .cache __pycache__ *egg-info htmlcov",
+    "clear": "rm -rf .cache __pycache__ *egg-info htmlcov .coverage"
   },
   "repository": {
     "type": "git",
