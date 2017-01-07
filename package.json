@@ -1,0 +1,31 @@
+{
+  "name": "openai_gym",
+  "version": "1.0.0",
+  "description": "working out at the OpenAI gym",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "python3 main.py",
+    "test": "python3 setup.py test",
+    "posttest": "rm -rf .cache __pycache__ *egg-info",
+    "clear": "rm -rf .cache __pycache__ *egg-info .coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kengz/openai_gym.git"
+  },
+  "keywords": [
+    "openai",
+    "gym",
+    "reinforcement",
+    "learning"
+  ],
+  "author": "keng, laura",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kengz/openai_gym/issues"
+  },
+  "homepage": "https://github.com/kengz/openai_gym#readme"
+}
