@@ -1,9 +1,9 @@
-import gc
 import gym
 import json
 import multiprocessing as mp
 from datetime import datetime
 from functools import partial
+from keras import backend as K
 from rl.spec import game_specs
 from rl.util import *
 
@@ -66,7 +66,7 @@ class Session(object):
             if sys_vars['solved']:
                 break
 
-        gc.collect()  # manual gc to fix TF issue 3388
+        K.clear_session()  # manual gc to fix TF issue 3388
         return sys_vars
 
 
