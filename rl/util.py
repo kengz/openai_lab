@@ -102,9 +102,12 @@ def check_sys_vars(sys_vars):
 
 
 def get_env_spec(env):
-    '''Helper: return the env specs: dims, actions, reward range'''
+    '''Helper: return the env specs: dims, actions, reward range'''  
+    state_dim = env.observation_space.shape[0]
+    if (len(env.observation_space.shape) > 1):
+        state_dim = env.observation_space.shape
     return {
-        'state_dim': env.observation_space.shape[0],
+        'state_dim': state_dim,
         'state_bounds': np.transpose(
             [env.observation_space.low, env.observation_space.high]),
         'action_dim': env.action_space.n,

@@ -125,5 +125,45 @@ game_specs = {
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 500,
         }
+    },
+    'air_raid_dqn': {
+        'problem': 'AirRaid-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
+        }
+    },
+    'breakout_dqn': {
+        'problem': 'Breakout-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
+        }
     }
 }
