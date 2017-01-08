@@ -155,7 +155,7 @@ Refer to the following Agents in `rl/agent/` for building your own:
 - [ ] visualization of NN with tensorboard?
 - [ ] try with RNN like the DeepMind deep meta-RL paper
 - [x] add state preprocessing
-- [ ] add convolutional agent
+- [x] add convolutional agent
 - [ ] implement policy gradient algorithm
 
 
