@@ -21,8 +21,9 @@ class DQN(Agent):
     def __init__(self, env_spec,
                  train_per_n_new_exp=1,
                  gamma=0.95, learning_rate=0.1,
-                 batch_size=16, n_epoch=1, hidden_layers_shape=[4],
+                 batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
+                 output_layer_activation=None,
                  **kwargs):  # absorb generic param without breaking
         super(DQN, self).__init__(env_spec)
 
@@ -30,9 +31,11 @@ class DQN(Agent):
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        self.n_epoch = n_epoch
+        self.n_epoch = 1
+        self.final_n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
+        self.output_layer_activation = output_layer_activation
         logger.info('Agent params: {}'.format(pp.pformat(self.__dict__)))
         self.build_model()
 
@@ -56,7 +59,9 @@ class DQN(Agent):
     def build_model(self):
         model = Sequential()
         self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
+        model.add(Dense(self.env_spec['action_dim'],
+                        init='lecun_uniform',
+                        activation=self.output_layer_activation))
 
         logger.info("Model summary")
         model.summary()
@@ -85,7 +90,7 @@ class DQN(Agent):
         once it has more experience
         Best so far, increment num epochs every 2 up to a max of 5
         '''
-        if (self.n_epoch < 5 and
+        if (self.n_epoch < self.final_n_epoch and
                 sys_vars['t'] == 0 and
                 sys_vars['epi'] % 2 == 0):
             self.n_epoch += 1
@@ -111,7 +116,7 @@ class DQN(Agent):
         timestep_limit = self.env_spec['timestep_limit']
         done = self.memory.pop()['terminals'][0]
         return bool(
-            (t != 0 and t % self.train_per_n_new_exp == 0) or
+            t % self.train_per_n_new_exp == 0 or
             t == (timestep_limit-1) or
             done)
 

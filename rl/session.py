@@ -210,10 +210,17 @@ def save_experiment_data(data_grid):
     data_grid.sort(
         key=lambda data: data['metrics']['experiment_mean'],
         reverse=True)
-    filename = '{}_data_grid.json'.format(datetime.now().date().isoformat())
+    timestamp = '{:%Y-%m-%d_%H:%M:%S}'.format(datetime.now())
+    filename = './data/{}_{}_{}_{}_{}.json'.format(
+        data_grid[0]['sess_spec']['problem'],
+        data_grid[0]['sess_spec']['Agent'],
+        data_grid[0]['sess_spec']['Memory'],
+        data_grid[0]['sess_spec']['Policy'],
+        timestamp
+    )
     with open(filename, 'w') as f:
         json.dump(data_grid, f, indent=2, sort_keys=True)
-    logger.info('Experiment complete, data written to data_grid.json')
+    logger.info('Experiment complete, written to data/')
 
 
 def run_single_exp(sess_spec, data_grid, sess_name, times=1):

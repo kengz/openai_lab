@@ -3,6 +3,9 @@ from rl.memory import *
 from rl.policy import *
 
 # Dict of specs runnable on a Session
+# specify the Class constructors for Agent, Memory, Policy
+# specify any of their parameters under the unified 'param' key
+# specify param_range for hyper param selection (if needed)
 game_specs = {
     'dummy': {
         'problem': 'CartPole-v0',
@@ -25,7 +28,8 @@ game_specs = {
     'dqn': {
         'problem': 'CartPole-v0',
         'Agent': dqn.DQN,
-        'Memory': LinearMemoryWithForgetting,
+        # 'Memory': LinearMemoryWithForgetting,
+        'Memory': RankedMemory,
         'Policy': BoltzmannPolicy,
         'param': {
             'train_per_n_new_exp': 1,
@@ -104,9 +108,10 @@ game_specs = {
             'train_per_n_new_exp': 4,
             'learning_rate': 0.001,
             'batch_size': 32,
-            'gamma': 0.98,
+            'gamma': 0.99,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
+            'output_layer_activation': 'linear',
             'exploration_anneal_episodes': 325,
             'epi_change_learning_rate' : 350,
             'state_preprocessing' : 'concat',
@@ -130,6 +135,46 @@ game_specs = {
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 500,
             'state_preprocessing' : 'none',
+        }
+    },
+    'air_raid_dqn': {
+        'problem': 'AirRaid-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
+        }
+    },
+    'breakout_dqn': {
+        'problem': 'Breakout-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
         }
     }
 }
