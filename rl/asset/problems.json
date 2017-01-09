@@ -19,5 +19,26 @@
     "SOLVED_MEAN_REWARD": 200,
     "MAX_EPISODES": 3000,
     "REWARD_MEAN_LEN": 100
+  },
+  "AirRaid-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "AirRaid-v0",
+    "SOLVED_MEAN_REWARD": 500,
+    "MAX_EPISODES": 1000000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "Breakout-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "Breakout-v0",
+    "SOLVED_MEAN_REWARD": 300,
+    "MAX_EPISODES": 1000000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "MsPacman-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "MsPacman-v0",
+    "SOLVED_MEAN_REWARD": 1000,
+    "MAX_EPISODES": 1000000,
+    "REWARD_MEAN_LEN": 100
   }
 }

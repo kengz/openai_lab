@@ -57,6 +57,21 @@ python setup.py build
 python setup.py install
 ```
 
+To run Atari envs three additional dependencies are required
+
+```shell
+pip install atari_py
+pip install Pillow
+pip install PyOpenGL
+```
+
+Then check that it works with
+```python
+import gym
+env = gym.make('SpaceInvaders-v0')
+env.reset()
+env.render()
+```
 
 ## Usage
 
