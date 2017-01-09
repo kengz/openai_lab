@@ -122,24 +122,7 @@ Refer to the following Agents in `rl/agent/` for building your own:
 
 ## Roadmap
 
-- [x] major refactoring for more efficient development; standardization of the `Agent` class, and methods it shall implement.
-- [x] logging of crucial data points, for plotting after runs
-- [x] complete refactoring of Agent and Policy
-- [x] parameter selection with parallelization
-- [x] report and plot loss for Q estimates, seeing weirdly high, rising values
-- [x] parametrize NN architecture under the key `architecture_grid`, pass as part of hyper-param selection.
-- [x] introduce LinearMemoryWithForgetting
-- [x] delay training till more experience is gathered
-- [x] experiment setup and data logging
-- [ ] improve memory selection policy
-- [ ] memory weightage, simply, we can just do high vs low weightage per episode first (if episode solved, put in high)
-- [ ] boltzmann for exploration policy
-- [ ] oscillating exploration cycles so learn and solve the problem, chunk by chunk. Combine this with the subepisodic, compositional solutions by parts. First do linear decay, till hits the plateau, if still not solved, activate exploration again. Parametrize by partial mean rewards. *Notes* Turn off exploration until you enter a later stage. Can't reliably parameterize with time, need to do so with state. E.g. Reach medium height, if haven't learned how to land from there, explore and learn to fire the engine. This will be the way to do subepisodic exploration.
-- [x] fix advanced dependencies on Ubuntu
-- [ ] smarter exploration policy, use the idea of learning activation and strange attractors of dynamical system
-- [ ] visualization of NN with tensorboard?
-- [ ] try with RNN like the DeepMind deep meta-RL paper
-
+Check the latest under the [Github Projects](https://github.com/kengz/openai_gym/projects)
 
 ## Authors
 
