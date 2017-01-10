@@ -275,6 +275,16 @@ def param_product(default_param, param_range):
         param_grid.append(param)
     return param_grid
 
+def param_line_search(default_param, param_range):
+    keys = param_range.keys()
+    param_list = []
+    for key in keys:
+        vals = param_range[key]
+        for val in vals:
+            param = copy.deepcopy(default_param)
+            param[key] = val
+            param_list.append(param)
+    return param_list
 
 def stringify_param_value(value):
     return value.__name__ if isinstance(value, type) else value
