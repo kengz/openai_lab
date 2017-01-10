@@ -275,6 +275,11 @@ def param_product(default_param, param_range):
         param_grid.append(param)
     return param_grid
 
+# convert a dict of param ranges into
+# a list parameter settings corresponding
+# to a line search of the param range
+# for each param
+# All other parameters set to default vals
 def param_line_search(default_param, param_range):
     keys = param_range.keys()
     param_list = []
