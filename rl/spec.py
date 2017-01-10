@@ -117,8 +117,13 @@ game_specs = {
             'state_preprocessing' : 'concat',
         },
         'param_range': {
-            'learning_rate': [0.001, 0.01],
-            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
+            'train_per_n_new_exp': [1, 2, 3, 4, 5, 8, 10, 15],
+            'gamma' : [0.95, 0.96, 0.97, 0.98, 0.99],
+            'exploration_anneal_episodes': [100, 200, 300, 400, 500, 600],
+            'learning_rate': [0.01, 0.005, 0.001, 0.0005, 0.0001],
+            'hidden_layers_shape': [[100], [200], [300], [400], [500], 
+                                    [200, 100], [300, 100], [300, 150], 
+                                    [400, 100], [400, 200]],
         }
     },
     'lunar_double_dqn': {
