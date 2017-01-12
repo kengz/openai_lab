@@ -112,9 +112,9 @@ game_specs = {
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'output_layer_activation': 'linear',
-            'exploration_anneal_episodes': 325,
+            'exploration_anneal_episodes': 100,
             'epi_change_learning_rate' : 350,
-            'state_preprocessing' : 'concat',
+            'state_preprocessing' : 'none',
         },
         'param_range': {
             'train_per_n_new_exp': [1, 2, 3, 4, 5, 8, 10, 15],

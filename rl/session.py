@@ -53,15 +53,20 @@ class Session(object):
                     proc_state = self.action_sel_processing_stack_states(state, previous_state)
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
                     # To add change when implemented
-                    pass
+                    print("Error, no atari preprocessing implemented")
+                    exit(0)
             if (t == 0):
                 print("Initial state dim: {}".format(proc_state.shape))
 
             action = agent.select_action(proc_state)
             next_state, reward, done, info = env.step(action)
             temp_exp_mem.append([state, action, reward, next_state, done])
+            # Buffer currently set to hold only last 4 experiences
+            # Amount needed for Atari games preprocessing
+            if (len(temp_exp_mem) > 4):
+                del temp_exp_mem[0]   
 
-            # State preprocessing, determined by spec.py
+            # State preprocessing for memory, determined by spec.py
             if 'state_preprocessing' in game_specs[self.sess_name]['param']:
                 if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'diff'):
                     self.run_state_processing_diff_states(agent, temp_exp_mem, t)
@@ -69,7 +74,8 @@ class Session(object):
                     self.run_state_processing_stack_states(agent, temp_exp_mem, t)
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
                     # To add change when implemented
-                    pass
+                    print("Error, no atari preprocessing implemented")
+                    exit(0)
                 else:
                     # Default: no processing
                     self.run_state_processing_none(agent, temp_exp_mem, t)    
@@ -77,15 +83,10 @@ class Session(object):
                 self.run_state_processing_none(agent, temp_exp_mem, t)
             agent.update(sys_vars)
 
-            # Buffer currently set to hold last 4 experiences
-            # Amount needed for Atari games preprocessing
-            if (len(temp_exp_mem) > 4):
-                del temp_exp_mem[0]   
-
             # t comparison indicates when to start training
             # Ideally should start at 3 so can be used for all tasks
             # E.g. If taking the difference of current and previous state can't train until t=1
-            if (t >= 1) and agent.to_train(sys_vars):
+            if (t >= 0) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
             
             pre_pre_previous_state = pre_previous_state
@@ -130,9 +131,6 @@ class Session(object):
             agent.memory.add_exp_processed(processed_state, action, reward, 
                                            processed_next_state, next_state, done)
 
-            # for i in range(len(agent.memory.exp['states'])):
-            #     print("INDEX: {}, state shape: {}".format(i, agent.memory.exp['states'][i].shape[0]))
-
     def run_state_processing_diff_states(self, agent, temp_exp_mem, t):
         # Change in state params, curr_state - last_state
         if (t >= 1):
@@ -167,8 +165,8 @@ class Session(object):
             if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
                 env_spec['state_dim'] = env_spec['state_dim'] * 2
             elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
-                # To add change when implemented
-                pass
+                print("Error, no atari preprocessing implemented")
+                exit(0)
 
         agent = self.Agent(env_spec, **self.param)
         memory = self.Memory(**self.param)

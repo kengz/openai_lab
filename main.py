@@ -5,4 +5,4 @@ if __name__ == '__main__':
     # ['dummy', 'q_table', 'lunar_double_dqn',
     #     'mountain_double_dqn', 'lunar_dqn', 'double_dqn', 'dqn']
     # run('dqn', run_param_selection=False, times=1)
-    run('lunar_dqn', run_param_selection=True, times=5, line_search=True)
+    run('lunar_dqn', run_param_selection=False, times=1, line_search=True)
