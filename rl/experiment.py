@@ -129,4 +129,4 @@ def run(sess_name_or_spec, times=1, param_selection=False):
     else:
         # run_single_exp(sess_spec, data_grid=data_grid, times=times)
         experiment = Experiment(sess_spec, times=times)
-        experiment.run()
+        return experiment.run()
