@@ -63,6 +63,8 @@ class Session(object):
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode(sys_vars, env, agent)
+            if 'epi_change_learning_rate' in self.param and epi == self.param['epi_change_learning_rate']:
+                agent.recompile_model(self.param['learning_rate'] / 10.0)
             if sys_vars['solved']:
                 break
 
@@ -132,7 +134,7 @@ def run_single_exp(sess_spec, data_grid, times=1):
     return data
 
 
-def run(sess_name, run_param_selection=False, times=1):
+def run(sess_name, run_param_selection=False, times=1, line_search=True):
     '''
     primary method:
     run the experiment (single or multiple)
@@ -145,8 +147,12 @@ def run(sess_name, run_param_selection=False, times=1):
     data_grid = []
 
     if run_param_selection:
-        param_grid = param_product(
+        if line_search:
+            param_grid = param_line_search(
             sess_spec['param'], sess_spec['param_range'])
+        else:
+            param_grid = param_product(
+                sess_spec['param'], sess_spec['param_range'])
         sess_spec_grid = [{
             'problem': sess_spec['problem'],
             'Agent': sess_spec['Agent'],

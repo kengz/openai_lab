@@ -102,9 +102,12 @@ def check_sys_vars(sys_vars):
 
 
 def get_env_spec(env):
-    '''Helper: return the env specs: dims, actions, reward range'''
+    '''Helper: return the env specs: dims, actions, reward range'''  
+    state_dim = env.observation_space.shape[0]
+    if (len(env.observation_space.shape) > 1):
+        state_dim = env.observation_space.shape
     return {
-        'state_dim': env.observation_space.shape[0],
+        'state_dim': state_dim,
         'state_bounds': np.transpose(
             [env.observation_space.low, env.observation_space.high]),
         'action_dim': env.action_space.n,
@@ -272,6 +275,21 @@ def param_product(default_param, param_range):
         param_grid.append(param)
     return param_grid
 
+# convert a dict of param ranges into
+# a list parameter settings corresponding
+# to a line search of the param range
+# for each param
+# All other parameters set to default vals
+def param_line_search(default_param, param_range):
+    keys = param_range.keys()
+    param_list = []
+    for key in keys:
+        vals = param_range[key]
+        for val in vals:
+            param = copy.deepcopy(default_param)
+            param[key] = val
+            param_list.append(param)
+    return param_list
 
 def stringify_param_value(value):
     return value.__name__ if isinstance(value, type) else value

@@ -60,6 +60,26 @@ game_specs = {
             'exploration_anneal_episodes': 180,
         }
     },
+    # Mountain dqn params don't work yet
+    'mountain_dqn': {
+        'problem': 'MountainCar-v0',
+        'Agent': lunar_dqn.LunarDQN,
+        'Memory': LinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.98,
+            'hidden_layers_shape': [200, 100],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 100,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [200, 100, 50]],
+        }
+    },
     'mountain_double_dqn': {
         'problem': 'MountainCar-v0',
         'Agent': mountain_double_dqn.MountainDoubleDQN,
@@ -84,15 +104,21 @@ game_specs = {
             'train_per_n_new_exp': 4,
             'learning_rate': 0.001,
             'batch_size': 32,
-            'gamma': 0.98,
+            'gamma': 0.99,
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'output_layer_activation': 'linear',
             'exploration_anneal_episodes': 300,
+            'epi_change_learning_rate' : 325,
         },
         'param_range': {
-            'learning_rate': [0.001, 0.01],
-            'hidden_layers_shape': [[200, 100], [200, 100, 50]],
+            'train_per_n_new_exp': [1, 2, 3, 4, 5, 8, 10, 15],
+            'gamma' : [0.95, 0.96, 0.97, 0.98, 0.99],
+            'exploration_anneal_episodes': [100, 200, 300, 400, 500, 600],
+            'learning_rate': [0.01, 0.005, 0.001, 0.0005, 0.0001],
+            'hidden_layers_shape': [[100], [200], [300], [400], [500], 
+                                    [200, 100], [300, 100], [300, 150], 
+                                    [400, 100], [400, 200]],
         }
     },
     'lunar_double_dqn': {
@@ -108,6 +134,46 @@ game_specs = {
             'hidden_layers_shape': [200, 100],
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 500,
+        }
+    },
+    'air_raid_dqn': {
+        'problem': 'AirRaid-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
+        }
+    },
+    'breakout_dqn': {
+        'problem': 'Breakout-v0',
+        'Agent': atari_conv_dqn.ConvDQN,
+        'Memory': LongLinearMemoryWithForgetting,
+        'Policy': EpsilonGreedyPolicy,
+        'param': {
+            'train_per_n_new_exp': 4,
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'gamma': 0.99,
+            'hidden_layers_shape': [[16, 8, 8, (4, 4)], [32, 4, 4, (2, 2)]],
+            'hidden_layers_activation': 'relu',
+            'exploration_anneal_episodes': 1000000,
+            'epi_change_learning_rate' : 1000000,
+        },
+        'param_range': {
+            'learning_rate': [0.001, 0.01],
+            'hidden_layers_shape': [[200, 100], [300, 200], [200, 100, 50]],
         }
     }
 }
