@@ -12,7 +12,12 @@
 #     - summary metrics
 # - sys_vars_array
 
-from rl.util import timestamp
+import json
+import multiprocessing as mp
+from functools import partial
+from rl.session import Session
+from rl.spec import game_specs
+from rl.util import *
 
 
 def analyze(data):
@@ -32,6 +37,8 @@ def analyze(data):
 # TODO
 # report speed too (from util)
 
+# need a formatter
+
 
 def save(data_grid):
     '''
@@ -39,7 +46,7 @@ def save(data_grid):
     '''
     # sort data, best first
     data_grid.sort(
-        key=lambda data: data['metrics']['experiment_mean'],
+        key=lambda data: data['summary']['metrics']['experiment_mean'],
         reverse=True)
     filename = './data/{}_{}_{}_{}_{}.json'.format(
         data_grid[0]['sess_spec']['problem'],
@@ -58,22 +65,29 @@ def run_single_exp(sess_spec, data_grid, times=1):
     helper: run a experiment for Session
     a number of times times given a sess_spec from gym_specs
     '''
-    start_time = timestamp()
+    sess_spec.pop('param_range', None)  # single exp, del range
+    time_start = timestamp()
     sess = Session(problem=sess_spec['problem'],
                    Agent=sess_spec['Agent'],
                    Memory=sess_spec['Memory'],
                    Policy=sess_spec['Policy'],
                    param=sess_spec['param'])
     sys_vars_array = [sess.run() for i in range(times)]
-    end_time = timestamp()
+    time_end = timestamp()
+    time_taken = timestamp_elapse(time_start, time_end)
+
     data = {  # experiment data
-        'start_time': start_time,
         'sess_spec': stringify_param(sess_spec),
+        'summary': {
+            'time_start': time_start,
+            'time_end': time_end,
+            'time_taken': time_taken,
+            'metrics': None,
+        },
         'sys_vars_array': sys_vars_array,
-        'metrics': None,
-        'end_time': end_time,
     }
-    data.update({'metrics': analyze(data)})
+
+    data['summary'].update({'metrics': analyze(data)})
     # progressive update of data_grid, write when an exp is done
     data_grid.append(data)
     save(data_grid)

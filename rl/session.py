@@ -1,9 +1,5 @@
 import gym
-import json
-import multiprocessing as mp
-from functools import partial
 from keras import backend as K
-from rl.spec import game_specs
 from rl.util import *
 
 
@@ -50,6 +46,7 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
+        time_start = timestamp()
         sys_vars = init_sys_vars(
             self.problem, self.param)  # rl system, see util.py
         env = gym.make(sys_vars['GYM_ENV_NAME'])
@@ -68,4 +65,10 @@ class Session(object):
                 break
 
         K.clear_session()  # manual gc to fix TF issue 3388
+        time_end = timestamp()
+        time_taken = timestamp_elapse(time_start, time_end)
+        sys_vars['time_start'] = time_start
+        sys_vars['time_end'] = time_end
+        sys_vars['time_taken'] = time_taken
+
         return sys_vars

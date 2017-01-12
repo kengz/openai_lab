@@ -124,6 +124,13 @@ def timestamp():
     return '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
 
 
+def timestamp_elapse(s1, s2):
+    '''calculate the time elapsed between timestamps from s1 to s2'''
+    FMT = '%Y-%m-%d_%H%M%S'
+    delta_t = datetime.strptime(s2, FMT) - datetime.strptime(s1, FMT)
+    return str(delta_t)
+
+
 def report_speed(real_time, total_t):
     '''Report on how fast each time step runs'''
     avg_speed = float(real_time)/float(total_t)
