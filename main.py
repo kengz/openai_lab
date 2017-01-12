@@ -1,8 +1,8 @@
-from rl.session import game_specs, run
+from rl.experiment import game_specs, run
 
 if __name__ == '__main__':
     # print(list(game_specs.keys()))
     # ['dummy', 'q_table', 'lunar_double_dqn',
     #     'mountain_double_dqn', 'lunar_dqn', 'double_dqn', 'dqn']
-    # run('dqn', run_param_selection=False, times=1)
-    run('lunar_dqn', run_param_selection=True, times=5, line_search=True)
+    run('dqn', times=1, param_selection=False)
+    # run('lunar_dqn', times=5, param_selection=True, line_search=True)
