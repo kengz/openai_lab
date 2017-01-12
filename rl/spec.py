@@ -176,6 +176,7 @@ game_specs = {
             'hidden_layers_activation': 'relu',
             'exploration_anneal_episodes': 1000000,
             'epi_change_learning_rate' : 1000000,
+            'state_preprocessing' : 'atari',
         },
         'param_range': {
             'learning_rate': [0.001, 0.01],

@@ -8,6 +8,7 @@ import multiprocessing as mp
 import numpy as np
 import os
 import pprint
+import scipy as sp
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
 from os import path, environ
@@ -298,3 +299,21 @@ def stringify_param_value(value):
 
 def stringify_param(param):
     return {k: stringify_param_value(param[k]) for k in param}
+
+def resize_image(im):
+    return sp.misc.imresize(im, (110, 84))
+
+def crop_image(im):
+    return im[-84:,:]
+
+def process_image_atari(im):
+    # Image preprocessing from the paper 
+    # Playing Atari with Deep Reinforcement Learning, 2013
+    # Takes an RGB image and converts it to grayscale, 
+    # downsizes to 110 x 84
+    # and crops to square 84 x 84, taking bottomost rows of image
+    im_gray = np.dot(im[...,:3], [0.299, 0.587, 0.114])
+    im_resized = resize_image(im_gray)
+    im_cropped = crop_image(im_resized)
+    return im_cropped
+

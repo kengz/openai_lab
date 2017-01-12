@@ -31,10 +31,18 @@ class Session(object):
         agent.memory.reset_state(state)
         total_rewards = 0
         debug_agent_info(agent)
-        # Dummy previous states, NOTE: only works for 1D shapes
-        previous_state = np.zeros([state.shape[0]])
-        pre_previous_state = np.zeros([state.shape[0]])
-        pre_pre_previous_state = np.zeros([state.shape[0]])
+
+        # Dummy previous states
+        # print(state.shape)
+        # print(state.shape[0])
+        # exit(0)
+        previous_state = np.zeros(state.shape)
+        pre_previous_state = np.zeros(state.shape)
+        pre_pre_previous_state = np.zeros(state.shape)
+        if (previous_state.ndim==1):
+            previous_state = np.zeros([state.shape[0]])
+            pre_previous_state = np.zeros([state.shape[0]])
+            pre_pre_previous_state = np.zeros([state.shape[0]])
 
         # Temp memory buffer to hold last n experiences
         # Enables data preprocessing, inc. diff and stack
@@ -52,9 +60,9 @@ class Session(object):
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
                     proc_state = self.action_sel_processing_stack_states(state, previous_state)
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
-                    # To add change when implemented
-                    print("Error, no atari preprocessing implemented")
-                    exit(0)
+                    proc_state = self.action_sel_processing_atari_states(state, previous_state,
+                                                                        pre_previous_state,
+                                                                        pre_pre_previous_state)
             if (t == 0):
                 print("Initial state dim: {}".format(proc_state.shape))
 
@@ -73,9 +81,7 @@ class Session(object):
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
                     self.run_state_processing_stack_states(agent, temp_exp_mem, t)
                 elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
-                    # To add change when implemented
-                    print("Error, no atari preprocessing implemented")
-                    exit(0)
+                    self.run_state_processing_atari(agent, temp_exp_mem, t)
                 else:
                     # Default: no processing
                     self.run_state_processing_none(agent, temp_exp_mem, t)    
@@ -86,7 +92,7 @@ class Session(object):
             # t comparison indicates when to start training
             # Ideally should start at 3 so can be used for all tasks
             # E.g. If taking the difference of current and previous state can't train until t=1
-            if (t >= 0) and agent.to_train(sys_vars):
+            if (t >= 3) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
             
             pre_pre_previous_state = pre_previous_state
@@ -105,6 +111,14 @@ class Session(object):
 
     def action_sel_processing_diff_states(self, state, previous_state):
         return state - previous_state    
+
+    def action_sel_processing_atari_states(self, state, previous_state, 
+                                          pre_previous_state, pre_pre_previous_state):
+        arrays = (process_image_atari(state),
+                  process_image_atari(previous_state),
+                  process_image_atari(pre_previous_state),
+                  process_image_atari(pre_pre_previous_state))
+        return np.stack(arrays, axis=-1)
 
     def run_state_processing_none(self, agent, temp_exp_mem, t):
         # No state processing
@@ -146,10 +160,31 @@ class Session(object):
             agent.memory.add_exp_processed(processed_state, action, reward, 
                                            processed_next_state, next_state, done)
 
-    def run_state_processing_atari_processing(self, agent, temp_exp_mem, t):
-        # Convert images to greyscale, crop, then stack 4 states
+    def run_state_processing_atari(self, agent, temp_exp_mem, t):
+        # Convert images to greyscale, downsize, crop, then stack 4 states
+        # NOTE: Image order is cols * rows * channels to match openai gym format
         # Input to model is rows * cols * channels (== states)
-        pass
+       if (t>=3):
+            arrays = (process_image_atari(temp_exp_mem[-1][0]),
+                      process_image_atari(temp_exp_mem[-2][0]),
+                      process_image_atari(temp_exp_mem[-3][0]),
+                      process_image_atari(temp_exp_mem[-4][0]))
+            next_arrays = (process_image_atari(temp_exp_mem[-1][3]),
+                           process_image_atari(temp_exp_mem[-2][3]),
+                           process_image_atari(temp_exp_mem[-3][3]),
+                           process_image_atari(temp_exp_mem[-4][3]))
+            processed_state = np.stack(arrays, axis=-1)
+            action = temp_exp_mem[-1][1]
+            reward = temp_exp_mem[-1][2]
+            processed_next_state = np.stack(next_arrays, axis=-1)
+            next_state = processed_next_state
+            done = temp_exp_mem[-1][4]
+            if (t == 3):
+                print("State shape: {}".format(processed_state.shape))
+                print("Next state shape: {}".format(processed_next_state.shape))
+            agent.memory.add_exp_processed(processed_state, action, reward, 
+                                           processed_next_state, next_state, done)
+
 
     def run(self):
         '''run a session of agent'''
@@ -165,8 +200,7 @@ class Session(object):
             if (game_specs[self.sess_name]['param']['state_preprocessing'] == 'concat'):
                 env_spec['state_dim'] = env_spec['state_dim'] * 2
             elif (game_specs[self.sess_name]['param']['state_preprocessing'] == 'atari'):
-                print("Error, no atari preprocessing implemented")
-                exit(0)
+                env_spec['state_dim'] = (84, 84, 4)
 
         agent = self.Agent(env_spec, **self.param)
         memory = self.Memory(**self.param)
@@ -192,7 +226,7 @@ def experiment_analytics(data):
     given data from an experiment
     '''
     sys_vars_array = data['sys_vars_array']
-    mean_r_array = [sys_vars['mean_rewards'] for sys_vars in sys_vars_array]
+    mean_r_array = [sys_vars['mean_rewards'] for gsys_vars in sys_vars_array]
     metrics = {
         'experiment_mean': np.mean(mean_r_array),
         'experiment_std': np.std(mean_r_array),
