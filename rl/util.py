@@ -307,9 +307,9 @@ def crop_image(im):
     return im[-84:,:]
 
 def process_image_atari(im):
-    # Image preprocessing from the paper 
+    # Image preprocessing from the paper
     # Playing Atari with Deep Reinforcement Learning, 2013
-    # Takes an RGB image and converts it to grayscale, 
+    # Takes an RGB image and converts it to grayscale,
     # downsizes to 110 x 84
     # and crops to square 84 x 84, taking bottomost rows of image
     im_gray = np.dot(im[...,:3], [0.299, 0.587, 0.114])

@@ -114,15 +114,15 @@ game_specs = {
             'output_layer_activation': 'linear',
             'exploration_anneal_episodes': 100,
             'epi_change_learning_rate' : 350,
-            'state_preprocessing' : 'none',
+            'state_preprocessing' : 'concat',
         },
         'param_range': {
             'train_per_n_new_exp': [1, 2, 3, 4, 5, 8, 10, 15],
             'gamma' : [0.95, 0.96, 0.97, 0.98, 0.99],
             'exploration_anneal_episodes': [100, 200, 300, 400, 500, 600],
             'learning_rate': [0.01, 0.005, 0.001, 0.0005, 0.0001],
-            'hidden_layers_shape': [[100], [200], [300], [400], [500], 
-                                    [200, 100], [300, 100], [300, 150], 
+            'hidden_layers_shape': [[100], [200], [300], [400], [500],
+                                    [200, 100], [300, 100], [300, 150],
                                     [400, 100], [400, 200]],
         }
     },

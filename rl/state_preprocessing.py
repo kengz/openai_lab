@@ -4,9 +4,9 @@ def action_sel_processing_stack_states(state, previous_state):
         return np.concatenate([previous_state, state])
 
 def action_sel_processing_diff_states(state, previous_state):
-    return state - previous_state    
+    return state - previous_state
 
-def action_sel_processing_atari_states(state, previous_state, 
+def action_sel_processing_atari_states(state, previous_state,
                                       pre_previous_state, pre_pre_previous_state):
     arrays = (process_image_atari(state),
               process_image_atari(previous_state),
@@ -21,13 +21,13 @@ def run_state_processing_none(agent, temp_exp_mem, t):
     reward = temp_exp_mem[-1][2]
     next_state = temp_exp_mem[-1][3]
     done = temp_exp_mem[-1][4]
-    agent.memory.add_exp_processed(state, action, reward, 
+    agent.memory.add_exp_processed(state, action, reward,
                                    next_state, next_state, done)
 
 def run_state_processing_stack_states(agent, temp_exp_mem, t):
     # Concatenates previous + current states
-    if (t >=1):    
-        processed_state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]]) 
+    if (t >=1):
+        processed_state = np.concatenate([temp_exp_mem[-2][0], temp_exp_mem[-1][0]])
         action = temp_exp_mem[-1][1]
         reward = temp_exp_mem[-1][2]
         processed_next_state = np.concatenate([temp_exp_mem[-1][0], temp_exp_mem[-1][3]])
@@ -36,7 +36,7 @@ def run_state_processing_stack_states(agent, temp_exp_mem, t):
         if (t == 1):
             print("State shape: {}".format(processed_state.shape))
             print("Next state shape: {}".format(processed_next_state.shape))
-        agent.memory.add_exp_processed(processed_state, action, reward, 
+        agent.memory.add_exp_processed(processed_state, action, reward,
                                        processed_next_state, next_state, done)
 
 def run_state_processing_diff_states(agent, temp_exp_mem, t):

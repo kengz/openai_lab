@@ -85,7 +85,7 @@ class Session(object):
                     run_state_processing_atari(agent, temp_exp_mem, t)
                 else:
                     # Default: no processing
-                    run_state_processing_none(agent, temp_exp_mem, t)    
+                    run_state_processing_none(agent, temp_exp_mem, t)
             else:
                 run_state_processing_none(agent, temp_exp_mem, t)
             agent.update(sys_vars)
