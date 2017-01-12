@@ -10,6 +10,7 @@ import os
 import pprint
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import matplotlib.pyplot as plt
+from datetime import datetime
 from os import path, environ
 
 
@@ -102,7 +103,7 @@ def check_sys_vars(sys_vars):
 
 
 def get_env_spec(env):
-    '''Helper: return the env specs: dims, actions, reward range'''  
+    '''Helper: return the env specs: dims, actions, reward range'''
     state_dim = env.observation_space.shape[0]
     if (len(env.observation_space.shape) > 1):
         state_dim = env.observation_space.shape
@@ -116,6 +117,11 @@ def get_env_spec(env):
         'timestep_limit': env.spec.tags.get(
             'wrapper_config.TimeLimit.max_episode_steps')
     }
+
+
+def timestamp():
+    '''timestamp used for filename'''
+    return '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
 
 
 def report_speed(real_time, total_t):
@@ -275,6 +281,15 @@ def param_product(default_param, param_range):
         param_grid.append(param)
     return param_grid
 
+
+def stringify_param_value(value):
+    return value.__name__ if isinstance(value, type) else value
+
+
+def stringify_param(param):
+    return {k: stringify_param_value(param[k]) for k in param}
+
+
 # convert a dict of param ranges into
 # a list parameter settings corresponding
 # to a line search of the param range
@@ -290,10 +305,3 @@ def param_line_search(default_param, param_range):
             param[key] = val
             param_list.append(param)
     return param_list
-
-def stringify_param_value(value):
-    return value.__name__ if isinstance(value, type) else value
-
-
-def stringify_param(param):
-    return {k: stringify_param_value(param[k]) for k in param}
