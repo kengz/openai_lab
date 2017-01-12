@@ -1,11 +1,50 @@
 # The experiment logic and analysis
 import gym
 import json
+import os
+import matplotlib
+matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
+import matplotlib.pyplot as plt
 import multiprocessing as mp
+import numpy as np
 from functools import partial
 from keras import backend as K
 from rl.spec import game_specs
 from rl.util import *
+
+plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
+
+
+def live_plot(sys_vars):
+    '''do live plotting'''
+    if not sys_vars['RENDER']:
+        return
+    ax1, p1 = plotters['total rewards']
+    p1.set_ydata(np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
+    p1.set_xdata(np.arange(len(p1.get_ydata())))
+    ax1.relim()
+    ax1.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    ax1e, p1e = plotters['e']
+    p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
+    p1e.set_xdata(np.arange(len(p1e.get_ydata())))
+    ax1e.relim()
+    ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    ax2, p2 = plotters['mean rewards']
+    p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
+    p2.set_xdata(np.arange(len(p2.get_ydata())))
+    ax2.relim()
+    ax2.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    ax3, p3 = plotters['loss']
+    p3.set_ydata(sys_vars['loss'])
+    p3.set_xdata(np.arange(len(p3.get_ydata())))
+    ax3.relim()
+    ax3.autoscale_view(tight=True, scalex=True, scaley=True)
+
+    plt.draw()
+    plt.pause(0.01)
 
 
 class Session(object):
@@ -22,9 +61,65 @@ class Session(object):
         self.Memory = Memory
         self.Policy = Policy
         self.param = param
+        # init all things, so a session can only be ran once
+        # TODO change agent to only run once per life time
+        self.sys_vars = init_sys_vars(
+            self.problem, self.param)  # rl system, see util.py
+        self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
+        self.agent = self.Agent(get_env_spec(self.env), **self.param)
+        self.memory = self.Memory(**self.param)
+        self.policy = self.Policy(**self.param)
+        self.agent.compile(self.memory, self.policy)
+        logger.info('Compiled Agent, Memory, Policy')
 
-    def run_episode(self, sys_vars, env, agent):
+
+    # def init_plotter(self, sys_vars):
+    #     param = sys_vars['PARAM']
+    #     if not sys_vars['RENDER']:
+    #         return
+    #     # initialize the plotters
+    #     fig = plt.figure(facecolor='white', figsize=(8, 9))
+
+    #     ax1 = fig.add_subplot(311,
+    #                           frame_on=False,
+    #                           title="learning rate: {}, "
+    #                           "gamma: {}\ntotal rewards per episode".format(
+    #                               str(param.get('learning_rate')),
+    #                               str(param.get('gamma'))),
+    #                           ylabel='total rewards')
+    #     p1, = ax1.plot([], [])
+    #     plotters['total rewards'] = (ax1, p1)
+
+    #     ax1e = ax1.twinx()
+    #     ax1e.set_ylabel('(epsilon or tau)').set_color('r')
+    #     ax1e.set_frame_on(False)
+    #     p1e, = ax1e.plot([], [], 'r')
+    #     plotters['e'] = (ax1e, p1e)
+
+    #     ax2 = fig.add_subplot(312,
+    #                           frame_on=False,
+    #                           title='mean rewards over last 100 episodes',
+    #                           ylabel='mean rewards')
+    #     p2, = ax2.plot([], [], 'g')
+    #     plotters['mean rewards'] = (ax2, p2)
+
+    #     ax3 = fig.add_subplot(313,
+    #                           frame_on=False,
+    #                           title='loss over time, episode',
+    #                           ylabel='loss')
+    #     p3, = ax3.plot([], [])
+    #     plotters['loss'] = (ax3, p3)
+
+    #     plt.tight_layout()  # auto-fix spacing
+    #     plt.ion()  # for live plot
+
+
+    def run_episode(self):
         '''run ane episode, return sys_vars'''
+        sys_vars = self.sys_vars
+        env = self.env
+        agent = self.agent
+
         state = env.reset()
         agent.memory.reset_state(state)
         total_rewards = 0
@@ -51,21 +146,13 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
+        sys_vars = self.sys_vars
         time_start = timestamp()
-        sys_vars = init_sys_vars(
-            self.problem, self.param)  # rl system, see util.py
-        env = gym.make(sys_vars['GYM_ENV_NAME'])
-        agent = self.Agent(get_env_spec(env), **self.param)
-        memory = self.Memory(**self.param)
-        policy = self.Policy(**self.param)
-        agent.compile(memory, policy)
-        logger.info('Compiled Agent, Memory, Policy')
-
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
-            self.run_episode(sys_vars, env, agent)
+            self.run_episode()
             if 'epi_change_learning_rate' in self.param and epi == self.param['epi_change_learning_rate']:
-                agent.recompile_model(self.param['learning_rate'] / 10.0)
+                self.agent.recompile_model(self.param['learning_rate'] / 10.0)
             if sys_vars['solved']:
                 break
 
