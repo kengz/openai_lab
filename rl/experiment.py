@@ -11,7 +11,9 @@ class Experiment(object):
 
     '''
     The experiment class for each unique sess_spec
-    runs for a specified number of times
+    handles the data and also the plots,
+    on session level and on cross-session level
+    run for a specified number of times
     Requirements:
     JSON, single file, quick and useful summary,
     replottable data, rerunnable specs
