@@ -147,7 +147,7 @@ def experiment_analytics(data):
     given data from an experiment
     '''
     sys_vars_array = data['sys_vars_array']
-    mean_r_array = [sys_vars['mean_rewards'] for gsys_vars in sys_vars_array]
+    mean_r_array = [sys_vars['mean_rewards'] for sys_vars in sys_vars_array]
     metrics = {
         'experiment_mean': np.mean(mean_r_array),
         'experiment_std': np.std(mean_r_array),
