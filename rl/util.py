@@ -131,12 +131,6 @@ def timestamp_elapse(s1, s2):
     return str(delta_t)
 
 
-def report_speed(real_time, total_t):
-    '''Report on how fast each time step runs'''
-    avg_speed = float(real_time)/float(total_t)
-    logger.info('Mean speed: {:.4f} s/step'.format(avg_speed))
-
-
 def format_obj_dict(obj, keys):
     if isinstance(obj, dict):
         return pp.pformat(
@@ -295,6 +289,47 @@ def stringify_param_value(value):
 
 def stringify_param(param):
     return {k: stringify_param_value(param[k]) for k in param}
+
+
+# own custom sorted json serializer, cuz python
+def to_json(o, level=0):
+    INDENT = 2
+    SPACE = " "
+    NEWLINE = "\n"
+    ret = ""
+    if isinstance(o, dict):
+        ret += "{" + NEWLINE
+        comma = ""
+        for k in sorted(o.keys()):
+            v = o[k]
+            ret += comma
+            comma = ",\n"
+            ret += SPACE * INDENT * (level+1)
+            ret += '"' + str(k) + '":' + SPACE
+            ret += to_json(v, level + 1)
+
+        ret += NEWLINE + SPACE * INDENT * level + "}"
+    elif isinstance(o, str):
+        ret += '"' + o + '"'
+    elif isinstance(o, list):
+        ret += "[" + ",".join([to_json(e, level+1) for e in o]) + "]"
+    elif isinstance(o, bool):
+        ret += "true" if o else "false"
+    elif isinstance(o, int):
+        ret += str(o)
+    elif isinstance(o, float):
+        ret += '%.7g' % o
+    elif isinstance(o, np.ndarray) and np.issubdtype(o.dtype, np.integer):
+        ret += "[" + ','.join(map(str, o.flatten().tolist())) + "]"
+    elif isinstance(o, np.ndarray) and np.issubdtype(o.dtype, np.inexact):
+        ret += "[" + \
+            ','.join(map(lambda x: '%.7g' % x, o.flatten().tolist())) + "]"
+    elif o is None:
+        ret += 'null'
+    else:
+        raise TypeError(
+            "Unknown type '%s' for json serialization" % str(type(o)))
+    return ret
 
 
 # convert a dict of param ranges into

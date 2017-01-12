@@ -56,7 +56,7 @@ def save(data_grid):
         timestamp()
     )
     with open(filename, 'w') as f:
-        json.dump(data_grid, f, indent=2, sort_keys=True)
+        f.write(to_json(data_grid))
     logger.info('Experiment complete, written to data/')
 
 
