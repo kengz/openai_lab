@@ -62,7 +62,7 @@ class Session(object):
 
         # for plotting
         self.plotters = None
-        self.fig = None
+        self.figure = None
         self.init_plotter()
 
     def init_plotter(self):
@@ -70,10 +70,10 @@ class Session(object):
             return
         # initialize the plotters
         self.plotters = {}
-        self.fig = plt.figure(facecolor='white', figsize=(8, 9))
+        self.figure = plt.figure(facecolor='white', figsize=(8, 9))
 
         # graph 1
-        ax1 = self.fig.add_subplot(
+        ax1 = self.figure.add_subplot(
             311,
             frame_on=False,
             title="learning rate: {}, "
@@ -91,18 +91,20 @@ class Session(object):
         self.plotters['e'] = (ax1e, p1e)
 
         # graph 2
-        ax2 = self.fig.add_subplot(312,
-                                   frame_on=False,
-                                   title='mean rewards over last 100 episodes',
-                                   ylabel='mean rewards')
+        ax2 = self.figure.add_subplot(
+            312,
+            frame_on=False,
+            title='mean rewards over last 100 episodes',
+            ylabel='mean rewards')
         p2, = ax2.plot([], [], 'g')
         self.plotters['mean rewards'] = (ax2, p2)
 
         # graph 3
-        ax3 = self.fig.add_subplot(313,
-                                   frame_on=False,
-                                   title='loss over time, episode',
-                                   ylabel='loss')
+        ax3 = self.figure.add_subplot(
+            313,
+            frame_on=False,
+            title='loss over time, episode',
+            ylabel='loss')
         p3, = ax3.plot([], [])
         self.plotters['loss'] = (ax3, p3)
 
