@@ -61,6 +61,7 @@ required_sys_keys = {
     'solved': False,
 }
 
+# TODO absorb into session too
 
 def init_sys_vars(problem='CartPole-v0', param={}):
     '''

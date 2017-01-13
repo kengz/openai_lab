@@ -23,6 +23,15 @@ plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
 
 # Split out graphing module, so it can plot from data set outside of a session
+# need a data handler class too? nah
+# for replottability, make ability to reload a session at its end, from the json data? nah meaningless. just focus on making json data plottable from Grapher
+# Session respawn on taking json data can:
+# - use sess_spec to rerun completely
+# - use data to just replot
+#
+# so, just make graph name to 1,2,3,4?
+# and on taking a single (arrayed) data file, will reproduce that graph
+# name too
 
 class Grapher(object):
 
@@ -122,12 +131,15 @@ class Session(object):
     a DQN Agent, at a problem, with agent params
     '''
 
-    def __init__(self, problem, Agent, Memory, Policy, param):
-        self.problem = problem
-        self.Agent = Agent
-        self.Memory = Memory
-        self.Policy = Policy
-        self.param = param
+    def __init__(self, experiment, session_id=0):
+        self.experiment = experiment
+        self.session_id = session_id
+        self.sess_spec = experiment.sess_spec
+        self.problem = self.sess_spec['problem']
+        self.Agent = self.sess_spec['Agent']
+        self.Memory = self.sess_spec['Memory']
+        self.Policy = self.sess_spec['Policy']
+        self.param = self.sess_spec['param']
         # init all things, so a session can only be ran once
         # TODO change agent to only run once per life time
         self.sys_vars = init_sys_vars(
@@ -140,17 +152,9 @@ class Session(object):
         logger.info('Compiled Agent, Memory, Policy')
 
         # data file and graph
-        self.timestamp = timestamp()
-        self.base_filename = './data/{}_{}_{}_{}'.format(
-            self.problem,
-            stringify_param_value(self.Agent),
-            stringify_param_value(self.Memory),
-            stringify_param_value(self.Policy)
-        )
-        self.data_filename = self.base_filename + \
-            '_{}.json'.format(self.timestamp)
-        self.graph_filename = self.base_filename + \
-            '_{}.png'.format(self.timestamp)
+        self.base_filename = self.experiment.base_filename + \
+            '_' + str(self.session_id)
+        self.graph_filename = self.base_filename + '.png'
 
         # for plotting
         self.grapher = Grapher(self)
@@ -274,6 +278,16 @@ class Experiment(object):
         self.data_grid = []
         self.times = times
         self.sess_spec.pop('param_range', None)  # single exp, del range
+        sample_spec = stringify_param(self.sess_spec)
+        self.experiment_id = '{}_{}_{}_{}_{}'.format(
+            sample_spec['problem'],
+            sample_spec['Agent'],
+            sample_spec['Memory'],
+            sample_spec['Policy'],
+            timestamp()
+        )
+        self.base_filename = './data/{}'.format(self.experiment_id)
+        self.data_filename = self.base_filename + '.json'
 
     def analyze(self, data):
         '''
@@ -297,17 +311,10 @@ class Experiment(object):
         self.data_grid.sort(
             key=lambda data: data['summary']['metrics']['experiment_mean'],
             reverse=True)
-        sample_spec = stringify_param(self.sess_spec)
-        filename = './data/{}_{}_{}_{}_{}.json'.format(
-            sample_spec['problem'],
-            sample_spec['Agent'],
-            sample_spec['Memory'],
-            sample_spec['Policy'],
-            timestamp()
-        )
-        with open(filename, 'w') as f:
+        with open(self.data_filename, 'w') as f:
             f.write(to_json(self.data_grid))
-        logger.info('Experiment complete, written to {}'.format(filename))
+        logger.info(
+            'Experiment complete, written to {}'.format(self.data_filename))
 
     def run(self):
         '''
@@ -315,12 +322,11 @@ class Experiment(object):
         a number of times times given a sess_spec from gym_specs
         '''
         time_start = timestamp()
-        sess = Session(problem=self.sess_spec['problem'],
-                       Agent=self.sess_spec['Agent'],
-                       Memory=self.sess_spec['Memory'],
-                       Policy=self.sess_spec['Policy'],
-                       param=self.sess_spec['param'])
-        sys_vars_array = [sess.run() for i in range(self.times)]
+        sys_vars_array = []
+        for i in range(self.times):
+            sess = Session(experiment=self, session_id=i)
+            sys_vars = sess.run()
+            sys_vars_array.append(sys_vars)
         time_end = timestamp()
         time_taken = timestamp_elapse(time_start, time_end)
 
