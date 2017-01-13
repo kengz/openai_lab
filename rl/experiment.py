@@ -108,6 +108,11 @@ class Grapher(object):
         plt.draw()
         plt.pause(0.01)
 
+    def save(self, filename):
+        '''save graph to filename'''
+        self.figure.savefig(filename)
+        # plt.close(self.figure)
+
 
 class Session(object):
 
@@ -153,8 +158,7 @@ class Session(object):
     def save(self):
         '''save data and graph'''
         if self.sys_vars['RENDER']:
-            plt.savefig(self.graph_filename)
-            # TODO kill specific figure after? plt is global
+            self.grapher.save(self.graph_filename)
 
     def check_end(self):
         sys_vars = self.sys_vars
