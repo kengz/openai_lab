@@ -15,39 +15,9 @@ from rl.util import *
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
 
-
-def update_history(agent,
-                   sys_vars,
-                   total_t,
-                   total_rewards):
-    '''
-    update the hisory (list of total rewards)
-    max len = REWARD_MEAN_LEN
-    then report status
-    '''
-
-    sys_vars['total_r_history'].append(total_rewards)
-    policy = agent.policy
-    sys_vars['explore_history'].append(
-        getattr(policy, 'e', 0) or getattr(policy, 'tau', 0))
-    avg_len = sys_vars['REWARD_MEAN_LEN']
-    # Calculating mean_reward over last 100 episodes
-    # case away from np for json serializable (dumb python)
-    mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
-    solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
-    sys_vars['mean_rewards'] = mean_rewards
-    sys_vars['total_rewards'] = total_rewards
-    sys_vars['solved'] = solved
-    live_plot(sys_vars)
-
-    logger.debug(
-        "RL Sys info: {}".format(
-            format_obj_dict(
-                sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
-    logger.debug('{:->30}'.format(''))
-    check_session_ends(sys_vars)
-    return sys_vars
-
+# TODO
+# move filename to session
+# move data saving to session too
 
 def check_session_ends(sys_vars):
     if (sys_vars['solved'] or
@@ -84,26 +54,27 @@ class Session(object):
         self.policy = self.Policy(**self.param)
         self.agent.compile(self.memory, self.policy)
         logger.info('Compiled Agent, Memory, Policy')
+
         # for plotting
         self.plotters = None
         self.fig = None
         self.init_plotter()
 
-
     def init_plotter(self):
         if not self.sys_vars['RENDER']:
             return
         # initialize the plotters
-        self.plotters = []
+        self.plotters = {}
         self.fig = plt.figure(facecolor='white', figsize=(8, 9))
 
+        # graph 1
         ax1 = self.fig.add_subplot(311,
-                              frame_on=False,
-                              title="learning rate: {}, "
-                              "gamma: {}\ntotal rewards per episode".format(
-                                  str(self.param.get('learning_rate')),
-                                  str(self.param.get('gamma'))),
-                              ylabel='total rewards')
+                                   frame_on=False,
+                                   title="learning rate: {}, "
+                                   "gamma: {}\ntotal rewards per episode".format(
+                                       str(self.param.get('learning_rate')),
+                                       str(self.param.get('gamma'))),
+                                   ylabel='total rewards')
         p1, = ax1.plot([], [])
         self.plotters['total rewards'] = (ax1, p1)
 
@@ -113,36 +84,40 @@ class Session(object):
         p1e, = ax1e.plot([], [], 'r')
         self.plotters['e'] = (ax1e, p1e)
 
+        # graph 2
         ax2 = self.fig.add_subplot(312,
-                              frame_on=False,
-                              title='mean rewards over last 100 episodes',
-                              ylabel='mean rewards')
+                                   frame_on=False,
+                                   title='mean rewards over last 100 episodes',
+                                   ylabel='mean rewards')
         p2, = ax2.plot([], [], 'g')
         self.plotters['mean rewards'] = (ax2, p2)
 
+        # graph 3
         ax3 = self.fig.add_subplot(313,
-                              frame_on=False,
-                              title='loss over time, episode',
-                              ylabel='loss')
+                                   frame_on=False,
+                                   title='loss over time, episode',
+                                   ylabel='loss')
         p3, = ax3.plot([], [])
         self.plotters['loss'] = (ax3, p3)
 
         plt.tight_layout()  # auto-fix spacing
         plt.ion()  # for live plot
 
-    def live_plot(self):
+    def self.live_plot(self):
         '''do live plotting'''
         sys_vars = self.sys_vars
         if not sys_vars['RENDER']:
             return
         ax1, p1 = self.plotters['total rewards']
-        p1.set_ydata(np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
+        p1.set_ydata(
+            np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax1e, p1e = self.plotters['e']
-        p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
+        p1e.set_ydata(
+            np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
         p1e.set_xdata(np.arange(len(p1e.get_ydata())))
         ax1e.relim()
         ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -162,6 +137,45 @@ class Session(object):
         plt.draw()
         plt.pause(0.01)
 
+    def check_session_ends(self):
+        sys_vars = self.sys_vars
+        if (sys_vars['solved'] or
+                (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
+            logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
+                sys_vars['solved'], sys_vars['epi'],
+                pp.pformat(sys_vars['PARAM'])))
+        if not sys_vars['RENDER']:
+            return
+        plt.savefig('./data/{}.png'.format(sys_vars['GYM_ENV_NAME']))
+
+    def update_history(self):
+        '''
+        update the hisory (list of total rewards)
+        max len = REWARD_MEAN_LEN
+        then report status
+        '''
+
+        sys_vars = self.sys_vars
+        sys_vars['total_r_history'].append(sys_vars['total_rewards'])
+        sys_vars['explore_history'].append(
+            getattr(self.policy, 'e', 0) or getattr(self.policy, 'tau', 0))
+        avg_len = sys_vars['REWARD_MEAN_LEN']
+        # Calculating mean_reward over last 100 episodes
+        # case away from np for json serializable (dumb python)
+        mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
+        solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
+        sys_vars['mean_rewards'] = mean_rewards
+        sys_vars['solved'] = solved
+        self.live_plot()
+
+        logger.debug(
+            "RL Sys info: {}".format(
+                format_obj_dict(
+                    sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
+        logger.debug('{:->30}'.format(''))
+        check_session_ends(sys_vars)
+        return sys_vars
+
     def run_episode(self):
         '''run ane episode, return sys_vars'''
         sys_vars = self.sys_vars
@@ -170,7 +184,6 @@ class Session(object):
 
         state = env.reset()
         agent.memory.reset_state(state)
-        total_rewards = 0
         debug_agent_info(agent)
 
         for t in range(agent.env_spec['timestep_limit']):
@@ -186,10 +199,10 @@ class Session(object):
                 agent.train(sys_vars)
 
             state = next_state
-            total_rewards += reward
+            sys_vars['total_rewards'] += reward
             if done:
                 break
-        update_history(agent, sys_vars, t, total_rewards)
+        self.update_history()
         return sys_vars
 
     def run(self):
