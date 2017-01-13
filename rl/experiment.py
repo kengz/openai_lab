@@ -140,8 +140,8 @@ class Session(object):
         self.Memory = self.sess_spec['Memory']
         self.Policy = self.sess_spec['Policy']
         self.param = self.sess_spec['param']
+
         # init all things, so a session can only be ran once
-        # TODO change agent to only run once per life time
         self.sys_vars = init_sys_vars(
             self.problem, self.param)  # rl system, see util.py
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
@@ -165,7 +165,16 @@ class Session(object):
             self.grapher.save(self.graph_filename)
 
     def check_end(self):
+        '''check if session ends (if is last episode)
+        do ending steps'''
         sys_vars = self.sys_vars
+
+        logger.debug(
+            "RL Sys info: {}".format(
+                format_obj_dict(
+                    sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
+        logger.debug('{:->30}'.format(''))
+
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
@@ -175,9 +184,7 @@ class Session(object):
 
     def update_history(self):
         '''
-        update the hisory (list of total rewards)
-        max len = REWARD_MEAN_LEN
-        then report status
+        update the data per episode end
         '''
 
         sys_vars = self.sys_vars
@@ -191,13 +198,8 @@ class Session(object):
         solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
         sys_vars['mean_rewards'] = mean_rewards
         sys_vars['solved'] = solved
-        self.grapher.plot()
 
-        logger.debug(
-            "RL Sys info: {}".format(
-                format_obj_dict(
-                    sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
-        logger.debug('{:->30}'.format(''))
+        self.grapher.plot()
         self.save()
         self.check_end()
         return sys_vars
@@ -276,7 +278,7 @@ class Experiment(object):
 
     def __init__(self, sess_spec, times=1):
         self.sess_spec = sess_spec
-        self.data_grid = []
+        self.data = None
         self.times = times
         self.sess_spec.pop('param_range', None)  # single exp, del range
         sample_spec = stringify_param(self.sess_spec)
@@ -290,30 +292,27 @@ class Experiment(object):
         self.base_filename = './data/{}'.format(self.experiment_id)
         self.data_filename = self.base_filename + '.json'
 
-    def analyze(self, data):
+    def analyze(self):
         '''
         helper: analyze given data from an experiment
         return metrics
         '''
-        sys_vars_array = data['sys_vars_array']
+        sys_vars_array = self.data['sys_vars_array']
         mean_r_array = [sys_vars['mean_rewards']
                         for sys_vars in sys_vars_array]
         metrics = {
             'experiment_mean': np.mean(mean_r_array),
             'experiment_std': np.std(mean_r_array),
         }
-        return metrics
+        self.data['summary'].update({'metrics': metrics})
+        return self.data
 
     def save(self):
         '''
         save the entire experiment data grid from inside run()
         '''
-        # sort data, best first
-        self.data_grid.sort(
-            key=lambda data: data['summary']['metrics']['experiment_mean'],
-            reverse=True)
         with open(self.data_filename, 'w') as f:
-            f.write(to_json(self.data_grid))
+            f.write(to_json(self.data))
         logger.info(
             'Experiment complete, written to {}'.format(self.data_filename))
 
@@ -328,25 +327,24 @@ class Experiment(object):
             sess = Session(experiment=self, session_id=i)
             sys_vars = sess.run()
             sys_vars_array.append(sys_vars)
-        time_end = timestamp()
-        time_taken = timestamp_elapse(time_start, time_end)
+            # update and save each time
+            time_end = timestamp()
+            time_taken = timestamp_elapse(time_start, time_end)
 
-        data = {  # experiment data
-            'sess_spec': stringify_param(self.sess_spec),
-            'summary': {
-                'time_start': time_start,
-                'time_end': time_end,
-                'time_taken': time_taken,
-                'metrics': None,
-            },
-            'sys_vars_array': sys_vars_array,
-        }
-
-        data['summary'].update({'metrics': self.analyze(data)})
-        # progressive update of data_grid, write when an exp is done
-        self.data_grid.append(data)
-        self.save()
-        return data
+            self.data = {  # experiment data
+                'sess_spec': stringify_param(self.sess_spec),
+                'summary': {
+                    'time_start': time_start,
+                    'time_end': time_end,
+                    'time_taken': time_taken,
+                    'metrics': None,
+                },
+                'sys_vars_array': sys_vars_array,
+            }
+            self.analyze()
+            # progressive update, write when every session is done
+            self.save()
+        return self.data
 
 
 def run(sess_name_or_spec, times=1, param_selection=False):
