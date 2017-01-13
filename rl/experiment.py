@@ -171,6 +171,7 @@ class Session(object):
             logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
                 sys_vars['solved'], sys_vars['epi'],
                 pp.pformat(sys_vars['PARAM'])))
+            self.env.close()
 
     def update_history(self):
         '''
