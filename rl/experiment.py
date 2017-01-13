@@ -22,6 +22,93 @@ plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 # 1, 2, 3, 4, 5 ...
 
 
+# Split out graphing module, so it can plot from data set outside of a session
+
+class Grapher(object):
+
+    def __init__(self, session):
+        self.session = session
+        self.subgraphs = {}
+        self.figure = plt.figure(facecolor='white', figsize=(8, 9))
+        self.init_figure()
+
+    def init_figure(self):
+        if not self.session.sys_vars['RENDER']:
+            return
+        # graph 1
+        ax1 = self.figure.add_subplot(
+            311,
+            frame_on=False,
+            title="learning rate: {}, "
+            "gamma: {}\ntotal rewards per episode".format(
+                str(self.session.param.get('learning_rate')),
+                str(self.session.param.get('gamma'))),
+            ylabel='total rewards')
+        p1, = ax1.plot([], [])
+        self.subgraphs['total rewards'] = (ax1, p1)
+
+        ax1e = ax1.twinx()
+        ax1e.set_ylabel('(epsilon or tau)').set_color('r')
+        ax1e.set_frame_on(False)
+        p1e, = ax1e.plot([], [], 'r')
+        self.subgraphs['e'] = (ax1e, p1e)
+
+        # graph 2
+        ax2 = self.figure.add_subplot(
+            312,
+            frame_on=False,
+            title='mean rewards over last 100 episodes',
+            ylabel='mean rewards')
+        p2, = ax2.plot([], [], 'g')
+        self.subgraphs['mean rewards'] = (ax2, p2)
+
+        # graph 3
+        ax3 = self.figure.add_subplot(
+            313,
+            frame_on=False,
+            title='loss over time, episode',
+            ylabel='loss')
+        p3, = ax3.plot([], [])
+        self.subgraphs['loss'] = (ax3, p3)
+
+        plt.tight_layout()  # auto-fix spacing
+        plt.ion()  # for live plot
+
+    def plot(self):
+        '''do live plotting'''
+        sys_vars = self.session.sys_vars
+        if not sys_vars['RENDER']:
+            return
+        ax1, p1 = self.subgraphs['total rewards']
+        p1.set_ydata(
+            np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
+        p1.set_xdata(np.arange(len(p1.get_ydata())))
+        ax1.relim()
+        ax1.autoscale_view(tight=True, scalex=True, scaley=True)
+
+        ax1e, p1e = self.subgraphs['e']
+        p1e.set_ydata(
+            np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
+        p1e.set_xdata(np.arange(len(p1e.get_ydata())))
+        ax1e.relim()
+        ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
+
+        ax2, p2 = self.subgraphs['mean rewards']
+        p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
+        p2.set_xdata(np.arange(len(p2.get_ydata())))
+        ax2.relim()
+        ax2.autoscale_view(tight=True, scalex=True, scaley=True)
+
+        ax3, p3 = self.subgraphs['loss']
+        p3.set_ydata(sys_vars['loss'])
+        p3.set_xdata(np.arange(len(p3.get_ydata())))
+        ax3.relim()
+        ax3.autoscale_view(tight=True, scalex=True, scaley=True)
+
+        plt.draw()
+        plt.pause(0.01)
+
+
 class Session(object):
 
     '''
@@ -61,94 +148,13 @@ class Session(object):
             '_{}.png'.format(self.timestamp)
 
         # for plotting
-        self.plotters = None
-        self.figure = None
-        self.init_plotter()
-
-    def init_plotter(self):
-        if not self.sys_vars['RENDER']:
-            return
-        # initialize the plotters
-        self.plotters = {}
-        self.figure = plt.figure(facecolor='white', figsize=(8, 9))
-
-        # graph 1
-        ax1 = self.figure.add_subplot(
-            311,
-            frame_on=False,
-            title="learning rate: {}, "
-            "gamma: {}\ntotal rewards per episode".format(
-                str(self.param.get('learning_rate')),
-                str(self.param.get('gamma'))),
-            ylabel='total rewards')
-        p1, = ax1.plot([], [])
-        self.plotters['total rewards'] = (ax1, p1)
-
-        ax1e = ax1.twinx()
-        ax1e.set_ylabel('(epsilon or tau)').set_color('r')
-        ax1e.set_frame_on(False)
-        p1e, = ax1e.plot([], [], 'r')
-        self.plotters['e'] = (ax1e, p1e)
-
-        # graph 2
-        ax2 = self.figure.add_subplot(
-            312,
-            frame_on=False,
-            title='mean rewards over last 100 episodes',
-            ylabel='mean rewards')
-        p2, = ax2.plot([], [], 'g')
-        self.plotters['mean rewards'] = (ax2, p2)
-
-        # graph 3
-        ax3 = self.figure.add_subplot(
-            313,
-            frame_on=False,
-            title='loss over time, episode',
-            ylabel='loss')
-        p3, = ax3.plot([], [])
-        self.plotters['loss'] = (ax3, p3)
-
-        plt.tight_layout()  # auto-fix spacing
-        plt.ion()  # for live plot
-
-    def live_plot(self):
-        '''do live plotting'''
-        sys_vars = self.sys_vars
-        if not sys_vars['RENDER']:
-            return
-        ax1, p1 = self.plotters['total rewards']
-        p1.set_ydata(
-            np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
-        p1.set_xdata(np.arange(len(p1.get_ydata())))
-        ax1.relim()
-        ax1.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax1e, p1e = self.plotters['e']
-        p1e.set_ydata(
-            np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
-        p1e.set_xdata(np.arange(len(p1e.get_ydata())))
-        ax1e.relim()
-        ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax2, p2 = self.plotters['mean rewards']
-        p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
-        p2.set_xdata(np.arange(len(p2.get_ydata())))
-        ax2.relim()
-        ax2.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax3, p3 = self.plotters['loss']
-        p3.set_ydata(sys_vars['loss'])
-        p3.set_xdata(np.arange(len(p3.get_ydata())))
-        ax3.relim()
-        ax3.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        plt.draw()
-        plt.pause(0.01)
+        self.grapher = Grapher(self)
 
     def save(self):
         '''save data and graph'''
         if self.sys_vars['RENDER']:
             plt.savefig(self.graph_filename)
+            # TODO kill specific figure after? plt is global
 
     def check_end(self):
         sys_vars = self.sys_vars
@@ -176,7 +182,7 @@ class Session(object):
         solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
         sys_vars['mean_rewards'] = mean_rewards
         sys_vars['solved'] = solved
-        self.live_plot()
+        self.grapher.plot()
 
         logger.debug(
             "RL Sys info: {}".format(

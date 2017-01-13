@@ -3,13 +3,10 @@ import copy
 import itertools
 import json
 import logging
-import matplotlib
 import multiprocessing as mp
 import numpy as np
 import os
 import pprint
-matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
-import matplotlib.pyplot as plt
 from datetime import datetime
 from os import path, environ
 
@@ -30,7 +27,6 @@ parser.add_argument("-b", "--blind",
                     default=True)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
-
 # Goddam python logger
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -41,9 +37,6 @@ logger.addHandler(handler)
 logger.propagate = False
 
 pp = pprint.PrettyPrinter(indent=2)
-
-plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
-plotters = {}  # hash of matplotlib objects for live-plot
 
 PROBLEMS = json.loads(open(
     path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
