@@ -83,7 +83,6 @@ def init_sys_vars(problem='CartPole-v0', param={}):
         sys_vars['MAX_EPISODES'] = 2
     sys_vars['PARAM'] = param
     reset_sys_vars(sys_vars)
-    init_plotter(sys_vars)
     return sys_vars
 
 
@@ -149,123 +148,6 @@ def debug_agent_info(agent):
     logger.debug(
         "Policy info: {}".format(
             format_obj_dict(agent.policy, ['e'])))
-
-
-def update_history(agent,
-                   sys_vars,
-                   total_t,
-                   total_rewards):
-    '''
-    update the hisory (list of total rewards)
-    max len = REWARD_MEAN_LEN
-    then report status
-    '''
-
-    sys_vars['total_r_history'].append(total_rewards)
-    policy = agent.policy
-    sys_vars['explore_history'].append(
-        getattr(policy, 'e', 0) or getattr(policy, 'tau', 0))
-    avg_len = sys_vars['REWARD_MEAN_LEN']
-    # Calculating mean_reward over last 100 episodes
-    # case away from np for json serializable (dumb python)
-    mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
-    solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
-    sys_vars['mean_rewards'] = mean_rewards
-    sys_vars['total_rewards'] = total_rewards
-    sys_vars['solved'] = solved
-    live_plot(sys_vars)
-
-    logger.debug(
-        "RL Sys info: {}".format(
-            format_obj_dict(
-                sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
-    logger.debug('{:->30}'.format(''))
-    check_session_ends(sys_vars)
-    return sys_vars
-
-
-def check_session_ends(sys_vars):
-    if (sys_vars['solved'] or
-            (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
-        logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
-            sys_vars['solved'], sys_vars['epi'],
-            pp.pformat(sys_vars['PARAM'])))
-    if not sys_vars['RENDER']:
-        return
-    plt.savefig('./data/{}.png'.format(sys_vars['GYM_ENV_NAME']))
-
-
-def init_plotter(sys_vars):
-    param = sys_vars['PARAM']
-    if not sys_vars['RENDER']:
-        return
-    # initialize the plotters
-    fig = plt.figure(facecolor='white', figsize=(8, 9))
-
-    ax1 = fig.add_subplot(311,
-                          frame_on=False,
-                          title="learning rate: {}, "
-                          "gamma: {}\ntotal rewards per episode".format(
-                              str(param.get('learning_rate')),
-                              str(param.get('gamma'))),
-                          ylabel='total rewards')
-    p1, = ax1.plot([], [])
-    plotters['total rewards'] = (ax1, p1)
-
-    ax1e = ax1.twinx()
-    ax1e.set_ylabel('(epsilon or tau)').set_color('r')
-    ax1e.set_frame_on(False)
-    p1e, = ax1e.plot([], [], 'r')
-    plotters['e'] = (ax1e, p1e)
-
-    ax2 = fig.add_subplot(312,
-                          frame_on=False,
-                          title='mean rewards over last 100 episodes',
-                          ylabel='mean rewards')
-    p2, = ax2.plot([], [], 'g')
-    plotters['mean rewards'] = (ax2, p2)
-
-    ax3 = fig.add_subplot(313,
-                          frame_on=False,
-                          title='loss over time, episode',
-                          ylabel='loss')
-    p3, = ax3.plot([], [])
-    plotters['loss'] = (ax3, p3)
-
-    plt.tight_layout()  # auto-fix spacing
-    plt.ion()  # for live plot
-
-
-def live_plot(sys_vars):
-    '''do live plotting'''
-    if not sys_vars['RENDER']:
-        return
-    ax1, p1 = plotters['total rewards']
-    p1.set_ydata(np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
-    p1.set_xdata(np.arange(len(p1.get_ydata())))
-    ax1.relim()
-    ax1.autoscale_view(tight=True, scalex=True, scaley=True)
-
-    ax1e, p1e = plotters['e']
-    p1e.set_ydata(np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
-    p1e.set_xdata(np.arange(len(p1e.get_ydata())))
-    ax1e.relim()
-    ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
-
-    ax2, p2 = plotters['mean rewards']
-    p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
-    p2.set_xdata(np.arange(len(p2.get_ydata())))
-    ax2.relim()
-    ax2.autoscale_view(tight=True, scalex=True, scaley=True)
-
-    ax3, p3 = plotters['loss']
-    p3.set_ydata(sys_vars['loss'])
-    p3.set_xdata(np.arange(len(p3.get_ydata())))
-    ax3.relim()
-    ax3.autoscale_view(tight=True, scalex=True, scaley=True)
-
-    plt.draw()
-    plt.pause(0.01)
 
 
 # convert a dict of param ranges into

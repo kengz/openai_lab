@@ -18,16 +18,8 @@ plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 # TODO
 # move filename to session
 # move data saving to session too
-
-def check_session_ends(sys_vars):
-    if (sys_vars['solved'] or
-            (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
-        logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
-            sys_vars['solved'], sys_vars['epi'],
-            pp.pformat(sys_vars['PARAM'])))
-    if not sys_vars['RENDER']:
-        return
-    plt.savefig('./data/{}.png'.format(sys_vars['GYM_ENV_NAME']))
+# data aggr on high level shd yield graph (named) on high level too, graph
+# 1, 2, 3, 4, 5 ...
 
 
 class Session(object):
@@ -55,6 +47,19 @@ class Session(object):
         self.agent.compile(self.memory, self.policy)
         logger.info('Compiled Agent, Memory, Policy')
 
+        # data file and graph
+        self.timestamp = timestamp()
+        self.base_filename = './data/{}_{}_{}_{}'.format(
+            self.problem,
+            stringify_param_value(self.Agent),
+            stringify_param_value(self.Memory),
+            stringify_param_value(self.Policy)
+        )
+        self.data_filename = self.base_filename + \
+            '_{}.json'.format(self.timestamp)
+        self.graph_filename = self.base_filename + \
+            '_{}.png'.format(self.timestamp)
+
         # for plotting
         self.plotters = None
         self.fig = None
@@ -68,13 +73,14 @@ class Session(object):
         self.fig = plt.figure(facecolor='white', figsize=(8, 9))
 
         # graph 1
-        ax1 = self.fig.add_subplot(311,
-                                   frame_on=False,
-                                   title="learning rate: {}, "
-                                   "gamma: {}\ntotal rewards per episode".format(
-                                       str(self.param.get('learning_rate')),
-                                       str(self.param.get('gamma'))),
-                                   ylabel='total rewards')
+        ax1 = self.fig.add_subplot(
+            311,
+            frame_on=False,
+            title="learning rate: {}, "
+            "gamma: {}\ntotal rewards per episode".format(
+                str(self.param.get('learning_rate')),
+                str(self.param.get('gamma'))),
+            ylabel='total rewards')
         p1, = ax1.plot([], [])
         self.plotters['total rewards'] = (ax1, p1)
 
@@ -103,7 +109,7 @@ class Session(object):
         plt.tight_layout()  # auto-fix spacing
         plt.ion()  # for live plot
 
-    def self.live_plot(self):
+    def live_plot(self):
         '''do live plotting'''
         sys_vars = self.sys_vars
         if not sys_vars['RENDER']:
@@ -137,16 +143,18 @@ class Session(object):
         plt.draw()
         plt.pause(0.01)
 
-    def check_session_ends(self):
+    def save(self):
+        '''save data and graph'''
+        if self.sys_vars['RENDER']:
+            plt.savefig(self.graph_filename)
+
+    def check_end(self):
         sys_vars = self.sys_vars
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
                 sys_vars['solved'], sys_vars['epi'],
                 pp.pformat(sys_vars['PARAM'])))
-        if not sys_vars['RENDER']:
-            return
-        plt.savefig('./data/{}.png'.format(sys_vars['GYM_ENV_NAME']))
 
     def update_history(self):
         '''
@@ -173,7 +181,8 @@ class Session(object):
                 format_obj_dict(
                     sys_vars, ['epi', 't', 'total_rewards', 'mean_rewards'])))
         logger.debug('{:->30}'.format(''))
-        check_session_ends(sys_vars)
+        self.save()
+        self.check_end()
         return sys_vars
 
     def run_episode(self):
