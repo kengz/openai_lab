@@ -58,6 +58,7 @@ class Grapher(object):
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
         self.figure = plt.figure(facecolor='white', figsize=(8, 9))
+        self.figure.suptitle(self.session.session_id, wrap=True)
         self.init_figure()
 
     def init_figure(self):
@@ -67,10 +68,7 @@ class Grapher(object):
         ax1 = self.figure.add_subplot(
             311,
             frame_on=False,
-            title="learning rate: {}, "
-            "gamma: {}\ntotal rewards per episode".format(
-                str(self.session.param.get('learning_rate')),
-                str(self.session.param.get('gamma'))),
+            title="\ntotal rewards per episode",
             ylabel='total rewards')
         p1, = ax1.plot([], [])
         self.subgraphs['total rewards'] = (ax1, p1)
@@ -156,7 +154,8 @@ class Session(object):
 
     def __init__(self, experiment, session_id=0):
         self.experiment = experiment
-        self.session_id = session_id
+        self.session_id = self.experiment.experiment_id + \
+            '_' + str(session_id)
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
         self.Agent = get_module(GREF, self.sess_spec['Agent'])
@@ -174,8 +173,7 @@ class Session(object):
         logger.info('Compiled Agent, Memory, Policy')
 
         # data file and graph
-        self.base_filename = self.experiment.base_filename + \
-            '_' + str(self.session_id)
+        self.base_filename = './data/{}'.format(self.session_id)
         self.graph_filename = self.base_filename + '.png'
 
         # for plotting
@@ -417,7 +415,7 @@ def plot(experiment_id):
     sess_spec = data['sess_spec']
     experiment = Experiment(sess_spec, times=1)
     # save with the right serialized filename
-    experiment.base_filename = './data/{}'.format(experiment_id)
+    experiment.experiment_id = experiment_id
 
     for i in range(len(data['sys_vars_array'])):
         sess = Session(experiment=experiment, session_id=i)
