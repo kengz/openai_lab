@@ -15,10 +15,12 @@ from rl.agent import *
 from rl.memory import *
 from rl.policy import *
 
+
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
 GREF = globals()
 
+PARALLEL_PROCESS_NUM = 4
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 SESS_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'sess_specs.json')).read())
@@ -384,6 +386,7 @@ class Experiment(object):
         helper: run a experiment for Session
         a number of times times given a sess_spec from gym_specs
         '''
+        configure_gpu()
         time_start = timestamp()
         sys_vars_array = []
         for i in range(self.times):
@@ -407,6 +410,25 @@ class Experiment(object):
             # progressive update, write when every session is done
             self.save()
         return self.data
+
+
+def configure_gpu():
+    '''detect GPU options and configure'''
+    if K._BACKEND != 'tensorflow':
+        # skip directly if is not tensorflow
+        return
+    real_parallel_process_num = 1 if mp.current_process(
+    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
+    tf = K.tf
+    gpu_options = tf.GPUOptions(
+        allow_growth=True,
+        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
+    config = tf.ConfigProto(
+        gpu_options=gpu_options,
+        allow_soft_placement=True)
+    sess = tf.Session(config=config)
+    K.set_session(sess)
+    return sess
 
 
 def plot(experiment_id):
