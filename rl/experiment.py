@@ -44,6 +44,11 @@ REQUIRED_SYS_KEYS = {
 
 class Grapher(object):
 
+    '''
+    Grapher object that belongs to a Session
+    to draw graphs from its data
+    '''
+
     def __init__(self, session):
         self.session = session
         self.subgraphs = {}
@@ -134,9 +139,12 @@ class Grapher(object):
 class Session(object):
 
     '''
-    main.py calls this
-    The base class for running a session of
-    an Agent, at a problem, with agent params
+    The base unit of an Experiment
+    An Experiment for a config on repeat for k time
+    will run k Sessions, each with identical sess_spec
+    for a problem, Agent, Memory, Policy, param.
+    Handles its own data, plots and saves its own graphs
+    Serialized by the parent experiment_id with its session_id
     '''
 
     def __init__(self, experiment, session_id=0):
@@ -307,11 +315,15 @@ class Session(object):
 class Experiment(object):
 
     '''
-    The experiment class for each unique sess_spec
-    handles the data and also the plots,
-    on session level and on cross-session level
-    run for a specified number of times
-    Requirements:
+    An Experiment for a config on repeat for k time
+    will run k Sessions, each with identical sess_spec
+    for a problem, Agent, Memory, Policy, param.
+    Will spawn as many Sessions for repetition
+    Handles all the data from sessions
+    to provide an experiment-level summary for a sess_spec
+    Its experiment_id is serialized by
+    problem, Agent, Memory, Policy and timestamp
+    Data Requirements:
     JSON, single file, quick and useful summary,
     replottable data, rerunnable specs
     Keys:
