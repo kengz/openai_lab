@@ -157,3 +157,11 @@ def param_line_search(default_param, param_range):
             param[key] = val
             param_list.append(param)
     return param_list
+
+
+def load_data_from_experiment_id(serial_str):
+    experiment_id = serial_str.split(
+        '/').pop().split('.').pop(0)
+    data_filename = './data/{}.json'.format(experiment_id)
+    data = json.loads(open(data_filename).read())
+    return data

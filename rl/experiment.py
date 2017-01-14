@@ -413,24 +413,25 @@ class Experiment(object):
         return self.data
 
 
-def run(sess_name_or_spec, times=1, param_selection=False, line_search=True):
+def plot(experiment_id):
+    return
+
+
+def run(sess_name_id_spec, times=1, param_selection=False, line_search=True):
     '''
     primary method:
     run all experiments, specified by the sess_spec or its name
     for a specified number of times per experiment
     (multiple experiments if param_selection=True)
     '''
-    if isinstance(sess_name_or_spec, str):
-        if len(sess_name_or_spec.split('_')) >= 4:
-            experiment_id = sess_name_or_spec.split(
-                '/').pop().split('.').pop(0)
-            data_filename = './data/{}.json'.format(experiment_id)
-            data = json.loads(open(data_filename).read())
+    if isinstance(sess_name_id_spec, str):
+        if len(sess_name_id_spec.split('_')) >= 4:
+            data = load_data_from_experiment_id(sess_name_id_spec)
             sess_spec = data['sess_spec']
         else:
-            sess_spec = SESS_SPECS.get(sess_name_or_spec)
+            sess_spec = SESS_SPECS.get(sess_name_id_spec)
     else:
-        sess_spec = sess_name_or_spec
+        sess_spec = sess_name_id_spec
 
     if param_selection:
         raise Exception('to be implemented, with separate py processes')
