@@ -10,13 +10,20 @@ import multiprocessing as mp
 import numpy as np
 from functools import partial
 from keras import backend as K
-from rl.spec import game_specs
 from rl.util import *
+from rl.agent import *
+from rl.memory import *
+from rl.policy import *
 
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
+GREF = globals()
+
+ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+SESS_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'sess_specs.json')).read())
 PROBLEMS = json.loads(open(
-    path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
+    path.join(ASSET_PATH, 'problems.json')).read())
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -36,10 +43,6 @@ REQUIRED_SYS_KEYS = {
     'total_rewards': 0,
     'solved': False,
 }
-
-# Session respawn on taking json data can:
-# - use sess_spec to rerun completely
-# - use data to just replot
 
 
 class Grapher(object):
@@ -152,9 +155,9 @@ class Session(object):
         self.session_id = session_id
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
-        self.Agent = self.sess_spec['Agent']
-        self.Memory = self.sess_spec['Memory']
-        self.Policy = self.sess_spec['Policy']
+        self.Agent = get_module(GREF, self.sess_spec['Agent'])
+        self.Memory = get_module(GREF, self.sess_spec['Memory'])
+        self.Policy = get_module(GREF, self.sess_spec['Policy'])
         self.param = self.sess_spec['param']
 
         # init all things, so a session can only be ran once
@@ -342,12 +345,11 @@ class Experiment(object):
         self.data = None
         self.times = times
         self.sess_spec.pop('param_range', None)  # single exp, del range
-        sample_spec = stringify_param(self.sess_spec)
         self.experiment_id = '{}_{}_{}_{}_{}'.format(
-            sample_spec['problem'],
-            sample_spec['Agent'],
-            sample_spec['Memory'],
-            sample_spec['Policy'],
+            sess_spec['problem'],
+            sess_spec['Agent'].split('.').pop(),
+            sess_spec['Memory'].split('.').pop(),
+            sess_spec['Policy'].split('.').pop(),
             timestamp()
         )
         self.base_filename = './data/{}'.format(self.experiment_id)
@@ -393,7 +395,7 @@ class Experiment(object):
             time_taken = timestamp_elapse(time_start, time_end)
 
             self.data = {  # experiment data
-                'sess_spec': stringify_param(self.sess_spec),
+                'sess_spec': self.sess_spec,
                 'summary': {
                     'time_start': time_start,
                     'time_end': time_end,
@@ -416,7 +418,14 @@ def run(sess_name_or_spec, times=1, param_selection=False, line_search=True):
     (multiple experiments if param_selection=True)
     '''
     if isinstance(sess_name_or_spec, str):
-        sess_spec = game_specs.get(sess_name_or_spec)
+        if len(sess_name_or_spec.split('_')) >= 4:
+            experiment_id = sess_name_or_spec.split(
+                '/').pop().split('.').pop(0)
+            data_filename = './data/{}.json'.format(experiment_id)
+            data = json.loads(open(data_filename).read())
+            sess_spec = data['sess_spec']
+        else:
+            sess_spec = SESS_SPECS.get(sess_name_or_spec)
     else:
         sess_spec = sess_name_or_spec
 

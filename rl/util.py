@@ -76,12 +76,14 @@ def format_obj_dict(obj, keys):
             {k: getattr(obj, k, None) for k in keys})
 
 
-def stringify_param_value(value):
-    return value.__name__ if isinstance(value, type) else value
-
-
-def stringify_param(param):
-    return {k: stringify_param_value(param[k]) for k in param}
+def get_module(GREF, dot_path):
+    # get module from globals() by string dot_path
+    path_arr = dot_path.split('.')
+    # base level from globals
+    mod = GREF.get(path_arr.pop(0))
+    for deeper_path in path_arr:
+        mod = getattr(mod, deeper_path)
+    return mod
 
 
 # own custom sorted json serializer, cuz python
