@@ -213,6 +213,7 @@ class Session(object):
         state = env.reset()
         agent.memory.reset_state(state)
         debug_agent_info(agent)
+        sys_vars['total_rewards'] = 0
 
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
