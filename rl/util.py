@@ -38,62 +38,6 @@ logger.propagate = False
 
 pp = pprint.PrettyPrinter(indent=2)
 
-PROBLEMS = json.loads(open(
-    path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
-
-# the keys and their defaults need to be implemented by a sys_var
-# the constants (capitalized) are problem configs,
-# set in asset/problems.json
-required_sys_keys = {
-    'RENDER': None,
-    'GYM_ENV_NAME': None,
-    'SOLVED_MEAN_REWARD': None,
-    'MAX_EPISODES': None,
-    'REWARD_MEAN_LEN': None,
-    'PARAM': None,
-    'epi': 0,
-    't': 0,
-    'loss': [],
-    'total_r_history': [],
-    'explore_history': [],
-    'mean_rewards': 0,
-    'total_rewards': 0,
-    'solved': False,
-}
-
-# TODO absorb into session too
-
-def init_sys_vars(problem='CartPole-v0', param={}):
-    '''
-    init the sys vars for a problem by reading from
-    asset/problems.json, then reset the other sys vars
-    on reset will add vars (lower cases, see required_sys_keys)
-    '''
-    sys_vars = PROBLEMS[problem]
-    if (not args.render) or mp.current_process().name != 'MainProcess':
-        sys_vars['RENDER'] = False  # mute on parallel
-    if environ.get('CI'):
-        sys_vars['RENDER'] = False
-        sys_vars['MAX_EPISODES'] = 2
-    sys_vars['PARAM'] = param
-    reset_sys_vars(sys_vars)
-    return sys_vars
-
-
-def reset_sys_vars(sys_vars):
-    '''reset and check RL system vars (lower case) before each new session'''
-    for k in required_sys_keys:
-        if k.islower():
-            sys_vars[k] = copy.copy(required_sys_keys.get(k))
-    check_sys_vars(sys_vars)
-    return sys_vars
-
-
-def check_sys_vars(sys_vars):
-    '''ensure the requried RL system vars are specified'''
-    sys_keys = sys_vars.keys()
-    assert all(k in sys_keys for k in required_sys_keys)
-
 
 def get_env_spec(env):
     '''Helper: return the env specs: dims, actions, reward range'''
@@ -133,6 +77,7 @@ def format_obj_dict(obj, keys):
             {k: getattr(obj, k, None) for k in keys})
 
 
+# TODO Move to Session
 def debug_agent_info(agent):
     logger.debug(
         "Agent info: {}".format(
@@ -144,6 +89,7 @@ def debug_agent_info(agent):
             format_obj_dict(agent.policy, ['e'])))
 
 
+# TODO move to Experiment
 # convert a dict of param ranges into
 # a list of cartesian products of param_range
 # e.g. {'a': [1,2], 'b': [3]} into
@@ -208,6 +154,7 @@ def to_json(o, level=0):
     return ret
 
 
+# TODO move to Experiment
 # convert a dict of param ranges into
 # a list parameter settings corresponding
 # to a line search of the param range

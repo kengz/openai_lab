@@ -15,24 +15,33 @@ from rl.util import *
 
 plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
+PROBLEMS = json.loads(open(
+    path.join(path.dirname(__file__), 'asset', 'problems.json')).read())
 
-# TODO
-# move filename to session
-# move data saving to session too
-# data aggr on high level shd yield graph (named) on high level too, graph
-# 1, 2, 3, 4, 5 ...
+# the keys and their defaults need to be implemented by a sys_var
+# the constants (capitalized) are problem configs,
+# set in asset/problems.json
+REQUIRED_SYS_KEYS = {
+    'RENDER': None,
+    'GYM_ENV_NAME': None,
+    'SOLVED_MEAN_REWARD': None,
+    'MAX_EPISODES': None,
+    'REWARD_MEAN_LEN': None,
+    'PARAM': None,
+    'epi': 0,
+    't': 0,
+    'loss': [],
+    'total_r_history': [],
+    'explore_history': [],
+    'mean_rewards': 0,
+    'total_rewards': 0,
+    'solved': False,
+}
 
-
-# Split out graphing module, so it can plot from data set outside of a session
-# need a data handler class too? nah
-# for replottability, make ability to reload a session at its end, from the json data? nah meaningless. just focus on making json data plottable from Grapher
 # Session respawn on taking json data can:
 # - use sess_spec to rerun completely
 # - use data to just replot
-#
-# so, just make graph name to 1,2,3,4?
-# and on taking a single (arrayed) data file, will reproduce that graph
-# name too
+
 
 class Grapher(object):
 
@@ -128,7 +137,7 @@ class Session(object):
     '''
     main.py calls this
     The base class for running a session of
-    a DQN Agent, at a problem, with agent params
+    an Agent, at a problem, with agent params
     '''
 
     def __init__(self, experiment, session_id=0):
@@ -142,8 +151,7 @@ class Session(object):
         self.param = self.sess_spec['param']
 
         # init all things, so a session can only be ran once
-        self.sys_vars = init_sys_vars(
-            self.problem, self.param)  # rl system, see util.py
+        self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
         self.agent = self.Agent(get_env_spec(self.env), **self.param)
         self.memory = self.Memory(**self.param)
@@ -158,6 +166,37 @@ class Session(object):
 
         # for plotting
         self.grapher = Grapher(self)
+
+    def init_sys_vars(self):
+        '''
+        init the sys vars for a problem by reading from
+        asset/problems.json, then reset the other sys vars
+        on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
+        '''
+        sys_vars = PROBLEMS[self.problem]
+        if (not args.render) or mp.current_process().name != 'MainProcess':
+            sys_vars['RENDER'] = False  # mute on parallel
+        if environ.get('CI'):
+            sys_vars['RENDER'] = False
+            sys_vars['MAX_EPISODES'] = 2
+        sys_vars['PARAM'] = self.param
+        self.sys_vars = sys_vars
+        self.reset_sys_vars()
+        return self.sys_vars
+
+    def reset_sys_vars(self):
+        '''reset and check RL system vars (lower case)
+        before each new session'''
+        for k in REQUIRED_SYS_KEYS:
+            if k.islower():
+                self.sys_vars[k] = copy.copy(REQUIRED_SYS_KEYS.get(k))
+        self.check_sys_vars()
+        return self.sys_vars
+
+    def check_sys_vars(self):
+        '''ensure the requried RL system vars are specified'''
+        sys_keys = self.sys_vars.keys()
+        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
 
     def save(self):
         '''save data and graph'''
