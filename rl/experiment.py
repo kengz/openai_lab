@@ -207,7 +207,7 @@ class Session(object):
                 format_obj_dict(self.agent.policy, ['e'])))
 
     def save(self):
-        '''save data and graph'''
+        '''save graph'''
         if self.sys_vars['RENDER']:
             self.grapher.save(self.graph_filename)
 
@@ -396,7 +396,7 @@ class Experiment(object):
         return self.data
 
 
-def run(sess_name_or_spec, times=1, param_selection=False):
+def run(sess_name_or_spec, times=1, param_selection=False, line_search=True):
     '''
     primary method:
     run all experiments, specified by the sess_spec or its name
@@ -410,8 +410,12 @@ def run(sess_name_or_spec, times=1, param_selection=False):
 
     if param_selection:
         raise Exception('to be implemented, with separate py processes')
-        # param_grid = param_product(
+        # if line_search:
+        #     param_grid = param_line_search(
         #     sess_spec['param'], sess_spec['param_range'])
+        # else:
+        #     param_grid = param_product(
+        #         sess_spec['param'], sess_spec['param_range'])
         # sess_spec_grid = [{
         #     'problem': sess_spec['problem'],
         #     'Agent': sess_spec['Agent'],

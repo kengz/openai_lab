@@ -3,7 +3,6 @@ import copy
 import itertools
 import json
 import logging
-import multiprocessing as mp
 import numpy as np
 import os
 import pprint
@@ -77,23 +76,6 @@ def format_obj_dict(obj, keys):
             {k: getattr(obj, k, None) for k in keys})
 
 
-
-# TODO move to Experiment
-# convert a dict of param ranges into
-# a list of cartesian products of param_range
-# e.g. {'a': [1,2], 'b': [3]} into
-# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(default_param, param_range):
-    keys = param_range.keys()
-    range_vals = param_range.values()
-    param_grid = []
-    for vals in itertools.product(*range_vals):
-        param = copy.deepcopy(default_param)
-        param.update(dict(zip(keys, vals)))
-        param_grid.append(param)
-    return param_grid
-
-
 def stringify_param_value(value):
     return value.__name__ if isinstance(value, type) else value
 
@@ -143,7 +125,21 @@ def to_json(o, level=0):
     return ret
 
 
-# TODO move to Experiment
+# convert a dict of param ranges into
+# a list of cartesian products of param_range
+# e.g. {'a': [1,2], 'b': [3]} into
+# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
+def param_product(default_param, param_range):
+    keys = param_range.keys()
+    range_vals = param_range.values()
+    param_grid = []
+    for vals in itertools.product(*range_vals):
+        param = copy.deepcopy(default_param)
+        param.update(dict(zip(keys, vals)))
+        param_grid.append(param)
+    return param_grid
+
+
 # convert a dict of param ranges into
 # a list parameter settings corresponding
 # to a line search of the param range
