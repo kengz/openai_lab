@@ -39,6 +39,7 @@ REQUIRED_SYS_KEYS = {
     'loss': [],
     'total_r_history': [],
     'explore_history': [],
+    'mean_rewards_history': [],
     'mean_rewards': 0,
     'total_rewards': 0,
     'solved': False,
@@ -107,20 +108,21 @@ class Grapher(object):
             return
         ax1, p1 = self.subgraphs['total rewards']
         p1.set_ydata(
-            np.append(p1.get_ydata(), sys_vars['total_r_history'][-1]))
+            sys_vars['total_r_history'])
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax1e, p1e = self.subgraphs['e']
         p1e.set_ydata(
-            np.append(p1e.get_ydata(), sys_vars['explore_history'][-1]))
+            sys_vars['explore_history'])
         p1e.set_xdata(np.arange(len(p1e.get_ydata())))
         ax1e.relim()
         ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax2, p2 = self.subgraphs['mean rewards']
-        p2.set_ydata(np.append(p2.get_ydata(), sys_vars['mean_rewards']))
+        p2.set_ydata(
+            sys_vars['mean_rewards_history'])
         p2.set_xdata(np.arange(len(p2.get_ydata())))
         ax2.relim()
         ax2.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -255,6 +257,7 @@ class Session(object):
         mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
         solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
         sys_vars['mean_rewards'] = mean_rewards
+        sys_vars['mean_rewards_history'].append(mean_rewards)
         sys_vars['solved'] = solved
 
         self.grapher.plot()
