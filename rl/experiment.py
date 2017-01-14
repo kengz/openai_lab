@@ -27,7 +27,6 @@ REQUIRED_SYS_KEYS = {
     'SOLVED_MEAN_REWARD': None,
     'MAX_EPISODES': None,
     'REWARD_MEAN_LEN': None,
-    'PARAM': None,
     'epi': 0,
     't': 0,
     'loss': [],
@@ -179,7 +178,6 @@ class Session(object):
         if environ.get('CI'):
             sys_vars['RENDER'] = False
             sys_vars['MAX_EPISODES'] = 2
-        sys_vars['PARAM'] = self.param
         self.sys_vars = sys_vars
         self.reset_sys_vars()
         return self.sys_vars
@@ -218,7 +216,7 @@ class Session(object):
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
                 sys_vars['solved'], sys_vars['epi'],
-                pp.pformat(sys_vars['PARAM'])))
+                pp.pformat(self.param)))
             self.env.close()
 
     def update_history(self):
