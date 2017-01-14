@@ -77,17 +77,6 @@ def format_obj_dict(obj, keys):
             {k: getattr(obj, k, None) for k in keys})
 
 
-# TODO Move to Session
-def debug_agent_info(agent):
-    logger.debug(
-        "Agent info: {}".format(
-            format_obj_dict(agent, ['learning_rate', 'n_epoch'])))
-    logger.debug(
-        "Memory info: size: {}".format(agent.memory.size()))
-    logger.debug(
-        "Policy info: {}".format(
-            format_obj_dict(agent.policy, ['e'])))
-
 
 # TODO move to Experiment
 # convert a dict of param ranges into

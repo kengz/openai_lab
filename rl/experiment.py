@@ -196,6 +196,16 @@ class Session(object):
         sys_keys = self.sys_vars.keys()
         assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
 
+    def debug_agent_info(self):
+        logger.debug(
+            "Agent info: {}".format(
+                format_obj_dict(self.agent, ['learning_rate', 'n_epoch'])))
+        logger.debug(
+            "Memory info: size: {}".format(self.agent.memory.size()))
+        logger.debug(
+            "Policy info: {}".format(
+                format_obj_dict(self.agent.policy, ['e'])))
+
     def save(self):
         '''save data and graph'''
         if self.sys_vars['RENDER']:
@@ -249,7 +259,7 @@ class Session(object):
 
         state = env.reset()
         agent.memory.reset_state(state)
-        debug_agent_info(agent)
+        self.debug_agent_info()
         sys_vars['total_rewards'] = 0
 
         for t in range(agent.env_spec['timestep_limit']):
