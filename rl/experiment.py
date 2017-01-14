@@ -1,4 +1,5 @@
 # The experiment logic and analysis
+import copy
 import gym
 import json
 import os
@@ -120,7 +121,6 @@ class Grapher(object):
     def save(self, filename):
         '''save graph to filename'''
         self.figure.savefig(filename)
-        plt.close(self.figure)
 
 
 class Session(object):
@@ -326,7 +326,7 @@ class Experiment(object):
         for i in range(self.times):
             sess = Session(experiment=self, session_id=i)
             sys_vars = sess.run()
-            sys_vars_array.append(sys_vars)
+            sys_vars_array.append(copy.copy(sys_vars))
             # update and save each time
             time_end = timestamp()
             time_taken = timestamp_elapse(time_start, time_end)
