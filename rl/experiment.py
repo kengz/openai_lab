@@ -55,6 +55,7 @@ class Grapher(object):
 
     def __init__(self, session):
         self.session = session
+        self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
         self.figure = plt.figure(facecolor='white', figsize=(8, 9))
         self.init_figure()
@@ -135,10 +136,11 @@ class Grapher(object):
 
         plt.draw()
         plt.pause(0.01)
+        self.save()
 
-    def save(self, filename):
+    def save(self):
         '''save graph to filename'''
-        self.figure.savefig(filename)
+        self.figure.savefig(self.graph_filename)
 
 
 class Session(object):
@@ -219,11 +221,6 @@ class Session(object):
             "Policy info: {}".format(
                 format_obj_dict(self.agent.policy, ['e'])))
 
-    def save(self):
-        '''save graph'''
-        if self.sys_vars['RENDER']:
-            self.grapher.save(self.graph_filename)
-
     def check_end(self):
         '''check if session ends (if is last episode)
         do ending steps'''
@@ -261,7 +258,6 @@ class Session(object):
         sys_vars['solved'] = solved
 
         self.grapher.plot()
-        self.save()
         self.check_end()
         return sys_vars
 
@@ -295,6 +291,10 @@ class Session(object):
         self.update_history()
         return sys_vars
 
+    def clear_session(self):
+        if K._BACKEND == 'tensorflow':
+            K.clear_session()  # manual gc to fix TF issue 3388
+
     def run(self):
         '''run a session of agent'''
         sys_vars = self.sys_vars
@@ -307,8 +307,7 @@ class Session(object):
             if sys_vars['solved']:
                 break
 
-        if K._BACKEND == 'tensorflow':
-            K.clear_session()  # manual gc to fix TF issue 3388
+        self.clear_session()
         time_end = timestamp()
         time_taken = timestamp_elapse(time_start, time_end)
         sys_vars['time_start'] = time_start
@@ -393,7 +392,6 @@ class Experiment(object):
             sess = Session(experiment=self, session_id=i)
             sys_vars = sess.run()
             sys_vars_array.append(copy.copy(sys_vars))
-            # update and save each time
             time_end = timestamp()
             time_taken = timestamp_elapse(time_start, time_end)
 
@@ -414,16 +412,39 @@ class Experiment(object):
 
 
 def plot(experiment_id):
+    '''plot from a saved data by init sessions for each sys_vars'''
+    data = load_data_from_experiment_id(experiment_id)
+    sess_spec = data['sess_spec']
+    experiment = Experiment(sess_spec, times=1)
+    # save with the right serialized filename
+    experiment.base_filename = './data/{}'.format(experiment_id)
+
+    for i in range(len(data['sys_vars_array'])):
+        sess = Session(experiment=experiment, session_id=i)
+        sys_vars = data['sys_vars_array'][i]
+        sess.sys_vars = sys_vars
+        sess.grapher.plot()
+        sess.clear_session()
     return
 
 
-def run(sess_name_id_spec, times=1, param_selection=False, line_search=True):
+def run(sess_name_id_spec, times=1,
+        param_selection=False, line_search=True,
+        plot_only=False):
     '''
     primary method:
-    run all experiments, specified by the sess_spec or its name
-    for a specified number of times per experiment
-    (multiple experiments if param_selection=True)
+    specify:
+    - sess_name(str) or sess_spec(Dict): run new experiment,
+    - experiment_id(str): rerun experiment from data
+    - experiment_id(str) with plot_only=True: plot graphs from data
+    This runs all experiments, specified by the obtained sess_spec
+    for a specified number of sessions per experiment
+    Multiple experiments are ran if param_selection=True
     '''
+    if plot_only:
+        plot(sess_name_id_spec)
+        return
+
     if isinstance(sess_name_id_spec, str):
         if len(sess_name_id_spec.split('_')) >= 4:
             data = load_data_from_experiment_id(sess_name_id_spec)
