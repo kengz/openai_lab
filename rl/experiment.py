@@ -120,7 +120,7 @@ class Grapher(object):
     def save(self, filename):
         '''save graph to filename'''
         self.figure.savefig(filename)
-        # plt.close(self.figure)
+        plt.close(self.figure)
 
 
 class Session(object):
