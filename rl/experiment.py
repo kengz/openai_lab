@@ -246,7 +246,8 @@ class Session(object):
             if sys_vars['solved']:
                 break
 
-        K.clear_session()  # manual gc to fix TF issue 3388
+        if K._BACKEND == 'tensorflow':
+            K.clear_session()  # manual gc to fix TF issue 3388
         time_end = timestamp()
         time_taken = timestamp_elapse(time_start, time_end)
         sys_vars['time_start'] = time_start
