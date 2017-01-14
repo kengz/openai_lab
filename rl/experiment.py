@@ -20,7 +20,7 @@ plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
 GREF = globals()
 
-PARALLEL_PROCESS_NUM = 4
+PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 SESS_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'sess_specs.json')).read())
@@ -448,6 +448,11 @@ def plot(experiment_id):
     return
 
 
+def spawn_run(sess_spec, times=1):
+    experiment = Experiment(sess_spec, times=times)
+    return experiment.run()
+
+
 def run(sess_name_id_spec, times=1,
         param_selection=False, line_search=True,
         plot_only=False):
@@ -475,24 +480,23 @@ def run(sess_name_id_spec, times=1,
         sess_spec = sess_name_id_spec
 
     if param_selection:
-        raise Exception('to be implemented, with separate py processes')
-        # if line_search:
-        #     param_grid = param_line_search(
-        #     sess_spec['param'], sess_spec['param_range'])
-        # else:
-        #     param_grid = param_product(
-        #         sess_spec['param'], sess_spec['param_range'])
-        # sess_spec_grid = [{
-        #     'problem': sess_spec['problem'],
-        #     'Agent': sess_spec['Agent'],
-        #     'Memory': sess_spec['Memory'],
-        #     'Policy': sess_spec['Policy'],
-        #     'param': param,
-        # } for param in param_grid]
-        # p = mp.Pool(mp.cpu_count())
-        # list(p.map(
-        #     partial(run_single_exp, data_grid=data_grid, times=times),
-        #     sess_spec_grid))
+        if line_search:
+            param_grid = param_line_search(
+                sess_spec['param'], sess_spec['param_range'])
+        else:
+            param_grid = param_product(
+                sess_spec['param'], sess_spec['param_range'])
+        sess_spec_grid = [{
+            'problem': sess_spec['problem'],
+            'Agent': sess_spec['Agent'],
+            'Memory': sess_spec['Memory'],
+            'Policy': sess_spec['Policy'],
+            'param': param,
+        } for param in param_grid]
+        p = mp.Pool(PARALLEL_PROCESS_NUM)
+        list(p.map(
+            partial(spawn_run, times=times),
+            sess_spec_grid))
     else:
         # run_single_exp(sess_spec, data_grid=data_grid, times=times)
         experiment = Experiment(sess_spec, times=times)
