@@ -188,11 +188,11 @@ class Session(object):
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
         sys_vars = PROBLEMS[self.problem]
-        if (not args.render) or mp.current_process().name != 'MainProcess':
+        if not args.render:
             sys_vars['RENDER'] = False  # mute on parallel
         if environ.get('CI'):
             sys_vars['RENDER'] = False
-            sys_vars['MAX_EPISODES'] = 2
+            sys_vars['MAX_EPISODES'] = 4
         self.sys_vars = sys_vars
         self.reset_sys_vars()
         return self.sys_vars
