@@ -156,10 +156,12 @@ class Session(object):
     Serialized by the parent experiment_id with its session_id
     '''
 
-    def __init__(self, experiment, session_num=0):
+    def __init__(self, experiment, session_num=0, num_of_sessions=1):
         self.experiment = experiment
+        self.session_num = session_num
+        self.num_of_sessions = num_of_sessions
         self.session_id = self.experiment.experiment_id + \
-            '_s' + str(session_num)
+            '_s' + str(self.session_num)
         log_delimiter('Init Session:\n{}'.format(self.session_id))
 
         self.sess_spec = experiment.sess_spec
@@ -319,8 +321,12 @@ class Session(object):
         sys_vars['time_start'] = time_start
         sys_vars['time_end'] = time_end
         sys_vars['time_taken'] = time_taken
-        log_delimiter('End Session:\n{}'.format(self.session_id))
 
+        progress = 'Progress: Experiment #{} Session #{} of {} done.'.format(
+            self.experiment.experiment_num,
+            self.session_num, self.num_of_sessions)
+        log_delimiter('End Session:\n{}\n{}'.format(
+            self.session_id, progress))
         return sys_vars
 
 
@@ -349,18 +355,21 @@ class Experiment(object):
     - sys_vars_array
     '''
 
-    def __init__(self, sess_spec, times=1, experiment_num=0):
+    def __init__(self, sess_spec, times=1,
+                 experiment_num=0, num_of_experiments=1):
         self.sess_spec = sess_spec
         self.data = None
         self.times = times
         self.sess_spec.pop('param_range', None)  # single exp, del range
+        self.experiment_num = experiment_num
+        self.num_of_experiments = num_of_experiments
         self.experiment_id = '{}_{}_{}_{}_{}_e{}'.format(
             sess_spec['problem'],
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
             sess_spec['Policy'].split('.').pop(),
             timestamp(),
-            experiment_num
+            self.experiment_num
         )
         self.base_filename = './data/{}'.format(self.experiment_id)
         self.data_filename = self.base_filename + '.json'
@@ -427,7 +436,8 @@ class Experiment(object):
         time_start = timestamp()
         sys_vars_array = []
         for s in range(self.times):
-            sess = Session(experiment=self, session_num=s)
+            sess = Session(experiment=self,
+                           session_num=s, num_of_sessions=self.times)
             sys_vars = sess.run()
             sys_vars_array.append(copy.copy(sys_vars))
             time_end = timestamp()
@@ -447,7 +457,11 @@ class Experiment(object):
             # progressive update, write when every session is done
             self.save()
 
-        log_delimiter('End Experiment:\n{}'.format(self.experiment_id), '=')
+        progress = 'Progress: Experiment #{} of {} done.'.format(
+            self.experiment_num, self.num_of_experiments)
+        log_delimiter(
+            'End Experiment:\n{}\n{}'.format(
+                self.experiment_id, progress), '=')
         return self.data
 
 
@@ -477,9 +491,11 @@ def plot(experiment_id):
     experiment = Experiment(sess_spec, times=1)
     # save with the right serialized filename
     experiment.experiment_id = experiment_id
+    num_of_sessions = len(data['sys_vars_array'])
 
-    for s in range(len(data['sys_vars_array'])):
-        sess = Session(experiment=experiment, session_num=s)
+    for s in range(num_of_sessions):
+        sess = Session(experiment=experiment,
+                       session_num=s, num_of_sessions=num_of_sessions)
         sys_vars = data['sys_vars_array'][s]
         sess.sys_vars = sys_vars
         sess.grapher.plot()
@@ -524,12 +540,14 @@ def run(sess_name_id_spec, times=1,
             param_grid = param_product(
                 sess_spec['param'], sess_spec['param_range'])
         sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
+        num_of_experiments = len(sess_spec_grid)
 
         experiment_array = []
-        for e in range(len(sess_spec_grid)):
+        for e in range(num_of_experiments):
             sess_spec = sess_spec_grid[e]
             experiment = Experiment(
-                sess_spec, times=times, experiment_num=e)
+                sess_spec, times=times, experiment_num=e,
+                num_of_experiments=num_of_experiments)
             experiment_array.append(experiment)
 
         p = mp.Pool(PARALLEL_PROCESS_NUM)
