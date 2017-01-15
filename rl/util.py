@@ -128,21 +128,6 @@ def to_json(o, level=0):
 
 
 # convert a dict of param ranges into
-# a list of cartesian products of param_range
-# e.g. {'a': [1,2], 'b': [3]} into
-# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(default_param, param_range):
-    keys = param_range.keys()
-    range_vals = param_range.values()
-    param_grid = []
-    for vals in itertools.product(*range_vals):
-        param = copy.deepcopy(default_param)
-        param.update(dict(zip(keys, vals)))
-        param_grid.append(param)
-    return param_grid
-
-
-# convert a dict of param ranges into
 # a list parameter settings corresponding
 # to a line search of the param range
 # for each param
@@ -157,6 +142,38 @@ def param_line_search(default_param, param_range):
             param[key] = val
             param_list.append(param)
     return param_list
+
+
+# convert a dict of param ranges into
+# a list of cartesian products of param_range
+# e.g. {'a': [1,2], 'b': [3]} into
+# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
+def param_product(default_param, param_range):
+    keys = param_range.keys()
+    range_vals = param_range.values()
+    param_grid = []
+    for vals in itertools.product(*range_vals):
+        param = copy.deepcopy(default_param)
+        param.update(dict(zip(keys, vals)))
+        param_grid.append(param)
+    return param_grid
+
+
+# for param selection
+def generate_sess_spec_grid(sess_spec, param_grid):
+    sess_spec_grid = [{
+        'problem': sess_spec['problem'],
+        'Agent': sess_spec['Agent'],
+        'Memory': sess_spec['Memory'],
+        'Policy': sess_spec['Policy'],
+        'param': param,
+    } for param in param_grid]
+    return sess_spec_grid
+
+
+# helper wrapper for multiprocessing
+def mp_run_helper(experiment):
+    return experiment.run()
 
 
 def load_data_from_experiment_id(serial_str):

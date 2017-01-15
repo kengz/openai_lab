@@ -154,10 +154,10 @@ class Session(object):
     Serialized by the parent experiment_id with its session_id
     '''
 
-    def __init__(self, experiment, session_id=0):
+    def __init__(self, experiment, session_num=0):
         self.experiment = experiment
         self.session_id = self.experiment.experiment_id + \
-            '_' + str(session_id)
+            '_s' + str(session_num)
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
         self.Agent = get_module(GREF, self.sess_spec['Agent'])
@@ -342,17 +342,18 @@ class Experiment(object):
     - sys_vars_array
     '''
 
-    def __init__(self, sess_spec, times=1):
+    def __init__(self, sess_spec, times=1, experiment_num=0):
         self.sess_spec = sess_spec
         self.data = None
         self.times = times
         self.sess_spec.pop('param_range', None)  # single exp, del range
-        self.experiment_id = '{}_{}_{}_{}_{}'.format(
+        self.experiment_id = '{}_{}_{}_{}_{}_e{}'.format(
             sess_spec['problem'],
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
             sess_spec['Policy'].split('.').pop(),
-            timestamp()
+            timestamp(),
+            experiment_num
         )
         self.base_filename = './data/{}'.format(self.experiment_id)
         self.data_filename = self.base_filename + '.json'
@@ -390,7 +391,7 @@ class Experiment(object):
         time_start = timestamp()
         sys_vars_array = []
         for i in range(self.times):
-            sess = Session(experiment=self, session_id=i)
+            sess = Session(experiment=self, session_num=i)
             sys_vars = sess.run()
             sys_vars_array.append(copy.copy(sys_vars))
             time_end = timestamp()
@@ -440,17 +441,12 @@ def plot(experiment_id):
     experiment.experiment_id = experiment_id
 
     for i in range(len(data['sys_vars_array'])):
-        sess = Session(experiment=experiment, session_id=i)
+        sess = Session(experiment=experiment, session_num=i)
         sys_vars = data['sys_vars_array'][i]
         sess.sys_vars = sys_vars
         sess.grapher.plot()
         sess.clear_session()
     return
-
-
-def spawn_run(sess_spec, times=1):
-    experiment = Experiment(sess_spec, times=times)
-    return experiment.run()
 
 
 def run(sess_name_id_spec, times=1,
@@ -466,10 +462,12 @@ def run(sess_name_id_spec, times=1,
     for a specified number of sessions per experiment
     Multiple experiments are ran if param_selection=True
     '''
+    # run plots on data only
     if plot_only:
         plot(sess_name_id_spec)
         return
 
+    # set sess_spec based on input
     if isinstance(sess_name_id_spec, str):
         if len(sess_name_id_spec.split('_')) >= 4:
             data = load_data_from_experiment_id(sess_name_id_spec)
@@ -479,6 +477,7 @@ def run(sess_name_id_spec, times=1,
     else:
         sess_spec = sess_name_id_spec
 
+    # compose grid and run param selection
     if param_selection:
         if line_search:
             param_grid = param_line_search(
@@ -486,17 +485,19 @@ def run(sess_name_id_spec, times=1,
         else:
             param_grid = param_product(
                 sess_spec['param'], sess_spec['param_range'])
-        sess_spec_grid = [{
-            'problem': sess_spec['problem'],
-            'Agent': sess_spec['Agent'],
-            'Memory': sess_spec['Memory'],
-            'Policy': sess_spec['Policy'],
-            'param': param,
-        } for param in param_grid]
+        sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
+
+        experiment_array = []
+        for i in range(len(sess_spec_grid)):
+            sess_spec = sess_spec_grid[i]
+            experiment = Experiment(
+                sess_spec, times=times, experiment_num=i)
+            experiment_array.append(experiment)
+
         p = mp.Pool(PARALLEL_PROCESS_NUM)
-        list(p.map(
-            partial(spawn_run, times=times),
-            sess_spec_grid))
+        list(p.map(mp_run_helper, experiment_array))
+        p.close()
+        p.join()
     else:
         # run_single_exp(sess_spec, data_grid=data_grid, times=times)
         experiment = Experiment(sess_spec, times=times)
