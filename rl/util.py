@@ -1,4 +1,5 @@
 import argparse
+import collections
 import copy
 import itertools
 import json
@@ -153,6 +154,17 @@ def format_obj_dict(obj, keys):
              if getattr(obj, k, None) is not None})
 
 
+def flatten_dict(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
 def get_module(GREF, dot_path):
     # get module from globals() by string dot_path
     path_arr = dot_path.split('.')
@@ -216,9 +228,22 @@ def mp_run_helper(experiment):
     return experiment.run()
 
 
-def load_data_from_experiment_id(serial_str):
-    experiment_id = serial_str.split(
+def load_data_from_experiment_id(experiment_id):
+    experiment_id = experiment_id.split(
         '/').pop().split('.').pop(0)
     data_filename = './data/{}.json'.format(experiment_id)
     data = json.loads(open(data_filename).read())
     return data
+
+
+def load_data_array_from_prefix_id(prefix_id):
+    # to load all ./data files for a series of experiments
+    data_path = './data'
+    experiment_id_array = [
+        f for f in os.listdir(data_path)
+        if (os.path.isfile(os.path.join(data_path, f)) and
+            f.startswith(prefix_id) and
+            f.endswith('.json'))
+    ]
+    return [load_data_from_experiment_id(experiment_id)
+            for experiment_id in experiment_id_array]

@@ -6,6 +6,7 @@ import matplotlib
 import multiprocessing as mp
 import warnings
 import numpy as np
+import pandas as pd
 from keras import backend as K
 from os import environ
 from rl.util import *
@@ -503,8 +504,32 @@ def plot(experiment_id):
     return
 
 
-def analyze_param_space(experiment_data_array):
-    return
+def analyze_param_space(experiment_data_array_or_prefix_id):
+    '''
+    get all the data from all experiments.run()
+    or read from all data files matching the prefix of experiment_id
+    e.g. usage without running:
+    prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
+    analyze_param_space(prefix_id)
+    '''
+    if isinstance(experiment_data_array_or_prefix_id, str):
+        experiment_data_array = load_data_array_from_prefix_id(
+            experiment_data_array_or_prefix_id)
+    else:
+        experiment_data_array = experiment_data_array_or_prefix_id
+
+    flat_metrics_array = []
+    for data in experiment_data_array:
+        flat_metrics = flatten_dict(data['summary']['metrics'])
+        flat_metrics.update({'experiment_id': data['experiment_id']})
+        flat_metrics_array.append(flat_metrics)
+    metrics_df = pd.DataFrame.from_dict(flat_metrics_array)
+    metrics_df.sort_values(
+        ['mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
+        ascending=False
+    ).sort_values(['epi_stats_mean'])
+    metrics_df.to_csv('./data/param_space_data.csv', index=False)
+    return metrics_df
 
 
 def run(sess_name_id_spec, times=1,
@@ -558,4 +583,7 @@ def run(sess_name_id_spec, times=1,
         p.join()
     else:
         experiment = Experiment(sess_spec, times=times)
-        return experiment.run()
+        experiment_data = experiment.run()
+        experiment_data_array = [experiment_data]
+
+    return analyze_param_space(experiment_data_array)
