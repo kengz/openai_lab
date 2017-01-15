@@ -5,7 +5,6 @@ import json
 import os
 import matplotlib
 matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
-import matplotlib.pyplot as plt
 import multiprocessing as mp
 import numpy as np
 from functools import partial
@@ -15,8 +14,6 @@ from rl.agent import *
 from rl.memory import *
 from rl.policy import *
 
-
-plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
 
 GREF = globals()
 
@@ -56,6 +53,8 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
+        import matplotlib.pyplot as plt
+        plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
         self.session = session
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
@@ -499,6 +498,5 @@ def run(sess_name_id_spec, times=1,
         p.close()
         p.join()
     else:
-        # run_single_exp(sess_spec, data_grid=data_grid, times=times)
         experiment = Experiment(sess_spec, times=times)
         return experiment.run()
