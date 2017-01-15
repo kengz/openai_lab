@@ -2,7 +2,7 @@ import unittest
 import pytest
 from os import environ
 environ['CI'] = environ.get('CI') or 'true'
-from rl.experiment import game_specs, run
+from rl.experiment import run
 
 
 class DQNTest(unittest.TestCase):

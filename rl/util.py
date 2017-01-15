@@ -54,6 +54,8 @@ def get_env_spec(env):
 
 
 def print_line(line='-'):
+    if environ.get('CI'):
+        return
     rows, columns = os.popen('stty size', 'r').read().split()
     line_str = line*int(columns)
     print(line_str)
