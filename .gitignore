@@ -20,3 +20,4 @@ models/
 *.png
 *.txt
 *.json
+*.log
