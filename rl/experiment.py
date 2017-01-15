@@ -374,6 +374,12 @@ class Experiment(object):
         solved_sys_vars_array = list(filter(
             lambda sv: sv['solved'], sys_vars_array))
         mean_rewards_array = list(map(lambda sv: sv['epi'], sys_vars_array))
+        epi_array = list(
+            map(lambda sv: sv['epi'], sys_vars_array))
+        t_array = list(map(lambda sv: sv['t'], sys_vars_array))
+        time_taken_array = list(
+            map(lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+                sys_vars_array))
         solved_epi_array = list(
             map(lambda sv: sv['epi'], solved_sys_vars_array))
         solved_t_array = list(map(lambda sv: sv['t'], solved_sys_vars_array))
@@ -388,6 +394,9 @@ class Experiment(object):
             'solved_ratio_of_sessions': float(len(
                 solved_sys_vars_array)) / len(sys_vars_array),
             'mean_rewards_stats': basic_stats(mean_rewards_array),
+            'epi_stats': basic_stats(epi_array),
+            't_stats': basic_stats(t_array),
+            'time_taken_stats': basic_stats(time_taken_array),
             'solved_epi_stats': basic_stats(solved_epi_array),
             'solved_t_stats': basic_stats(solved_t_array),
             'solved_time_taken_stats': basic_stats(solved_time_taken_array),
