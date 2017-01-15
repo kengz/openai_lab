@@ -20,3 +20,5 @@ models/
 *.png
 *.txt
 *.json
+*.csv
+*.log

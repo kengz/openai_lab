@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, pp
+from rl.util import logger
 from rl.agent.dqn import DQN
 from rl.util import logger
 from keras.models import Sequential

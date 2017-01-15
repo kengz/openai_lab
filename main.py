@@ -1,8 +1,9 @@
-from rl.session import game_specs, run
+from rl.experiment import run
 
 if __name__ == '__main__':
-    # print(list(game_specs.keys()))
     # ['dummy', 'q_table', 'lunar_double_dqn',
     #     'mountain_double_dqn', 'lunar_dqn', 'double_dqn', 'dqn']
-    # run('dqn', run_param_selection=False, times=1)
-    run('breakout_dqn', run_param_selection=False, times=1, line_search=True)
+    run('dev_dqn', times=2, param_selection=False)
+    # run('dqn', times=2, param_selection=False)
+    # run('CartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-14_201002_e1', plot_only=True)
+    # run('lunar_dqn', times=5, param_selection=True, line_search=True)

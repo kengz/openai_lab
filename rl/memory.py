@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, pp
+from rl.util import logger, to_json
 from scipy.stats import halfnorm
 
 
@@ -60,7 +60,7 @@ class LinearMemory(Memory):
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
-        logger.info('Memory params: {}'.format(pp.pformat(self.__dict__)))
+        logger.info('Memory params: {}'.format(to_json(self.__dict__)))
 
     def one_hot_action(self, action):
         action_arr = np.zeros(self.agent.env_spec['action_dim'])
@@ -192,7 +192,7 @@ class LeftTailMemory(LinearMemory):
             random_batch_size = size - new_exp_size
             rand_inds = (old_memory_ind - halfnorm.rvs(
                 size=random_batch_size,
-                scale=float(old_memory_ind)*0.37).astype(int))
+                scale=float(old_memory_ind)*0.80).astype(int))
             inds = np.concatenate([rand_inds, latest_inds]).clip(0)
         minibatch = self.get_exp(inds)
         return minibatch
@@ -214,7 +214,21 @@ class RankedMemory(LinearMemory):
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
         self.epi_memory = []
+        self.sorted_epi_exp = self.exp
         self.n_best_epi = 10
+        # then do left tail selection or early forget, I dont care
+
+    # merge the epi_memory into an exp object
+    def merge_exp(self):
+        sorted_exp = {}
+        # split epi_memory into better and worse halves
+        half_epi_len = int(float(len(self.epi_memory))/float(2))
+        for k in self.exp_keys:
+            k_exp = np.concatenate(
+                [epi_exp['exp'][k] for epi_exp in self.epi_memory[-half_epi_len:]]
+            )
+            sorted_exp[k] = k_exp
+        return sorted_exp
 
     def add_exp(self, action, reward, next_state, terminal):
         super(RankedMemory, self).add_exp(
@@ -228,6 +242,7 @@ class RankedMemory(LinearMemory):
             self.epi_memory.sort(key=lambda epi_exp: epi_exp['total_rewards'])
             self.last_exp = self.exp
             self.exp = {k: [] for k in self.exp_keys}
+            self.sorted_epi_exp = self.merge_exp()
 
     def pop(self):
         '''
@@ -240,6 +255,16 @@ class RankedMemory(LinearMemory):
         return res
 
     def rand_minibatch(self, size):
+        if len(self.epi_memory) == 0:   # base case, early exit
+            return super(RankedMemory, self).rand_minibatch(size)
+
+        buffer_exp = self.exp  # store for restoration after
+        self.exp = self.sorted_epi_exp
+        minibatch = super(RankedMemory, self).rand_minibatch(size)
+        self.exp = buffer_exp  # set buffer back to original
+        return minibatch
+
+    def split_rand_minibatch(self, size):
         '''
         the minibatch composed of minibatches from the best epis
         guarantee that every exp will be trained at least once

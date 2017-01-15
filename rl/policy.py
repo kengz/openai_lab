@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, pp
+from rl.util import logger, to_json
 
 
 class Policy(object):
@@ -36,7 +36,7 @@ class EpsilonGreedyPolicy(Policy):
         self.final_e = final_e
         self.e = self.init_e
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
+        logger.info('Policy params: {}'.format(to_json(self.__dict__)))
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -92,13 +92,13 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         SOLVED_MEAN_REWARD = sys_vars['SOLVED_MEAN_REWARD']
         REWARD_MEAN_LEN = sys_vars['REWARD_MEAN_LEN']
         PARTIAL_MEAN_LEN = int(REWARD_MEAN_LEN * 0.20)
-        if epi < 1:  # corner case when no total_r_history to avg
+        if epi < 1:  # corner case when no total_rewards_history to avg
             return
         # the partial mean for projection the entire mean
         partial_mean_reward = np.mean(
-            sys_vars['total_r_history'][-PARTIAL_MEAN_LEN:])
+            sys_vars['total_rewards_history'][-PARTIAL_MEAN_LEN:])
         # difference to target, and its ratio (1 if denominator is 0)
-        min_reward = np.amin(sys_vars['total_r_history'])
+        min_reward = np.amin(sys_vars['total_rewards_history'])
         projection_gap = SOLVED_MEAN_REWARD - partial_mean_reward
         worst_gap = SOLVED_MEAN_REWARD - min_reward
         gap_ratio = projection_gap / worst_gap
@@ -131,7 +131,7 @@ class BoltzmannPolicy(Policy):
         self.final_tau = final_tau
         self.tau = self.init_tau
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        logger.info('Policy params: {}'.format(pp.pformat(self.__dict__)))
+        logger.info('Policy params: {}'.format(to_json(self.__dict__)))
 
     def select_action(self, state):
         agent = self.agent
