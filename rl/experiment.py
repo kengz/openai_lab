@@ -55,6 +55,7 @@ class Grapher(object):
     def __init__(self, session):
         import matplotlib.pyplot as plt
         plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
+        self.plt = plt
         self.session = session
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
@@ -98,8 +99,8 @@ class Grapher(object):
         p3, = ax3.plot([], [])
         self.subgraphs['loss'] = (ax3, p3)
 
-        plt.tight_layout()  # auto-fix spacing
-        plt.ion()  # for live plot
+        self.plt.tight_layout()  # auto-fix spacing
+        self.plt.ion()  # for live plot
 
     def plot(self):
         '''do live plotting'''
@@ -133,8 +134,8 @@ class Grapher(object):
         ax3.relim()
         ax3.autoscale_view(tight=True, scalex=True, scaley=True)
 
-        plt.draw()
-        plt.pause(0.01)
+        self.plt.draw()
+        self.plt.pause(0.01)
         self.save()
 
     def save(self):
