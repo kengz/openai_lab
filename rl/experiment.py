@@ -38,7 +38,7 @@ REQUIRED_SYS_KEYS = {
     'epi': 0,
     't': 0,
     'loss': [],
-    'total_r_history': [],
+    'total_rewards_history': [],
     'explore_history': [],
     'mean_rewards_history': [],
     'mean_rewards': 0,
@@ -111,7 +111,7 @@ class Grapher(object):
             return
         ax1, p1 = self.subgraphs['total rewards']
         p1.set_ydata(
-            sys_vars['total_r_history'])
+            sys_vars['total_rewards_history'])
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -249,13 +249,14 @@ class Session(object):
         '''
 
         sys_vars = self.sys_vars
-        sys_vars['total_r_history'].append(sys_vars['total_rewards'])
+        sys_vars['total_rewards_history'].append(sys_vars['total_rewards'])
         sys_vars['explore_history'].append(
             getattr(self.policy, 'e', 0) or getattr(self.policy, 'tau', 0))
         avg_len = sys_vars['REWARD_MEAN_LEN']
         # Calculating mean_reward over last 100 episodes
         # case away from np for json serializable (dumb python)
-        mean_rewards = float(np.mean(sys_vars['total_r_history'][-avg_len:]))
+        mean_rewards = float(
+            np.mean(sys_vars['total_rewards_history'][-avg_len:]))
         solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
         sys_vars['mean_rewards'] = mean_rewards
         sys_vars['mean_rewards_history'].append(mean_rewards)
@@ -373,19 +374,22 @@ class Experiment(object):
         sys_vars_array = self.data['sys_vars_array']
         solved_sys_vars_array = list(filter(
             lambda sv: sv['solved'], sys_vars_array))
-        mean_rewards_array = list(map(lambda sv: sv['epi'], sys_vars_array))
-        epi_array = list(
-            map(lambda sv: sv['epi'], sys_vars_array))
+        mean_rewards_array = list(map(
+            lambda sv: sv['mean_rewards'], sys_vars_array))
+        max_total_rewards_array = list(map(
+            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array))
+        epi_array = list(map(lambda sv: sv['epi'], sys_vars_array))
         t_array = list(map(lambda sv: sv['t'], sys_vars_array))
-        time_taken_array = list(
-            map(lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-                sys_vars_array))
-        solved_epi_array = list(
-            map(lambda sv: sv['epi'], solved_sys_vars_array))
-        solved_t_array = list(map(lambda sv: sv['t'], solved_sys_vars_array))
-        solved_time_taken_array = list(
-            map(lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-                solved_sys_vars_array))
+        time_taken_array = list(map(
+            lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+            sys_vars_array))
+        solved_epi_array = list(map(
+            lambda sv: sv['epi'], solved_sys_vars_array))
+        solved_t_array = list(map(
+            lambda sv: sv['t'], solved_sys_vars_array))
+        solved_time_taken_array = list(map(
+            lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+            solved_sys_vars_array))
 
         metrics = {
             # percentage solved
@@ -394,6 +398,7 @@ class Experiment(object):
             'solved_ratio_of_sessions': float(len(
                 solved_sys_vars_array)) / len(sys_vars_array),
             'mean_rewards_stats': basic_stats(mean_rewards_array),
+            'max_total_rewards_stats': basic_stats(max_total_rewards_array),
             'epi_stats': basic_stats(epi_array),
             't_stats': basic_stats(t_array),
             'time_taken_stats': basic_stats(time_taken_array),
