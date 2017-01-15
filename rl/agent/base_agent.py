@@ -1,3 +1,6 @@
+from util import logger
+
+
 class Agent(object):
 
     '''
@@ -15,6 +18,7 @@ class Agent(object):
         # back references
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)
+        logger.info('Compiled Agent, Memory, Policy')
 
     def select_action(self, state):
         self.policy.select_action(state)

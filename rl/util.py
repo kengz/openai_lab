@@ -35,8 +35,6 @@ logger.setLevel(args.loglevel)
 logger.addHandler(handler)
 logger.propagate = False
 
-pp = pprint.PrettyPrinter(indent=2)
-
 
 def get_env_spec(env):
     '''Helper: return the env specs: dims, actions, reward range'''
@@ -81,25 +79,6 @@ def timestamp_elapse(s1, s2):
     return str(delta_t)
 
 
-def format_obj_dict(obj, keys):
-    if isinstance(obj, dict):
-        return pp.pformat(
-            {k: obj.get(k) for k in keys})
-    else:
-        return pp.pformat(
-            {k: getattr(obj, k, None) for k in keys})
-
-
-def get_module(GREF, dot_path):
-    # get module from globals() by string dot_path
-    path_arr = dot_path.split('.')
-    # base level from globals
-    mod = GREF.get(path_arr.pop(0))
-    for deeper_path in path_arr:
-        mod = getattr(mod, deeper_path)
-    return mod
-
-
 # own custom sorted json serializer, cuz python
 def to_json(o, level=0):
     INDENT = 2
@@ -120,7 +99,7 @@ def to_json(o, level=0):
         ret += NEWLINE + SPACE * INDENT * level + "}"
     elif isinstance(o, str):
         ret += '"' + o + '"'
-    elif isinstance(o, list):
+    elif isinstance(o, list) or isinstance(o, tuple):
         ret += "[" + ",".join([to_json(e, level+1) for e in o]) + "]"
     elif isinstance(o, bool):
         ret += "true" if o else "false"
@@ -139,6 +118,26 @@ def to_json(o, level=0):
         raise TypeError(
             "Unknown type '%s' for json serialization" % str(type(o)))
     return ret
+
+
+def format_obj_dict(obj, keys):
+    if isinstance(obj, dict):
+        return to_json(
+            {k: obj.get(k) for k in keys if obj.get(k) is not None})
+    else:
+        return to_json(
+            {k: getattr(obj, k, None) for k in keys
+             if getattr(obj, k, None) is not None})
+
+
+def get_module(GREF, dot_path):
+    # get module from globals() by string dot_path
+    path_arr = dot_path.split('.')
+    # base level from globals
+    mod = GREF.get(path_arr.pop(0))
+    for deeper_path in path_arr:
+        mod = getattr(mod, deeper_path)
+    return mod
 
 
 # convert a dict of param ranges into

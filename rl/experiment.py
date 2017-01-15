@@ -160,7 +160,7 @@ class Session(object):
         self.experiment = experiment
         self.session_id = self.experiment.experiment_id + \
             '_s' + str(session_num)
-        log_delimiter('Running Session:\n{}'.format(self.session_id))
+        log_delimiter('Init Session:\n{}'.format(self.session_id))
 
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
@@ -176,7 +176,6 @@ class Session(object):
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
         self.agent.compile(self.memory, self.policy)
-        logger.info('Compiled Agent, Memory, Policy')
 
         # data file and graph
         self.base_filename = './data/{}'.format(self.session_id)
@@ -223,7 +222,7 @@ class Session(object):
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
             "Policy info: {}".format(
-                format_obj_dict(self.agent.policy, ['e'])))
+                format_obj_dict(self.agent.policy, ['e', 'tau'])))
 
     def check_end(self):
         '''check if session ends (if is last episode)
@@ -238,9 +237,9 @@ class Session(object):
 
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
-            logger.info('Problem solved? {}. At epi: {}. Params: {}'.format(
+            logger.info('Problem solved? {}\nAt episode: {}\nParams: {}'.format(
                 sys_vars['solved'], sys_vars['epi'],
-                pp.pformat(self.param)))
+                to_json(self.param)))
             self.env.close()
 
     def update_history(self):
@@ -273,8 +272,8 @@ class Session(object):
 
         state = env.reset()
         agent.memory.reset_state(state)
-        self.debug_agent_info()
         sys_vars['total_rewards'] = 0
+        self.debug_agent_info()
 
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
@@ -301,6 +300,7 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
+        log_delimiter('Run Session:\n{}'.format(self.session_id))
         sys_vars = self.sys_vars
         time_start = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
@@ -317,7 +317,7 @@ class Session(object):
         sys_vars['time_start'] = time_start
         sys_vars['time_end'] = time_end
         sys_vars['time_taken'] = time_taken
-        log_delimiter('Ending Session:\n{}'.format(self.session_id))
+        log_delimiter('End Session:\n{}'.format(self.session_id))
 
         return sys_vars
 
@@ -362,8 +362,7 @@ class Experiment(object):
         )
         self.base_filename = './data/{}'.format(self.experiment_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter(
-            'Running Experiment:\n{}'.format(self.experiment_id), '=')
+        log_delimiter('Init Experiment:\n{}'.format(self.experiment_id), '=')
 
     def analyze(self):
         '''
@@ -418,8 +417,7 @@ class Experiment(object):
             # progressive update, write when every session is done
             self.save()
 
-        log_delimiter(
-            'Ending Experiment:\n{}'.format(self.experiment_id), '=')
+        log_delimiter('End Experiment:\n{}'.format(self.experiment_id), '=')
         return self.data
 
 
