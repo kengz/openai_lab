@@ -6,7 +6,6 @@ import matplotlib
 import multiprocessing as mp
 import warnings
 import numpy as np
-from functools import partial
 from keras import backend as K
 from os import environ
 from rl.util import *

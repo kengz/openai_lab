@@ -5,7 +5,6 @@ import json
 import logging
 import numpy as np
 import os
-import pprint
 from datetime import datetime, timedelta
 from os import path, environ
 
