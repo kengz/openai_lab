@@ -6,6 +6,7 @@ import matplotlib
 import multiprocessing as mp
 import warnings
 import numpy as np
+import platform
 import pandas as pd
 from keras import backend as K
 from os import environ
@@ -13,9 +14,12 @@ from rl.util import *
 from rl.agent import *
 from rl.memory import *
 from rl.policy import *
+from rl.state_preprocessing import *
 
 
-matplotlib.rcParams['backend'] = 'agg' if environ.get('CI') else 'TkAgg'
+# set only if it's not MacOS
+if environ.get('CI') or platform.system() != 'Darwin':
+    matplotlib.rcParams['backend'] = 'TkAgg'
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -61,8 +65,8 @@ class Grapher(object):
         self.session = session
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
-        self.figure = plt.figure(facecolor='white', figsize=(8, 9))
-        self.figure.suptitle(self.session.session_id, wrap=True)
+        self.figure = self.plt.figure(facecolor='white', figsize=(8, 9))
+        self.figure.suptitle(self.session.session_id)
         self.init_figure()
 
     def init_figure(self):
@@ -174,7 +178,9 @@ class Session(object):
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
-        self.agent = self.Agent(get_env_spec(self.env), **self.param)
+        self.env_spec = get_env_spec(self.env)
+        self.set_state_dim()
+        self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
         self.agent.compile(self.memory, self.policy)
@@ -216,15 +222,72 @@ class Session(object):
         sys_keys = self.sys_vars.keys()
         assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
 
+    def set_state_dim(self):
+        param = self.param
+        if 'state_preprocessing' in param:
+            if (param['state_preprocessing'] == 'concat'):
+                self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
+            elif (param['state_preprocessing'] == 'atari'):
+                self.env_spec['state_dim'] = (84, 84, 4)
+
     def debug_agent_info(self):
         logger.debug(
             "Agent info: {}".format(
-                format_obj_dict(self.agent, ['learning_rate', 'n_epoch'])))
+                format_obj_dict(
+                    self.agent,
+                    ['learning_rate', 'n_epoch', 'state_preprocessing'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
             "Policy info: {}".format(
                 format_obj_dict(self.agent.policy, ['e', 'tau'])))
+
+    def create_dummy_states(self, state):
+        # TODO refactor etc
+        previous_state = np.zeros(state.shape)
+        pre_previous_state = np.zeros(state.shape)
+        pre_pre_previous_state = np.zeros(state.shape)
+        if (previous_state.ndim == 1):
+            previous_state = np.zeros([state.shape[0]])
+            pre_previous_state = np.zeros([state.shape[0]])
+            pre_pre_previous_state = np.zeros([state.shape[0]])
+        return (previous_state, pre_previous_state, pre_pre_previous_state)
+
+    def process_state_for_action(self, state):
+        proc_state = state
+        param = self.param
+        if 'state_preprocessing' in param:
+            if (param['state_preprocessing'] == 'diff'):
+                proc_state = action_sel_processing_diff_states(
+                    state, previous_state)
+            elif (param['state_preprocessing'] == 'concat'):
+                proc_state = action_sel_processing_stack_states(
+                    state, previous_state)
+            elif (param['state_preprocessing'] == 'atari'):
+                proc_state = action_sel_processing_atari_states(
+                    state, previous_state,
+                    pre_previous_state,
+                    pre_pre_previous_state)
+        return proc_state
+
+    def process_state_for_memory(self, temp_exp_mem):
+        agent = self.agent
+        t = self.sys_vars['t']
+        param = self.param
+
+        # State preprocessing for memory, determined by spec.py
+        if 'state_preprocessing' in param:
+            if (param['state_preprocessing'] == 'diff'):
+                run_state_processing_diff_states(agent, temp_exp_mem, t)
+            elif (param['state_preprocessing'] == 'concat'):
+                run_state_processing_stack_states(agent, temp_exp_mem, t)
+            elif (param['state_preprocessing'] == 'atari'):
+                run_state_processing_atari(agent, temp_exp_mem, t)
+            else:
+                # Default: no processing
+                run_state_processing_none(agent, temp_exp_mem, t)
+        else:
+            run_state_processing_none(agent, temp_exp_mem, t)
 
     def check_end(self):
         '''check if session ends (if is last episode)
@@ -279,18 +342,36 @@ class Session(object):
         sys_vars['total_rewards'] = 0
         self.debug_agent_info()
 
+        (previous_state, pre_previous_state,
+            pre_pre_previous_state) = self.create_dummy_states(state)
+
+        # Temp memory buffer to hold last n experiences
+        # Enables data preprocessing, inc. diff and stack
+        temp_exp_mem = []
+
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
 
-            action = agent.select_action(state)
+            proc_state = self.process_state_for_action(state)
+            action = agent.select_action(proc_state)
             next_state, reward, done, info = env.step(action)
-            agent.memory.add_exp(action, reward, next_state, done)
+            temp_exp_mem.append([state, action, reward, next_state, done])
+            # Buffer currently set to hold only last 4 experiences
+            # Amount needed for Atari games preprocessing
+            if (len(temp_exp_mem) > 4):
+                del temp_exp_mem[0]
+
+            # agent.memory.add_exp(action, reward, next_state, done)
+            self.process_state_for_memory(temp_exp_mem)
             agent.update(sys_vars)
-            if agent.to_train(sys_vars):
+            if (t >= 3) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
 
+            pre_pre_previous_state = pre_previous_state
+            pre_previous_state = previous_state
+            previous_state = state
             state = next_state
             sys_vars['total_rewards'] += reward
             if done:
