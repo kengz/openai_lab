@@ -169,7 +169,9 @@ def get_module(GREF, dot_path):
 # to a line search of the param range
 # for each param
 # All other parameters set to default vals
-def param_line_search(default_param, param_range):
+def param_line_search(sess_spec):
+    default_param = sess_spec['param']
+    param_range = sess_spec['param_range']
     keys = param_range.keys()
     param_list = []
     for key in keys:
@@ -185,7 +187,9 @@ def param_line_search(default_param, param_range):
 # a list of cartesian products of param_range
 # e.g. {'a': [1,2], 'b': [3]} into
 # [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(default_param, param_range):
+def param_product(sess_spec):
+    default_param = sess_spec['param']
+    param_range = sess_spec['param_range']
     keys = param_range.keys()
     range_vals = param_range.values()
     param_grid = []

@@ -534,11 +534,9 @@ def run(sess_name_id_spec, times=1,
     # compose grid and run param selection
     if param_selection:
         if line_search:
-            param_grid = param_line_search(
-                sess_spec['param'], sess_spec['param_range'])
+            param_grid = param_line_search(sess_spec)
         else:
-            param_grid = param_product(
-                sess_spec['param'], sess_spec['param_range'])
+            param_grid = param_product(sess_spec)
         sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
         num_of_experiments = len(sess_spec_grid)
 
