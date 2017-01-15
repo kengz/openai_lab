@@ -33,10 +33,7 @@
     "param_range": {
       "learning_rate": [0.01, 0.1],
       "gamma": [0.95, 0.99],
-      "hidden_layers_shape": [
-        [4],
-        [4, 8, 4]
-      ]
+      "exploration_anneal_episodes": [10, 20]
     }
   },
   "double_dqn": {
