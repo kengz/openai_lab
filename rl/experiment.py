@@ -72,7 +72,7 @@ class Grapher(object):
         ax1 = self.figure.add_subplot(
             311,
             frame_on=False,
-            title="\ntotal rewards per episode",
+            title="\n\ntotal rewards per episode",
             ylabel='total rewards')
         p1, = ax1.plot([], [])
         self.subgraphs['total rewards'] = (ax1, p1)
