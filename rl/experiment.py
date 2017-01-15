@@ -426,8 +426,8 @@ class Experiment(object):
         configure_gpu()
         time_start = timestamp()
         sys_vars_array = []
-        for i in range(self.times):
-            sess = Session(experiment=self, session_num=i)
+        for s in range(self.times):
+            sess = Session(experiment=self, session_num=s)
             sys_vars = sess.run()
             sys_vars_array.append(copy.copy(sys_vars))
             time_end = timestamp()
@@ -478,9 +478,9 @@ def plot(experiment_id):
     # save with the right serialized filename
     experiment.experiment_id = experiment_id
 
-    for i in range(len(data['sys_vars_array'])):
-        sess = Session(experiment=experiment, session_num=i)
-        sys_vars = data['sys_vars_array'][i]
+    for s in range(len(data['sys_vars_array'])):
+        sess = Session(experiment=experiment, session_num=s)
+        sys_vars = data['sys_vars_array'][s]
         sess.sys_vars = sys_vars
         sess.grapher.plot()
         sess.clear_session()
@@ -526,10 +526,10 @@ def run(sess_name_id_spec, times=1,
         sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
 
         experiment_array = []
-        for i in range(len(sess_spec_grid)):
-            sess_spec = sess_spec_grid[i]
+        for e in range(len(sess_spec_grid)):
+            sess_spec = sess_spec_grid[e]
             experiment = Experiment(
-                sess_spec, times=times, experiment_num=i)
+                sess_spec, times=times, experiment_num=e)
             experiment_array.append(experiment)
 
         p = mp.Pool(PARALLEL_PROCESS_NUM)
