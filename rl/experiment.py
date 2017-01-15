@@ -444,6 +444,7 @@ class Experiment(object):
             time_taken = timestamp_elapse(time_start, time_end)
 
             self.data = {  # experiment data
+                'experiment_id': self.experiment_id,
                 'sess_spec': self.sess_spec,
                 'summary': {
                     'time_start': time_start,
@@ -503,6 +504,10 @@ def plot(experiment_id):
     return
 
 
+def analyze_param_space(experiment_data_array):
+    return
+
+
 def run(sess_name_id_spec, times=1,
         param_selection=False, line_search=True,
         plot_only=False):
@@ -549,7 +554,7 @@ def run(sess_name_id_spec, times=1,
             experiment_array.append(experiment)
 
         p = mp.Pool(PARALLEL_PROCESS_NUM)
-        list(p.map(mp_run_helper, experiment_array))
+        experiment_data_array = list(p.map(mp_run_helper, experiment_array))
         p.close()
         p.join()
     else:
