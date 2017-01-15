@@ -4,8 +4,8 @@ import gym
 import json
 import os
 import matplotlib
-matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
 import multiprocessing as mp
+import warnings
 import numpy as np
 from functools import partial
 from keras import backend as K
@@ -15,8 +15,10 @@ from rl.memory import *
 from rl.policy import *
 
 
-GREF = globals()
+matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
+warnings.filterwarnings("ignore", module="matplotlib")
 
+GREF = globals()
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 SESS_SPECS = json.loads(open(
