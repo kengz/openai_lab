@@ -237,9 +237,10 @@ class Session(object):
 
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
-            logger.info('Problem solved? {}\nAt episode: {}\nParams: {}'.format(
-                sys_vars['solved'], sys_vars['epi'],
-                to_json(self.param)))
+            logger.info(
+                'Problem solved? {}\nAt episode: {}\nParams: {}'.format(
+                    sys_vars['solved'], sys_vars['epi'],
+                    to_json(self.param)))
             self.env.close()
 
     def update_history(self):
@@ -370,11 +371,26 @@ class Experiment(object):
         return metrics
         '''
         sys_vars_array = self.data['sys_vars_array']
-        mean_r_array = [sys_vars['mean_rewards']
-                        for sys_vars in sys_vars_array]
+        solved_sys_vars_array = list(filter(
+            lambda sv: sv['solved'], sys_vars_array))
+        mean_rewards_array = list(map(lambda sv: sv['epi'], sys_vars_array))
+        solved_epi_array = list(
+            map(lambda sv: sv['epi'], solved_sys_vars_array))
+        solved_t_array = list(map(lambda sv: sv['t'], solved_sys_vars_array))
+        solved_time_taken_array = list(
+            map(lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+                solved_sys_vars_array))
+
         metrics = {
-            'experiment_mean': np.mean(mean_r_array),
-            'experiment_std': np.std(mean_r_array),
+            # percentage solved
+            'num_of_sessions': len(sys_vars_array),
+            'solved_num_of_sessions': len(solved_sys_vars_array),
+            'solved_ratio_of_sessions': float(len(
+                solved_sys_vars_array)) / len(sys_vars_array),
+            'mean_rewards_stats': basic_stats(mean_rewards_array),
+            'solved_epi_stats': basic_stats(solved_epi_array),
+            'solved_t_stats': basic_stats(solved_t_array),
+            'solved_time_taken_stats': basic_stats(solved_time_taken_array),
         }
         self.data['summary'].update({'metrics': metrics})
         return self.data

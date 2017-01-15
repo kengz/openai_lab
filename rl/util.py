@@ -6,7 +6,7 @@ import logging
 import numpy as np
 import os
 import pprint
-from datetime import datetime
+from datetime import datetime, timedelta
 from os import path, environ
 
 
@@ -79,6 +79,28 @@ def timestamp_elapse(s1, s2):
     FMT = '%Y-%m-%d_%H%M%S'
     delta_t = datetime.strptime(s2, FMT) - datetime.strptime(s1, FMT)
     return str(delta_t)
+
+
+def timestamp_elapse_to_seconds(s1):
+    a = datetime.strptime(s1, '%H:%M:%S')
+    secs = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second).seconds
+    return secs
+
+
+def seconds_to_timestamp_elapse(secs):
+    return
+
+
+def basic_stats(array):
+    '''generate the basic stats for a numerical array'''
+    if not array:
+        return None
+    return {
+        'min': np.min(array).astype(float),
+        'max': np.max(array).astype(float),
+        'mean': np.mean(array).astype(float),
+        'std': np.std(array).astype(float),
+    }
 
 
 # own custom sorted json serializer, cuz python
