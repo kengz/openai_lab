@@ -160,6 +160,8 @@ class Session(object):
         self.experiment = experiment
         self.session_id = self.experiment.experiment_id + \
             '_s' + str(session_num)
+        log_delimiter('Running Session:\n{}'.format(self.session_id))
+
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
         self.Agent = get_module(GREF, self.sess_spec['Agent'])
@@ -315,6 +317,7 @@ class Session(object):
         sys_vars['time_start'] = time_start
         sys_vars['time_end'] = time_end
         sys_vars['time_taken'] = time_taken
+        log_delimiter('Ending Session:\n{}'.format(self.session_id))
 
         return sys_vars
 
@@ -359,6 +362,8 @@ class Experiment(object):
         )
         self.base_filename = './data/{}'.format(self.experiment_id)
         self.data_filename = self.base_filename + '.json'
+        log_delimiter(
+            'Running Experiment:\n{}'.format(self.experiment_id), '=')
 
     def analyze(self):
         '''
@@ -382,7 +387,7 @@ class Experiment(object):
         with open(self.data_filename, 'w') as f:
             f.write(to_json(self.data))
         logger.info(
-            'Experiment complete, written to {}'.format(self.data_filename))
+            'Session complete, data saved to {}'.format(self.data_filename))
 
     def run(self):
         '''
@@ -412,6 +417,9 @@ class Experiment(object):
             self.analyze()
             # progressive update, write when every session is done
             self.save()
+
+        log_delimiter(
+            'Ending Experiment:\n{}'.format(self.experiment_id), '=')
         return self.data
 
 

@@ -55,6 +55,20 @@ def get_env_spec(env):
     }
 
 
+def print_line(line='-'):
+    rows, columns = os.popen('stty size', 'r').read().split()
+    line_str = line*int(columns)
+    print(line_str)
+
+
+def log_delimiter(msg, line='-'):
+    print('{:\n>3}'.format(''))
+    print_line(line)
+    print(msg)
+    print_line(line)
+    print('{:\n>3}'.format(''))
+
+
 def timestamp():
     '''timestamp used for filename'''
     return '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
