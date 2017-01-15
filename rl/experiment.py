@@ -19,7 +19,7 @@ from rl.state_preprocessing import *
 
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() != 'Darwin':
-    matplotlib.rcParams['backend'] = 'TkAgg'
+    matplotlib.rcParams['backend'] = 'agg'
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
