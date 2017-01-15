@@ -2,20 +2,20 @@
 import copy
 import gym
 import json
-import os
 import matplotlib
 import multiprocessing as mp
 import warnings
 import numpy as np
 from functools import partial
 from keras import backend as K
+from os import environ
 from rl.util import *
 from rl.agent import *
 from rl.memory import *
 from rl.policy import *
 
 
-matplotlib.rcParams['backend'] = 'agg' if os.environ.get('CI') else 'TkAgg'
+matplotlib.rcParams['backend'] = 'agg' if environ.get('CI') else 'TkAgg'
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -66,7 +66,7 @@ class Grapher(object):
         self.init_figure()
 
     def init_figure(self):
-        if not self.session.sys_vars['RENDER']:
+        if environ.get('CI'):
             return
         # graph 1
         ax1 = self.figure.add_subplot(
@@ -107,7 +107,7 @@ class Grapher(object):
     def plot(self):
         '''do live plotting'''
         sys_vars = self.session.sys_vars
-        if not sys_vars['RENDER']:
+        if environ.get('CI'):
             return
         ax1, p1 = self.subgraphs['total rewards']
         p1.set_ydata(
@@ -192,7 +192,7 @@ class Session(object):
         '''
         sys_vars = PROBLEMS[self.problem]
         if not args.render:
-            sys_vars['RENDER'] = False  # mute on parallel
+            sys_vars['RENDER'] = False
         if environ.get('CI'):
             sys_vars['RENDER'] = False
             sys_vars['MAX_EPISODES'] = 4
