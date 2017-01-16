@@ -31,7 +31,6 @@
       "gamma": 0.99,
       "hidden_layers_shape": [4],
       "hidden_layers_activation": "sigmoid",
-      "state_preprocessing": null,
       "exploration_anneal_episodes": 10
     },
     "param_range": {
@@ -127,7 +126,6 @@
       "hidden_layers_shape": [200, 100],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
-      "state_preprocessing": "concat",
       "exploration_anneal_episodes": 100,
       "epi_change_learning_rate": 150
     },
@@ -178,7 +176,6 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "state_preprocessing": "atari",
       "exploration_anneal_episodes": 1000000,
       "epi_change_learning_rate": 1000000
     },
@@ -207,7 +204,6 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "state_preprocessing": "atari",
       "exploration_anneal_episodes": 1000000,
       "epi_change_learning_rate": 1000000
     },
