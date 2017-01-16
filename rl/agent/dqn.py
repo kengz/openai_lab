@@ -4,9 +4,7 @@ from rl.util import logger, to_json
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
-# from keras.regularizers import l1, l2
-# from keras.constraints import maxnorm
-# from keras.objectives import mse
+from keras.constraints import maxnorm
 
 
 class DQN(Agent):
@@ -46,13 +44,15 @@ class DQN(Agent):
         model.add(Dense(self.hidden_layers[0],
                         input_shape=(self.env_spec['state_dim'],),
                         init='lecun_uniform',
-                        activation=self.hidden_layers_activation))
+                        activation=self.hidden_layers_activation,
+                        W_constraint=maxnorm(3)))
 
         if (len(self.hidden_layers) > 1):
             for i in range(1, len(self.hidden_layers)):
                 model.add(Dense(self.hidden_layers[i],
                                 init='lecun_uniform',
-                                activation=self.hidden_layers_activation))
+                                activation=self.hidden_layers_activation,
+                                W_constraint=maxnorm(3)))
 
         return model
 
@@ -61,7 +61,8 @@ class DQN(Agent):
         self.build_hidden_layers(model)
         model.add(Dense(self.env_spec['action_dim'],
                         init='lecun_uniform',
-                        activation=self.output_layer_activation))
+                        activation=self.output_layer_activation,
+                        W_constraint=maxnorm(3)))
 
         logger.info("Model summary")
         model.summary()
