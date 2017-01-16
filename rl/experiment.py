@@ -16,10 +16,15 @@ from rl.memory import *
 from rl.policy import *
 from rl.state_preprocessing import *
 
-
+# TODO fix mp breaking on Mac shit,
+# except when running -b with agg backend
+# (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() != 'Darwin':
     matplotlib.rcParams['backend'] = 'TkAgg'
+else:
+    matplotlib.rcParams['backend'] = 'agg'
+
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -229,6 +234,7 @@ class Session(object):
                 self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
             elif (param['state_preprocessing'] == 'atari'):
                 self.env_spec['state_dim'] = (84, 84, 4)
+        return self.env_spec
 
     def debug_agent_info(self):
         logger.debug(
@@ -345,6 +351,7 @@ class Session(object):
         sys_vars['total_rewards'] = 0
         self.debug_agent_info()
 
+        # TODO refactor preprocessing
         (previous_state, pre_previous_state,
             pre_pre_previous_state) = self.create_dummy_states(state)
 
@@ -397,7 +404,9 @@ class Session(object):
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode()
-            if 'epi_change_learning_rate' in self.param and epi == self.param['epi_change_learning_rate']:
+            # TODO refactor to inside agent
+            if ('epi_change_learning_rate' in self.param and
+                    epi == self.param['epi_change_learning_rate']):
                 self.agent.recompile_model(self.param['learning_rate'] / 10.0)
             if sys_vars['solved']:
                 break
