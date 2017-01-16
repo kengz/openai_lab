@@ -236,6 +236,12 @@ def load_data_from_experiment_id(experiment_id):
     return data
 
 
+def prefix_id_from_experiment_id(experiment_id):
+    str_arr = experiment_id.split('_')
+    str_arr.pop()
+    return '_'.join(str_arr)
+
+
 def load_data_array_from_prefix_id(prefix_id):
     # to load all ./data files for a series of experiments
     data_path = './data'
