@@ -1,6 +1,7 @@
 import numpy as np
 from rl.agent.base_agent import Agent
 from rl.util import logger, to_json
+from rl.state_preprocessing import NoPreProcessing
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -22,6 +23,7 @@ class DQN(Agent):
                  batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
                  output_layer_activation=None,
+                 state_preprocessing=NoPreProcessing(),
                  **kwargs):  # absorb generic param without breaking
         super(DQN, self).__init__(env_spec)
 
@@ -34,6 +36,7 @@ class DQN(Agent):
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
+        self.state_preprocessing = state_preprocessing
         logger.info('Agent params: {}'.format(to_json(self.__dict__)))
         self.build_model()
 
