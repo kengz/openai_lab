@@ -20,10 +20,10 @@ from rl.state_preprocessing import *
 # except when running -b with agg backend
 # (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
-if platform.system() != 'Darwin':
-    matplotlib.rcParams['backend'] = 'TkAgg'
-else:
+if os.environ('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
+else:
+    matplotlib.rcParams['backend'] = 'TkAgg'
 
 warnings.filterwarnings("ignore", module="matplotlib")
 
