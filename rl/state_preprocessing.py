@@ -1,3 +1,4 @@
+from rl.util import logger
 import numpy as np
 import scipy as sp
 
@@ -64,8 +65,8 @@ def run_state_processing_stack_states(agent, temp_exp_mem, t):
         next_state = processed_next_state
         done = temp_exp_mem[-1][4]
         if (t == 1):
-            print("State shape: {}".format(processed_state.shape))
-            print("Next state shape: {}".format(processed_next_state.shape))
+            logger.debug("State shape: {}".format(processed_state.shape))
+            logger.debug("Next state shape: {}".format(processed_next_state.shape))
         agent.memory.add_exp_processed(processed_state, action, reward,
                                        processed_next_state, next_state, done)
 
@@ -80,8 +81,8 @@ def run_state_processing_diff_states(agent, temp_exp_mem, t):
         next_state = processed_next_state
         done = temp_exp_mem[-1][4]
         if (t == 1):
-            print("State shape: {}".format(processed_state.shape))
-            print("Next state shape: {}".format(processed_next_state.shape))
+            logger.debug("State shape: {}".format(processed_state.shape))
+            logger.debug("Next state shape: {}".format(processed_next_state.shape))
         agent.memory.add_exp_processed(processed_state, action, reward,
                                        processed_next_state, next_state, done)
 
@@ -106,7 +107,7 @@ def run_state_processing_atari(agent, temp_exp_mem, t):
         next_state = processed_next_state
         done = temp_exp_mem[-1][4]
         if (t == 3):
-            print("State shape: {}".format(processed_state.shape))
-            print("Next state shape: {}".format(processed_next_state.shape))
+            logger.debug("State shape: {}".format(processed_state.shape))
+            logger.debug("Next state shape: {}".format(processed_next_state.shape))
         agent.memory.add_exp_processed(processed_state, action, reward,
                                        processed_next_state, next_state, done)
