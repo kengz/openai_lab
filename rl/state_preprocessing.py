@@ -136,12 +136,12 @@ class Atari(PreProcessing):
             reward = temp_exp_mem[-1][2]
             processed_next_state = np.stack(next_arrays, axis=-1)
             next_state = processed_next_state
-#             done = temp_exp_mem[-1][4]
-#             if (t == 3):
-#                 logger.debug("State shape: {}".format(processed_state.shape))
-#                 logger.debug("Next state shape: {}".format(processed_next_state.shape))
-#             agent.memory.add_exp_processed(processed_state, action, reward,
-#                                            processed_next_state, next_state, done)
+            done = temp_exp_mem[-1][4]
+            if (t == 3):
+                logger.debug("State shape: {}".format(processed_state.shape))
+                logger.debug("Next state shape: {}".format(processed_next_state.shape))
+            agent.memory.add_exp_processed(processed_state, action, reward,
+                                           processed_next_state, next_state, done)
 
 
 # Util functions for state preprocessing
