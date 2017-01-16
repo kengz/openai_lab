@@ -7,6 +7,12 @@ class PreProcessing(object):
     '''
     The Base class for state preprocessing
     '''
+    def __init__(self, 
+                        **kwargs):  # absorb generic param without breaking
+        '''
+        Construct externally, and set at Agent.compile()
+        '''
+        self.agent = None
 
     def preprocessing_action_sel(self, state,
                                                                     previous_state,
@@ -22,7 +28,8 @@ class NoPreProcessing(PreProcessing):
     Default class, no preprocessing
     '''
 
-    def __init__(self):
+    def __init__(self,
+                        **kwargs):  # absorb generic param without breaking):
         super(NoPreProcessing, self).__init__()
 
     def preprocessing_action_sel(self, state,
@@ -38,7 +45,7 @@ class NoPreProcessing(PreProcessing):
         reward = temp_exp_mem[-1][2]
         next_state = temp_exp_mem[-1][3]
         done = temp_exp_mem[-1][4]
-        agent.memory.add_exp_processed(state, action, reward,
+        self.agent.memory.add_exp_processed(state, action, reward,
                                        next_state, next_state, done)
 
 
@@ -46,7 +53,8 @@ class StackStates(PreProcessing):
     '''
     Current and last state are concatenated to form input to model
     '''
-    def __init__(self,):
+    def __init__(self,
+                        **kwargs):  # absorb generic param without breaking):
         super(StackStates, self).__init__()
 
     def preprocessing_action_sel(self, state,
@@ -69,7 +77,7 @@ class StackStates(PreProcessing):
             if (t == 1):
                 logger.debug("State shape: {}".format(processed_state.shape))
                 logger.debug("Next state shape: {}".format(processed_next_state.shape))
-            agent.memory.add_exp_processed(processed_state, action, reward,
+            self.agent.memory.add_exp_processed(processed_state, action, reward,
                                            processed_next_state, next_state, done)
 
 
@@ -77,7 +85,8 @@ class DiffStates(PreProcessing):
     '''
     Different between current and last state is input to model
     '''
-    def __init__(self):
+    def __init__(self,
+                        **kwargs):  # absorb generic param without breaking):
         super(DiffStates, self).__init__()
 
     def preprocessing_action_sel(self, state,
@@ -98,7 +107,7 @@ class DiffStates(PreProcessing):
             if (t == 1):
                 logger.debug("State shape: {}".format(processed_state.shape))
                 logger.debug("Next state shape: {}".format(processed_next_state.shape))
-            agent.memory.add_exp_processed(processed_state, action, reward,
+            self.agent.memory.add_exp_processed(processed_state, action, reward,
                                            processed_next_state, next_state, done)
 
 class Atari(PreProcessing):
@@ -108,7 +117,8 @@ class Atari(PreProcessing):
     Input to model is rows * cols * channels (== states)
     '''
 
-    def __init__(self):
+    def __init__(self,
+                        **kwargs):  # absorb generic param without breaking):
         super(Atari, self).__init__()
 
     def preprocessing_action_sel(self, state,
@@ -140,7 +150,7 @@ class Atari(PreProcessing):
             if (t == 3):
                 logger.debug("State shape: {}".format(processed_state.shape))
                 logger.debug("Next state shape: {}".format(processed_next_state.shape))
-            agent.memory.add_exp_processed(processed_state, action, reward,
+            self.agent.memory.add_exp_processed(processed_state, action, reward,
                                            processed_next_state, next_state, done)
 
 

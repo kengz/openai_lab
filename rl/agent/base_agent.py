@@ -19,7 +19,8 @@ class Agent(object):
         # back references
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)
-        logger.info('Compiled Agent, Memory, Policy')
+        setattr(preprocessing, 'agent', self)
+        logger.info('Compiled Agent, Memory, Policy, Preprocessing')
 
     def select_action(self, state):
         self.policy.select_action(state)
