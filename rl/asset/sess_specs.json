@@ -22,6 +22,7 @@
     "Agent": "dqn.DQN",
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -40,6 +41,7 @@
     "Agent": "dqn.DQN",
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -59,6 +61,7 @@
     "Agent": "double_dqn.DoubleDQN",
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.01,
@@ -74,6 +77,7 @@
     "Agent": "lunar_dqn.LunarDQN",
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 4,
       "learning_rate": 0.001,
@@ -96,6 +100,7 @@
     "Agent": "mountain_double_dqn.MountainDoubleDQN",
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.01,
@@ -111,6 +116,7 @@
     "Agent": "lunar_dqn.LunarDQN",
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.Sta",
     "param": {
       "train_per_n_new_exp": 5,
       "learning_rate": 0.0005,
@@ -143,6 +149,7 @@
     "Agent": "lunar_double_dqn.LunarDoubleDQN",
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.01,
@@ -158,6 +165,7 @@
     "Agent": "atari_conv_dqn.ConvDQN",
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 4,
       "learning_rate": 0.001,
@@ -186,6 +194,7 @@
     "Agent": "atari_conv_dqn.ConvDQN",
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
+    "Preprocessing": "state_preprocessing.NoPreProcessing",
     "param": {
       "train_per_n_new_exp": 4,
       "learning_rate": 0.001,
