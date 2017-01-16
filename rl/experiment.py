@@ -20,7 +20,7 @@ from rl.state_preprocessing import *
 # except when running -b with agg backend
 # (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
-if os.environ('CI') or platform.system() == 'Darwin':
+if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
