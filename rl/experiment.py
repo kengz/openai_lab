@@ -19,7 +19,7 @@ from rl.state_preprocessing import *
 
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() != 'Darwin':
-    matplotlib.rcParams['backend'] = 'agg'
+    matplotlib.rcParams['backend'] = 'TkAgg'
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -253,7 +253,10 @@ class Session(object):
             pre_pre_previous_state = np.zeros([state.shape[0]])
         return (previous_state, pre_previous_state, pre_pre_previous_state)
 
-    def process_state_for_action(self, state):
+    def process_state_for_action(self, state,
+                                 previous_state,
+                                 pre_previous_state,
+                                 pre_pre_previous_state):
         proc_state = state
         param = self.param
         if 'state_preprocessing' in param:
@@ -354,7 +357,10 @@ class Session(object):
             if sys_vars.get('RENDER'):
                 env.render()
 
-            proc_state = self.process_state_for_action(state)
+            proc_state = self.process_state_for_action(
+                state, previous_state,
+                pre_previous_state,
+                pre_pre_previous_state)
             action = agent.select_action(proc_state)
             next_state, reward, done, info = env.step(action)
             temp_exp_mem.append([state, action, reward, next_state, done])

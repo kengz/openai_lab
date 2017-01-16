@@ -112,33 +112,29 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "param": {
-      "train_per_n_new_exp": 4,
-      "learning_rate": 0.001,
+      "train_per_n_new_exp": 5,
+      "learning_rate": 0.0005,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [200, 100],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "state_preprocessing": "concat",
-      "exploration_anneal_episodes": 300,
-      "epi_change_learning_rate": 325
+      "exploration_anneal_episodes": 100,
+      "epi_change_learning_rate": 150
     },
     "param_range": {
-      "train_per_n_new_exp": [1, 2, 3, 4, 5, 8, 10, 15],
-      "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "exploration_anneal_episodes": [100, 200, 300, 400, 500, 600],
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005, 0.0001],
+      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "state_preprocessing": ["concat", "diff", null],
+      "epi_change_learning_rate": [75, 150, 200, 250],
       "hidden_layers_shape": [
-        [100],
-        [200],
-        [300],
-        [400],
-        [500],
         [200, 100],
-        [300, 100],
         [300, 150],
-        [400, 100],
-        [400, 200]
+        [300, 200],
+        [300, 150, 75],
+        [400, 200],
+        [400, 200, 100],
+        [400, 300]
       ]
     }
   },
