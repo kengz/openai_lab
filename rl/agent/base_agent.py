@@ -11,10 +11,11 @@ class Agent(object):
                  **kwargs):  # absorb generic param without breaking
         self.env_spec = env_spec
 
-    def compile(self, memory, policy):
+    def compile(self, memory, policy, preprocessing):
         # set 2 way references
         self.memory = memory
         self.policy = policy
+        self.preprocessing = preprocessing
         # back references
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)

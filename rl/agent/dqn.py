@@ -23,7 +23,6 @@ class DQN(Agent):
                  batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
                  output_layer_activation=None,
-                 state_preprocessing=NoPreProcessing(),
                  **kwargs):  # absorb generic param without breaking
         super(DQN, self).__init__(env_spec)
 
@@ -36,7 +35,6 @@ class DQN(Agent):
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        self.state_preprocessing = state_preprocessing
         logger.info('Agent params: {}'.format(to_json(self.__dict__)))
         self.build_model()
 
