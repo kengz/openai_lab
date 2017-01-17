@@ -364,10 +364,7 @@ class Session(object):
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode()
-            # TODO refactor to inside agent
-            if ('epi_change_learning_rate' in self.param and
-                    epi == self.param['epi_change_learning_rate']):
-                self.agent.recompile_model(self.param['learning_rate'] / 10.0)
+            self.agent.recompile_model(self.param, self.sys_vars)
             if sys_vars['solved']:
                 break
 

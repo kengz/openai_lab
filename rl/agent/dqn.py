@@ -74,16 +74,18 @@ class DQN(Agent):
         logger.info("Model built and compiled")
         return self.model
 
-    def recompile_model(self, new_lr):
+    def recompile_model(self, params, sys_vars):
         '''
         Option to change model optimizer settings
         Currently only used for changing the learning rate
         Compiling does not affect the model weights
         '''
-        self.learning_rate = new_lr
-        self.optimizer = SGD(lr=self.learning_rate)
-        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
-        logger.info("Model recompiled with new settings: Learning rate: {}".format(self.learning_rate))
+        if 'epi_change_learning_rate' in params:
+            if (sys_vars['epi'] == params['epi_change_learning_rate']):
+                self.learning_rate = self.learning_rate / 10.0
+                self.optimizer = SGD(lr=self.learning_rate)
+                self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
+                logger.info("Model recompiled with new settings: Learning rate: {}".format(self.learning_rate))
 
     def update_n_epoch(self, sys_vars):
         '''
