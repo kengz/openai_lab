@@ -1,7 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
 from rl.util import logger, to_json
-from rl.state_preprocessing import NoPreProcessing
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -84,8 +83,11 @@ class DQN(Agent):
             if (sys_vars['epi'] == params['epi_change_learning_rate']):
                 self.learning_rate = self.learning_rate / 10.0
                 self.optimizer = SGD(lr=self.learning_rate)
-                self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
-                logger.info("Model recompiled with new settings: Learning rate: {}".format(self.learning_rate))
+                self.model.compile(
+                    loss='mean_squared_error', optimizer=self.optimizer)
+                logger.info('Model recompiled with new settings: '
+                            'Learning rate: {}'.format(self.learning_rate))
+        return self.model
 
     def update_n_epoch(self, sys_vars):
         '''
