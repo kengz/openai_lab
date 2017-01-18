@@ -1,6 +1,6 @@
 import numpy as np
 import scipy as sp
-from rl.util import logger
+from rl.util import logger, log_self
 
 
 # Util functions for state preprocessing
@@ -57,6 +57,7 @@ class NoPreProcessor(PreProcessor):
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking):
         super(NoPreProcessor, self).__init__()
+        log_self(self)
 
     def preprocess_action_sel(self, state,
                               previous_state,
@@ -85,6 +86,7 @@ class StackStates(PreProcessor):
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking):
         super(StackStates, self).__init__()
+        log_self(self)
 
     def preprocess_action_sel(self, state,
                               previous_state,
@@ -121,6 +123,7 @@ class DiffStates(PreProcessor):
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking):
         super(DiffStates, self).__init__()
+        log_self(self)
 
     def preprocess_action_sel(self, state,
                               previous_state,
@@ -157,6 +160,7 @@ class Atari(PreProcessor):
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking):
         super(Atari, self).__init__()
+        log_self(self)
 
     def preprocess_action_sel(self, state,
                               previous_state,

@@ -20,7 +20,10 @@ class Agent(object):
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)
         setattr(preprocessor, 'agent', self)
-        logger.info('Compiled Agent, Memory, Policy, Preprocessor')
+        logger.info('Compiled:\nAgent, Memory, Policy, Preprocessor:\n{}'.format(
+            ', '.join([comp.__class__.__name__ for comp in [
+                self, memory, policy, preprocessor]])
+        ))
 
     def select_action(self, state):
         self.policy.select_action(state)

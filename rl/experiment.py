@@ -246,6 +246,9 @@ class Session(object):
         logger.debug(
             "Policy info: {}".format(
                 format_obj_dict(self.agent.policy, ['e', 'tau'])))
+        logger.debug(
+            "PreProcessor info: {}".format(
+                format_obj_dict(self.agent.preprocessor, [])))
 
     def create_dummy_states(self, state):
         # TODO refactor etc

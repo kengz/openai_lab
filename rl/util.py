@@ -36,6 +36,12 @@ logger.addHandler(handler)
 logger.propagate = False
 
 
+def log_self(subject):
+    logger.info('{}, params: {}'.format(
+        subject.__class__.__name__,
+        to_json(subject.__dict__)))
+
+
 def get_env_spec(env):
     '''Helper: return the env specs: dims, actions, reward range'''
     state_dim = env.observation_space.shape[0]

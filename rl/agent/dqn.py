@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
-from rl.util import logger, to_json
+from rl.util import logger, log_self
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -34,7 +34,7 @@ class DQN(Agent):
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        logger.info('Agent params: {}'.format(to_json(self.__dict__)))
+        log_self(self)
         self.build_model()
 
     def build_hidden_layers(self, model):
