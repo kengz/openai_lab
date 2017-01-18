@@ -21,7 +21,7 @@ class DQN(Agent):
                  gamma=0.95, learning_rate=0.1,
                  batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation=None,
+                 output_layer_activation='linear',
                  **kwargs):  # absorb generic param without breaking
         super(DQN, self).__init__(env_spec)
 
