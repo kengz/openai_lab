@@ -131,7 +131,6 @@
     },
     "param_range": {
       "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-      "state_preprocessing": ["concat", "diff", null],
       "epi_change_learning_rate": [75, 150, 200, 250],
       "hidden_layers_shape": [
         [200, 100],

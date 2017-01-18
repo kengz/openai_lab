@@ -14,7 +14,7 @@ from rl.util import *
 from rl.agent import *
 from rl.memory import *
 from rl.policy import *
-from rl.state_preprocessing import *
+from rl.preprocessor import *
 
 # TODO fix mp breaking on Mac shit,
 # except when running -b with agg backend
@@ -240,7 +240,7 @@ class Session(object):
             "Agent info: {}".format(
                 format_obj_dict(
                     self.agent,
-                    ['learning_rate', 'n_epoch', 'state_preprocessing'])))
+                    ['learning_rate', 'n_epoch', 'preprocessor'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
