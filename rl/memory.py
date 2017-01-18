@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, to_json
+from rl.util import log_self
 from scipy.stats import halfnorm
 
 
@@ -60,7 +60,7 @@ class LinearMemory(Memory):
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
-        logger.info('Memory params: {}'.format(to_json(self.__dict__)))
+        log_self(self)
 
     def one_hot_action(self, action):
         action_arr = np.zeros(self.agent.env_spec['action_dim'])
@@ -80,8 +80,8 @@ class LinearMemory(Memory):
         self.exp['terminals'].append(int(terminal))
         self.state = next_state
 
-    def add_exp_processed(self, processed_state, action, reward, 
-                                processed_next_state, next_state, terminal):
+    def add_exp_processed(self, processed_state, action, reward,
+                          processed_next_state, next_state, terminal):
         '''
         similar to add_exp function but allows for preprocessing raw state input
         E.g. concatenating states, diffing states, cropping, grayscale and stacking images
@@ -136,19 +136,19 @@ class LinearMemoryWithForgetting(LinearMemory):
             for k in self.exp_keys:
                 del self.exp[k][0]
 
-    def add_exp_processed(self, processed_state, action, reward, 
-                                processed_next_state, next_state, terminal):
+    def add_exp_processed(self, processed_state, action, reward,
+                          processed_next_state, next_state, terminal):
         '''
         add processed exp as usual, but preserve only the recent episodes
         '''
         super(LinearMemoryWithForgetting, self).add_exp_processed(
-                    processed_state, action, reward, 
-                    processed_next_state, next_state, terminal)
+            processed_state, action, reward,
+            processed_next_state, next_state, terminal)
 
         if (self.size() > 50000):
             for k in self.exp_keys:
                 del self.exp[k][0]
-                
+
 
 class LongLinearMemoryWithForgetting(LinearMemory):
 
@@ -217,6 +217,7 @@ class RankedMemory(LinearMemory):
         self.sorted_epi_exp = self.exp
         self.n_best_epi = 10
         # then do left tail selection or early forget, I dont care
+        log_self(self)
 
     # merge the epi_memory into an exp object
     def merge_exp(self):
@@ -225,7 +226,8 @@ class RankedMemory(LinearMemory):
         half_epi_len = int(float(len(self.epi_memory))/float(2))
         for k in self.exp_keys:
             k_exp = np.concatenate(
-                [epi_exp['exp'][k] for epi_exp in self.epi_memory[-half_epi_len:]]
+                [epi_exp['exp'][k]
+                    for epi_exp in self.epi_memory[-half_epi_len:]]
             )
             sorted_exp[k] = k_exp
         return sorted_exp

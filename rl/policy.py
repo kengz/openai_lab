@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, to_json
+from rl.util import log_self
 
 
 class Policy(object):
@@ -36,7 +36,7 @@ class EpsilonGreedyPolicy(Policy):
         self.final_e = final_e
         self.e = self.init_e
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        logger.info('Policy params: {}'.format(to_json(self.__dict__)))
+        log_self(self)
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -131,7 +131,7 @@ class BoltzmannPolicy(Policy):
         self.final_tau = final_tau
         self.tau = self.init_tau
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        logger.info('Policy params: {}'.format(to_json(self.__dict__)))
+        log_self(self)
 
     def select_action(self, state):
         agent = self.agent

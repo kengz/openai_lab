@@ -21,3 +21,6 @@ class Dummy(Agent):
 
     def train(self, sys_vars):
         return
+
+    def recompile_model(self, params, sys_vars):
+        return

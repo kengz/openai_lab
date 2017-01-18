@@ -11,14 +11,19 @@ class Agent(object):
                  **kwargs):  # absorb generic param without breaking
         self.env_spec = env_spec
 
-    def compile(self, memory, policy):
+    def compile(self, memory, policy, preprocessor):
         # set 2 way references
         self.memory = memory
         self.policy = policy
+        self.preprocessor = preprocessor
         # back references
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)
-        logger.info('Compiled Agent, Memory, Policy')
+        setattr(preprocessor, 'agent', self)
+        logger.info('Compiled:\nAgent, Memory, Policy, Preprocessor:\n{}'.format(
+            ', '.join([comp.__class__.__name__ for comp in [
+                self, memory, policy, preprocessor]])
+        ))
 
     def select_action(self, state):
         self.policy.select_action(state)
@@ -35,4 +40,7 @@ class Agent(object):
         raise NotImplementedError()
 
     def train(self, sys_vars):
+        raise NotImplementedError()
+
+    def recompile_model(self, params, sys_vars):
         raise NotImplementedError()
