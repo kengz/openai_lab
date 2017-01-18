@@ -41,3 +41,6 @@ class Agent(object):
 
     def train(self, sys_vars):
         raise NotImplementedError()
+
+    def recompile_model(self, params, sys_vars):
+        raise NotImplementedError()
