@@ -218,6 +218,7 @@ def generate_sess_spec_grid(sess_spec, param_grid):
         'Agent': sess_spec['Agent'],
         'Memory': sess_spec['Memory'],
         'Policy': sess_spec['Policy'],
+        'PreProcessor': sess_spec['PreProcessor'],
         'param': param,
     } for param in param_grid]
     return sess_spec_grid

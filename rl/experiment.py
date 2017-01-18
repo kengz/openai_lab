@@ -178,7 +178,7 @@ class Session(object):
         self.Agent = get_module(GREF, self.sess_spec['Agent'])
         self.Memory = get_module(GREF, self.sess_spec['Memory'])
         self.Policy = get_module(GREF, self.sess_spec['Policy'])
-        self.Preprocessing = get_module(GREF, self.sess_spec['Preprocessing'])
+        self.PreProcessor = get_module(GREF, self.sess_spec['PreProcessor'])
         self.param = self.sess_spec['param']
 
         # init all things, so a session can only be ran once
@@ -189,8 +189,8 @@ class Session(object):
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.preprocessing = self.Preprocessing(**self.param)
-        self.agent.compile(self.memory, self.policy, self.preprocessing)
+        self.preprocessor = self.PreProcessor(**self.param)
+        self.agent.compile(self.memory, self.policy, self.preprocessor)
 
         # data file and graph
         self.base_filename = './data/{}'.format(self.session_id)
@@ -230,9 +230,9 @@ class Session(object):
         assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
 
     def set_state_dim(self):
-        if self.Preprocessing is StackStates:
+        if self.PreProcessor is StackStates:
             self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
-        elif self.Preprocessing is Atari:
+        elif self.PreProcessor is Atari:
             self.env_spec['state_dim'] = (84, 84, 4)
 
     def debug_agent_info(self):
@@ -240,7 +240,7 @@ class Session(object):
             "Agent info: {}".format(
                 format_obj_dict(
                     self.agent,
-                    ['learning_rate', 'n_epoch', 'preprocessor'])))
+                    ['learning_rate', 'n_epoch'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
@@ -324,7 +324,7 @@ class Session(object):
             if sys_vars.get('RENDER'):
                 env.render()
 
-            proc_state = agent.preprocessing.preprocessing_action_sel(
+            proc_state = agent.preprocessor.preprocess_action_sel(
                 state, previous_state,
                 pre_previous_state,
                 pre_pre_previous_state)
@@ -337,7 +337,7 @@ class Session(object):
                 del temp_exp_mem[0]
 
             # agent.memory.add_exp(action, reward, next_state, done)
-            agent.preprocessing.preprocessing_memory(temp_exp_mem, t)
+            agent.preprocessor.preprocess_memory(temp_exp_mem, t)
             agent.update(sys_vars)
             if (t >= 3) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
@@ -424,7 +424,7 @@ class Experiment(object):
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
             sess_spec['Policy'].split('.').pop(),
-            sess_spec['Preprocessing'].split('.').pop(),
+            sess_spec['PreProcessor'].split('.').pop(),
             self.run_timestamp
         )
         self.experiment_id = self.prefix_id + '_e' + str(self.experiment_num)

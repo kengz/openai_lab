@@ -25,7 +25,7 @@ def process_image_atari(im):
     return im_cropped
 
 
-class PreProcessing(object):
+class PreProcessor(object):
 
     '''
     The Base class for state preprocessing
@@ -38,17 +38,17 @@ class PreProcessing(object):
         '''
         self.agent = None
 
-    def preprocessing_action_sel(self, state,
-                                 previous_state,
-                                 pre_previous_state,
-                                 pre_pre_previous_state):
+    def preprocess_action_sel(self, state,
+                              previous_state,
+                              pre_previous_state,
+                              pre_pre_previous_state):
         raise NotImplementedError()
 
-    def preprocessing_memory(self, temp_exp_mem, t):
+    def preprocess_memory(self, temp_exp_mem, t):
         raise NotImplementedError()
 
 
-class NoPreProcessing(PreProcessing):
+class NoPreProcessor(PreProcessor):
 
     '''
     Default class, no preprocessing
@@ -56,26 +56,27 @@ class NoPreProcessing(PreProcessing):
 
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking):
-        super(NoPreProcessing, self).__init__()
+        super(NoPreProcessor, self).__init__()
 
-    def preprocessing_action_sel(self, state,
-                                 previous_state,
-                                 pre_previous_state,
-                                 pre_pre_previous_state):
+    def preprocess_action_sel(self, state,
+                              previous_state,
+                              pre_previous_state,
+                              pre_pre_previous_state):
         return state
 
-    def preprocessing_memory(self, temp_exp_mem, t):
+    def preprocess_memory(self, temp_exp_mem, t):
         # No state processing
         state = temp_exp_mem[-1][0]
         action = temp_exp_mem[-1][1]
         reward = temp_exp_mem[-1][2]
         next_state = temp_exp_mem[-1][3]
         done = temp_exp_mem[-1][4]
-        self.agent.memory.add_exp_processed(state, action, reward,
-                                            next_state, next_state, done)
+        self.agent.memory.add_exp_processed(
+            state, action, reward,
+            next_state, next_state, done)
 
 
-class StackStates(PreProcessing):
+class StackStates(PreProcessor):
 
     '''
     Current and last state are concatenated to form input to model
@@ -85,13 +86,13 @@ class StackStates(PreProcessing):
                  **kwargs):  # absorb generic param without breaking):
         super(StackStates, self).__init__()
 
-    def preprocessing_action_sel(self, state,
-                                 previous_state,
-                                 pre_previous_state,
-                                 pre_pre_previous_state):
+    def preprocess_action_sel(self, state,
+                              previous_state,
+                              pre_previous_state,
+                              pre_pre_previous_state):
         return np.concatenate([previous_state, state])
 
-    def preprocessing_memory(self, temp_exp_mem, t):
+    def preprocess_memory(self, temp_exp_mem, t):
         # Concatenates previous + current states
         if (t >= 1):
             processed_state = np.concatenate(
@@ -111,7 +112,7 @@ class StackStates(PreProcessing):
                 processed_next_state, next_state, done)
 
 
-class DiffStates(PreProcessing):
+class DiffStates(PreProcessor):
 
     '''
     Different between current and last state is input to model
@@ -121,13 +122,13 @@ class DiffStates(PreProcessing):
                  **kwargs):  # absorb generic param without breaking):
         super(DiffStates, self).__init__()
 
-    def preprocessing_action_sel(self, state,
-                                 previous_state,
-                                 pre_previous_state,
-                                 pre_pre_previous_state):
+    def preprocess_action_sel(self, state,
+                              previous_state,
+                              pre_previous_state,
+                              pre_pre_previous_state):
         return state - previous_state
 
-    def preprocessing_memory(self, temp_exp_mem, t):
+    def preprocess_memory(self, temp_exp_mem, t):
         # Change in state params, curr_state - last_state
         if (t >= 1):
             processed_state = temp_exp_mem[-1][0] - temp_exp_mem[-2][0]
@@ -145,7 +146,7 @@ class DiffStates(PreProcessing):
                 processed_next_state, next_state, done)
 
 
-class Atari(PreProcessing):
+class Atari(PreProcessor):
 
     '''
     Convert images to greyscale, downsize, crop, then stack 4 states
@@ -157,17 +158,17 @@ class Atari(PreProcessing):
                  **kwargs):  # absorb generic param without breaking):
         super(Atari, self).__init__()
 
-    def preprocessing_action_sel(self, state,
-                                 previous_state,
-                                 pre_previous_state,
-                                 pre_pre_previous_state):
+    def preprocess_action_sel(self, state,
+                              previous_state,
+                              pre_previous_state,
+                              pre_pre_previous_state):
         arrays = (process_image_atari(state),
                   process_image_atari(previous_state),
                   process_image_atari(pre_previous_state),
                   process_image_atari(pre_pre_previous_state))
         return np.stack(arrays, axis=-1)
 
-    def preprocessing_memory(self, temp_exp_mem, t):
+    def preprocess_memory(self, temp_exp_mem, t):
         if (t >= 3):
             arrays = (process_image_atari(temp_exp_mem[-1][0]),
                       process_image_atari(temp_exp_mem[-2][0]),
