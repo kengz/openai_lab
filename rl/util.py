@@ -8,6 +8,7 @@ import numpy as np
 import os
 from datetime import datetime, timedelta
 from os import path, environ
+from textwrap import wrap
 
 
 # parse_args to add flag
@@ -42,21 +43,8 @@ def log_self(subject):
         to_json(subject.__dict__)))
 
 
-def get_env_spec(env):
-    '''Helper: return the env specs: dims, actions, reward range'''
-    state_dim = env.observation_space.shape[0]
-    if (len(env.observation_space.shape) > 1):
-        state_dim = env.observation_space.shape
-    return {
-        'state_dim': state_dim,
-        'state_bounds': np.transpose(
-            [env.observation_space.low, env.observation_space.high]),
-        'action_dim': env.action_space.n,
-        'actions': list(range(env.action_space.n)),
-        'reward_range': env.reward_range,
-        'timestep_limit': env.spec.tags.get(
-            'wrapper_config.TimeLimit.max_episode_steps')
-    }
+def wrap_text(text):
+    return '\n'.join(wrap(text, 60))
 
 
 def print_line(line='-'):
@@ -91,10 +79,6 @@ def timestamp_elapse_to_seconds(s1):
     a = datetime.strptime(s1, '%H:%M:%S')
     secs = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second).seconds
     return secs
-
-
-def seconds_to_timestamp_elapse(secs):
-    return
 
 
 def basic_stats(array):
