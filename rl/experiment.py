@@ -71,7 +71,7 @@ class Grapher(object):
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
         self.figure = self.plt.figure(facecolor='white', figsize=(8, 9))
-        self.figure.suptitle(self.session.session_id)
+        self.figure.suptitle(wrap_text(self.session.session_id))
         self.init_figure()
 
     def init_figure(self):
