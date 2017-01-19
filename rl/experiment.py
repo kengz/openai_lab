@@ -299,7 +299,7 @@ class Session(object):
         sys_vars['mean_rewards_history'].append(mean_rewards)
         sys_vars['solved'] = solved
 
-        # self.grapher.plot()
+        self.grapher.plot()
         self.check_end()
         return sys_vars
 
