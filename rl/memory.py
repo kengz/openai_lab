@@ -405,16 +405,16 @@ class HighLowMemory(LinearMemory):
             self.last_exp = self.exp
             self.exp = {k: [] for k in self.exp_keys}
             self.epi_num += 1
-            print("THRESHOLD HISTORY")
-            print(self.threshold_history)
-            print("HIGH MEM")
-            for epi in self.epi_memory_high:
-                print(str(epi['total_rewards'])+ " ,", end=" ")
-            print()
-            print("LOW MEM")
-            for epi in self.epi_memory_low:
-                print(str(epi['total_rewards'] )+ " ,", end=" ")
-            print()
+            # print("THRESHOLD HISTORY")
+            # print(self.threshold_history)
+            # print("HIGH MEM")
+            # for epi in self.epi_memory_high:
+            #     print(str(epi['total_rewards'])+ " ,", end=" ")
+            # print()
+            # print("LOW MEM")
+            # for epi in self.epi_memory_low:
+            #     print(str(epi['total_rewards'] )+ " ,", end=" ")
+            # print()
 
             
     def add_exp_processed(self, processed_state, action, reward, 
@@ -441,16 +441,16 @@ class HighLowMemory(LinearMemory):
             self.last_exp = self.exp
             self.exp = {k: [] for k in self.exp_keys}
             self.epi_num += 1
-            print("THRESHOLD HISTORY")
-            print(self.threshold_history)
-            print("HIGH MEM")
-            for epi in self.epi_memory_high:
-                print(str(epi['total_rewards'])+ " ,", end=" ")
-            print()
-            print("LOW MEM")
-            for epi in self.epi_memory_low:
-                print(str(epi['total_rewards'] )+ " ,", end=" ")
-            print()
+            # print("THRESHOLD HISTORY")
+            # print(self.threshold_history)
+            # print("HIGH MEM")
+            # for epi in self.epi_memory_high:
+            #     print(str(epi['total_rewards'])+ " ,", end=" ")
+            # print()
+            # print("LOW MEM")
+            # for epi in self.epi_memory_low:
+            #     print(str(epi['total_rewards'] )+ " ,", end=" ")
+            # print()
             
 
     def pop(self):
