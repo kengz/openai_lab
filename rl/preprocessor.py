@@ -60,7 +60,7 @@ class PreProcessor(object):
         '''
         reset the state of LinearMemory per episode env.reset()
         '''
-        self.state = init_state
+        self.state = np.array(init_state)  # cast into np for safety
         (previous_state, pre_previous_state,
             pre_pre_previous_state) = create_dummy_states(self.state)
         self.previous_state = previous_state
