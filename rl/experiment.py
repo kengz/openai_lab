@@ -25,6 +25,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
+np.seterr(all='warn')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
