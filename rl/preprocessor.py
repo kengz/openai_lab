@@ -26,7 +26,7 @@ def process_image_atari(im):
 
 
 def create_dummy_states(state):
-    state_shape = state.state_shape
+    state_shape = state.shape
     previous_state = np.zeros(state_shape)
     pre_previous_state = np.zeros(state_shape)
     pre_pre_previous_state = np.zeros(state_shape)
