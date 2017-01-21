@@ -269,17 +269,6 @@ class Session(object):
             "PreProcessor info: {}".format(
                 format_obj_dict(self.agent.preprocessor, [])))
 
-    def create_dummy_states(self, state):
-        # TODO refactor etc
-        previous_state = np.zeros(state.shape)
-        pre_previous_state = np.zeros(state.shape)
-        pre_pre_previous_state = np.zeros(state.shape)
-        if (previous_state.ndim == 1):
-            previous_state = np.zeros([state.shape[0]])
-            pre_previous_state = np.zeros([state.shape[0]])
-            pre_pre_previous_state = np.zeros([state.shape[0]])
-        return (previous_state, pre_previous_state, pre_pre_previous_state)
-
     def check_end(self):
         '''check if session ends (if is last episode)
         do ending steps'''
@@ -327,47 +316,29 @@ class Session(object):
         sys_vars = self.sys_vars
         env = self.env
         agent = self.agent
-
         state = env.reset()
         agent.memory.reset_state(state)
+        agent.preprocessor.reset_state(state)
         sys_vars['total_rewards'] = 0
         self.debug_agent_info()
-
-        # TODO refactor preprocessing
-        (previous_state, pre_previous_state,
-            pre_pre_previous_state) = self.create_dummy_states(state)
-
-        # Temp memory buffer to hold last n experiences
-        # Enables data preprocessing, inc. diff and stack
-        temp_exp_mem = []
 
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
 
-            proc_state = agent.preprocessor.preprocess_action_sel(
-                state, previous_state,
-                pre_previous_state,
-                pre_pre_previous_state)
-            action = agent.select_action(proc_state)
+            processed_state = agent.preprocessor.preprocess_state()
+            action = agent.select_action(processed_state)
             next_state, reward, done, info = env.step(action)
-            temp_exp_mem.append([state, action, reward, next_state, done])
-            # Buffer currently set to hold only last 4 experiences
-            # Amount needed for Atari games preprocessing
-            if (len(temp_exp_mem) > 4):
-                del temp_exp_mem[0]
+            agent.preprocessor.preprocess_memory(action, reward, next_state, done)
+            agent.memory.add_exp(action, reward, next_state, done)
 
-            # agent.memory.add_exp(action, reward, next_state, done)
-            agent.preprocessor.preprocess_memory(temp_exp_mem, t)
+            state = next_state
             agent.update(sys_vars)
+            # TODO absorb time cond into agent.to_train
             if (t >= 3) and agent.to_train(sys_vars):
                 agent.train(sys_vars)
 
-            pre_pre_previous_state = pre_previous_state
-            pre_previous_state = previous_state
-            previous_state = state
-            state = next_state
             sys_vars['total_rewards'] += reward
             if done:
                 break
