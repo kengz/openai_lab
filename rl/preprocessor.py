@@ -68,6 +68,7 @@ class PreProcessor(object):
         self.previous_state = previous_state
         self.pre_previous_state = pre_previous_state
         self.pre_pre_previous_state = pre_pre_previous_state
+        return self.preprocess_state()
 
     def preprocess_state(self):
         raise NotImplementedError()
@@ -79,7 +80,7 @@ class PreProcessor(object):
         self.previous_state = self.state
         self.state = next_state
 
-    def add_exp(self, action, reward, next_state, done):
+    def add_raw_exp(self, action, reward, next_state, done):
         '''
         Buffer currently set to hold only last 4 experiences
         Amount needed for Atari games preprocessing
@@ -110,13 +111,10 @@ class NoPreProcessor(PreProcessor):
 
     def preprocess_memory(self, action, reward, next_state, done):
         '''No state processing'''
-        self.add_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done)
         (state, action, reward, next_state, done) = self.exp_queue[-1]
-        # TODO this is a bit odd, since now we have add_exp_processed and
-        # add_exp for memory
-        self.agent.memory.add_exp_processed(
-            state, action, reward,
-            next_state, next_state, done)
+        processed_exp = (action, reward, next_state, done)
+        return processed_exp
 
 
 class StackStates(PreProcessor):
@@ -136,7 +134,7 @@ class StackStates(PreProcessor):
 
     def preprocess_memory(self, action, reward, next_state, done):
         '''Concatenate: previous + current states'''
-        self.add_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
@@ -146,12 +144,8 @@ class StackStates(PreProcessor):
             logger.debug("State shape: {}".format(processed_state.shape))
             logger.debug(
                 "Next state shape: {}".format(processed_next_state.shape))
-        self.agent.memory.add_exp_processed(
-            processed_state, action, reward,
-            # TODO ensure we want to add processed_next_state as state
-            # TODO given that processed_next_state, processed_next_state
-            # the external passing then setting from agent is justified
-            processed_next_state, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done)
+        return processed_exp
 
 
 class DiffStates(PreProcessor):
@@ -171,7 +165,7 @@ class DiffStates(PreProcessor):
 
     def preprocess_memory(self, action, reward, next_state, done):
         '''Change in state, curr_state - last_state'''
-        self.add_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
@@ -181,10 +175,8 @@ class DiffStates(PreProcessor):
             logger.debug("State shape: {}".format(processed_state.shape))
             logger.debug(
                 "Next state shape: {}".format(processed_next_state.shape))
-        self.agent.memory.add_exp_processed(
-            processed_state, action, reward,
-            # TODO ensure we want to add processed_next_state as state
-            processed_next_state, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done)
+        return processed_exp
 
 
 class Atari(PreProcessor):
@@ -210,7 +202,7 @@ class Atari(PreProcessor):
         return processed_state
 
     def preprocess_memory(self, action, reward, next_state, done):
-        self.add_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 4):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
@@ -225,7 +217,5 @@ class Atari(PreProcessor):
             logger.debug("State shape: {}".format(processed_state.shape))
             logger.debug(
                 "Next state shape: {}".format(processed_next_state.shape))
-        self.agent.memory.add_exp_processed(
-            processed_state, action, reward,
-            # TODO ensure we want to add processed_next_state as state
-            processed_next_state, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done)
+        return processed_exp

@@ -316,10 +316,10 @@ class Session(object):
         sys_vars = self.sys_vars
         env = self.env
         agent = self.agent
-        state = env.reset()
-        agent.memory.reset_state(state)
-        agent.preprocessor.reset_state(state)
         sys_vars['total_rewards'] = 0
+        state = env.reset()
+        processed_state = agent.preprocessor.reset_state(state)
+        agent.memory.reset_state(processed_state)
         self.debug_agent_info()
 
         for t in range(agent.env_spec['timestep_limit']):
@@ -330,10 +330,11 @@ class Session(object):
             processed_state = agent.preprocessor.preprocess_state()
             action = agent.select_action(processed_state)
             next_state, reward, done, info = env.step(action)
-            agent.preprocessor.preprocess_memory(action, reward, next_state, done)
-            agent.memory.add_exp(action, reward, next_state, done)
+            processed_exp = agent.preprocessor.preprocess_memory(
+                action, reward, next_state, done)
+            if processed_exp is not None:
+                agent.memory.add_exp(*processed_exp)
 
-            state = next_state
             agent.update(sys_vars)
             # TODO absorb time cond into agent.to_train
             if (t >= 3) and agent.to_train(sys_vars):
