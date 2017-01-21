@@ -136,7 +136,7 @@ class StackStates(PreProcessor):
     def preprocess_memory(self, action, reward, next_state, done):
         '''Concatenate: previous + current states'''
         self.add_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 1):  # insufficient queue
+        if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_state = np.concatenate([self.exp_queue[-2][0], state])
@@ -168,7 +168,7 @@ class DiffStates(PreProcessor):
     def preprocess_memory(self, action, reward, next_state, done):
         '''Change in state, curr_state - last_state'''
         self.add_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 1):  # insufficient queue
+        if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_state = state - self.exp_queue[-2][0]
@@ -207,7 +207,7 @@ class Atari(PreProcessor):
 
     def preprocess_memory(self, action, reward, next_state, done):
         self.add_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 3):  # insufficient queue
+        if (self.exp_queue_size() < 4):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_next_state_queue = (
