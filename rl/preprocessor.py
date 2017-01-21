@@ -193,28 +193,26 @@ class Atari(PreProcessor):
         log_self(self)
 
     def preprocess_state(self):
-        state_arrays = (process_image_atari(self.state),
-                        process_image_atari(self.previous_state),
-                        process_image_atari(self.pre_previous_state),
-                        process_image_atari(self.pre_pre_previous_state))
-        return np.stack(state_arrays, axis=-1)
+        processed_state_queue = (
+            process_image_atari(self.state),
+            process_image_atari(self.previous_state),
+            process_image_atari(self.pre_previous_state),
+            process_image_atari(self.pre_pre_previous_state))
+        processed_state = np.stack(processed_state_queue, axis=-1)
+        return processed_state
 
     def preprocess_memory(self, action, reward, next_state, done):
         self.add_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 3):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
-        state_arrays = (process_image_atari(exp_queue[-1][0]),
-                        process_image_atari(exp_queue[-2][0]),
-                        process_image_atari(exp_queue[-3][0]),
-                        process_image_atari(exp_queue[-4][0]))
-        next_state_arrays = (process_image_atari(exp_queue[-1][3]),
-                             process_image_atari(exp_queue[-2][3]),
-                             process_image_atari(exp_queue[-3][3]),
-                             process_image_atari(exp_queue[-4][3]))
-        processed_state = np.stack(state_arrays, axis=-1)
-        processed_next_state = np.stack(next_state_arrays, axis=-1)
-        done = exp_queue[-1][4]
+        processed_next_state_queue = (
+            process_image_atari(exp_queue[-1][3]),
+            process_image_atari(exp_queue[-2][3]),
+            process_image_atari(exp_queue[-3][3]),
+            process_image_atari(exp_queue[-4][3]))
+        processed_state = self.preprocess_state()
+        processed_next_state = np.stack(processed_next_state_queue, axis=-1)
         if (self.exp_queue_size() == 3):
             logger.debug("State shape: {}".format(processed_state.shape))
             logger.debug(
