@@ -192,7 +192,8 @@ class Session(object):
         self.agent.compile(self.memory, self.policy, self.preprocessor)
 
         # data file and graph
-        self.base_filename = './data/{}'.format(self.session_id)
+        self.base_filename = './data/{}/{}'.format(
+            self.experiment.prefix_id, self.session_id)
         self.graph_filename = self.base_filename + '.png'
 
         # for plotting
@@ -416,7 +417,10 @@ class Experiment(object):
             self.run_timestamp
         )
         self.experiment_id = self.prefix_id + '_e' + str(self.experiment_num)
-        self.base_filename = './data/{}'.format(self.experiment_id)
+        self.base_dir = './data/{}'.format(self.prefix_id)
+        os.makedirs(self.base_dir, exist_ok=True)
+        self.base_filename = './data/{}/{}'.format(
+            self.prefix_id, self.experiment_id)
         self.data_filename = self.base_filename + '.json'
         log_delimiter('Init Experiment:\n{}'.format(self.experiment_id), '=')
 
@@ -582,7 +586,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
     experiment_id = experiment_data_array[0]['experiment_id']
     prefix_id = prefix_id_from_experiment_id(experiment_id)
     metrics_df.to_csv(
-        './data/param_space_data_{}.csv'.format(prefix_id),
+        './data/{0}/param_space_data_{0}.csv'.format(prefix_id),
         index=False)
     return metrics_df
 
