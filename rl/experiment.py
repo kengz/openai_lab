@@ -184,11 +184,11 @@ class Session(object):
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
+        self.preprocessor = self.PreProcessor(**self.param)
         self.env_spec = self.set_env_spec()
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.preprocessor = self.PreProcessor(**self.param)
         self.agent.compile(self.memory, self.policy, self.preprocessor)
 
         # data file and graph
@@ -234,7 +234,7 @@ class Session(object):
         state_dim = env.observation_space.shape[0]
         if (len(env.observation_space.shape) > 1):
             state_dim = env.observation_space.shape
-        self.env_spec = {
+        env_spec = {
             'state_dim': state_dim,
             'state_bounds': np.transpose(
                 [env.observation_space.low, env.observation_space.high]),
@@ -244,15 +244,9 @@ class Session(object):
             'timestep_limit': env.spec.tags.get(
                 'wrapper_config.TimeLimit.max_episode_steps')
         }
-        self.set_state_dim()  # preprocess
+        self.env_spec = self.preprocessor.preprocess_env_spec(
+            env_spec)  # preprocess
         return self.env_spec
-
-    def set_state_dim(self):
-        '''helper to tweak env_spec according to preprocessor'''
-        if self.PreProcessor is StackStates:
-            self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
-        elif self.PreProcessor is Atari:
-            self.env_spec['state_dim'] = (84, 84, 4)
 
     def debug_agent_info(self):
         logger.debug(

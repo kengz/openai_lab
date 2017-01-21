@@ -55,9 +55,6 @@ class PreProcessor(object):
         self.exp_queue = []
         self.MAX_QUEUE_SIZE = 4
 
-    def exp_queue_size(self):
-        return len(self.exp_queue)
-
     def reset_state(self, init_state):
         '''
         reset the state of LinearMemory per episode env.reset()
@@ -69,6 +66,18 @@ class PreProcessor(object):
         self.pre_previous_state = pre_previous_state
         self.pre_pre_previous_state = pre_pre_previous_state
         return self.preprocess_state()
+
+    def exp_queue_size(self):
+        return len(self.exp_queue)
+
+    def preprocess_env_spec(self, env_spec):
+        '''helper to tweak env_spec according to preprocessor'''
+        class_name = self.__class__.__name__
+        if class_name is 'StackStates':
+            env_spec['state_dim'] = env_spec['state_dim'] * 2
+        elif class_name is 'Atari':
+            env_spec['state_dim'] = (84, 84, 4)
+        return env_spec
 
     def preprocess_state(self):
         raise NotImplementedError()
