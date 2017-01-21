@@ -6,6 +6,7 @@ import json
 import logging
 import numpy as np
 import os
+import sys
 from datetime import datetime, timedelta
 from os import path, environ
 from textwrap import wrap
@@ -29,7 +30,7 @@ args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
 logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
+handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(
     logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
 logger.setLevel(args.loglevel)
