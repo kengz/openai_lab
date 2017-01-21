@@ -14,11 +14,13 @@ def crop_image(im):
 
 
 def process_image_atari(im):
-    # Image preprocessing from the paper
-    # Playing Atari with Deep Reinforcement Learning, 2013
-    # Takes an RGB image and converts it to grayscale,
-    # downsizes to 110 x 84
-    # and crops to square 84 x 84, taking bottomost rows of image
+    '''
+    Image preprocessing from the paper
+    Playing Atari with Deep Reinforcement Learning, 2013
+    Takes an RGB image and converts it to grayscale,
+    downsizes to 110 x 84
+    and crops to square 84 x 84, taking bottomost rows of image
+    '''
     im_gray = np.dot(im[..., :3], [0.299, 0.587, 0.114])
     im_resized = resize_image(im_gray)
     im_cropped = crop_image(im_resized)
@@ -78,8 +80,10 @@ class PreProcessor(object):
         self.state = next_state
 
     def add_exp(self, action, reward, next_state, done):
-        # Buffer currently set to hold only last 4 experiences
-        # Amount needed for Atari games preprocessing
+        '''
+        Buffer currently set to hold only last 4 experiences
+        Amount needed for Atari games preprocessing
+        '''
         self.exp_queue.append([self.state, action, reward, next_state, done])
         # TODO parametrize max length to top
         if (self.exp_queue_size() > self.MAX_QUEUE_SIZE):
@@ -105,7 +109,7 @@ class NoPreProcessor(PreProcessor):
         return self.state
 
     def preprocess_memory(self, action, reward, next_state, done):
-        # No state processing
+        '''No state processing'''
         self.add_exp(action, reward, next_state, done)
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         # TODO this is a bit odd, since now we have add_exp_processed and
@@ -130,7 +134,7 @@ class StackStates(PreProcessor):
         return np.concatenate([self.previous_state, self.state])
 
     def preprocess_memory(self, action, reward, next_state, done):
-        # Concatenates previous + current states
+        '''Concatenate: previous + current states'''
         self.add_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 1):  # insufficient queue
             return
@@ -162,7 +166,7 @@ class DiffStates(PreProcessor):
         return self.state - self.previous_state
 
     def preprocess_memory(self, action, reward, next_state, done):
-        # Change in state params, curr_state - last_state
+        '''Change in state, curr_state - last_state'''
         self.add_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 1):  # insufficient queue
             return
