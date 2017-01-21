@@ -83,7 +83,7 @@ class PreProcessor(object):
         self.exp_queue.append([self.state, action, reward, next_state, done])
         # TODO parametrize max length to top
         if (self.exp_queue_size() > self.MAX_QUEUE_SIZE):
-            del exp_queue[0]
+            del self.exp_queue[0]
         self.advance_state(next_state)
 
     def preprocess_memory(self, action, reward, next_state, done):
@@ -167,7 +167,7 @@ class DiffStates(PreProcessor):
         if (self.exp_queue_size() < 1):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
-        processed_state = state - exp_queue[-2][0]
+        processed_state = state - self.exp_queue[-2][0]
         processed_next_state = next_state - state
         if (self.exp_queue_size() == 1):
             logger.debug("State shape: {}".format(processed_state.shape))
@@ -207,10 +207,10 @@ class Atari(PreProcessor):
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_next_state_queue = (
-            process_image_atari(exp_queue[-1][3]),
-            process_image_atari(exp_queue[-2][3]),
-            process_image_atari(exp_queue[-3][3]),
-            process_image_atari(exp_queue[-4][3]))
+            process_image_atari(self.exp_queue[-1][3]),
+            process_image_atari(self.exp_queue[-2][3]),
+            process_image_atari(self.exp_queue[-3][3]),
+            process_image_atari(self.exp_queue[-4][3]))
         processed_state = self.preprocess_state()
         processed_next_state = np.stack(processed_next_state_queue, axis=-1)
         if (self.exp_queue_size() == 3):
