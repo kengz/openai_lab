@@ -27,6 +27,13 @@ export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorf
 sudo pip install --upgrade $TF_BINARY_URL
 ```
 
+For auto file copier, we use Gulp.
+
+```shell
+npm install --global gulp-cli
+npm install --save-dev gulp gulp-watch gulp-changed
+```
+
 ### Complete
 
 To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the [Install Everything](https://github.com/openai/gym#installing-everything) of the repo (which is still broken at the time of writing).
@@ -74,6 +81,8 @@ env.render()
 ```
 
 ## Usage
+
+First run `gulp` to setup watcher for automatically copying data files.
 
 The scripts are inside the `rl/` folder. Configure your `game_specs` in `rl/session.py`, and run
 

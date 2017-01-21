@@ -42,5 +42,7 @@ class Agent(object):
     def train(self, sys_vars):
         raise NotImplementedError()
 
+    # TODO perhaps refactor under update()
+    # or use a smooth decay
     def recompile_model(self, params, sys_vars):
         raise NotImplementedError()

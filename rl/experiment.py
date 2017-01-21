@@ -71,7 +71,7 @@ class Grapher(object):
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
         self.figure = self.plt.figure(facecolor='white', figsize=(8, 9))
-        self.figure.suptitle(self.session.session_id)
+        self.figure.suptitle(wrap_text(self.session.session_id))
         self.init_figure()
 
     def init_figure(self):
@@ -184,8 +184,7 @@ class Session(object):
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
-        self.env_spec = get_env_spec(self.env)
-        self.set_state_dim()
+        self.env_spec = self.set_env_spec()
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
@@ -229,7 +228,27 @@ class Session(object):
         sys_keys = self.sys_vars.keys()
         assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
 
+    def set_env_spec(self):
+        '''Helper: return the env specs: dims, actions, reward range'''
+        env = self.env
+        state_dim = env.observation_space.shape[0]
+        if (len(env.observation_space.shape) > 1):
+            state_dim = env.observation_space.shape
+        self.env_spec = {
+            'state_dim': state_dim,
+            'state_bounds': np.transpose(
+                [env.observation_space.low, env.observation_space.high]),
+            'action_dim': env.action_space.n,
+            'actions': list(range(env.action_space.n)),
+            'reward_range': env.reward_range,
+            'timestep_limit': env.spec.tags.get(
+                'wrapper_config.TimeLimit.max_episode_steps')
+        }
+        self.set_state_dim()  # preprocess
+        return self.env_spec
+
     def set_state_dim(self):
+        '''helper to tweak env_spec according to preprocessor'''
         if self.PreProcessor is StackStates:
             self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
         elif self.PreProcessor is Atari:
@@ -299,7 +318,7 @@ class Session(object):
         sys_vars['mean_rewards_history'].append(mean_rewards)
         sys_vars['solved'] = solved
 
-        # self.grapher.plot()
+        self.grapher.plot()
         self.check_end()
         return sys_vars
 
