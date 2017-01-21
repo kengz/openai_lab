@@ -28,10 +28,6 @@ class Memory(object):
         '''add an experience'''
         raise NotImplementedError()
 
-    def add_exp_processed(self, state, action, reward, next_state, terminal):
-        '''add a processed experience'''
-        raise NotImplementedError()
-
     def get_exp(self, inds):
         '''get a batch of experiences by indices'''
         raise NotImplementedError()
@@ -81,19 +77,6 @@ class LinearMemory(Memory):
         self.exp['terminals'].append(int(terminal))
         self.state = next_state
 
-    def add_exp_processed(self, processed_state, action, reward,
-                          processed_next_state, next_state, terminal):
-        '''
-        similar to add_exp function but allows for preprocessing raw state input
-        E.g. concatenating states, diffing states, cropping, grayscale and stacking images
-        '''
-        self.exp['states'].append(processed_state)
-        self.exp['actions'].append(self.one_hot_action(action))
-        self.exp['rewards'].append(reward)
-        self.exp['next_states'].append(processed_next_state)
-        self.exp['terminals'].append(int(terminal))
-        self.state = next_state
-
     def _get_exp(self, exp_name, inds):
         return np.array([self.exp[exp_name][i] for i in inds])
 
@@ -132,19 +115,6 @@ class LinearMemoryWithForgetting(LinearMemory):
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
-
-        if (self.size() > 50000):
-            for k in self.exp_keys:
-                del self.exp[k][0]
-
-    def add_exp_processed(self, processed_state, action, reward,
-                          processed_next_state, next_state, terminal):
-        '''
-        add processed exp as usual, but preserve only the recent episodes
-        '''
-        super(LinearMemoryWithForgetting, self).add_exp_processed(
-            processed_state, action, reward,
-            processed_next_state, next_state, terminal)
 
         if (self.size() > 50000):
             for k in self.exp_keys:
@@ -317,6 +287,7 @@ class RankedMemory(LinearMemory):
 
         return minibatch
 
+
 class HighLowMemory(LinearMemory):
 
     '''
@@ -338,9 +309,10 @@ class HighLowMemory(LinearMemory):
         self.last_exp = self.exp
         self.epi_memory_high = []
         self.epi_memory_low = []
-        self.max_reward =  -math.inf
+        self.max_reward = -math.inf
         self.min_reward = math.inf
-        self.threshold = math.inf # 1st  5 epis goes into bad half, recompute every 5 epis
+        # 1st  5 epis goes into bad half, recompute every 5 epis
+        self.threshold = math.inf
         self.threshold_history = []
         self.epi_num = 0
         self.prob_high = 0.66
@@ -348,7 +320,6 @@ class HighLowMemory(LinearMemory):
         self.max_epis_in_mem = 15
         self.recompute_freq = 10
         log_self(self)
-
 
     def reassign_episodes(self):
         temp_high = self.epi_memory_high
@@ -369,19 +340,20 @@ class HighLowMemory(LinearMemory):
                 self.epi_memory_low.append(epi)
 
     def compute_threshold(self):
-        self.threshold_history.append([self.threshold, 
-                                                                self.max_reward,
-                                                                self.min_reward])
+        self.threshold_history.append([self.threshold,
+                                       self.max_reward,
+                                       self.min_reward])
         if (len(self.threshold_history) > 1):
-        # Scaled because this threshold seems too severe based on trial runs
+            # Scaled because this threshold seems too severe based on trial
+            # runs
             self.threshold =  \
-                max(self.threshold, (self.max_reward + self.min_reward) / 2.0 * 0.75)
+                max(self.threshold,
+                    (self.max_reward + self.min_reward) / 2.0 * 0.75)
         else:
-            self.threshold =  (self.max_reward + self.min_reward) / 2.0 * 0.75
+            self.threshold = (self.max_reward + self.min_reward) / 2.0 * 0.75
         self.reassign_episodes()
-        self.max_reward =  -math.inf
+        self.max_reward = -math.inf
         self.min_reward = math.inf
-
 
     def add_exp(self, action, reward, next_state, terminal):
         super(HighLowMemory, self).add_exp(
@@ -390,9 +362,9 @@ class HighLowMemory(LinearMemory):
             epi_exp = {
                 'exp': self.exp,
                 'total_rewards': np.sum(self.exp['rewards']),
-                'epi_num' : self.epi_num
+                'epi_num': self.epi_num
             }
-            if (epi_exp['total_rewards']  <= self.threshold):
+            if (epi_exp['total_rewards'] <= self.threshold):
                 self.epi_memory_low.append(epi_exp)
             else:
                 self.epi_memory_high.append(epi_exp)
@@ -401,7 +373,7 @@ class HighLowMemory(LinearMemory):
             if (epi_exp['total_rewards'] > self.max_reward):
                 self.max_reward = epi_exp['total_rewards']
             if (epi_exp['total_rewards'] < self.min_reward):
-                self.min_reward = epi_exp['total_rewards'] 
+                self.min_reward = epi_exp['total_rewards']
             self.last_exp = self.exp
             self.exp = {k: [] for k in self.exp_keys}
             self.epi_num += 1
@@ -415,43 +387,6 @@ class HighLowMemory(LinearMemory):
             # for epi in self.epi_memory_low:
             #     print(str(epi['total_rewards'] )+ " ,", end=" ")
             # print()
-
-            
-    def add_exp_processed(self, processed_state, action, reward, 
-                                processed_next_state, next_state, terminal):
-        super(HighLowMemory, self).add_exp_processed(
-                    processed_state, action, reward, 
-                    processed_next_state, next_state, terminal)
-        if terminal:
-            epi_exp = {
-                'exp': self.exp,
-                'total_rewards': np.sum(self.exp['rewards']),
-                'epi_num' : self.epi_num
-            }
-            if (epi_exp['total_rewards']  <= self.threshold):
-                self.epi_memory_low.append(epi_exp)
-            else:
-                self.epi_memory_high.append(epi_exp)
-            if (self.epi_num > 0 and self.epi_num % self.recompute_freq == 0):
-                self.compute_threshold()
-            if (epi_exp['total_rewards'] > self.max_reward):
-                self.max_reward = epi_exp['total_rewards']
-            if (epi_exp['total_rewards'] < self.min_reward):
-                self.min_reward = epi_exp['total_rewards'] 
-            self.last_exp = self.exp
-            self.exp = {k: [] for k in self.exp_keys}
-            self.epi_num += 1
-            # print("THRESHOLD HISTORY")
-            # print(self.threshold_history)
-            # print("HIGH MEM")
-            # for epi in self.epi_memory_high:
-            #     print(str(epi['total_rewards'])+ " ,", end=" ")
-            # print()
-            # print("LOW MEM")
-            # for epi in self.epi_memory_low:
-            #     print(str(epi['total_rewards'] )+ " ,", end=" ")
-            # print()
-            
 
     def pop(self):
         '''
@@ -468,15 +403,18 @@ class HighLowMemory(LinearMemory):
         high_samples = np.int(np.ceil(size * self.prob_high))
         low_samples = size - high_samples
 
-        if (len(self.epi_memory_high) == 0) and (len(self.epi_memory_low) == 0):   
+        if (len(self.epi_memory_high) == 0 and
+                len(self.epi_memory_low) == 0):
             return super(HighLowMemory, self).rand_minibatch(size)
 
         if (len(self.epi_memory_high) == 0):
             high_samples = 0
             low_samples = size
 
-        high_samples_per_epi = np.int(np.ceil(high_samples / self.num_epis_to_sample))
-        low_samples_per_epi = np.int(np.ceil(low_samples / self.num_epis_to_sample))
+        high_samples_per_epi = np.int(
+            np.ceil(high_samples / self.num_epis_to_sample))
+        low_samples_per_epi = np.int(
+            np.ceil(low_samples / self.num_epis_to_sample))
 
         buffer_exp = self.exp
         minibatch_as_list = []
@@ -512,6 +450,7 @@ class HighLowMemory(LinearMemory):
 
         return minibatch
 
+
 class HighLowMemoryWithForgetting(HighLowMemory):
 
     '''
@@ -539,15 +478,8 @@ class HighLowMemoryWithForgetting(HighLowMemory):
                     self.epi_memory_low.append(epi)
 
         for epi in temp_low:
-             if (self.epi_num - epi['epi_num'] <= self.max_epis_in_mem):
+            if (self.epi_num - epi['epi_num'] <= self.max_epis_in_mem):
                 if (epi['total_rewards'] > self.threshold):
                     self.epi_memory_high.append(epi)
                 else:
                     self.epi_memory_low.append(epi)
-
-        
-
-
-
-
-    
