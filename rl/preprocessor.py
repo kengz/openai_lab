@@ -51,7 +51,7 @@ class PreProcessor(object):
         self.agent = None
         self.state = None
         self.exp_queue = []
-        self.state_buffer = ()
+        self.MAX_QUEUE_SIZE = 4
 
     def exp_queue_size(self):
         return len(self.exp_queue)
@@ -81,7 +81,8 @@ class PreProcessor(object):
         # Buffer currently set to hold only last 4 experiences
         # Amount needed for Atari games preprocessing
         self.exp_queue.append([self.state, action, reward, next_state, done])
-        if (len(exp_queue) > 4):
+        # TODO parametrize max length to top
+        if (self.exp_queue_size() > self.MAX_QUEUE_SIZE):
             del exp_queue[0]
         self.advance_state(next_state)
 
