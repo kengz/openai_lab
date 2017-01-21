@@ -87,7 +87,7 @@ class Grapher(object):
         self.subgraphs['total rewards'] = (ax1, p1)
 
         ax1e = ax1.twinx()
-        ax1e.set_ylabel('(epsilon or tau)').set_color('r')
+        ax1e.set_ylabel('exploration rate').set_color('r')
         ax1e.set_frame_on(False)
         p1e, = ax1e.plot([], [], 'r')
         self.subgraphs['e'] = (ax1e, p1e)
@@ -421,29 +421,30 @@ class Experiment(object):
         log_delimiter('Init Experiment:\n{}'.format(self.experiment_id), '=')
 
     def analyze(self):
-        '''
+        '''mean_rewards_per_epi
         helper: analyze given data from an experiment
         return metrics
         '''
         sys_vars_array = self.data['sys_vars_array']
         solved_sys_vars_array = list(filter(
             lambda sv: sv['solved'], sys_vars_array))
-        mean_rewards_array = list(map(
-            lambda sv: sv['mean_rewards'], sys_vars_array))
-        max_total_rewards_array = list(map(
-            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array))
-        epi_array = list(map(lambda sv: sv['epi'], sys_vars_array))
-        t_array = list(map(lambda sv: sv['t'], sys_vars_array))
-        time_taken_array = list(map(
+        mean_rewards_array = np.array(list(map(
+            lambda sv: sv['mean_rewards'], sys_vars_array)))
+        max_total_rewards_array = np.array(list(map(
+            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
+        epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
+        mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array)
+        t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
+        time_taken_array = np.array(list(map(
             lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            sys_vars_array))
-        solved_epi_array = list(map(
-            lambda sv: sv['epi'], solved_sys_vars_array))
-        solved_t_array = list(map(
-            lambda sv: sv['t'], solved_sys_vars_array))
-        solved_time_taken_array = list(map(
+            sys_vars_array)))
+        solved_epi_array = np.array(list(map(
+            lambda sv: sv['epi'], solved_sys_vars_array)))
+        solved_t_array = np.array(list(map(
+            lambda sv: sv['t'], solved_sys_vars_array)))
+        solved_time_taken_array = np.array(list(map(
             lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            solved_sys_vars_array))
+            solved_sys_vars_array)))
 
         metrics = {
             # percentage solved
@@ -452,6 +453,8 @@ class Experiment(object):
             'solved_ratio_of_sessions': float(len(
                 solved_sys_vars_array)) / len(sys_vars_array),
             'mean_rewards_stats': basic_stats(mean_rewards_array),
+            'mean_rewards_per_epi_stats': basic_stats(
+                mean_rewards_per_epi_array),
             'max_total_rewards_stats': basic_stats(max_total_rewards_array),
             'epi_stats': basic_stats(epi_array),
             't_stats': basic_stats(t_array),
@@ -571,9 +574,10 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
     metrics_df = pd.DataFrame.from_dict(flat_metrics_array)
     metrics_df.sort_values(
-        ['mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
+        ['mean_rewards_per_epi_stats_mean',
+         'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
         ascending=False
-    ).sort_values(['epi_stats_mean'])
+    )
 
     experiment_id = experiment_data_array[0]['experiment_id']
     prefix_id = prefix_id_from_experiment_id(experiment_id)
