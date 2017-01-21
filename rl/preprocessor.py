@@ -131,7 +131,8 @@ class StackStates(PreProcessor):
         log_self(self)
 
     def preprocess_state(self):
-        return np.concatenate([self.previous_state, self.state])
+        processed_state = np.concatenate([self.previous_state, self.state])
+        return processed_state
 
     def preprocess_memory(self, action, reward, next_state, done):
         '''Concatenate: previous + current states'''
@@ -139,7 +140,7 @@ class StackStates(PreProcessor):
         if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
-        processed_state = np.concatenate([self.exp_queue[-2][0], state])
+        processed_state = self.preprocess_state()
         processed_next_state = np.concatenate([state, next_state])
         if (self.exp_queue_size() == 1):
             logger.debug("State shape: {}".format(processed_state.shape))
@@ -148,6 +149,8 @@ class StackStates(PreProcessor):
         self.agent.memory.add_exp_processed(
             processed_state, action, reward,
             # TODO ensure we want to add processed_next_state as state
+            # TODO given that processed_next_state, processed_next_state
+            # the external passing then setting from agent is justified
             processed_next_state, processed_next_state, done)
 
 
@@ -163,7 +166,8 @@ class DiffStates(PreProcessor):
         log_self(self)
 
     def preprocess_state(self):
-        return self.state - self.previous_state
+        processed_state = self.state - self.previous_state
+        return processed_state
 
     def preprocess_memory(self, action, reward, next_state, done):
         '''Change in state, curr_state - last_state'''
@@ -171,7 +175,7 @@ class DiffStates(PreProcessor):
         if (self.exp_queue_size() < 2):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
-        processed_state = state - self.exp_queue[-2][0]
+        processed_state = self.preprocess_state()
         processed_next_state = next_state - state
         if (self.exp_queue_size() == 1):
             logger.debug("State shape: {}".format(processed_state.shape))
