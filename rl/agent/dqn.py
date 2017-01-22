@@ -151,12 +151,6 @@ class DQN(Agent):
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
 
-            # logger.info("minibatch actions: {}\n Q_targets_a (reshapes): {}"
-            #             "\n Q_states: {}\n Q_targets: {}\n\n".format(
-            #                 minibatch['actions'], Q_targets_a[
-            #                     :, np.newaxis], Q_states,
-            #                 Q_targets))
-
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
         avg_loss = loss_total / self.n_epoch

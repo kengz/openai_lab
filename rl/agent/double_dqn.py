@@ -31,7 +31,6 @@ class DoubleDQN(DQN):
         otherwise (e.g. policy) see self.update()
         step 1,2,3,4 of algo.
         '''
-
         loss_total = 0
         for _epoch in range(self.n_epoch):
             minibatch = self.memory.rand_minibatch(self.batch_size)
@@ -57,12 +56,6 @@ class DoubleDQN(DQN):
             # minibatch['actions'] is one-hot encoded
             Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
                 (1 - minibatch['actions']) * Q_states
-
-            # logger.info("minibatch actions: {}\n Q_targets_a (reshapes): {}"
-            #             "\n Q_states: {}\n Q_targets: {}\n\n".format(
-            #                 minibatch['actions'], Q_targets_a[
-            #                     :, np.newaxis], Q_states,
-            #                 Q_targets))
 
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
