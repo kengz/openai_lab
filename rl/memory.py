@@ -294,7 +294,7 @@ class HighLowMemory(LinearMemory):
     Memory divided into two: good and bad experiences
     As with RankedMemory experiences are grouped episodically
     Episodes with a total reward > threshold are assigned to good memory
-    The threshold is recomputed every n episodes and 
+    The threshold is recomputed every n episodes and
     episodes are reassigned accordingly.
     Memories are sampled from good experiences with a self.prob_high
     Memories are sampled from bad experiences with a 1 - self.prob_high
