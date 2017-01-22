@@ -142,15 +142,11 @@ class BoltzmannPolicy(Policy):
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
-        # print(Q_state)
-        # print(exp_values)
-        # print(probs)
-        # print(np.amax(probs))
         action = np.random.choice(agent.env_spec['actions'], p=probs)
         return action
 
     def update(self, sys_vars):
-        '''strategy to update epsilon in agent'''
+        '''strategy to update tau in agent'''
         epi = sys_vars['epi']
         rise = self.final_tau - self.init_tau
         slope = rise / float(self.exploration_anneal_episodes)

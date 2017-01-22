@@ -37,6 +37,7 @@ class DQN(Agent):
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
         log_self(self)
+        self.optimizer = None
         self.build_model()
 
     def build_hidden_layers(self, model):
@@ -45,10 +46,11 @@ class DQN(Agent):
         '''
         model.add(Dense(self.hidden_layers[0],
                         input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform',
                         activation=self.hidden_layers_activation,
+                        init='lecun_uniform',
                         W_constraint=maxnorm(3)))
 
+        # inner hidden layer: no specification of input shape
         if (len(self.hidden_layers) > 1):
             for i in range(1, len(self.hidden_layers)):
                 model.add(Dense(self.hidden_layers[i],
@@ -58,6 +60,9 @@ class DQN(Agent):
 
         return model
 
+    def build_optimizer(self):
+        self.optimizer = SGD(lr=self.learning_rate)
+
     def build_model(self):
         model = Sequential()
         self.build_hidden_layers(model)
@@ -65,12 +70,11 @@ class DQN(Agent):
                         init='lecun_uniform',
                         activation=self.output_layer_activation,
                         W_constraint=maxnorm(3)))
-
         logger.info("Model summary")
         model.summary()
         self.model = model
 
-        self.optimizer = SGD(lr=self.learning_rate)
+        self.build_optimizer()
         self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Model built and compiled")
         return self.model
@@ -85,7 +89,7 @@ class DQN(Agent):
             if (sys_vars['epi'] == self.epi_change_learning_rate and
                     sys_vars['t'] == 0):
                 self.learning_rate = self.learning_rate / 10.0
-                self.optimizer = type(self.optimizer)(lr=self.learning_rate)
+                self.build_optimizer()
                 self.model.compile(
                     loss='mean_squared_error', optimizer=self.optimizer)
                 logger.info('Model recompiled with new settings: '
@@ -130,6 +134,33 @@ class DQN(Agent):
             t == (timestep_limit-1) or
             done)
 
+    def compute_Q_states(self, minibatch):
+        # note the computed values below are batched in array
+        Q_states = self.model.predict(minibatch['states'])
+
+        Q_next_states = self.model.predict(minibatch['next_states'])
+        Q_next_states_max = np.amax(Q_next_states, axis=1)
+        return (Q_states, Q_next_states_max)
+
+    def compute_Q_targets(self, minibatch, Q_states, Q_next_states_max):
+        # make future reward 0 if exp is terminal
+        Q_targets_a = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * Q_next_states_max
+        # set batch Q_targets of a as above, the rest as is
+        # minibatch['actions'] is one-hot encoded
+        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
+            (1 - minibatch['actions']) * Q_states
+        return Q_targets
+
+    def train_an_epoch(self):
+        minibatch = self.memory.rand_minibatch(self.batch_size)
+        (Q_states, Q_next_states_max) = self.compute_Q_states(minibatch)
+        Q_targets = self.compute_Q_targets(
+            minibatch, Q_states, Q_next_states_max)
+
+        loss = self.model.train_on_batch(minibatch['states'], Q_targets)
+        return loss
+
     def train(self, sys_vars):
         '''
         Training is for the Q function (NN) only
@@ -138,26 +169,7 @@ class DQN(Agent):
         '''
         loss_total = 0
         for _epoch in range(self.n_epoch):
-            minibatch = self.memory.rand_minibatch(self.batch_size)
-            # note the computed values below are batched in array
-            Q_states = self.model.predict(minibatch['states'])
-            Q_next_states = self.model.predict(minibatch['next_states'])
-            Q_next_states_max = np.amax(Q_next_states, axis=1)
-            # make future reward 0 if exp is terminal
-            Q_targets_a = minibatch['rewards'] + self.gamma * \
-                (1 - minibatch['terminals']) * Q_next_states_max
-            # set batch Q_targets of a as above, the rest as is
-            # minibatch['actions'] is one-hot encoded
-            Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
-                (1 - minibatch['actions']) * Q_states
-
-            # logger.info("minibatch actions: {}\n Q_targets_a (reshapes): {}"
-            #             "\n Q_states: {}\n Q_targets: {}\n\n".format(
-            #                 minibatch['actions'], Q_targets_a[
-            #                     :, np.newaxis], Q_states,
-            #                 Q_targets))
-
-            loss = self.model.train_on_batch(minibatch['states'], Q_targets)
+            loss = self.train_an_epoch()
             loss_total += loss
         avg_loss = loss_total / self.n_epoch
         sys_vars['loss'].append(avg_loss)

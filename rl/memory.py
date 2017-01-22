@@ -10,8 +10,7 @@ class Memory(object):
     The base class of Memory, with the core methods
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
@@ -47,8 +46,7 @@ class LinearMemory(Memory):
     The replay memory used for random minibatch training
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
@@ -59,6 +57,11 @@ class LinearMemory(Memory):
         action_arr = np.zeros(self.agent.env_spec['action_dim'])
         action_arr[action] = 1
         return action_arr
+
+    def trim_exp(self, max_len=50000):
+        if (self.size() > max_len):
+            for k in self.exp_keys:
+                del self.exp[k][0]
 
     def add_exp(self, action, reward, next_state, terminal):
         '''
@@ -80,9 +83,7 @@ class LinearMemory(Memory):
         return {k: self._get_exp(k, inds) for k in self.exp_keys}
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         assert self.size() > 0
         return self.get_exp([self.size() - 1])
 
@@ -112,9 +113,7 @@ class LinearMemoryWithForgetting(LinearMemory):
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
 
-        if (self.size() > 50000):
-            for k in self.exp_keys:
-                del self.exp[k][0]
+        self.trim_exp(max_len=50000)
 
 
 class LongLinearMemoryWithForgetting(LinearMemory):
@@ -130,9 +129,7 @@ class LongLinearMemoryWithForgetting(LinearMemory):
         super(LongLinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
 
-        if (self.size() > 500000):
-            for k in self.exp_keys:
-                del self.exp[k][0]
+        self.trim_exp(max_len=500000)
 
 
 class LeftTailMemory(LinearMemory):
@@ -175,8 +172,7 @@ class RankedMemory(LinearMemory):
     experiences are grouped episodically
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(RankedMemory, self).__init__()
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
@@ -214,9 +210,7 @@ class RankedMemory(LinearMemory):
             self.sorted_epi_exp = self.merge_exp()
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         buffer_exp = self.exp  # store for restore later
         self.exp = self.last_exp
         res = super(RankedMemory, self).pop()
@@ -298,8 +292,7 @@ class HighLowMemory(LinearMemory):
     per minibatch for each of the high and low memories
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(HighLowMemory, self).__init__()
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
@@ -385,9 +378,7 @@ class HighLowMemory(LinearMemory):
             # print()
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         buffer_exp = self.exp  # store for restore later
         self.exp = self.last_exp
         res = super(HighLowMemory, self).pop()
@@ -454,8 +445,7 @@ class HighLowMemoryWithForgetting(HighLowMemory):
     Controlled by max_epis_in_mem param
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(HighLowMemoryWithForgetting, self).__init__()
         self.max_epis_in_mem = 250
         log_self(self)

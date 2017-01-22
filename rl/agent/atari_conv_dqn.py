@@ -1,6 +1,4 @@
 from rl.agent.dqn import DQN
-from rl.util import logger
-from keras.models import Sequential
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
 from keras.optimizers import RMSprop
@@ -40,28 +38,15 @@ class ConvDQN(DQN):
                         activation=self.hidden_layers_activation,
                         init='lecun_uniform',
                         W_constraint=maxnorm(3)))
+
         model.add(Flatten())
-        model.add(Dense(256, init='lecun_uniform',
+        model.add(Dense(256,
+                        init='lecun_uniform',
                         activation=self.hidden_layers_activation,
                         W_constraint=maxnorm(3)))
+
         return model
 
-    def build_model(self):
-        '''
-        Optimizer is RMSProp, default learning rate used
-        '''
-
-        model = Sequential()
-        self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'],
-                        init='lecun_uniform',
-                        W_constraint=maxnorm(3)))
-
-        logger.info("Model summary")
-        model.summary()
-        self.model = model
-
+    def build_optimizer(self):
+        '''Optimizer is RMSprop, default learning rate used'''
         self.optimizer = RMSprop()
-        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
-        logger.info("Model built and compiled")
-        return self.model
