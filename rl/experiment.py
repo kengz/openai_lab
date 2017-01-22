@@ -360,7 +360,7 @@ class Session(object):
         sys_vars['time_taken'] = timestamp_elapse(
             sys_vars['time_start'], sys_vars['time_end'])
 
-        progress = 'Progress: Experiment #{} Session #{} of {} done.'.format(
+        progress = 'Progress: Experiment #{} Session #{} of {} done'.format(
             self.experiment.experiment_num,
             self.session_num, self.num_of_sessions)
         log_delimiter('End Session:\n{}\n{}'.format(
@@ -468,13 +468,21 @@ class Experiment(object):
         return self.data
 
     def save(self):
-        '''
-        save the entire experiment data grid from inside run()
-        '''
+        '''save the entire experiment data grid from inside run()'''
         with open(self.data_filename, 'w') as f:
             f.write(to_json(self.data))
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
+
+    def to_stop(self):
+        '''check of experiment should be continued'''
+        metrics = self.data['summary']['metrics']
+        failed = metrics['solved_num_of_sessions'] == 0
+        if failed:
+            logger.info(
+                'Failed experiment, terminating sessions for {}'.format(
+                    self.experiment_id))
+        return failed
 
     def run(self):
         '''
@@ -507,7 +515,10 @@ class Experiment(object):
             # progressive update, write when every session is done
             self.save()
 
-        progress = 'Progress: Experiment #{} of {} done.'.format(
+            if self.to_stop():
+                break
+
+        progress = 'Progress: Experiment #{} of {} done'.format(
             self.experiment_num, self.num_of_experiments)
         log_delimiter(
             'End Experiment:\n{}\n{}'.format(
