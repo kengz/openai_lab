@@ -46,22 +46,6 @@ class ConvDQN(DQN):
                         W_constraint=maxnorm(3)))
         return model
 
-    def build_model(self):
-        '''
-        Optimizer is RMSProp, default learning rate used
-        '''
-
-        model = Sequential()
-        self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'],
-                        init='lecun_uniform',
-                        W_constraint=maxnorm(3)))
-
-        logger.info("Model summary")
-        model.summary()
-        self.model = model
-
+    def build_optimizer(self):
+        '''Optimizer is RMSprop, default learning rate used'''
         self.optimizer = RMSprop()
-        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
-        logger.info("Model built and compiled")
-        return self.model

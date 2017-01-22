@@ -37,6 +37,7 @@ class DQN(Agent):
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
         log_self(self)
+        self.optimizer = None
         self.build_model()
 
     def build_hidden_layers(self, model):
@@ -58,6 +59,9 @@ class DQN(Agent):
 
         return model
 
+    def build_optimizer(self):
+        self.optimizer = SGD(lr=self.learning_rate)
+
     def build_model(self):
         model = Sequential()
         self.build_hidden_layers(model)
@@ -65,12 +69,11 @@ class DQN(Agent):
                         init='lecun_uniform',
                         activation=self.output_layer_activation,
                         W_constraint=maxnorm(3)))
-
         logger.info("Model summary")
         model.summary()
         self.model = model
 
-        self.optimizer = SGD(lr=self.learning_rate)
+        self.build_optimizer()
         self.model.compile(loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Model built and compiled")
         return self.model
@@ -85,7 +88,7 @@ class DQN(Agent):
             if (sys_vars['epi'] == self.epi_change_learning_rate and
                     sys_vars['t'] == 0):
                 self.learning_rate = self.learning_rate / 10.0
-                self.optimizer = type(self.optimizer)(lr=self.learning_rate)
+                self.build_optimizer()
                 self.model.compile(
                     loss='mean_squared_error', optimizer=self.optimizer)
                 logger.info('Model recompiled with new settings: '
