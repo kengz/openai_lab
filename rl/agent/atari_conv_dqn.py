@@ -1,6 +1,4 @@
 from rl.agent.dqn import DQN
-from rl.util import logger
-from keras.models import Sequential
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
 from keras.optimizers import RMSprop
@@ -40,10 +38,13 @@ class ConvDQN(DQN):
                         activation=self.hidden_layers_activation,
                         init='lecun_uniform',
                         W_constraint=maxnorm(3)))
+
         model.add(Flatten())
-        model.add(Dense(256, init='lecun_uniform',
+        model.add(Dense(256,
+                        init='lecun_uniform',
                         activation=self.hidden_layers_activation,
                         W_constraint=maxnorm(3)))
+
         return model
 
     def build_optimizer(self):

@@ -45,11 +45,12 @@ class DQN(Agent):
         build the hidden layers into model using parameter self.hidden_layers
         '''
         model.add(Dense(self.hidden_layers[0],
-                        input_shape=(self.env_spec['state_dim'],),
-                        init='lecun_uniform',
+                        input_shape=(self.env_spec['state_dim']),
                         activation=self.hidden_layers_activation,
+                        init='lecun_uniform',
                         W_constraint=maxnorm(3)))
 
+        # inner hidden layer: no specification of input shape
         if (len(self.hidden_layers) > 1):
             for i in range(1, len(self.hidden_layers)):
                 model.add(Dense(self.hidden_layers[i],
