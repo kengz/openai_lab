@@ -6,6 +6,7 @@ import json
 import logging
 import numpy as np
 import os
+import sys
 from datetime import datetime, timedelta
 from os import path, environ
 from textwrap import wrap
@@ -29,7 +30,7 @@ args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
 logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
+handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(
     logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
 logger.setLevel(args.loglevel)
@@ -50,7 +51,7 @@ def wrap_text(text):
 def print_line(line='-'):
     if environ.get('CI'):
         return
-    rows, columns = os.popen('stty size', 'r').read().split()
+    _rows, columns = os.popen('stty size', 'r').read().split()
     line_str = line*int(columns)
     print(line_str)
 
@@ -83,7 +84,7 @@ def timestamp_elapse_to_seconds(s1):
 
 def basic_stats(array):
     '''generate the basic stats for a numerical array'''
-    if not array:
+    if not len(array):
         return None
     return {
         'min': np.min(array).astype(float),
@@ -219,26 +220,29 @@ def mp_run_helper(experiment):
     return experiment.run()
 
 
+def prefix_id_from_experiment_id(experiment_id):
+    str_arr = experiment_id.split('_')
+    if str_arr[-1].startswith('e'):
+        str_arr.pop()
+    return '_'.join(str_arr)
+
+
 def load_data_from_experiment_id(experiment_id):
     experiment_id = experiment_id.split(
         '/').pop().split('.').pop(0)
-    data_filename = './data/{}.json'.format(experiment_id)
+    prefix_id = prefix_id_from_experiment_id(experiment_id)
+    data_filename = './data/{}/{}.json'.format(prefix_id, experiment_id)
     data = json.loads(open(data_filename).read())
     return data
 
 
-def prefix_id_from_experiment_id(experiment_id):
-    str_arr = experiment_id.split('_')
-    str_arr.pop()
-    return '_'.join(str_arr)
-
-
 def load_data_array_from_prefix_id(prefix_id):
     # to load all ./data files for a series of experiments
-    data_path = './data'
+    prefix_id = prefix_id_from_experiment_id(prefix_id)
+    data_path = './data/{}'.format(prefix_id)
     experiment_id_array = [
         f for f in os.listdir(data_path)
-        if (os.path.isfile(os.path.join(data_path, f)) and
+        if (path.isfile(path.join(data_path, f)) and
             f.startswith(prefix_id) and
             f.endswith('.json'))
     ]

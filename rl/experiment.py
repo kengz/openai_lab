@@ -8,8 +8,9 @@ import warnings
 import numpy as np
 import platform
 import pandas as pd
+import traceback
 from keras import backend as K
-from os import environ
+from os import path, environ
 from rl.util import *
 from rl.agent import *
 from rl.memory import *
@@ -25,6 +26,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
+np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -46,6 +48,7 @@ REQUIRED_SYS_KEYS = {
     'REWARD_MEAN_LEN': None,
     'epi': 0,
     't': 0,
+    'done': False,
     'loss': [],
     'total_rewards_history': [],
     'explore_history': [],
@@ -87,7 +90,7 @@ class Grapher(object):
         self.subgraphs['total rewards'] = (ax1, p1)
 
         ax1e = ax1.twinx()
-        ax1e.set_ylabel('(epsilon or tau)').set_color('r')
+        ax1e.set_ylabel('exploration rate').set_color('r')
         ax1e.set_frame_on(False)
         p1e, = ax1e.plot([], [], 'r')
         self.subgraphs['e'] = (ax1e, p1e)
@@ -171,7 +174,8 @@ class Session(object):
         self.num_of_sessions = num_of_sessions
         self.session_id = self.experiment.experiment_id + \
             '_s' + str(self.session_num)
-        log_delimiter('Init Session:\n{}'.format(self.session_id))
+        log_delimiter('Init Session #{} of {}:\n{}'.format(
+            self.session_num, self.num_of_sessions, self.session_id))
 
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
@@ -184,15 +188,16 @@ class Session(object):
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
+        self.preprocessor = self.PreProcessor(**self.param)
         self.env_spec = self.set_env_spec()
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.preprocessor = self.PreProcessor(**self.param)
         self.agent.compile(self.memory, self.policy, self.preprocessor)
 
         # data file and graph
-        self.base_filename = './data/{}'.format(self.session_id)
+        self.base_filename = './data/{}/{}'.format(
+            self.experiment.prefix_id, self.session_id)
         self.graph_filename = self.base_filename + '.png'
 
         # for plotting
@@ -234,7 +239,7 @@ class Session(object):
         state_dim = env.observation_space.shape[0]
         if (len(env.observation_space.shape) > 1):
             state_dim = env.observation_space.shape
-        self.env_spec = {
+        env_spec = {
             'state_dim': state_dim,
             'state_bounds': np.transpose(
                 [env.observation_space.low, env.observation_space.high]),
@@ -244,15 +249,9 @@ class Session(object):
             'timestep_limit': env.spec.tags.get(
                 'wrapper_config.TimeLimit.max_episode_steps')
         }
-        self.set_state_dim()  # preprocess
+        self.env_spec = self.preprocessor.preprocess_env_spec(
+            env_spec)  # preprocess
         return self.env_spec
-
-    def set_state_dim(self):
-        '''helper to tweak env_spec according to preprocessor'''
-        if self.PreProcessor is StackStates:
-            self.env_spec['state_dim'] = self.env_spec['state_dim'] * 2
-        elif self.PreProcessor is Atari:
-            self.env_spec['state_dim'] = (84, 84, 4)
 
     def debug_agent_info(self):
         logger.debug(
@@ -268,17 +267,6 @@ class Session(object):
         logger.debug(
             "PreProcessor info: {}".format(
                 format_obj_dict(self.agent.preprocessor, [])))
-
-    def create_dummy_states(self, state):
-        # TODO refactor etc
-        previous_state = np.zeros(state.shape)
-        pre_previous_state = np.zeros(state.shape)
-        pre_pre_previous_state = np.zeros(state.shape)
-        if (previous_state.ndim == 1):
-            previous_state = np.zeros([state.shape[0]])
-            pre_previous_state = np.zeros([state.shape[0]])
-            pre_pre_previous_state = np.zeros([state.shape[0]])
-        return (previous_state, pre_previous_state, pre_pre_previous_state)
 
     def check_end(self):
         '''check if session ends (if is last episode)
@@ -324,50 +312,30 @@ class Session(object):
 
     def run_episode(self):
         '''run ane episode, return sys_vars'''
-        sys_vars = self.sys_vars
-        env = self.env
-        agent = self.agent
-
-        state = env.reset()
-        agent.memory.reset_state(state)
+        sys_vars, env, agent = self.sys_vars, self.env, self.agent
         sys_vars['total_rewards'] = 0
+        state = env.reset()
+        processed_state = agent.preprocessor.reset_state(state)
+        agent.memory.reset_state(processed_state)
         self.debug_agent_info()
-
-        # TODO refactor preprocessing
-        (previous_state, pre_previous_state,
-            pre_pre_previous_state) = self.create_dummy_states(state)
-
-        # Temp memory buffer to hold last n experiences
-        # Enables data preprocessing, inc. diff and stack
-        temp_exp_mem = []
 
         for t in range(agent.env_spec['timestep_limit']):
             sys_vars['t'] = t  # update sys_vars t
             if sys_vars.get('RENDER'):
                 env.render()
 
-            proc_state = agent.preprocessor.preprocess_action_sel(
-                state, previous_state,
-                pre_previous_state,
-                pre_pre_previous_state)
-            action = agent.select_action(proc_state)
-            next_state, reward, done, info = env.step(action)
-            temp_exp_mem.append([state, action, reward, next_state, done])
-            # Buffer currently set to hold only last 4 experiences
-            # Amount needed for Atari games preprocessing
-            if (len(temp_exp_mem) > 4):
-                del temp_exp_mem[0]
+            processed_state = agent.preprocessor.preprocess_state()
+            action = agent.select_action(processed_state)
+            next_state, reward, done, _info = env.step(action)
+            processed_exp = agent.preprocessor.preprocess_memory(
+                action, reward, next_state, done)
+            if processed_exp is not None:
+                agent.memory.add_exp(*processed_exp)
 
-            # agent.memory.add_exp(action, reward, next_state, done)
-            agent.preprocessor.preprocess_memory(temp_exp_mem, t)
+            sys_vars['done'] = done
             agent.update(sys_vars)
-            if (t >= 3) and agent.to_train(sys_vars):
+            if agent.to_train(sys_vars):
                 agent.train(sys_vars)
-
-            pre_pre_previous_state = pre_previous_state
-            pre_previous_state = previous_state
-            previous_state = state
-            state = next_state
             sys_vars['total_rewards'] += reward
             if done:
                 break
@@ -380,24 +348,28 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
-        log_delimiter('Run Session:\n{}'.format(self.session_id))
+        log_delimiter('Run Session #{} of {}\n{}'.format(
+            self.session_num, self.num_of_sessions, self.session_id))
         sys_vars = self.sys_vars
-        time_start = timestamp()
+        sys_vars['time_start'] = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
-            self.run_episode()
-            self.agent.recompile_model(self.param, self.sys_vars)
+            try:
+                self.run_episode()
+            except Exception:
+                logger.error('Error in experiment, terminating '
+                             'further session from {}'.format(self.session_id))
+                traceback.print_exc(file=sys.stdout)
+                break
             if sys_vars['solved']:
                 break
 
         self.clear_session()
-        time_end = timestamp()
-        time_taken = timestamp_elapse(time_start, time_end)
-        sys_vars['time_start'] = time_start
-        sys_vars['time_end'] = time_end
-        sys_vars['time_taken'] = time_taken
+        sys_vars['time_end'] = timestamp()
+        sys_vars['time_taken'] = timestamp_elapse(
+            sys_vars['time_start'], sys_vars['time_end'])
 
-        progress = 'Progress: Experiment #{} Session #{} of {} done.'.format(
+        progress = 'Progress: Experiment #{} Session #{} of {} done'.format(
             self.experiment.experiment_num,
             self.session_num, self.num_of_sessions)
         log_delimiter('End Session:\n{}\n{}'.format(
@@ -432,7 +404,8 @@ class Experiment(object):
 
     def __init__(self, sess_spec, times=1,
                  experiment_num=0, num_of_experiments=1,
-                 run_timestamp=timestamp()):
+                 run_timestamp=timestamp(),
+                 prefix_id_override=None):
 
         self.sess_spec = sess_spec
         self.data = None
@@ -441,7 +414,7 @@ class Experiment(object):
         self.experiment_num = experiment_num
         self.num_of_experiments = num_of_experiments
         self.run_timestamp = run_timestamp
-        self.prefix_id = '{}_{}_{}_{}_{}_{}'.format(
+        self.prefix_id = prefix_id_override or '{}_{}_{}_{}_{}_{}'.format(
             sess_spec['problem'],
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
@@ -450,34 +423,40 @@ class Experiment(object):
             self.run_timestamp
         )
         self.experiment_id = self.prefix_id + '_e' + str(self.experiment_num)
-        self.base_filename = './data/{}'.format(self.experiment_id)
+        self.base_dir = './data/{}'.format(self.prefix_id)
+        os.makedirs(self.base_dir, exist_ok=True)
+        self.base_filename = './data/{}/{}'.format(
+            self.prefix_id, self.experiment_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Experiment:\n{}'.format(self.experiment_id), '=')
+        log_delimiter('Init Experiment #{} of {}:\n{}'.format(
+            self.experiment_num, self.num_of_experiments,
+            self.experiment_id), '=')
 
     def analyze(self):
-        '''
+        '''mean_rewards_per_epi
         helper: analyze given data from an experiment
         return metrics
         '''
         sys_vars_array = self.data['sys_vars_array']
         solved_sys_vars_array = list(filter(
             lambda sv: sv['solved'], sys_vars_array))
-        mean_rewards_array = list(map(
-            lambda sv: sv['mean_rewards'], sys_vars_array))
-        max_total_rewards_array = list(map(
-            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array))
-        epi_array = list(map(lambda sv: sv['epi'], sys_vars_array))
-        t_array = list(map(lambda sv: sv['t'], sys_vars_array))
-        time_taken_array = list(map(
+        mean_rewards_array = np.array(list(map(
+            lambda sv: sv['mean_rewards'], sys_vars_array)))
+        max_total_rewards_array = np.array(list(map(
+            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
+        epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
+        mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array)
+        t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
+        time_taken_array = np.array(list(map(
             lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            sys_vars_array))
-        solved_epi_array = list(map(
-            lambda sv: sv['epi'], solved_sys_vars_array))
-        solved_t_array = list(map(
-            lambda sv: sv['t'], solved_sys_vars_array))
-        solved_time_taken_array = list(map(
+            sys_vars_array)))
+        solved_epi_array = np.array(list(map(
+            lambda sv: sv['epi'], solved_sys_vars_array)))
+        solved_t_array = np.array(list(map(
+            lambda sv: sv['t'], solved_sys_vars_array)))
+        solved_time_taken_array = np.array(list(map(
             lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            solved_sys_vars_array))
+            solved_sys_vars_array)))
 
         metrics = {
             # percentage solved
@@ -486,6 +465,8 @@ class Experiment(object):
             'solved_ratio_of_sessions': float(len(
                 solved_sys_vars_array)) / len(sys_vars_array),
             'mean_rewards_stats': basic_stats(mean_rewards_array),
+            'mean_rewards_per_epi_stats': basic_stats(
+                mean_rewards_per_epi_array),
             'max_total_rewards_stats': basic_stats(max_total_rewards_array),
             'epi_stats': basic_stats(epi_array),
             't_stats': basic_stats(t_array),
@@ -498,13 +479,21 @@ class Experiment(object):
         return self.data
 
     def save(self):
-        '''
-        save the entire experiment data grid from inside run()
-        '''
+        '''save the entire experiment data grid from inside run()'''
         with open(self.data_filename, 'w') as f:
             f.write(to_json(self.data))
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
+
+    def to_stop(self):
+        '''check of experiment should be continued'''
+        metrics = self.data['summary']['metrics']
+        failed = metrics['solved_ratio_of_sessions'] < 1.
+        if failed:
+            logger.info(
+                'Failed experiment, terminating sessions for {}'.format(
+                    self.experiment_id))
+        return failed
 
     def run(self):
         '''
@@ -537,7 +526,10 @@ class Experiment(object):
             # progressive update, write when every session is done
             self.save()
 
-        progress = 'Progress: Experiment #{} of {} done.'.format(
+            if self.to_stop():
+                break
+
+        progress = 'Progress: Experiment #{} of {} done'.format(
             self.experiment_num, self.num_of_experiments)
         log_delimiter(
             'End Experiment:\n{}\n{}'.format(
@@ -564,23 +556,25 @@ def configure_gpu():
     return sess
 
 
-def plot(experiment_id):
+def plot(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
-    data = load_data_from_experiment_id(experiment_id)
-    sess_spec = data['sess_spec']
-    experiment = Experiment(sess_spec, times=1)
-    # save with the right serialized filename
-    experiment.experiment_id = experiment_id
-    num_of_sessions = len(data['sys_vars_array'])
+    prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
+    experiment_data_array = load_data_array_from_prefix_id(prefix_id)
+    for data in experiment_data_array:
+        sess_spec = data['sess_spec']
+        experiment = Experiment(sess_spec, times=1,
+                                prefix_id_override=prefix_id)
+        # save with the right serialized filename
+        experiment.experiment_id = data['experiment_id']
+        num_of_sessions = len(data['sys_vars_array'])
 
-    for s in range(num_of_sessions):
-        sess = Session(experiment=experiment,
-                       session_num=s, num_of_sessions=num_of_sessions)
-        sys_vars = data['sys_vars_array'][s]
-        sess.sys_vars = sys_vars
-        sess.grapher.plot()
-        sess.clear_session()
-    return
+        for s in range(num_of_sessions):
+            sess = Session(experiment=experiment,
+                           session_num=s, num_of_sessions=num_of_sessions)
+            sys_vars = data['sys_vars_array'][s]
+            sess.sys_vars = sys_vars
+            sess.grapher.plot()
+            sess.clear_session()
 
 
 def analyze_param_space(experiment_data_array_or_prefix_id):
@@ -605,20 +599,23 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
     metrics_df = pd.DataFrame.from_dict(flat_metrics_array)
     metrics_df.sort_values(
-        ['mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
+        ['mean_rewards_per_epi_stats_mean',
+         'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
         ascending=False
-    ).sort_values(['epi_stats_mean'])
+    )
 
     experiment_id = experiment_data_array[0]['experiment_id']
     prefix_id = prefix_id_from_experiment_id(experiment_id)
-    metrics_df.to_csv(
-        './data/param_space_data_{}.csv'.format(prefix_id),
-        index=False)
+    param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
+        prefix_id)
+    metrics_df.to_csv(param_space_data_filename, index=False)
+    logger.info(
+        'Param space data saved to {}'.format(param_space_data_filename))
     return metrics_df
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, line_search=True,
+        param_selection=False, line_search=False,
         plot_only=False):
     '''
     primary method:
