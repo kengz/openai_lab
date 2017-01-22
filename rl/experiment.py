@@ -25,7 +25,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
-np.seterr(all='warn')
+np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
@@ -351,7 +351,11 @@ class Session(object):
         sys_vars['time_start'] = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
-            self.run_episode()
+            try:
+                self.run_episode()
+            except:
+                logger.error('Error in experiment, terminating')
+                break
             if sys_vars['solved']:
                 break
 
