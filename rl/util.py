@@ -26,6 +26,30 @@ parser.add_argument("-b", "--blind",
                     dest="render",
                     const=False,
                     default=True)
+parser.add_argument("-s", "--sess",
+                    help="specifies session to run, see sess_specs.json",
+                    action="store",
+                    type=str,
+                    nargs='?',
+                    dest="sess_to_run",
+                    default="dev_dqn")
+parser.add_argument("-t", "--times",
+                    help="number of times session is run",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="times",
+                    default=1)
+parser.add_argument("-p", "--param_selection",
+                    help="run parameter selection if present",
+                    action="store_true",
+                    dest="param_selection",
+                    default=False)
+parser.add_argument("-l", "--line_search",
+                    help="run line search instead of grid search if present",
+                    action="store_true",
+                    dest="line_search",
+                    default=False)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
