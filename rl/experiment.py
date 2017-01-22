@@ -8,6 +8,7 @@ import warnings
 import numpy as np
 import platform
 import pandas as pd
+import traceback
 from keras import backend as K
 from os import environ
 from rl.util import *
@@ -353,9 +354,9 @@ class Session(object):
             sys_vars['epi'] = epi  # update sys_vars epi
             try:
                 self.run_episode()
-            except Exception as e:
-                logger.error(str(e))
+            except Exception:
                 logger.error('Error in experiment, terminating')
+                traceback.print_exc(file=sys.stdout)
                 break
             if sys_vars['solved']:
                 break
