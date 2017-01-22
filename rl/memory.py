@@ -10,8 +10,7 @@ class Memory(object):
     The base class of Memory, with the core methods
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
@@ -47,8 +46,7 @@ class LinearMemory(Memory):
     The replay memory used for random minibatch training
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
@@ -174,8 +172,7 @@ class RankedMemory(LinearMemory):
     experiences are grouped episodically
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(RankedMemory, self).__init__()
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
@@ -295,8 +292,7 @@ class HighLowMemory(LinearMemory):
     per minibatch for each of the high and low memories
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(HighLowMemory, self).__init__()
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
@@ -449,8 +445,7 @@ class HighLowMemoryWithForgetting(HighLowMemory):
     Controlled by max_epis_in_mem param
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         super(HighLowMemoryWithForgetting, self).__init__()
         self.max_epis_in_mem = 250
         log_self(self)

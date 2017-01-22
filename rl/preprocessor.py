@@ -45,8 +45,7 @@ class PreProcessor(object):
     The Base class for state preprocessing
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, **kwargs):  # absorb generic param without breaking
         '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
@@ -104,8 +103,7 @@ class NoPreProcessor(PreProcessor):
     Default class, no preprocessing
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking):
+    def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(NoPreProcessor, self).__init__()
         log_self(self)
 
@@ -126,8 +124,7 @@ class StackStates(PreProcessor):
     Current and last state are concatenated to form input to model
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking):
+    def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(StackStates, self).__init__()
         log_self(self)
 
@@ -157,8 +154,7 @@ class DiffStates(PreProcessor):
     Different between current and last state is input to model
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking):
+    def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(DiffStates, self).__init__()
         log_self(self)
 
@@ -190,8 +186,7 @@ class Atari(PreProcessor):
     Input to model is rows * cols * channels (== states)
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking):
+    def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(Atari, self).__init__()
         log_self(self)
 
