@@ -90,7 +90,11 @@ Tl;dr:
 # run locally
 npm start
 # run from remote after logging in to ssh
+# launch screen first, then run
+screen
 npm run remote
+# use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
+# use screen -r to resume screen next time
 ```
 
 The scripts are inside the `rl/` folder. Configure your `game_specs` in `rl/session.py`, and run
