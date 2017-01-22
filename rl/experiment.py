@@ -604,7 +604,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, line_search=True,
+        param_selection=False, line_search=False,
         plot_only=False):
     '''
     primary method:
