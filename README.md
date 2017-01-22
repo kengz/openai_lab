@@ -84,6 +84,15 @@ env.render()
 
 First run `gulp` to setup watcher for automatically copying data files.
 
+Tl;dr:
+
+```shell
+# run locally
+npm start
+# run from remote after logging in to ssh
+npm run remote
+```
+
 The scripts are inside the `rl/` folder. Configure your `game_specs` in `rl/session.py`, and run
 
 ```shell

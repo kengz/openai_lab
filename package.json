@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "python3 main.py -b | tee -a ./data/terminal.log",
+    "remote": "xvfb-run -a -s \"-screen 0 1400x900x24\" -- npm start",
     "test": "python3 setup.py test",
     "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov",
     "clear": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log"
