@@ -400,7 +400,8 @@ class Experiment(object):
 
     def __init__(self, sess_spec, times=1,
                  experiment_num=0, num_of_experiments=1,
-                 run_timestamp=timestamp()):
+                 run_timestamp=timestamp(),
+                 prefix_id_override=None):
 
         self.sess_spec = sess_spec
         self.data = None
@@ -409,7 +410,7 @@ class Experiment(object):
         self.experiment_num = experiment_num
         self.num_of_experiments = num_of_experiments
         self.run_timestamp = run_timestamp
-        self.prefix_id = '{}_{}_{}_{}_{}_{}'.format(
+        self.prefix_id = prefix_id_override or '{}_{}_{}_{}_{}_{}'.format(
             sess_spec['problem'],
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
@@ -538,23 +539,25 @@ def configure_gpu():
     return sess
 
 
-def plot(experiment_id):
+def plot(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
-    data = load_data_from_experiment_id(experiment_id)
-    sess_spec = data['sess_spec']
-    experiment = Experiment(sess_spec, times=1)
-    # save with the right serialized filename
-    experiment.experiment_id = experiment_id
-    num_of_sessions = len(data['sys_vars_array'])
+    prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
+    experiment_data_array = load_data_array_from_prefix_id(prefix_id)
+    for data in experiment_data_array:
+        sess_spec = data['sess_spec']
+        experiment = Experiment(sess_spec, times=1,
+                                prefix_id_override=prefix_id)
+        # save with the right serialized filename
+        experiment.experiment_id = data['experiment_id']
+        num_of_sessions = len(data['sys_vars_array'])
 
-    for s in range(num_of_sessions):
-        sess = Session(experiment=experiment,
-                       session_num=s, num_of_sessions=num_of_sessions)
-        sys_vars = data['sys_vars_array'][s]
-        sess.sys_vars = sys_vars
-        sess.grapher.plot()
-        sess.clear_session()
-    return
+        for s in range(num_of_sessions):
+            sess = Session(experiment=experiment,
+                           session_num=s, num_of_sessions=num_of_sessions)
+            sys_vars = data['sys_vars_array'][s]
+            sess.sys_vars = sys_vars
+            sess.grapher.plot()
+            sess.clear_session()
 
 
 def analyze_param_space(experiment_data_array_or_prefix_id):
@@ -586,9 +589,10 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
     experiment_id = experiment_data_array[0]['experiment_id']
     prefix_id = prefix_id_from_experiment_id(experiment_id)
-    metrics_df.to_csv(
-        './data/{0}/param_space_data_{0}.csv'.format(prefix_id),
-        index=False)
+    param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
+        prefix_id)
+    metrics_df.to_csv(param_space_data_filename, index=False)
+    logger.info('Param space data saved to {}'.format(param_space_data_filename))
     return metrics_df
 
 
