@@ -10,9 +10,7 @@ class Policy(object):
 
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking
-        '''
-        Construct externally, and set at Agent.compile()
-        '''
+        '''Construct externally, and set at Agent.compile()'''
         self.agent = None
 
     def select_action(self, state):

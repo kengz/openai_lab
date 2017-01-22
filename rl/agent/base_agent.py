@@ -31,9 +31,7 @@ class Agent(object):
         raise NotImplementedError()
 
     def update(self, sys_vars):
-        '''
-        Agent update apart from training the Q function
-        '''
+        '''Agent update apart from training the Q function'''
         self.policy.update(sys_vars)
         raise NotImplementedError()
 

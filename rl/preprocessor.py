@@ -47,18 +47,14 @@ class PreProcessor(object):
 
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking
-        '''
-        Construct externally, and set at Agent.compile()
-        '''
+        '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
         self.exp_queue = []
         self.MAX_QUEUE_SIZE = 4
 
     def reset_state(self, init_state):
-        '''
-        reset the state of LinearMemory per episode env.reset()
-        '''
+        '''reset the state of LinearMemory per episode env.reset()'''
         self.state = np.array(init_state)  # cast into np for safety
         (previous_state, pre_previous_state,
             pre_pre_previous_state) = create_dummy_states(self.state)

@@ -12,16 +12,12 @@ class Memory(object):
 
     def __init__(self,
                  **kwargs):  # absorb generic param without breaking
-        '''
-        Construct externally, and set at Agent.compile()
-        '''
+        '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
 
     def reset_state(self, init_state):
-        '''
-        reset the state of LinearMemory per episode env.reset()
-        '''
+        '''reset the state of LinearMemory per episode env.reset()'''
         self.state = init_state
 
     def add_exp(self, action, reward, next_state, terminal):
