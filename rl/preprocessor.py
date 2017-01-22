@@ -45,13 +45,14 @@ class PreProcessor(object):
     The Base class for state preprocessing
     '''
 
-    def __init__(self, **kwargs):  # absorb generic param without breaking
+    def __init__(self, max_queue_size=4, **kwargs):
         '''Construct externally, and set at Agent.compile()'''
         self.agent = None
         self.state = None
         self.exp_queue = []
-        self.MAX_QUEUE_SIZE = 4
+        self.MAX_QUEUE_SIZE = max_queue_size
         self.never_debugged = True
+        log_self(self)
 
     def reset_state(self, init_state):
         '''reset the state of LinearMemory per episode env.reset()'''
@@ -113,7 +114,6 @@ class NoPreProcessor(PreProcessor):
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(NoPreProcessor, self).__init__()
-        log_self(self)
 
     def preprocess_state(self):
         return self.state
@@ -133,9 +133,7 @@ class StackStates(PreProcessor):
     '''
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
-        super(StackStates, self).__init__()
-        self.MAX_QUEUE_SIZE = 2
-        log_self(self)
+        super(StackStates, self).__init__(max_queue_size=2)
 
     def preprocess_state(self):
         processed_state = np.concatenate([self.previous_state, self.state])
@@ -161,9 +159,7 @@ class DiffStates(PreProcessor):
     '''
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
-        super(DiffStates, self).__init__()
-        self.MAX_QUEUE_SIZE = 2
-        log_self(self)
+        super(DiffStates, self).__init__(max_queue_size=2)
 
     def preprocess_state(self):
         processed_state = self.state - self.previous_state
@@ -192,7 +188,6 @@ class Atari(PreProcessor):
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(Atari, self).__init__()
-        log_self(self)
 
     def preprocess_state(self):
         processed_state_queue = (
