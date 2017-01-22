@@ -47,6 +47,7 @@ REQUIRED_SYS_KEYS = {
     'REWARD_MEAN_LEN': None,
     'epi': 0,
     't': 0,
+    'done': False,
     'loss': [],
     'total_rewards_history': [],
     'explore_history': [],
@@ -309,9 +310,7 @@ class Session(object):
 
     def run_episode(self):
         '''run ane episode, return sys_vars'''
-        sys_vars = self.sys_vars
-        env = self.env
-        agent = self.agent
+        sys_vars, env, agent = self.sys_vars, self.env, self.agent
         sys_vars['total_rewards'] = 0
         state = env.reset()
         processed_state = agent.preprocessor.reset_state(state)
@@ -331,11 +330,10 @@ class Session(object):
             if processed_exp is not None:
                 agent.memory.add_exp(*processed_exp)
 
+            sys_vars['done'] = done
             agent.update(sys_vars)
-            # TODO absorb time cond into agent.to_train
-            if (t >= 3) and agent.to_train(sys_vars):
+            if agent.to_train(sys_vars):
                 agent.train(sys_vars)
-
             sys_vars['total_rewards'] += reward
             if done:
                 break
@@ -350,7 +348,7 @@ class Session(object):
         '''run a session of agent'''
         log_delimiter('Run Session:\n{}'.format(self.session_id))
         sys_vars = self.sys_vars
-        time_start = timestamp()
+        sys_vars['time_start'] = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode()
@@ -358,11 +356,9 @@ class Session(object):
                 break
 
         self.clear_session()
-        time_end = timestamp()
-        time_taken = timestamp_elapse(time_start, time_end)
-        sys_vars['time_start'] = time_start
-        sys_vars['time_end'] = time_end
-        sys_vars['time_taken'] = time_taken
+        sys_vars['time_end'] = timestamp()
+        sys_vars['time_taken'] = timestamp_elapse(
+            sys_vars['time_start'], sys_vars['time_end'])
 
         progress = 'Progress: Experiment #{} Session #{} of {} done.'.format(
             self.experiment.experiment_num,
