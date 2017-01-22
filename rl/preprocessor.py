@@ -51,6 +51,7 @@ class PreProcessor(object):
         self.state = None
         self.exp_queue = []
         self.MAX_QUEUE_SIZE = 4
+        self.never_debugged = True
 
     def reset_state(self, init_state):
         '''reset the state of LinearMemory per episode env.reset()'''
@@ -64,6 +65,13 @@ class PreProcessor(object):
 
     def exp_queue_size(self):
         return len(self.exp_queue)
+
+    def debug_state(self, processed_state, processed_next_state):
+        if self.never_debugged:
+            logger.debug("State shape: {}".format(processed_state.shape))
+            logger.debug(
+                "Next state shape: {}".format(processed_next_state.shape))
+            self.never_debugged = False
 
     def preprocess_env_spec(self, env_spec):
         '''helper to tweak env_spec according to preprocessor'''
@@ -126,6 +134,7 @@ class StackStates(PreProcessor):
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(StackStates, self).__init__()
+        self.MAX_QUEUE_SIZE = 2
         log_self(self)
 
     def preprocess_state(self):
@@ -135,15 +144,12 @@ class StackStates(PreProcessor):
     def preprocess_memory(self, action, reward, next_state, done):
         '''Concatenate: previous + current states'''
         self.add_raw_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 2):  # insufficient queue
+        if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_state = self.preprocess_state()
         processed_next_state = np.concatenate([state, next_state])
-        if (self.exp_queue_size() == 1):
-            logger.debug("State shape: {}".format(processed_state.shape))
-            logger.debug(
-                "Next state shape: {}".format(processed_next_state.shape))
+        self.debug_state(processed_state, processed_next_state)
         processed_exp = (action, reward, processed_next_state, done)
         return processed_exp
 
@@ -156,6 +162,7 @@ class DiffStates(PreProcessor):
 
     def __init__(self, **kwargs):  # absorb generic param without breaking):
         super(DiffStates, self).__init__()
+        self.MAX_QUEUE_SIZE = 2
         log_self(self)
 
     def preprocess_state(self):
@@ -165,15 +172,12 @@ class DiffStates(PreProcessor):
     def preprocess_memory(self, action, reward, next_state, done):
         '''Change in state, curr_state - last_state'''
         self.add_raw_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 2):  # insufficient queue
+        if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
         (state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_state = self.preprocess_state()
         processed_next_state = next_state - state
-        if (self.exp_queue_size() == 1):
-            logger.debug("State shape: {}".format(processed_state.shape))
-            logger.debug(
-                "Next state shape: {}".format(processed_next_state.shape))
+        self.debug_state(processed_state, processed_next_state)
         processed_exp = (action, reward, processed_next_state, done)
         return processed_exp
 
@@ -201,7 +205,7 @@ class Atari(PreProcessor):
 
     def preprocess_memory(self, action, reward, next_state, done):
         self.add_raw_exp(action, reward, next_state, done)
-        if (self.exp_queue_size() < 4):  # insufficient queue
+        if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
         (_state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_next_state_queue = (
@@ -211,9 +215,6 @@ class Atari(PreProcessor):
             process_image_atari(self.exp_queue[-4][3]))
         processed_state = self.preprocess_state()
         processed_next_state = np.stack(processed_next_state_queue, axis=-1)
-        if (self.exp_queue_size() == 3):
-            logger.debug("State shape: {}".format(processed_state.shape))
-            logger.debug(
-                "Next state shape: {}".format(processed_next_state.shape))
+        self.debug_state(processed_state, processed_next_state)
         processed_exp = (action, reward, processed_next_state, done)
         return processed_exp
