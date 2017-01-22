@@ -99,7 +99,7 @@
     },
     "mountain_double_dqn": {
         "problem": "MountainCar-v0",
-        "Agent": "mountain_double_dqn.MountainDoubleDQN",
+        "Agent": "double_dqn.DoubleDQN",
         "Memory": "LinearMemory",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -146,7 +146,7 @@
     },
     "lunar_double_dqn": {
         "problem": "LunarLander-v2",
-        "Agent": "lunar_double_dqn.LunarDoubleDQN",
+        "Agent": "double_dqn.DoubleDQN",
         "Memory": "LinearMemory",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
