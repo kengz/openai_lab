@@ -355,7 +355,8 @@ class Session(object):
             try:
                 self.run_episode()
             except Exception:
-                logger.error('Error in experiment, terminating')
+                logger.error('Error in experiment, terminating '
+                             'further session from {}'.format(self.session_id))
                 traceback.print_exc(file=sys.stdout)
                 break
             if sys_vars['solved']:
