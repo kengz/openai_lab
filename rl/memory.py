@@ -60,6 +60,11 @@ class LinearMemory(Memory):
         action_arr[action] = 1
         return action_arr
 
+    def trim_exp(self, max_len=50000):
+        if (self.size() > max_len):
+            for k in self.exp_keys:
+                del self.exp[k][0]
+
     def add_exp(self, action, reward, next_state, terminal):
         '''
         after the env.step(a) that returns s', r,
@@ -80,9 +85,7 @@ class LinearMemory(Memory):
         return {k: self._get_exp(k, inds) for k in self.exp_keys}
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         assert self.size() > 0
         return self.get_exp([self.size() - 1])
 
@@ -112,9 +115,7 @@ class LinearMemoryWithForgetting(LinearMemory):
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
 
-        if (self.size() > 50000):
-            for k in self.exp_keys:
-                del self.exp[k][0]
+        self.trim_exp(max_len=50000)
 
 
 class LongLinearMemoryWithForgetting(LinearMemory):
@@ -130,9 +131,7 @@ class LongLinearMemoryWithForgetting(LinearMemory):
         super(LongLinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal)
 
-        if (self.size() > 500000):
-            for k in self.exp_keys:
-                del self.exp[k][0]
+        self.trim_exp(max_len=500000)
 
 
 class LeftTailMemory(LinearMemory):
@@ -214,9 +213,7 @@ class RankedMemory(LinearMemory):
             self.sorted_epi_exp = self.merge_exp()
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         buffer_exp = self.exp  # store for restore later
         self.exp = self.last_exp
         res = super(RankedMemory, self).pop()
@@ -385,9 +382,7 @@ class HighLowMemory(LinearMemory):
             # print()
 
     def pop(self):
-        '''
-        convenient method to get exp at [last_ind]
-        '''
+        '''convenient method to get exp at [last_ind]'''
         buffer_exp = self.exp  # store for restore later
         self.exp = self.last_exp
         res = super(HighLowMemory, self).pop()
