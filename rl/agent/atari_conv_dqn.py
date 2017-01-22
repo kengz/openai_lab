@@ -1,11 +1,8 @@
-import numpy as np
-from rl.util import logger
 from rl.agent.dqn import DQN
 from rl.util import logger
 from keras.models import Sequential
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
-from keras.layers.pooling import MaxPooling2D
 from keras.optimizers import RMSprop
 from keras.constraints import maxnorm
 from keras import backend as K

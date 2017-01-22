@@ -242,7 +242,7 @@ def load_data_array_from_prefix_id(prefix_id):
     data_path = './data/{}'.format(prefix_id)
     experiment_id_array = [
         f for f in os.listdir(data_path)
-        if (os.path.isfile(os.path.join(data_path, f)) and
+        if (path.isfile(path.join(data_path, f)) and
             f.startswith(prefix_id) and
             f.endswith('.json'))
     ]

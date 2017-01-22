@@ -10,7 +10,7 @@ import platform
 import pandas as pd
 import traceback
 from keras import backend as K
-from os import environ
+from os import path, environ
 from rl.util import *
 from rl.agent import *
 from rl.memory import *
