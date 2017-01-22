@@ -13,26 +13,16 @@ class DoubleDQN(DQN):
     '''
 
     def build_model(self):
-        model = Sequential()
-        self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'], init='lecun_uniform'))
+        super(DoubleDQN, self).build_model()
 
-        logger.info("Model 1 summary")
-        model.summary()
-        self.model = model
-
-        model2 = Sequential.from_config(model.get_config())
+        model2 = Sequential.from_config(self.model.get_config())
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2
 
-        self.optimizer = SGD(lr=self.learning_rate)
-        self.model.compile(
-            loss='mean_squared_error', optimizer=self.optimizer)
         self.model2.compile(
             loss='mean_squared_error', optimizer=self.optimizer)
         logger.info("Models built and compiled")
-
         return self.model, self.model2
 
     def train(self, sys_vars):
