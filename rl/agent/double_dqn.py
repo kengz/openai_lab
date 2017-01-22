@@ -38,23 +38,9 @@ class DoubleDQN(DQN):
         Q_next_states_max = Q_next_states[:, Q_next_states_max_ind]
         return (Q_states, Q_next_states_max)
 
-    def train(self, sys_vars):
-        loss_total = 0
-        for _epoch in range(self.n_epoch):
-            # same as dqn
-            minibatch = self.memory.rand_minibatch(self.batch_size)
-
-            (Q_states, Q_next_states_max) = self.compute_Q_states(minibatch)
-            Q_targets = self.compute_Q_targets(
-                minibatch, Q_states, Q_next_states_max)
-
-            loss = self.model.train_on_batch(minibatch['states'], Q_targets)
-            loss_total += loss
-
-            # Switch model 1 and model 2
-            temp = self.model
-            self.model = self.model2
-            self.model2 = temp
-        avg_loss = loss_total / self.n_epoch
-        sys_vars['loss'].append(avg_loss)
-        return avg_loss
+    def train_an_epoch(self):
+         # Switch model 1 and model 2
+        temp = self.model
+        self.model = self.model2
+        self.model2 = temp
+        return super(DoubleDQN, self).train_an_epoch()
