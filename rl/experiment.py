@@ -174,7 +174,8 @@ class Session(object):
         self.num_of_sessions = num_of_sessions
         self.session_id = self.experiment.experiment_id + \
             '_s' + str(self.session_num)
-        log_delimiter('Init Session:\n{}'.format(self.session_id))
+        log_delimiter('Init Session #{} of {}:\n{}'.format(
+            self.session_num, self.num_of_sessions, self.session_id))
 
         self.sess_spec = experiment.sess_spec
         self.problem = self.sess_spec['problem']
@@ -347,7 +348,8 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
-        log_delimiter('Run Session:\n{}'.format(self.session_id))
+        log_delimiter('Run Session #{} of {}\n{}'.format(
+            self.session_num, self.num_of_sessions, self.session_id))
         sys_vars = self.sys_vars
         sys_vars['time_start'] = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
@@ -426,7 +428,9 @@ class Experiment(object):
         self.base_filename = './data/{}/{}'.format(
             self.prefix_id, self.experiment_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Experiment:\n{}'.format(self.experiment_id), '=')
+        log_delimiter('Init Experiment #{} of {}:\n{}'.format(
+            self.experiment_num, self.num_of_experiments,
+            self.experiment_id), '=')
 
     def analyze(self):
         '''mean_rewards_per_epi
