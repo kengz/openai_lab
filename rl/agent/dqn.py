@@ -130,6 +130,24 @@ class DQN(Agent):
             t == (timestep_limit-1) or
             done)
 
+    def compute_Q_states(self, minibatch):
+        # note the computed values below are batched in array
+        Q_states = self.model.predict(minibatch['states'])
+
+        Q_next_states = self.model.predict(minibatch['next_states'])
+        Q_next_states_max = np.amax(Q_next_states, axis=1)
+        return (Q_states, Q_next_states_max)
+
+    def compute_Q_targets(self, minibatch, Q_states, Q_next_states_max):
+        # make future reward 0 if exp is terminal
+        Q_targets_a = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * Q_next_states_max
+        # set batch Q_targets of a as above, the rest as is
+        # minibatch['actions'] is one-hot encoded
+        Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
+            (1 - minibatch['actions']) * Q_states
+        return Q_targets
+
     def train(self, sys_vars):
         '''
         Training is for the Q function (NN) only
@@ -139,17 +157,10 @@ class DQN(Agent):
         loss_total = 0
         for _epoch in range(self.n_epoch):
             minibatch = self.memory.rand_minibatch(self.batch_size)
-            # note the computed values below are batched in array
-            Q_states = self.model.predict(minibatch['states'])
-            Q_next_states = self.model.predict(minibatch['next_states'])
-            Q_next_states_max = np.amax(Q_next_states, axis=1)
-            # make future reward 0 if exp is terminal
-            Q_targets_a = minibatch['rewards'] + self.gamma * \
-                (1 - minibatch['terminals']) * Q_next_states_max
-            # set batch Q_targets of a as above, the rest as is
-            # minibatch['actions'] is one-hot encoded
-            Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
-                (1 - minibatch['actions']) * Q_states
+
+            (Q_states, Q_next_states_max) = self.compute_Q_states(minibatch)
+            Q_targets = self.compute_Q_targets(
+                minibatch, Q_states, Q_next_states_max)
 
             loss = self.model.train_on_batch(minibatch['states'], Q_targets)
             loss_total += loss
