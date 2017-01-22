@@ -83,7 +83,6 @@ class PreProcessor(object):
         raise NotImplementedError()
 
     def advance_state(self, next_state):
-        # TODO can be generalized into a memory queue
         self.pre_pre_previous_state = self.pre_previous_state
         self.pre_previous_state = self.previous_state
         self.previous_state = self.state
@@ -95,7 +94,6 @@ class PreProcessor(object):
         Amount needed for Atari games preprocessing
         '''
         self.exp_queue.append([self.state, action, reward, next_state, done])
-        # TODO parametrize max length to top
         if (self.exp_queue_size() > self.MAX_QUEUE_SIZE):
             del self.exp_queue[0]
         self.advance_state(next_state)
