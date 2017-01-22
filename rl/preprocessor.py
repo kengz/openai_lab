@@ -119,7 +119,7 @@ class NoPreProcessor(PreProcessor):
     def preprocess_memory(self, action, reward, next_state, done):
         '''No state processing'''
         self.add_raw_exp(action, reward, next_state, done)
-        (state, action, reward, next_state, done) = self.exp_queue[-1]
+        (_state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_exp = (action, reward, next_state, done)
         return processed_exp
 

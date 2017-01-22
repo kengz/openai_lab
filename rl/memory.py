@@ -419,7 +419,7 @@ class HighLowMemory(LinearMemory):
         buffer_exp = self.exp
         minibatch_as_list = []
         if high_samples > 0:
-            for i in range(4):
+            for _i in range(4):
                 idx = np.random.randint(0, len(self.epi_memory_high))
                 epi_exp = self.epi_memory_high[idx]['exp']
                 self.exp = epi_exp
@@ -428,7 +428,7 @@ class HighLowMemory(LinearMemory):
                 minibatch_as_list.append(epi_minibatch)
 
         if low_samples > 0:
-            for i in range(4):
+            for _i in range(4):
                 idx = np.random.randint(0, len(self.epi_memory_low))
                 epi_exp = self.epi_memory_low[idx]['exp']
                 self.exp = epi_exp

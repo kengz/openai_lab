@@ -137,7 +137,7 @@ class DQN(Agent):
         step 1,2,3,4 of algo.
         '''
         loss_total = 0
-        for epoch in range(self.n_epoch):
+        for _epoch in range(self.n_epoch):
             minibatch = self.memory.rand_minibatch(self.batch_size)
             # note the computed values below are batched in array
             Q_states = self.model.predict(minibatch['states'])
