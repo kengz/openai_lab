@@ -353,7 +353,8 @@ class Session(object):
             sys_vars['epi'] = epi  # update sys_vars epi
             try:
                 self.run_episode()
-            except:
+            except Exception as e:
+                logger.error(str(e))
                 logger.error('Error in experiment, terminating')
                 break
             if sys_vars['solved']:
