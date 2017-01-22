@@ -212,7 +212,7 @@ class Atari(PreProcessor):
         self.add_raw_exp(action, reward, next_state, done)
         if (self.exp_queue_size() < 4):  # insufficient queue
             return
-        (state, action, reward, next_state, done) = self.exp_queue[-1]
+        (_state, action, reward, next_state, done) = self.exp_queue[-1]
         processed_next_state_queue = (
             process_image_atari(self.exp_queue[-1][3]),
             process_image_atari(self.exp_queue[-2][3]),
