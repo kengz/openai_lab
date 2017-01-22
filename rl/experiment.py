@@ -354,7 +354,6 @@ class Session(object):
         for epi in range(sys_vars['MAX_EPISODES']):
             sys_vars['epi'] = epi  # update sys_vars epi
             self.run_episode()
-            self.agent.recompile_model(self.param, self.sys_vars)
             if sys_vars['solved']:
                 break
 
@@ -592,7 +591,8 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
     param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
         prefix_id)
     metrics_df.to_csv(param_space_data_filename, index=False)
-    logger.info('Param space data saved to {}'.format(param_space_data_filename))
+    logger.info(
+        'Param space data saved to {}'.format(param_space_data_filename))
     return metrics_df
 
 

@@ -100,7 +100,3 @@ class QTable(Agent):
         self.qtable[flat_state, action] = Q_state_action + \
             self.learning_rate * loss
         return self.qtable
-
-    def recompile_model(self, params, sys_vars):
-        ''' Function not needed for non neural network based agents'''
-        return

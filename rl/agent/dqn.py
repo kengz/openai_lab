@@ -19,6 +19,7 @@ class DQN(Agent):
     def __init__(self, env_spec,
                  train_per_n_new_exp=1,
                  gamma=0.95, learning_rate=0.1,
+                 epi_change_learning_rate=None,
                  batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
@@ -28,6 +29,7 @@ class DQN(Agent):
         self.train_per_n_new_exp = train_per_n_new_exp
         self.gamma = gamma
         self.learning_rate = learning_rate
+        self.epi_change_learning_rate = epi_change_learning_rate
         self.batch_size = batch_size
         self.n_epoch = 1
         self.final_n_epoch = n_epoch
@@ -73,16 +75,17 @@ class DQN(Agent):
         logger.info("Model built and compiled")
         return self.model
 
-    def recompile_model(self, params, sys_vars):
+    def recompile_model(self, sys_vars):
         '''
         Option to change model optimizer settings
         Currently only used for changing the learning rate
         Compiling does not affect the model weights
         '''
-        if 'epi_change_learning_rate' in params:
-            if (sys_vars['epi'] == params['epi_change_learning_rate']):
+        if self.epi_change_learning_rate is not None:
+            if (sys_vars['epi'] == self.epi_change_learning_rate and
+                    sys_vars['t'] == 0):
                 self.learning_rate = self.learning_rate / 10.0
-                self.optimizer = SGD(lr=self.learning_rate)
+                self.optimizer = type(self.optimizer)(lr=self.learning_rate)
                 self.model.compile(
                     loss='mean_squared_error', optimizer=self.optimizer)
                 logger.info('Model recompiled with new settings: '
@@ -112,6 +115,7 @@ class DQN(Agent):
         '''
         self.policy.update(sys_vars)
         self.update_n_epoch(sys_vars)
+        self.recompile_model(sys_vars)
 
     def to_train(self, sys_vars):
         '''
