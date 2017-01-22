@@ -477,7 +477,7 @@ class Experiment(object):
     def to_stop(self):
         '''check of experiment should be continued'''
         metrics = self.data['summary']['metrics']
-        failed = metrics['solved_num_of_sessions'] == 0
+        failed = metrics['solved_ratio_of_sessions'] < 1.
         if failed:
             logger.info(
                 'Failed experiment, terminating sessions for {}'.format(
