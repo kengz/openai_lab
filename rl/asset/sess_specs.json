@@ -76,7 +76,7 @@
     },
     "mountain_dqn": {
         "problem": "MountainCar-v0",
-        "Agent": "lunar_dqn.LunarDQN",
+        "Agent": "dqn.DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -115,7 +115,7 @@
     },
     "lunar_dqn": {
         "problem": "LunarLander-v2",
-        "Agent": "lunar_dqn.LunarDQN",
+        "Agent": "dqn.DQN",
         "Memory": "HighLowMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "StackStates",
