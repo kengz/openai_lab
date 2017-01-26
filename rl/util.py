@@ -50,6 +50,11 @@ parser.add_argument("-l", "--line_search",
                     action="store_true",
                     dest="line_search",
                     default=False)
+parser.add_argument("-g", "--graph",
+                    help="plot metrics graphs live",
+                    action="store_true",
+                    dest="plot_graph",
+                    default=False)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
