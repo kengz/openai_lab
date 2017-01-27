@@ -31,7 +31,7 @@ parser.add_argument("-s", "--sess",
                     action="store",
                     type=str,
                     nargs='?',
-                    dest="sess_to_run",
+                    dest="sess_name",
                     default="dev_dqn")
 parser.add_argument("-t", "--times",
                     help="number of times session is run",
