@@ -464,7 +464,7 @@ class Experiment(object):
             'num_of_sessions': len(sys_vars_array),
             'solved_num_of_sessions': len(solved_sys_vars_array),
             'solved_ratio_of_sessions': float(len(
-                solved_sys_vars_array)) / len(sys_vars_array),
+                solved_sys_vars_array)) / self.times,
             'mean_rewards_stats': basic_stats(mean_rewards_array),
             'mean_rewards_per_epi_stats': basic_stats(
                 mean_rewards_per_epi_array),
