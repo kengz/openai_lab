@@ -67,6 +67,8 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
+        if not args.plot_graph:
+            return
         import matplotlib.pyplot as plt
         plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
         self.plt = plt
@@ -118,9 +120,9 @@ class Grapher(object):
 
     def plot(self):
         '''do live plotting'''
-        sys_vars = self.session.sys_vars
-        if environ.get('CI'):
+        if not args.plot_graph or environ.get('CI'):
             return
+        sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
         p1.set_ydata(
             sys_vars['total_rewards_history'])
