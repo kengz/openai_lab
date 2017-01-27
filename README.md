@@ -87,16 +87,19 @@ gulp
 
 ### Run experiments locally
 
+Configure the `"start"` scripts in `package.json` for easily running the same experiments over and over again.
+
 ```shell
+# easy run command
 npm start
+# to clear data/
+npm run clear
 ```
 
-Or to customize your run commands, use plain python:
+To customize your run commands, use plain python:
 
 ```shell
-python main.py # run default mode
-python main.py -d # debug mode
-python main.py -b # blind mode, no rendering
+python3 main.py -s lunar_dqn -b -g | tee -a ./data/terminal.log
 ```
 
 The extra flags are:
