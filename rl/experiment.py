@@ -674,3 +674,70 @@ def run(sess_name_id_spec, times=1,
         experiment_data_array = [experiment_data]
 
     return analyze_param_space(experiment_data_array)
+
+
+
+# from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+
+# def param_to_hp(param):
+#     # simple, all by choice first
+#     # can do uniform later
+#     # or just step up all the way
+#     param_space = {}
+#     for k in param:
+#         param_space[k] = hp.choice(k, param[k])
+#     return param_space
+
+# param_space = {
+#     'times': 5,
+#     'experiment_num': e_ohhh_shit_use_trial_tid,
+#     'num_of_experiments': num_of_experiments,
+#     'run_timestamp': run_timestamp,
+#     **sess_spec: ,
+# }
+
+# def hyperopt_run_experiment(sess_spec):
+#     # use param to carry those params other than sess_spec
+#     experiment = Experiment(
+#         sess_spec, times=times, experiment_num=e,
+#         num_of_experiments=num_of_experiments,
+#         run_timestamp=run_timestamp)
+#     experiment_data = experiment.run()
+#     metrics = experiment_data['summary']['metrics']
+#     # to maximize avg mean rewards/epi via minimization
+#     hyperopt_loss = -metrics['mean_rewards_per_epi_stats']['mean']
+#     return {'loss': hyperopt_loss, 'status': STATUS_OK}
+
+
+# OK fine init all experiments outside like normal,
+# but param_space when composed together can be used to retrieve the already-initialized experiment for running
+# so the code up till line 667 can be preserverd
+
+# whole shit
+# from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+
+# fspace = {
+#     'x': hp.uniform('x', -5, 5)
+# }
+
+# def f(params):
+#     x = params['x']
+#     val = x**2
+#     return {'loss': val, 'status': STATUS_OK}
+
+# trials = Trials()
+#     best = fmin(fn=f, space=fspace, algo=tpe.suggest, max_evals=50, trials=trials)
+
+# print 'best:', best
+
+# print 'trials:'
+# for trial in trials.trials[:2]:
+#     print trial
+
+
+# param_space = param_to_hp(param)
+# def f(param):
+#     # form sess_spec with param
+#     # define loss as high level wrapper for experiment analyze_param_space
+#     # spec algo, run
+#     return
