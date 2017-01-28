@@ -1,15 +1,11 @@
 import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, log_self
-from keras.models import Sequential
-from keras.layers.core import Dense
-from keras.optimizers import SGD
 
 
 class DeepSarsa(DQN):
 
     '''
-    Deep Sarsa agent. 
+    Deep Sarsa agent.
     On policy, with updates after each experience
     Policy = epsilonGreedyPolicy
     '''
