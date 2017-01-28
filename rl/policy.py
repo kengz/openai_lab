@@ -57,6 +57,22 @@ class EpsilonGreedyPolicy(Policy):
         self.e = max(slope * epi + self.init_e, self.final_e)
         return self.e
 
+class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
+    '''
+    Inspired by alvacarce's solution to mountain car
+    https://gym.openai.com/evaluations/eval_t3GN2Xb0R5KpyjkJUGsLw
+    '''
+    def __init__(self,
+                 init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
+                 **kwargs):  # absorb generic param without breaking
+        super(DecayingEpsilonGreedyPolicy, self).__init__()
+        self.decay = 0.9997
+
+    def update(self, sys_vars):
+        epi = sys_vars['epi']
+        if self.e > self.final_e:
+            self.e = self.e * self.decay
+        return self.e
 
 class OscillatingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
 
