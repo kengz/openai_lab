@@ -5,6 +5,8 @@
 # c) from trials, return the data and aggregate for metrics_df
 # 2. to run end to end, i.e. do a) and b) above, we need experiment_id (and other non-sess_spec variables) to be set from the f
 # 3. param (sess_spec) space should really set params(sess_specs) only, for clean design and ability to do search properly. use a global counter (shared across processes in case of parallel runs) to set the experiment_num and anything else. A central counter that increases the global variables, call that source a global_variable_source
+# 4. ok fuck have to do space enumeration on param, so sess_spec would
+# have to go in gvs
 
 
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
@@ -19,19 +21,31 @@ from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 #     return param_space
 
 gvs = {'SOME': 'PROPER CLASS OBJECT'}
-sess_spec_space = generate_sess_spec_space(sess_spec)
+param_space = generate_param_space(sess_spec)
 
-def generate_sess_spec_space(sess_spec):
+
+def generate_param_space(sess_spec):
     # list constant as is,
     # expand param range by hp object
     # default param as constant
-    return
+
+    # copy, extract param for defaulting, extract param_range for space
+    # construction
+    default_param = sess_spec['param']
+    param_range = sess_spec['param_range']
+    # keys = param_range.keys()
+    # range_vals = param_range.values()
+    param_space = {}
+    return param_space
+
 
 # SOLID
-def hyperopt_run_experiment(sess_spec):
+def hyperopt_run_experiment(param):
     # use param to carry those params other than sess_spec
     # set a global gvs: global variable source
     gv = gvs.get_next()
+    sess_spec = gv['bare_sess_spec']
+    sess_spec.update({'param': param})
     times = gv['times']
     experiment_num = gv['experiment_num']
     num_of_experiments = gv['num_of_experiments']
@@ -48,6 +62,7 @@ def hyperopt_run_experiment(sess_spec):
     # to maximize avg mean rewards/epi via minimization
     hyperopt_loss = -metrics['mean_rewards_per_epi_stats']['mean']
     return {'loss': hyperopt_loss, 'status': STATUS_OK}
+
 
 def hyperopt_analyze_param_space(trials):
     # recover experiment_data_array
@@ -92,6 +107,7 @@ fspace = {
     'x': hp.uniform('x', -5, 5),
     'w': hp.uniform('w', 0, 2),
 }
+
 
 def f(params):
     print(params)
