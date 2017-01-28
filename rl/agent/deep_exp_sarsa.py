@@ -22,7 +22,7 @@ class DeepExpectedSarsa(DQN):
             self.model.predict(last_exp['states']), -clip_val, clip_val)
         Q_next_states = np.clip(
             self.model.predict(last_exp['next_states']), -clip_val, clip_val)
-        
+
         curr_e = self.policy.e
         curr_e_per_a = curr_e / self.env_spec['action_dim']
 
