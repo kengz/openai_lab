@@ -6,4 +6,4 @@ if __name__ == '__main__':
     run(args.sess_name,
         args.times,
         args.param_selection,
-        args.line_search)
+        args.max_evals)

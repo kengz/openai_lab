@@ -109,7 +109,6 @@ The extra flags are:
 - `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`
 - `-t <times>`: the number of sessions to run per experiment. Default: `1`
 - `-p`: run param selection. Default: `False`
-- `-l`: use line search for param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 
 

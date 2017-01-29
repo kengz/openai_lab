@@ -40,15 +40,17 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
+parser.add_argument("-e", "--experiments",
+                    help="number of max experiments ran: hyperopt max_evals",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="max_evals",
+                    default=2)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
                     dest="param_selection",
-                    default=False)
-parser.add_argument("-l", "--line_search",
-                    help="run line search instead of grid search if present",
-                    action="store_true",
-                    dest="line_search",
                     default=False)
 parser.add_argument("-g", "--graph",
                     help="plot metrics graphs live",
