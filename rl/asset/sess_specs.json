@@ -43,7 +43,7 @@
         "problem": "CartPole-v0",
         "Agent": "dqn.DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
@@ -104,7 +104,7 @@
         "problem": "CartPole-v0",
         "Agent": "double_dqn.DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "DoubleDQNPolicy",
+        "Policy": "DoubleDQNBoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
@@ -183,8 +183,8 @@
     "lunar_dqn": {
         "problem": "LunarLander-v2",
         "Agent": "dqn.DQN",
-        "Memory": "HighLowMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Memory": "LinearMemoryWithForgetting",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 5,
@@ -246,7 +246,7 @@
         "problem": "LunarLander-v2",
         "Agent": "double_dqn.DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "DoubleDQNPolicy",
+        "Policy": "DoubleDQNBoltzmannPolicy",
         "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 5,
