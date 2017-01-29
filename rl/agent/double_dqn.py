@@ -31,20 +31,16 @@ class DoubleDQN(DQN):
         Q_next_states_select = np.clip(
             self.model2.predict(minibatch['next_states']), -clip_val, clip_val)
         Q_next_states_max_ind = np.argmax(Q_next_states_select, axis=1)
-        # if more than one max, pick 1st
-        # if (Q_next_states_max_ind.shape[1] > 1):
-        #     Q_next_states_max_ind = Q_next_states_max_ind[0]
-        rows = np.arange(Q_next_states_max_ind.shape[0])
         # same as dqn again, but use Q_next_states_max_ind above
         Q_next_states = np.clip(
             self.model.predict(minibatch['next_states']), -clip_val, clip_val)
+        rows = np.arange(Q_next_states_max_ind.shape[0])
         Q_next_states_max = Q_next_states[rows, Q_next_states_max_ind]
 
         return (Q_states, Q_next_states_max)
 
     def switch_models(self):
          # Switch model 1 and model 2
-        # print("SWITCHING MODELS")
         temp = self.model
         self.model = self.model2
         self.model2 = temp
