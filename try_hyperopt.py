@@ -20,16 +20,16 @@ class GlobalVariableSource(object):
     '''
 
     def __init__(self, **kwargs):
-        '''
-        keys are:
-        common_sess_spec
-        times
-        experiment_num
-        num_of_experiments
-        run_timestamp
-        '''
+        self.REQUIRED_GLOBAL_VARS = [
+            'common_sess_spec',
+            'times',
+            'experiment_num',
+            'num_of_experiments',
+            'run_timestamp'
+        ]
         for k in kwargs:
             setattr(self, k, kwargs[k])
+        assert all(k in kwargs for k in REQUIRED_SYS_KEYS)
 
     def increment(self):
         self.experiment_num += 1
