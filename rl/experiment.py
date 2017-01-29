@@ -29,6 +29,7 @@ else:
 np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
+gvs = None
 GREF = globals()
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
@@ -618,7 +619,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, line_search=False,
+        param_selection=False, max_evals=1,
         plot_only=False):
     '''
     primary method:
@@ -647,27 +648,37 @@ def run(sess_name_id_spec, times=1,
 
     # compose grid and run param selection
     if param_selection:
-        if line_search:
-            param_grid = param_line_search(sess_spec)
-        else:
-            param_grid = param_product(sess_spec)
-        sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
-        num_of_experiments = len(sess_spec_grid)
+        gv_seed = {
+            'common_sess_spec': sess_spec,
+            'times': times,
+            'experiment_num': 0,
+            'num_of_experiments': max_evals,
+            'run_timestamp': timestamp()
+        }
+        global gvs
+        gvs = GlobalVariableSource(gv_seed)
 
-        run_timestamp = timestamp()
-        experiment_array = []
-        for e in range(num_of_experiments):
-            sess_spec = sess_spec_grid[e]
-            experiment = Experiment(
-                sess_spec, times=times, experiment_num=e,
-                num_of_experiments=num_of_experiments,
-                run_timestamp=run_timestamp)
-            experiment_array.append(experiment)
+        # if line_search:
+        #     param_grid = param_line_search(sess_spec)
+        # else:
+        #     param_grid = param_product(sess_spec)
+        # sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
+        # num_of_experiments = len(sess_spec_grid)
 
-        p = mp.Pool(PARALLEL_PROCESS_NUM)
-        experiment_data_array = list(p.map(mp_run_helper, experiment_array))
-        p.close()
-        p.join()
+        # run_timestamp = timestamp()
+        # experiment_array = []
+        # for e in range(num_of_experiments):
+        #     sess_spec = sess_spec_grid[e]
+        #     experiment = Experiment(
+        #         sess_spec, times=times, experiment_num=e,
+        #         num_of_experiments=num_of_experiments,
+        #         run_timestamp=run_timestamp)
+        #     experiment_array.append(experiment)
+
+        # p = mp.Pool(PARALLEL_PROCESS_NUM)
+        # experiment_data_array = list(p.map(mp_run_helper, experiment_array))
+        # p.close()
+        # p.join()
     else:
         experiment = Experiment(sess_spec, times=times)
         experiment_data = experiment.run()

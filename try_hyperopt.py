@@ -8,8 +8,46 @@
 # 4. ok fuck have to do space enumeration on param, so sess_spec would
 # have to go in gvs
 
-
+import copy
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+
+
+class GlobalVariableSource(object):
+
+    '''
+    the global variable source (gvs) basic implementation
+    allows sharing of variables across processes
+    '''
+
+    def __init__(self, **kwargs):
+        '''
+        keys are:
+        common_sess_spec
+        times
+        experiment_num
+        num_of_experiments
+        run_timestamp
+        '''
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+
+    def increment(self):
+        self.experiment_num += 1
+
+    def get_next(self):
+        self.increment()
+        return self.__dict__
+
+
+# gv_seed = {
+#     'common_sess_spec': sess_spec,
+#     'times': times,
+#     'experiment_num': 0,
+#     'num_of_experiments': max_evals,
+#     'run_timestamp': timestamp()
+# }
+# gvs = GlobalVariableSource(gv_seed)
+
 
 # def param_to_hp(param):
 #     # simple, all by choice first
@@ -24,18 +62,29 @@ gvs = {'SOME': 'PROPER CLASS OBJECT'}
 param_space = generate_param_space(sess_spec)
 
 
+def param_range_to_param_space(default_param, param_range):
+    param_space = copy.copy(default_param)
+    # refer to constructors https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
+    # also need to design notation.
+    return param_space
+
+
 def generate_param_space(sess_spec):
     # list constant as is,
-    # expand param range by hp object
+    # expand param range by hp objterect
     # default param as constant
 
     # copy, extract param for defaulting, extract param_range for space
     # construction
     default_param = sess_spec['param']
     param_range = sess_spec['param_range']
+    sess_spec.pop('param', None)
+    sess_spec.pop('param_range', None)
+
+    # split param from sess_spec, put to global, then recombine within f from gvs
     # keys = param_range.keys()
     # range_vals = param_range.values()
-    param_space = {}
+    param_space = param_range_to_param_space(default_param, param_range)
     return param_space
 
 
@@ -44,7 +93,7 @@ def hyperopt_run_experiment(param):
     # use param to carry those params other than sess_spec
     # set a global gvs: global variable source
     gv = gvs.get_next()
-    sess_spec = gv['bare_sess_spec']
+    sess_spec = gv['common_sess_spec']
     sess_spec.update({'param': param})
     times = gv['times']
     experiment_num = gv['experiment_num']
