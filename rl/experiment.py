@@ -9,6 +9,7 @@ import numpy as np
 import platform
 import pandas as pd
 import traceback
+from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 from keras import backend as K
 from os import path, environ
 from rl.util import *
@@ -29,7 +30,6 @@ else:
 np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
-gvs = None
 GREF = globals()
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
@@ -541,6 +541,113 @@ class Experiment(object):
         return self.data
 
 
+class HyperOptimizer(object):
+
+    def __init__(self, **kwargs):
+        self.REQUIRED_GLOBAL_VARS = [
+            'sess_spec',
+            'times',
+            'experiment_num',
+            'num_of_experiments',
+            'run_timestamp',
+            'algo'
+        ]
+        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
+
+        raw_sess_spec = kwargs.pop('sess_spec')
+        assert 'param' in raw_sess_spec
+        assert 'param_range' in raw_sess_spec
+        self.common_sess_spec = copy.deepcopy(raw_sess_spec)
+        self.common_sess_spec.pop('param')
+        self.common_sess_spec.pop('param_range')
+        self.default_param = raw_sess_spec['param']
+        self.param_range = raw_sess_spec['param_range']
+
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+
+        self.generate_param_space()
+
+    def convert_to_hp(self, k, v):
+        '''
+        convert to hyperopt param expressions. refer:
+        https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
+        param = {
+            'learning_rate': {
+                'uniform': {
+                    'low': 0.0001,
+                    'high': 1.0
+                }
+            },
+            'hidden_layers_activation': ['relu', 'linear']
+        }
+        for k in param:
+            v = param[k]
+            print(convert_to_hp(k, v))
+        '''
+        if isinstance(v, list):
+            return hp.choice(k, v)
+        elif isinstance(v, dict):
+            space_keys = list(v.keys())
+            assert len(space_keys) == 1
+            space_k = space_keys[0]
+            space_v = v[space_k]
+            space = getattr(hp, space_k)(k, **space_v)
+            return space
+        else:
+            raise TypeError(
+                'sess_spec param_range value must be a list or dict')
+
+    # generate param_space for hyperopt from sess_spec
+    def generate_param_space(self):
+        self.param_space = copy.copy(self.default_param)
+        for k in self.param_range:
+            v = self.param_range[k]
+            space = self.convert_to_hp(k, v)
+            self.param_space[k] = space
+        return self.param_space
+
+    def increment_var(self):
+        self.experiment_num += 1
+
+    def get_next_var(self):
+        self.increment_var()
+        return self.__dict__
+
+    def hyperopt_run_experiment(self, param):
+        # use param to carry those params other than sess_spec
+        # set a global gvs: global variable source
+        gv = self.get_next_var()
+        sess_spec = gv['common_sess_spec']
+        sess_spec.update({'param': param})
+
+        experiment = Experiment(
+            sess_spec,
+            times=gv['times'],
+            experiment_num=gv['experiment_num'],
+            num_of_experiments=gv['num_of_experiments'],
+            run_timestamp=gv['run_timestamp'])
+        experiment_data = experiment.run()
+        metrics = experiment_data['summary']['metrics']
+        # to maximize avg mean rewards/epi via minimization
+        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean']
+        return {'loss': hyperopt_loss,
+                'status': STATUS_OK,
+                'experiment_data': experiment_data}
+
+    def run(self):
+        trials = Trials()
+        best = fmin(fn=self.hyperopt_run_experiment,
+                    space=self.param_space,
+                    algo=self.algo,
+                    max_evals=self.num_of_experiments,
+                    trials=trials)
+        # TODO implement mp parallel here,
+        experiment_data_array = [
+            trial['result']['experiment_data'] for trial in trials]
+        return experiment_data_array
+
+
 def configure_gpu():
     '''detect GPU options and configure'''
     if K._BACKEND != 'tensorflow':
@@ -619,7 +726,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, max_evals=1,
+        param_selection=False, max_evals=10,
         plot_only=False):
     '''
     primary method:
@@ -648,15 +755,16 @@ def run(sess_name_id_spec, times=1,
 
     # compose grid and run param selection
     if param_selection:
-        gv_seed = {
-            'common_sess_spec': sess_spec,
+        kwargs = {
+            'sess_spec': sess_spec,
             'times': times,
             'experiment_num': 0,
             'num_of_experiments': max_evals,
-            'run_timestamp': timestamp()
+            'run_timestamp': timestamp(),
+            'algo': tpe.suggest
         }
-        global gvs
-        gvs = GlobalVariableSource(gv_seed)
+        hopt = HyperOptimizer(**kwargs)
+        experiment_data_array = hopt.run()
 
         # if line_search:
         #     param_grid = param_line_search(sess_spec)
