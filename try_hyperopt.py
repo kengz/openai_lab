@@ -29,6 +29,8 @@ class GlobalVariableSource(object):
         ]
         for k in kwargs:
             setattr(self, k, kwargs[k])
+        self.common_sess_spec.pop('param', None)
+        self.common_sess_spec.pop('param_range', None)
         assert all(k in kwargs for k in REQUIRED_SYS_KEYS)
 
     def increment(self):
@@ -48,25 +50,17 @@ class GlobalVariableSource(object):
 # }
 # gvs = GlobalVariableSource(gv_seed)
 
+#######
+#######
+#######
+# param_space
+# f
+# trials = Trials()
+# best = fmin(fn=f, space=fspace, algo=tpe.suggest, max_evals=50, trials=trials)
 
-# def param_to_hp(param):
-#     # simple, all by choice first
-#     # can do uniform later
-#     # or just step up all the way
-#     param_space = {}
-#     for k in param:
-#         param_space[k] = hp.choice(k, param[k])
-#     return param_space
-
-gvs = {'SOME': 'PROPER CLASS OBJECT'}
-param_space = generate_param_space(sess_spec)
-
-
-def param_range_to_param_space(default_param, param_range):
-    param_space = copy.copy(default_param)
-    # refer to constructors https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
-    # also need to design notation.
-    return param_space
+# gvs = {'SOME': 'PROPER CLASS OBJECT'}
+# uses gvs in param space generation
+# param_space = generate_param_space(sess_spec)
 
 
 def generate_param_space(sess_spec):
@@ -78,14 +72,53 @@ def generate_param_space(sess_spec):
     # construction
     default_param = sess_spec['param']
     param_range = sess_spec['param_range']
-    sess_spec.pop('param', None)
-    sess_spec.pop('param_range', None)
-
-    # split param from sess_spec, put to global, then recombine within f from gvs
-    # keys = param_range.keys()
-    # range_vals = param_range.values()
+    # TODO CAN REFACTOR THIS WHOLE SHIT
     param_space = param_range_to_param_space(default_param, param_range)
     return param_space
+
+
+def param_range_to_param_space(default_param, param_range):
+    param_space = copy.copy(default_param)
+    for k in param_range:
+        v = param_range[k]
+
+    # refer to constructors https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
+    # also need to design notation.
+    return param_space
+
+
+# 'learning_rate':
+param = {
+    'learning_rate': {
+        'uniform': {
+            'low': 0,
+            'high': 1
+        }
+    },
+    'lorem': [1, 2, 3]
+}
+
+
+# convert to hyperopt param expressions.
+# refer to here
+# https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
+def convert_to_hp(k, v):
+    if isinstance(v, list):
+        return hp.choice(k, v)
+    elif isinstance(v, dict):
+        space_keys = list(v.keys())
+        assert len(space_keys) == 1
+        space_k = space_keys[0]
+        space_v = v[space_k]
+        space = getattr(hp, space_k)(k, **space_v)
+        return space
+    else:
+        raise Exception
+
+
+for k in param:
+    v = param[k]
+    print(convert_to_hp(k, v))
 
 
 # SOLID
@@ -109,8 +142,8 @@ def hyperopt_run_experiment(param):
     experiment_data = experiment.run()
     metrics = experiment_data['summary']['metrics']
     # to maximize avg mean rewards/epi via minimization
-    hyperopt_loss = -metrics['mean_rewards_per_epi_stats']['mean']
-    return {'loss': hyperopt_loss, 'status': STATUS_OK}
+    hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean']
+    return {'loss': hyperopt_loss, 'status': STATUS_OK, 'experiment_data': experiment_data}
 
 
 def hyperopt_analyze_param_space(trials):
@@ -150,24 +183,24 @@ def hyperopt_analyze_param_space(trials):
 #     return
 
 
-from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+# from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 
-fspace = {
-    'x': hp.uniform('x', -5, 5),
-    'w': hp.uniform('w', 0, 2),
-}
+# fspace = {
+#     'x': hp.uniform('x', -5, 5),
+#     'w': hp.uniform('w', 0, 2),
+# }
 
 
-def f(params):
-    print(params)
-    x = params['x']
-    w = params['w']
-    # print(w)
-    val = x**2 + w
-    return {'loss': val, 'status': STATUS_OK}
+# def f(params):
+#     print(params)
+#     x = params['x']
+#     w = params['w']
+#     # print(w)
+#     val = x**2 + w
+#     return {'loss': val, 'status': STATUS_OK}
 
-trials = Trials()
-best = fmin(fn=f, space=fspace, algo=tpe.suggest, max_evals=50, trials=trials)
+# trials = Trials()
+# best = fmin(fn=f, space=fspace, algo=tpe.suggest, max_evals=50, trials=trials)
 
 # print('best:')
 # print(best)
