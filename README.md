@@ -108,6 +108,7 @@ The extra flags are:
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`
 - `-t <times>`: the number of sessions to run per experiment. Default: `1`
+- `-e <experiments>`: the max number of experiments: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 
