@@ -53,7 +53,7 @@ class GlobalVariableSource(object):
 #######
 #######
 #######
-# param_space
+# param_space = generate_param_space(sess_spec)
 # f
 # trials = Trials()
 # best = fmin(fn=f, space=fspace, algo=tpe.suggest, max_evals=50, trials=trials)
@@ -63,46 +63,23 @@ class GlobalVariableSource(object):
 # param_space = generate_param_space(sess_spec)
 
 
-def generate_param_space(sess_spec):
-    # list constant as is,
-    # expand param range by hp objterect
-    # default param as constant
-
-    # copy, extract param for defaulting, extract param_range for space
-    # construction
-    default_param = sess_spec['param']
-    param_range = sess_spec['param_range']
-    # TODO CAN REFACTOR THIS WHOLE SHIT
-    param_space = param_range_to_param_space(default_param, param_range)
-    return param_space
-
-
-def param_range_to_param_space(default_param, param_range):
-    param_space = copy.copy(default_param)
-    for k in param_range:
-        v = param_range[k]
-
-    # refer to constructors https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
-    # also need to design notation.
-    return param_space
-
-
-# 'learning_rate':
-param = {
-    'learning_rate': {
-        'uniform': {
-            'low': 0,
-            'high': 1
-        }
-    },
-    'lorem': [1, 2, 3]
-}
-
-
-# convert to hyperopt param expressions.
-# refer to here
-# https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
 def convert_to_hp(k, v):
+    '''
+    convert to hyperopt param expressions. refer:
+    https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
+    param = {
+        'learning_rate': {
+            'uniform': {
+                'low': 0.0001,
+                'high': 1.0
+            }
+        },
+        'hidden_layers_activation': ['relu', 'linear']
+    }
+    for k in param:
+        v = param[k]
+        print(convert_to_hp(k, v))
+    '''
     if isinstance(v, list):
         return hp.choice(k, v)
     elif isinstance(v, dict):
@@ -113,12 +90,21 @@ def convert_to_hp(k, v):
         space = getattr(hp, space_k)(k, **space_v)
         return space
     else:
-        raise Exception
+        raise TypeError('sess_spec param_range value must be a list or dict')
 
 
-for k in param:
-    v = param[k]
-    print(convert_to_hp(k, v))
+# generate param_space for hyperopt from sess_spec
+def generate_param_space(sess_spec):
+    assert 'param' in sess_spec
+    assert 'param_range' in sess_spec
+    default_param = sess_spec['param']
+    param_space = copy.copy(default_param)
+    param_range = sess_spec['param_range']
+    for k in param_range:
+        v = param_range[k]
+        space = convert_to_hp(k, v)
+        param_space[k] = space
+    return param_space
 
 
 # SOLID
@@ -143,7 +129,9 @@ def hyperopt_run_experiment(param):
     metrics = experiment_data['summary']['metrics']
     # to maximize avg mean rewards/epi via minimization
     hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean']
-    return {'loss': hyperopt_loss, 'status': STATUS_OK, 'experiment_data': experiment_data}
+    return {'loss': hyperopt_loss,
+            'status': STATUS_OK,
+            'experiment_data': experiment_data}
 
 
 def hyperopt_analyze_param_space(trials):
