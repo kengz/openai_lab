@@ -765,6 +765,10 @@ def run(sess_name_id_spec, times=1,
         }
         hopt = HyperOptimizer(**kwargs)
         experiment_data_array = hopt.run()
+        # TODO
+        # need to account for ranked data from hopt: best result?
+        # the useful dependent variables into experiment data
+        # extract data into a smaller frame for plotting
 
         # if line_search:
         #     param_grid = param_line_search(sess_spec)
