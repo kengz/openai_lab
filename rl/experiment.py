@@ -527,8 +527,7 @@ class Experiment(object):
                 'sys_vars_array': sys_vars_array,
             }
             self.analyze()
-            # progressive update, write when every session is done
-            self.save()
+            self.save()  # progressive update, write every session completion
 
             if self.to_stop():
                 break
@@ -765,33 +764,6 @@ def run(sess_name_id_spec, times=1,
         }
         hopt = HyperOptimizer(**kwargs)
         experiment_data_array = hopt.run()
-        # TODO
-        # need to account for ranked data from hopt: best result?
-        # the useful dependent variables into experiment data
-        # extract data into a smaller frame for plotting
-        # parallelize hyperopt
-
-        # if line_search:
-        #     param_grid = param_line_search(sess_spec)
-        # else:
-        #     param_grid = param_product(sess_spec)
-        # sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
-        # num_of_experiments = len(sess_spec_grid)
-
-        # run_timestamp = timestamp()
-        # experiment_array = []
-        # for e in range(num_of_experiments):
-        #     sess_spec = sess_spec_grid[e]
-        #     experiment = Experiment(
-        #         sess_spec, times=times, experiment_num=e,
-        #         num_of_experiments=num_of_experiments,
-        #         run_timestamp=run_timestamp)
-        #     experiment_array.append(experiment)
-
-        # p = mp.Pool(PARALLEL_PROCESS_NUM)
-        # experiment_data_array = list(p.map(mp_run_helper, experiment_array))
-        # p.close()
-        # p.join()
     else:
         experiment = Experiment(sess_spec, times=times)
         experiment_data = experiment.run()
