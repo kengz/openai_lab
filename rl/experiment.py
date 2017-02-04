@@ -3,17 +3,16 @@ import copy
 import gym
 import json
 import matplotlib
-import multiprocessing as mp
 import warnings
 import numpy as np
 import platform
 import pandas as pd
 import traceback
-from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 from keras import backend as K
 from os import path, environ
 from rl.util import *
 from rl.agent import *
+from rl.hyperoptimizer import *
 from rl.memory import *
 from rl.policy import *
 from rl.preprocessor import *
@@ -31,7 +30,6 @@ np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
-PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 SESS_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'sess_specs.json')).read())
@@ -347,7 +345,7 @@ class Session(object):
         return sys_vars
 
     def clear_session(self):
-        if K._BACKEND == 'tensorflow':
+        if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
     def run(self):
@@ -540,182 +538,6 @@ class Experiment(object):
         return self.data
 
 
-class HyperoptHyperOpt(object):
-
-    def __init__(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
-            'times',
-            'max_evals'
-        ]
-        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
-
-        raw_sess_spec = kwargs.pop('sess_spec')
-        assert 'param' in raw_sess_spec
-        assert 'param_range' in raw_sess_spec
-        self.common_sess_spec = copy.deepcopy(raw_sess_spec)
-        self.common_sess_spec.pop('param')
-        self.common_sess_spec.pop('param_range')
-        self.default_param = raw_sess_spec['param']
-        self.param_range = raw_sess_spec['param_range']
-
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
-        self.run_timestamp = timestamp()
-        self.experiment_num = 0
-        self.algo = tpe.suggest
-
-        self.generate_param_space()
-
-    def convert_to_hp(self, k, v):
-        '''
-        convert to hyperopt param expressions. refer:
-        https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
-        param = {
-            'learning_rate': {
-                'uniform': {
-                    'low': 0.0001,
-                    'high': 1.0
-                }
-            },
-            'hidden_layers_activation': ['relu', 'linear']
-        }
-        for k in param:
-            v = param[k]
-            print(convert_to_hp(k, v))
-        '''
-        if isinstance(v, list):
-            return hp.choice(k, v)
-        elif isinstance(v, dict):
-            space_keys = list(v.keys())
-            assert len(space_keys) == 1
-            space_k = space_keys[0]
-            space_v = v[space_k]
-            space = getattr(hp, space_k)(k, **space_v)
-            return space
-        else:
-            raise TypeError(
-                'sess_spec param_range value must be a list or dict')
-
-    # generate param_space for hyperopt from sess_spec
-    def generate_param_space(self):
-        self.param_space = copy.copy(self.default_param)
-        for k in self.param_range:
-            v = self.param_range[k]
-            space = self.convert_to_hp(k, v)
-            self.param_space[k] = space
-        return self.param_space
-
-    def increment_var(self):
-        self.experiment_num += 1
-
-    def get_next_var(self):
-        self.increment_var()
-        return self.__dict__
-
-    def hyperopt_run_experiment(self, param):
-        # use param to carry those params other than sess_spec
-        # set a global gvs: global variable source
-        gv = self.get_next_var()
-        sess_spec = gv['common_sess_spec']
-        sess_spec.update({'param': param})
-
-        experiment = Experiment(
-            sess_spec,
-            times=gv['times'],
-            experiment_num=gv['experiment_num'],
-            num_of_experiments=gv['max_evals'],
-            run_timestamp=gv['run_timestamp'])
-        experiment_data = experiment.run()
-        metrics = experiment_data['summary']['metrics']
-        # to maximize avg mean rewards/epi via minimization
-        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats'][
-            'mean'] / experiment_data['sys_vars_array'][0][
-            'SOLVED_MEAN_REWARD']
-        return {'loss': hyperopt_loss,
-                'status': STATUS_OK,
-                'experiment_data': experiment_data}
-
-    def run(self):
-        trials = Trials()
-        best = fmin(fn=self.hyperopt_run_experiment,
-                    space=self.param_space,
-                    algo=self.algo,
-                    max_evals=self.max_evals,
-                    trials=trials)
-        # TODO implement mp parallel here,
-        experiment_data_array = [
-            trial['result']['experiment_data'] for trial in trials]
-        return experiment_data_array
-
-
-class BruteHyperOpt(object):
-
-    def __init__(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
-            'times',
-            'line_search'
-        ]
-        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
-        self.run_timestamp = timestamp()
-
-        self.generate_param_space()
-
-    # generate param_space for hyperopt from sess_spec
-    def generate_param_space(self):
-        if self.line_search:
-            param_grid = param_line_search(self.sess_spec)
-        else:
-            param_grid = param_product(self.sess_spec)
-        self.param_space = generate_sess_spec_grid(self.sess_spec, param_grid)
-        self.num_of_experiments = len(self.param_space)
-
-        self.experiment_array = []
-        for e in range(self.num_of_experiments):
-            sess_spec = self.param_space[e]
-            experiment = Experiment(
-                sess_spec, times=self.times, experiment_num=e,
-                num_of_experiments=self.num_of_experiments,
-                run_timestamp=self.run_timestamp)
-            self.experiment_array.append(experiment)
-
-        return self.param_space
-
-    # helper wrapper for multiprocessing
-    def mp_run_helper(self, experiment):
-        return experiment.run()
-
-    def run(self):
-        p = mp.Pool(PARALLEL_PROCESS_NUM)
-        experiment_data_array = list(
-            p.map(self.mp_run_helper, self.experiment_array))
-        p.close()
-        p.join()
-        return experiment_data_array
-
-
-def configure_gpu():
-    '''detect GPU options and configure'''
-    if K._BACKEND != 'tensorflow':
-        # skip directly if is not tensorflow
-        return
-    real_parallel_process_num = 1 if mp.current_process(
-    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
-    tf = K.tf
-    gpu_options = tf.GPUOptions(
-        allow_growth=True,
-        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
-    config = tf.ConfigProto(
-        gpu_options=gpu_options,
-        allow_soft_placement=True)
-    sess = tf.Session(config=config)
-    K.set_session(sess)
-    return sess
-
-
 def plot(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
     prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
@@ -809,8 +631,8 @@ def run(sess_name_id_spec, times=1,
             'times': times
         }
         hopt_kwargs.update(kwargs)
-        hopt = BruteHyperOpt(**hopt_kwargs)
-        # hopt = HyperoptHyperOpt(**hopt_kwargs)
+        hopt = BruteHyperOptimizer(Experiment, **hopt_kwargs)
+        # hopt = HyperoptHyperOptimizer(Experiment, **hopt_kwargs)
         experiment_data_array = hopt.run()
     else:
         experiment = Experiment(sess_spec, times=times)

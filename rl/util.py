@@ -4,13 +4,16 @@ import copy
 import itertools
 import json
 import logging
+import multiprocessing as mp
 import numpy as np
 import os
 import sys
 from datetime import datetime, timedelta
+from keras import backend as K
 from os import path, environ
 from textwrap import wrap
 
+PARALLEL_PROCESS_NUM = mp.cpu_count()
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
@@ -280,3 +283,23 @@ def load_data_array_from_prefix_id(prefix_id):
     ]
     return [load_data_from_experiment_id(experiment_id)
             for experiment_id in experiment_id_array]
+
+
+# TODO move to util
+def configure_gpu():
+    '''detect GPU options and configure'''
+    if K.backend() != 'tensorflow':
+        # skip directly if is not tensorflow
+        return
+    real_parallel_process_num = 1 if mp.current_process(
+    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
+    tf = K.tf
+    gpu_options = tf.GPUOptions(
+        allow_growth=True,
+        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
+    config = tf.ConfigProto(
+        gpu_options=gpu_options,
+        allow_soft_placement=True)
+    sess = tf.Session(config=config)
+    K.set_session(sess)
+    return sess
