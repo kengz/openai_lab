@@ -126,11 +126,11 @@ class HyperoptHyperOptimizer(HyperOptimizer):
 
     def run(self):
         trials = Trials()
-        best = fmin(fn=self.hyperopt_run_experiment,
-                    space=self.param_space,
-                    algo=self.algo,
-                    max_evals=self.max_evals,
-                    trials=trials)
+        fmin(fn=self.hyperopt_run_experiment,
+             space=self.param_space,
+             algo=self.algo,
+             max_evals=self.max_evals,
+             trials=trials)
         experiment_data_array = [
             trial['result']['experiment_data'] for trial in trials]
         return experiment_data_array
@@ -168,14 +168,10 @@ class BruteHyperOptimizer(HyperOptimizer):
 
         return self.param_space
 
-    # helper wrapper for multiprocessing
-    def mp_run_helper(self, experiment):
-        return experiment.run()
-
     def run(self):
         p = mp.Pool(PARALLEL_PROCESS_NUM)
         experiment_data_array = list(
-            p.map(self.mp_run_helper, self.experiment_array))
+            p.map(lambda ex: ex.run(), self.experiment_array))
         p.close()
         p.join()
         return experiment_data_array
