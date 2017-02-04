@@ -629,7 +629,7 @@ class HyperOptimizer(object):
         experiment_data = experiment.run()
         metrics = experiment_data['summary']['metrics']
         # to maximize avg mean rewards/epi via minimization
-        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean']
+        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean'] / experiment_data['sys_vars_array'][0]['SOLVED_MEAN_REWARD']
         return {'loss': hyperopt_loss,
                 'status': STATUS_OK,
                 'experiment_data': experiment_data}
