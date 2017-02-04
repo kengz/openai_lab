@@ -4,13 +4,16 @@ import copy
 import itertools
 import json
 import logging
+import multiprocessing as mp
 import numpy as np
 import os
 import sys
 from datetime import datetime, timedelta
+from keras import backend as K
 from os import path, environ
 from textwrap import wrap
 
+PARALLEL_PROCESS_NUM = mp.cpu_count()
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
@@ -40,15 +43,23 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
+parser.add_argument("-e", "--experiments",
+                    help="number of max experiments ran: hyperopt max_evals",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="max_evals",
+                    default=2)
+parser.add_argument("-l", "--line_search",
+                    help="to use line_search instead of param_product",
+                    action="store_const",
+                    dest="line_search",
+                    const=False,
+                    default=False)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
                     dest="param_selection",
-                    default=False)
-parser.add_argument("-l", "--line_search",
-                    help="run line search instead of grid search if present",
-                    action="store_true",
-                    dest="line_search",
                     default=False)
 parser.add_argument("-g", "--graph",
                     help="plot metrics graphs live",
@@ -244,11 +255,6 @@ def generate_sess_spec_grid(sess_spec, param_grid):
     return sess_spec_grid
 
 
-# helper wrapper for multiprocessing
-def mp_run_helper(experiment):
-    return experiment.run()
-
-
 def prefix_id_from_experiment_id(experiment_id):
     str_arr = experiment_id.split('_')
     if str_arr[-1].startswith('e'):
@@ -277,3 +283,23 @@ def load_data_array_from_prefix_id(prefix_id):
     ]
     return [load_data_from_experiment_id(experiment_id)
             for experiment_id in experiment_id_array]
+
+
+# TODO move to util
+def configure_gpu():
+    '''detect GPU options and configure'''
+    if K.backend() != 'tensorflow':
+        # skip directly if is not tensorflow
+        return
+    real_parallel_process_num = 1 if mp.current_process(
+    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
+    tf = K.tf
+    gpu_options = tf.GPUOptions(
+        allow_growth=True,
+        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
+    config = tf.ConfigProto(
+        gpu_options=gpu_options,
+        allow_soft_placement=True)
+    sess = tf.Session(config=config)
+    K.set_session(sess)
+    return sess

@@ -108,8 +108,9 @@ The extra flags are:
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`
 - `-t <times>`: the number of sessions to run per experiment. Default: `1`
+- `-e <experiments>`: the max number of experiments: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
-- `-l`: use line search for param selection. Default: `False`
+- `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 
 
@@ -142,6 +143,7 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/memory.py`: RL agent memory classes
 - `rl/policy.py`: RL agent policy classes
 - `rl/preprocessor.py`: RL agent preprocessor (state and memory) classes
+- `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
 Each run is by specifying a `sess_name` or `sess_id`. This runs experiments sharing the same `prefix_id`. Each experiment runs multiple sessions to take the average metrics and plot graphs. At last the experiments are aggregated into a metrics dataframe, sorted by the best experiments. All these data and graphs are saved into a new folder in `data/` named with the `prefix_id`.

@@ -1,18 +1,24 @@
 # The experiment logic and analysis
+RAND_SEED = 42
+import numpy as np
+np.random.seed(RAND_SEED)
+from keras import backend as K
+if K.backend() == 'tensorflow':
+    K.tf.set_random_seed(RAND_SEED)
+else:
+    K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
 import gym
 import json
 import matplotlib
-import multiprocessing as mp
 import warnings
-import numpy as np
 import platform
 import pandas as pd
 import traceback
-from keras import backend as K
 from os import path, environ
 from rl.util import *
 from rl.agent import *
+from rl.hyperoptimizer import *
 from rl.memory import *
 from rl.policy import *
 from rl.preprocessor import *
@@ -30,7 +36,6 @@ np.seterr(all='raise')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
-PARALLEL_PROCESS_NUM = mp.cpu_count()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 SESS_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'sess_specs.json')).read())
@@ -346,7 +351,7 @@ class Session(object):
         return sys_vars
 
     def clear_session(self):
-        if K._BACKEND == 'tensorflow':
+        if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
     def run(self):
@@ -526,8 +531,7 @@ class Experiment(object):
                 'sys_vars_array': sys_vars_array,
             }
             self.analyze()
-            # progressive update, write when every session is done
-            self.save()
+            self.save()  # progressive update, write every session completion
 
             if self.to_stop():
                 break
@@ -538,25 +542,6 @@ class Experiment(object):
             'End Experiment:\n{}\n{}'.format(
                 self.experiment_id, progress), '=')
         return self.data
-
-
-def configure_gpu():
-    '''detect GPU options and configure'''
-    if K._BACKEND != 'tensorflow':
-        # skip directly if is not tensorflow
-        return
-    real_parallel_process_num = 1 if mp.current_process(
-    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
-    tf = K.tf
-    gpu_options = tf.GPUOptions(
-        allow_growth=True,
-        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
-    config = tf.ConfigProto(
-        gpu_options=gpu_options,
-        allow_soft_placement=True)
-    sess = tf.Session(config=config)
-    K.set_session(sess)
-    return sess
 
 
 def plot(experiment_or_prefix_id):
@@ -618,8 +603,8 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, line_search=False,
-        plot_only=False):
+        param_selection=False,
+        plot_only=False, **kwargs):
     '''
     primary method:
     specify:
@@ -647,27 +632,14 @@ def run(sess_name_id_spec, times=1,
 
     # compose grid and run param selection
     if param_selection:
-        if line_search:
-            param_grid = param_line_search(sess_spec)
-        else:
-            param_grid = param_product(sess_spec)
-        sess_spec_grid = generate_sess_spec_grid(sess_spec, param_grid)
-        num_of_experiments = len(sess_spec_grid)
-
-        run_timestamp = timestamp()
-        experiment_array = []
-        for e in range(num_of_experiments):
-            sess_spec = sess_spec_grid[e]
-            experiment = Experiment(
-                sess_spec, times=times, experiment_num=e,
-                num_of_experiments=num_of_experiments,
-                run_timestamp=run_timestamp)
-            experiment_array.append(experiment)
-
-        p = mp.Pool(PARALLEL_PROCESS_NUM)
-        experiment_data_array = list(p.map(mp_run_helper, experiment_array))
-        p.close()
-        p.join()
+        hopt_kwargs = {
+            'sess_spec': sess_spec,
+            'times': times
+        }
+        hopt_kwargs.update(kwargs)
+        hopt = BruteHyperOptimizer(Experiment, **hopt_kwargs)
+        # hopt = HyperoptHyperOptimizer(Experiment, **hopt_kwargs)
+        experiment_data_array = hopt.run()
     else:
         experiment = Experiment(sess_spec, times=times)
         experiment_data = experiment.run()
