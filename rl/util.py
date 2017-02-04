@@ -47,6 +47,12 @@ parser.add_argument("-e", "--experiments",
                     type=int,
                     dest="max_evals",
                     default=2)
+parser.add_argument("-l", "--line_search",
+                    help="to use line_search instead of param_product",
+                    action="store_const",
+                    dest="line_search",
+                    const=False,
+                    default=False)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
@@ -244,11 +250,6 @@ def generate_sess_spec_grid(sess_spec, param_grid):
         'param': param,
     } for param in param_grid]
     return sess_spec_grid
-
-
-# helper wrapper for multiprocessing
-def mp_run_helper(experiment):
-    return experiment.run()
 
 
 def prefix_id_from_experiment_id(experiment_id):

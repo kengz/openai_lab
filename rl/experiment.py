@@ -540,16 +540,13 @@ class Experiment(object):
         return self.data
 
 
-class HyperOptimizer(object):
+class HyperoptHyperOpt(object):
 
     def __init__(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
             'sess_spec',
             'times',
-            'experiment_num',
-            'num_of_experiments',
-            'run_timestamp',
-            'algo'
+            'max_evals'
         ]
         assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
 
@@ -564,6 +561,9 @@ class HyperOptimizer(object):
 
         for k in kwargs:
             setattr(self, k, kwargs[k])
+        self.run_timestamp = timestamp()
+        self.experiment_num = 0
+        self.algo = tpe.suggest
 
         self.generate_param_space()
 
@@ -624,12 +624,14 @@ class HyperOptimizer(object):
             sess_spec,
             times=gv['times'],
             experiment_num=gv['experiment_num'],
-            num_of_experiments=gv['num_of_experiments'],
+            num_of_experiments=gv['max_evals'],
             run_timestamp=gv['run_timestamp'])
         experiment_data = experiment.run()
         metrics = experiment_data['summary']['metrics']
         # to maximize avg mean rewards/epi via minimization
-        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats']['mean'] / experiment_data['sys_vars_array'][0]['SOLVED_MEAN_REWARD']
+        hyperopt_loss = -1. * metrics['mean_rewards_per_epi_stats'][
+            'mean'] / experiment_data['sys_vars_array'][0][
+            'SOLVED_MEAN_REWARD']
         return {'loss': hyperopt_loss,
                 'status': STATUS_OK,
                 'experiment_data': experiment_data}
@@ -639,11 +641,59 @@ class HyperOptimizer(object):
         best = fmin(fn=self.hyperopt_run_experiment,
                     space=self.param_space,
                     algo=self.algo,
-                    max_evals=self.num_of_experiments,
+                    max_evals=self.max_evals,
                     trials=trials)
         # TODO implement mp parallel here,
         experiment_data_array = [
             trial['result']['experiment_data'] for trial in trials]
+        return experiment_data_array
+
+
+class BruteHyperOpt(object):
+
+    def __init__(self, **kwargs):
+        self.REQUIRED_GLOBAL_VARS = [
+            'sess_spec',
+            'times',
+            'line_search'
+        ]
+        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+        self.run_timestamp = timestamp()
+
+        self.generate_param_space()
+
+    # generate param_space for hyperopt from sess_spec
+    def generate_param_space(self):
+        if self.line_search:
+            param_grid = param_line_search(self.sess_spec)
+        else:
+            param_grid = param_product(self.sess_spec)
+        self.param_space = generate_sess_spec_grid(self.sess_spec, param_grid)
+        self.num_of_experiments = len(self.param_space)
+
+        self.experiment_array = []
+        for e in range(self.num_of_experiments):
+            sess_spec = self.param_space[e]
+            experiment = Experiment(
+                sess_spec, times=self.times, experiment_num=e,
+                num_of_experiments=self.num_of_experiments,
+                run_timestamp=self.run_timestamp)
+            self.experiment_array.append(experiment)
+
+        return self.param_space
+
+    # helper wrapper for multiprocessing
+    def mp_run_helper(self, experiment):
+        return experiment.run()
+
+    def run(self):
+        p = mp.Pool(PARALLEL_PROCESS_NUM)
+        experiment_data_array = list(
+            p.map(self.mp_run_helper, self.experiment_array))
+        p.close()
+        p.join()
         return experiment_data_array
 
 
@@ -725,8 +775,8 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
 
 def run(sess_name_id_spec, times=1,
-        param_selection=False, max_evals=10,
-        plot_only=False):
+        param_selection=False,
+        plot_only=False, **kwargs):
     '''
     primary method:
     specify:
@@ -754,15 +804,13 @@ def run(sess_name_id_spec, times=1,
 
     # compose grid and run param selection
     if param_selection:
-        kwargs = {
+        hopt_kwargs = {
             'sess_spec': sess_spec,
-            'times': times,
-            'experiment_num': 0,
-            'num_of_experiments': max_evals,
-            'run_timestamp': timestamp(),
-            'algo': tpe.suggest
+            'times': times
         }
-        hopt = HyperOptimizer(**kwargs)
+        hopt_kwargs.update(kwargs)
+        hopt = BruteHyperOpt(**hopt_kwargs)
+        # hopt = HyperoptHyperOpt(**hopt_kwargs)
         experiment_data_array = hopt.run()
     else:
         experiment = Experiment(sess_spec, times=times)
