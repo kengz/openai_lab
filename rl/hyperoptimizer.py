@@ -10,16 +10,16 @@ class HyperOptimizer(object):
     '''
 
     def __init__(self, Experiment, **kwargs):
+        self.REQUIRED_GLOBAL_VARS = [
+            'sess_spec',
+            'times'
+        ]
         self.check_set_keys(**kwargs)
         self.run_timestamp = timestamp()
         self.Experiment = Experiment
         self.generate_param_space()
 
     def check_set_keys(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
-            'times'
-        ]
         assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
         for k in kwargs:
             setattr(self, k, kwargs[k])
@@ -39,8 +39,6 @@ class HyperoptHyperOptimizer(HyperOptimizer):
             'times',
             'max_evals'
         ]
-        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
-
         raw_sess_spec = kwargs.pop('sess_spec')
         assert 'param' in raw_sess_spec
         assert 'param_range' in raw_sess_spec
@@ -52,8 +50,7 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         self.experiment_num = 0
         self.algo = tpe.suggest
 
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
+        super(HyperoptHyperOptimizer, self).check_set_keys(**kwargs)
 
     def convert_to_hp(self, k, v):
         '''
@@ -144,9 +141,7 @@ class BruteHyperOptimizer(HyperOptimizer):
             'times',
             'line_search'
         ]
-        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
+        super(BruteHyperOptimizer, self).check_set_keys(**kwargs)
 
     # generate param_space for hyperopt from sess_spec
     def generate_param_space(self):
@@ -168,10 +163,13 @@ class BruteHyperOptimizer(HyperOptimizer):
 
         return self.param_space
 
+    def mp_run_helper(self, experiment):
+        return experiment.run()
+
     def run(self):
         p = mp.Pool(PARALLEL_PROCESS_NUM)
         experiment_data_array = list(
-            p.map(lambda ex: ex.run(), self.experiment_array))
+            p.map(self.mp_run_helper, self.experiment_array))
         p.close()
         p.join()
         return experiment_data_array
