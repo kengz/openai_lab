@@ -142,7 +142,7 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/experiment.py`: the main high level experiment logic.
 - `rl/memory.py`: RL agent memory classes
 - `rl/policy.py`: RL agent policy classes
-- `rl/policy.py`: RL agent preprocessor (state and memory) classes
+- `rl/preprocessor.py`: RL agent preprocessor (state and memory) classes
 - `rl/util.py`: Generic util
 
 Each run is by specifying a `sess_name` or `sess_id`. This runs experiments sharing the same `prefix_id`. Each experiment runs multiple sessions to take the average metrics and plot graphs. At last the experiments are aggregated into a metrics dataframe, sorted by the best experiments. All these data and graphs are saved into a new folder in `data/` named with the `prefix_id`.
