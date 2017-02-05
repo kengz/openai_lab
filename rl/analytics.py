@@ -130,6 +130,54 @@ def basic_stats(array):
     }
 
 
+def compose_data(experiment):
+    '''
+    compose raw data from an experiment object
+    into useful summary and full metrics for analysis
+    '''
+    sys_vars_array = experiment.data['sys_vars_array']
+    solved_sys_vars_array = list(filter(
+        lambda sv: sv['solved'], sys_vars_array))
+    mean_rewards_array = np.array(list(map(
+        lambda sv: sv['mean_rewards'], sys_vars_array)))
+    max_total_rewards_array = np.array(list(map(
+        lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
+    epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
+    mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array)
+    t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
+    time_taken_array = np.array(list(map(
+        lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+        sys_vars_array)))
+    solved_epi_array = np.array(list(map(
+        lambda sv: sv['epi'], solved_sys_vars_array)))
+    solved_t_array = np.array(list(map(
+        lambda sv: sv['t'], solved_sys_vars_array)))
+    solved_time_taken_array = np.array(list(map(
+        lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
+        solved_sys_vars_array)))
+
+    metrics = {
+        # percentage solved
+        'num_of_sessions': len(sys_vars_array),
+        'solved_num_of_sessions': len(solved_sys_vars_array),
+        'solved_ratio_of_sessions': float(len(
+            solved_sys_vars_array)) / experiment.times,
+        'mean_rewards_stats': basic_stats(mean_rewards_array),
+        'mean_rewards_per_epi_stats': basic_stats(
+            mean_rewards_per_epi_array),
+        'max_total_rewards_stats': basic_stats(max_total_rewards_array),
+        'epi_stats': basic_stats(epi_array),
+        't_stats': basic_stats(t_array),
+        'time_taken_stats': basic_stats(time_taken_array),
+        'solved_epi_stats': basic_stats(solved_epi_array),
+        'solved_t_stats': basic_stats(solved_t_array),
+        'solved_time_taken_stats': basic_stats(solved_time_taken_array),
+    }
+    # split to have actual use summary vs full metrics data
+    experiment.data['summary'].update({'metrics': metrics})
+    return experiment.data
+
+
 def analyze_param_space(experiment_data_array_or_prefix_id):
     '''
     get all the data from all experiments.run()
