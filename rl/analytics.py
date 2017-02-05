@@ -156,7 +156,8 @@ def compose_data(experiment):
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
         solved_sys_vars_array)))
 
-    metrics = {
+    # shall not be named metrics
+    stats = {
         # percentage solved
         'num_of_sessions': len(sys_vars_array),
         'solved_num_of_sessions': len(solved_sys_vars_array),
@@ -173,8 +174,20 @@ def compose_data(experiment):
         'solved_t_stats': basic_stats(solved_t_array),
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
+    # do a full-on flat metrics
+    metrics = {
+        'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
+        'mean_rewards_per_epi_stats_mean': stats[
+            'mean_rewards_per_epi_stats']['mean'],
+        'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
+        'epi_stats_mean': stats['epi_stats']['mean'],
+        'max_total_rewards_stats_mean': stats[
+            'max_total_rewards_stats']['mean'],
+        't_stats_mean': stats['t_stats']['mean'],
+    }
     # split to have actual use summary vs full metrics data
-    experiment.data['summary'].update({'metrics': metrics})
+    experiment.data['stats'] = stats
+    experiment.data['metrics'].update(metrics)
     return experiment.data
 
 
@@ -194,12 +207,12 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
 
     flat_metrics_array = []
     for data in experiment_data_array:
-        flat_metrics = flatten_dict(data['summary']['metrics'])
+        flat_metrics = flatten_dict(data['stats'])
         flat_metrics.update({'experiment_id': data['experiment_id']})
         flat_metrics_array.append(flat_metrics)
 
-    metrics_df = pd.DataFrame.from_dict(flat_metrics_array)
-    metrics_df.sort_values(
+    stats_df = pd.DataFrame.from_dict(flat_metrics_array)
+    stats_df.sort_values(
         ['mean_rewards_per_epi_stats_mean',
          'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
         ascending=False
@@ -209,7 +222,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
     prefix_id = prefix_id_from_experiment_id(experiment_id)
     param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
         prefix_id)
-    metrics_df.to_csv(param_space_data_filename, index=False)
+    stats_df.to_csv(param_space_data_filename, index=False)
     logger.info(
         'Param space data saved to {}'.format(param_space_data_filename))
-    return metrics_df
+    return stats_df

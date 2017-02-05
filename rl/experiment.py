@@ -288,12 +288,14 @@ class Experiment(object):
     replottable data, rerunnable specs
     Keys:
     all below X array of hyper param selection:
-    - sess_spec (so we can plug in directly again to rerun)
-    - summary
+    - experiment_id
+    - metrics
+        - <metrics>
         - time_start
         - time_end
         - time_taken
-        - metrics
+    - sess_spec (so we can plug in directly again to rerun)
+    - stats
     - sys_vars_array
     '''
 
@@ -336,8 +338,7 @@ class Experiment(object):
 
     def to_stop(self):
         '''check of experiment should be continued'''
-        metrics = self.data['summary']['metrics']
-        failed = metrics['solved_ratio_of_sessions'] < 1.
+        failed = self.data['stats']['solved_ratio_of_sessions'] < 1.
         if failed:
             logger.info(
                 'Failed experiment, terminating sessions for {}'.format(
@@ -362,13 +363,13 @@ class Experiment(object):
 
             self.data = {  # experiment data
                 'experiment_id': self.experiment_id,
-                'sess_spec': self.sess_spec,
-                'summary': {
+                'metrics': {
                     'time_start': time_start,
                     'time_end': time_end,
                     'time_taken': time_taken,
-                    'metrics': None,
                 },
+                'sess_spec': self.sess_spec,
+                'stats': None,
                 'sys_vars_array': sys_vars_array,
             }
             compose_data(self)
