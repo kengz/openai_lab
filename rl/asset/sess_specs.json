@@ -1,7 +1,7 @@
 {
     "dummy": {
         "problem": "CartPole-v0",
-        "Agent": "dummy.Dummy",
+        "Agent": "Dummy",
         "Memory": "LinearMemory",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -9,7 +9,7 @@
     },
     "q_table": {
         "problem": "CartPole-v0",
-        "Agent": "q_table.QTable",
+        "Agent": "QTable",
         "Memory": "LinearMemory",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -21,7 +21,7 @@
     },
     "dev_dqn": {
         "problem": "DevCartPole-v0",
-        "Agent": "dqn.DQN",
+        "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -39,7 +39,7 @@
     },
     "dqn": {
         "problem": "CartPole-v0",
-        "Agent": "dqn.DQN",
+        "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -60,7 +60,7 @@
     },
     "sarsa_dn": {
         "problem": "CartPole-v0",
-        "Agent": "deep_sarsa.DeepSarsa",
+        "Agent": "DeepSarsa",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -80,7 +80,7 @@
     },
     "sarsa_exp": {
         "problem": "CartPole-v0",
-        "Agent": "deep_exp_sarsa.DeepExpectedSarsa",
+        "Agent": "DeepExpectedSarsa",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -100,7 +100,7 @@
     },
     "hyperopt_dqn": {
         "problem": "CartPole-v0",
-        "Agent": "dqn.DQN",
+        "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -137,7 +137,7 @@
     },
     "double_dqn": {
         "problem": "CartPole-v0",
-        "Agent": "double_dqn.DoubleDQN",
+        "Agent": "DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "DoubleDQNBoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -153,7 +153,7 @@
     },
     "mountain_dqn": {
         "problem": "MountainCar-v0",
-        "Agent": "dqn.DQN",
+        "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "DecayingEpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -178,7 +178,7 @@
     },
     "mountain_sarsa": {
         "problem": "MountainCar-v0",
-        "Agent": "sarsa_dn.DeepSarsa",
+        "Agent": "DeepSarsa",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -201,7 +201,7 @@
     },
     "mountain_double_dqn": {
         "problem": "MountainCar-v0",
-        "Agent": "double_dqn.DoubleDQN",
+        "Agent": "DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "DoubleDQNPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -217,7 +217,7 @@
     },
     "lunar_dqn": {
         "problem": "LunarLander-v2",
-        "Agent": "dqn.DQN",
+        "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "StackStates",
@@ -248,7 +248,7 @@
     },
     "lunar_sarsa": {
         "problem": "LunarLander-v2",
-        "Agent": "deep_exp_sarsa.DeepExpectedSarsa",
+        "Agent": "DeepExpectedSarsa",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "StackStates",
@@ -279,7 +279,7 @@
     },
     "lunar_double_dqn": {
         "problem": "LunarLander-v2",
-        "Agent": "double_dqn.DoubleDQN",
+        "Agent": "DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "DoubleDQNBoltzmannPolicy",
         "PreProcessor": "StackStates",
@@ -310,7 +310,7 @@
     },
     "air_raid_dqn": {
         "problem": "AirRaid-v0",
-        "Agent": "atari_conv_dqn.ConvDQN",
+        "Agent": "ConvDQN",
         "Memory": "LongLinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "Atari",
@@ -338,7 +338,7 @@
     },
     "breakout_dqn": {
         "problem": "Breakout-v0",
-        "Agent": "atari_conv_dqn.ConvDQN",
+        "Agent": "ConvDQN",
         "Memory": "LongLinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "Atari",
