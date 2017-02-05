@@ -18,6 +18,18 @@ else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
 
+STATS_COLS = [
+    'mean_rewards_per_epi_stats_mean',
+    'mean_rewards_stats_mean',
+    'epi_stats_mean',
+    'solved_ratio_of_sessions',
+    'max_total_rewards_stats_mean',
+    't_stats_mean',
+    'experiment_id'
+]
+EXPERIMENT_GRID_Y_COLS = ['mean_rewards_per_epi_stats_mean']
+
+
 class Grapher(object):
 
     '''
@@ -206,10 +218,11 @@ def compose_data(experiment):
 def plot_experiment_grid(data_df, experiment_id):
     prefix_id = prefix_id_from_experiment_id(experiment_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
-    Y_cols = ['mean_rewards_per_epi_stats_mean']
     for x in X_cols:
-        for y in Y_cols:
-            df_plot = data_df.plot(x=x, y=y, title=wrap_text(prefix_id))
+        for y in EXPERIMENT_GRID_Y_COLS:
+            df_plot = data_df.plot(
+                x=x, y=y,
+                title=wrap_text(prefix_id))
             fig = df_plot.get_figure()
             filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
                 prefix_id, x, y)
@@ -238,17 +251,8 @@ def analyze_data(experiment_grid_data_or_prefix_id):
         param_variables = data['param_variables']
         param_variables_array.append(param_variables)
 
-    stats_columns = [
-        'mean_rewards_per_epi_stats_mean',
-        'mean_rewards_stats_mean',
-        'epi_stats_mean',
-        'solved_ratio_of_sessions',
-        'max_total_rewards_stats_mean',
-        't_stats_mean',
-        'experiment_id'
-    ]
     raw_stats_df = pd.DataFrame.from_dict(stats_array)
-    stats_df = raw_stats_df[stats_columns]
+    stats_df = raw_stats_df[STATS_COLS]
 
     param_variables_df = pd.DataFrame.from_dict(param_variables_array)
     param_variables_df.columns = [
