@@ -174,7 +174,6 @@ def compose_data(experiment):
     }
 
     metrics = {
-        'variables': experiment.variables,
         'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
@@ -185,8 +184,15 @@ def compose_data(experiment):
         't_stats_mean': stats['t_stats']['mean'],
     }
 
+    # insert variables param into stats for analysis
+    param_variables = {
+        pv: experiment.sess_spec['param'][pv] for
+        pv in experiment.param_variables}
+    param_variables = flat_cast_dict(param_variables)
+
     experiment.data['metrics'].update(metrics)
     experiment.data['stats'] = stats
+    experiment.data['param_variables'] = param_variables
     return experiment.data
 
 

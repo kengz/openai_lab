@@ -163,6 +163,7 @@ def to_json(o, level=0):
     return ret
 
 
+# format object and its properties into printable dict
 def format_obj_dict(obj, keys):
     if isinstance(obj, dict):
         return to_json(
@@ -171,6 +172,15 @@ def format_obj_dict(obj, keys):
         return to_json(
             {k: getattr(obj, k, None) for k in keys
              if getattr(obj, k, None) is not None})
+
+
+# cast dict to have flat values (int, float, str)
+def flat_cast_dict(d):
+    for k in d:
+        v = d[k]
+        if not isinstance(v, (int, float)):
+            d[k] = str(v)
+    return d
 
 
 def flatten_dict(d, parent_key='', sep='_'):

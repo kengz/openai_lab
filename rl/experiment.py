@@ -309,7 +309,8 @@ class Experiment(object):
         self.sess_spec = sess_spec
         self.sess_name = sess_spec.get('sess_name')
         param_range = SESS_SPECS.get(self.sess_name).get('param_range')
-        self.variables = list(param_range.keys()) if param_range else None
+        self.param_variables = list(
+            param_range.keys()) if param_range else None
         self.sess_spec.pop('param_range', None)  # single exp, del range
         self.data = None
         self.times = times
