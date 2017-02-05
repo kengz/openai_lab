@@ -153,7 +153,9 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
-Each run is by specifying a `sess_name` or `sess_id`. This runs experiments sharing the same `prefix_id`. Each experiment runs multiple sessions to take the average metrics and plot graphs. At last the experiments are aggregated into a metrics dataframe, sorted by the best experiments. All these data and graphs are saved into a new folder in `data/` named with the `prefix_id`.
+Each run is an `experiment_grid` that runs multiple `Experiment`s (not restricted to the same `prefix_id` for future cross-training). Each `Experiment` runs multiple (by flag `-t`) `Session`s, so an `experiment` is a `sess_grid`.
+
+Each experiment collects the data from its sessions into `experiment_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment_grid` analyses the aggregate `experiment_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
 
 
 ## Roadmap
