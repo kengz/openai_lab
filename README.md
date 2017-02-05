@@ -1,10 +1,8 @@
 # OpenAI Gym [![CircleCI](https://circleci.com/gh/kengz/openai_gym.svg?style=shield)](https://circleci.com/gh/kengz/openai_gym) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_gym?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_gym&amp;utm_campaign=Badge_Grade)
 
-[OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl)
+[OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
-Working out at the (OpenAI) gym.
-
-This was started from the Eligible Reinforcement Learning event, and we just kept working on it. Checkout the tutorial session videos here: [Part 1](https://youtu.be/qBhLoeijgtA), [Part 2](https://youtu.be/wNSlZJGdodE)
+(Under work) An experimentation system for Reinforcement Learning using OpenAI and Keras.
 
 
 ## Installation
@@ -80,11 +78,11 @@ env.render()
 
 ### Data files auto-sync (optional)
 
-For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automatically copying data files via Keybase. If you're not Keng or Laura, change the Keybase filepath in `gulpfile.js`.
+For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
 
 ```shell
+npm install
 npm install --global gulp-cli
-npm install --save-dev gulp gulp-watch gulp-changed
 # run the file watcher
 gulp
 ```
@@ -142,11 +140,10 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `data/`: contains all the graphs per experiment sessions, JSON data file per experiment, and csv metrics dataframe per run of multiple experiments
 - `rl/agent/`: custom agents. Refer to `base_agent.py` and `dqn.py` to build your own
 - `rl/asset/`: specify new problems and sess_specs to run experiments for.
-- `rl/model/`: if you decide to save a model, this is the place
+- `rl/memory/`: RL agent memory classes
+- `rl/policy/`: RL agent policy classes
+- `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
 - `rl/experiment.py`: the main high level experiment logic.
-- `rl/memory.py`: RL agent memory classes
-- `rl/policy.py`: RL agent policy classes
-- `rl/preprocessor.py`: RL agent preprocessor (state and memory) classes
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
