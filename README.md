@@ -148,7 +148,8 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/memory/`: RL agent memory classes
 - `rl/policy/`: RL agent policy classes
 - `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
-- `rl/experiment.py`: the main high level experiment logic.
+- `rl/analytics.py`: the data analytics module for output experiment data
+- `rl/experiment.py`: the main high level experiment logic
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 

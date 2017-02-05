@@ -273,18 +273,6 @@ def load_data_array_from_prefix_id(prefix_id):
             for experiment_id in experiment_id_array]
 
 
-def basic_stats(array):
-    '''generate the basic stats for a numerical array'''
-    if not len(array):
-        return None
-    return {
-        'min': np.min(array).astype(float),
-        'max': np.max(array).astype(float),
-        'mean': np.mean(array).astype(float),
-        'std': np.std(array).astype(float),
-    }
-
-
 def configure_gpu():
     '''detect GPU options and configure'''
     if K.backend() != 'tensorflow':
