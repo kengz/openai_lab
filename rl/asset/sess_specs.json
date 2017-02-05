@@ -34,7 +34,8 @@
             "exploration_anneal_episodes": 10
         },
         "param_range": {
-            "exploration_anneal_episodes": [10, 20]
+            "exploration_anneal_episodes": [10, 20],
+            "learning_rate": [0.02, 0.2]
         }
     },
     "dqn": {

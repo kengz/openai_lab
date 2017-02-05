@@ -221,7 +221,7 @@ def plot_experiment_grid(data_df, experiment_id):
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
             df_plot = data_df.plot(
-                x=x, y=y,
+                x=x, y=y, kind='scatter',
                 title=wrap_text(prefix_id))
             fig = df_plot.get_figure()
             filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
