@@ -129,7 +129,7 @@ xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5
 # use screen -r to resume screen next time
 ```
 
-Or to set up multiple jobs and let them run one after the other on the server, edit `queue.py` and run:
+Or to set up multiple jobs and let them run one after the other on the server, edit `experiment_queue.py` and run:
 
 ```shell
 npm run queue
