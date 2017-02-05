@@ -70,6 +70,7 @@ else
   TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-0.12.1-cp35-cp35m-linux_x86_64.whl
 fi
 sudo python3 -m pip install $TF_BINARY_URL
+python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__version__)"
 
 # install theano
 if which clang >/dev/null; then
@@ -79,7 +80,10 @@ else
     brew install --with-clang llvm
   fi
 fi
-sudo python3 -m pip install git+https://github.com/Theano/Theano.git
+# sudo pip3 install --upgrade --no-deps git+git://github.com/Theano/Theano.git
+sudo python3 -m pip install theano==0.8.2
+python3 -c "import theano; print('theano version:'); print(theano.__version__)"
+
 
 # install keras
 sudo python3 -m pip install keras
