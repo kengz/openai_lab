@@ -1,5 +1,5 @@
 import numpy as np
-from rl.memory.linear_memory import LinearMemory
+from rl.memory.linear import LinearMemory
 from rl.util import log_self
 import math
 
