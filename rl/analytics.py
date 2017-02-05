@@ -156,9 +156,7 @@ def compose_data(experiment):
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
         solved_sys_vars_array)))
 
-    # shall not be named metrics
     stats = {
-        # percentage solved
         'num_of_sessions': len(sys_vars_array),
         'solved_num_of_sessions': len(solved_sys_vars_array),
         'solved_ratio_of_sessions': float(len(
@@ -174,8 +172,9 @@ def compose_data(experiment):
         'solved_t_stats': basic_stats(solved_t_array),
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
-    # do a full-on flat metrics
+
     metrics = {
+        'variables': experiment.variables,
         'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
@@ -185,9 +184,9 @@ def compose_data(experiment):
             'max_total_rewards_stats']['mean'],
         't_stats_mean': stats['t_stats']['mean'],
     }
-    # split to have actual use summary vs full metrics data
-    experiment.data['stats'] = stats
+
     experiment.data['metrics'].update(metrics)
+    experiment.data['stats'] = stats
     return experiment.data
 
 
@@ -212,6 +211,7 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
         flat_metrics_array.append(flat_metrics)
 
     stats_df = pd.DataFrame.from_dict(flat_metrics_array)
+    # filter by columns for output analysis
     stats_df.sort_values(
         ['mean_rewards_per_epi_stats_mean',
          'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],

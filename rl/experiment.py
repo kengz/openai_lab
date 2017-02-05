@@ -24,10 +24,12 @@ from rl.preprocessor import *
 
 GREF = globals()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
-SESS_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'sess_specs.json')).read())
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
+SESS_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'sess_specs.json')).read())
+for k in SESS_SPECS:
+    SESS_SPECS[k]['sess_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -305,9 +307,12 @@ class Experiment(object):
                  prefix_id_override=None):
 
         self.sess_spec = sess_spec
+        self.sess_name = sess_spec.get('sess_name')
+        param_range = SESS_SPECS.get(self.sess_name).get('param_range')
+        self.variables = list(param_range.keys()) if param_range else None
+        self.sess_spec.pop('param_range', None)  # single exp, del range
         self.data = None
         self.times = times
-        self.sess_spec.pop('param_range', None)  # single exp, del range
         self.experiment_num = experiment_num
         self.num_of_experiments = num_of_experiments
         self.run_timestamp = run_timestamp
@@ -364,8 +369,8 @@ class Experiment(object):
             self.data = {  # experiment data
                 'experiment_id': self.experiment_id,
                 'metrics': {
-                    'time_start': time_start,
-                    'time_end': time_end,
+                    # 'time_start': time_start,
+                    # 'time_end': time_end,
                     'time_taken': time_taken,
                 },
                 'sess_spec': self.sess_spec,

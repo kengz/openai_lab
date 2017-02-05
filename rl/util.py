@@ -233,6 +233,7 @@ def param_product(sess_spec):
 # for param selection
 def generate_sess_spec_grid(sess_spec, param_grid):
     sess_spec_grid = [{
+        'sess_name': sess_spec['sess_name'],
         'problem': sess_spec['problem'],
         'Agent': sess_spec['Agent'],
         'Memory': sess_spec['Memory'],
