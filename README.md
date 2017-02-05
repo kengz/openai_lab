@@ -14,19 +14,23 @@ This was started from the Eligible Reinforcement Learning event, and we just kep
 ```shell
 git clone https://github.com/kengz/openai_gym.git
 cd openai_gym
-python setup.py install
+bin/setup
 ```
 
-*Note that by default it installs Tensorflow for Python3 on MacOS. [If you're on a different platform, choose the correct binary to install from TF.](https://www.tensorflow.org/get_started/os_setup#pip_installation)*
+Then, setup your `~/.keras/keras.json`. See example files in `rl/asset/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
+
+The binary at `bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (for dev), Theano(for faster production), Keras.
+
+*Note the Tensorflow is defaulted to CPU Mac or GPU Linux. [If you're on a different platform, choose the correct binary to install from TF.](https://www.tensorflow.org/get_started/os_setup#pip_installation)*
 
 ```shell
 # default option
 TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.1-py3-none-any.whl
 # install from the TF_BINARY_URL
-sudo pip install --upgrade $TF_BINARY_URL
+sudo pip3 install -U $TF_BINARY_URL
 ```
 
-### Complete
+### Full OpenAI Gym Environments
 
 To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the [Install Everything](https://github.com/openai/gym#installing-everything) of the repo (which is still broken at the time of writing).
 
@@ -34,7 +38,7 @@ To run more than just the classic control gym env, we need to install the OpenAI
 brew install cmake boost boost-python sdl2 swig wget
 git clone https://github.com/openai/gym.git
 cd gym
-pip install -e '.[all]'
+pip3 install -e '.[all]'
 ```
 
 Try to run a Lunar Lander env, it will break (unless they fix it):
@@ -51,17 +55,17 @@ If it fails, debug as follow (and repeat once more if it fails again, glorious p
 pip3 uninstall Box2D box2d-py
 git clone https://github.com/pybox2d/pybox2d
 cd pybox2d/
-python setup.py clean
-python setup.py build
-python setup.py install
+python3 setup.py clean
+python3 setup.py build
+python3 setup.py install
 ```
 
 To run Atari envs three additional dependencies are required
 
 ```shell
-pip install atari_py
-pip install Pillow
-pip install PyOpenGL
+pip3 install atari_py
+pip3 install Pillow
+pip3 install PyOpenGL
 ```
 
 Then check that it works with
@@ -81,7 +85,7 @@ For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automati
 ```shell
 npm install --global gulp-cli
 npm install --save-dev gulp gulp-watch gulp-changed
-run the
+# run the file watcher
 gulp
 ```
 
@@ -99,7 +103,7 @@ npm run clear
 To customize your run commands, use plain python:
 
 ```shell
-python3 main.py -s lunar_dqn -b -g | tee -a ./data/terminal.log
+python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
 ```
 
 The extra flags are:
@@ -123,7 +127,7 @@ screen
 # enter the screen
 npm run remote
 # or full python command goes like
-xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -b | tee -a ./data/terminal.log
+xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
 # use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
 # use screen -r to resume screen next time
 ```

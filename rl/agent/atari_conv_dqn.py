@@ -3,7 +3,6 @@ from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
 from keras.optimizers import RMSprop
 from keras import backend as K
-K.set_image_dim_ordering('tf')
 
 
 class ConvDQN(DQN):
