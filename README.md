@@ -1,10 +1,8 @@
 # OpenAI Gym [![CircleCI](https://circleci.com/gh/kengz/openai_gym.svg?style=shield)](https://circleci.com/gh/kengz/openai_gym) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_gym?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_gym&amp;utm_campaign=Badge_Grade)
 
-[OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl)
+[OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
-Working out at the (OpenAI) gym.
-
-This was started from the Eligible Reinforcement Learning event, and we just kept working on it. Checkout the tutorial session videos here: [Part 1](https://youtu.be/qBhLoeijgtA), [Part 2](https://youtu.be/wNSlZJGdodE)
+(Under work) An experimentation system for Reinforcement Learning using OpenAI and Keras.
 
 
 ## Installation
@@ -80,11 +78,11 @@ env.render()
 
 ### Data files auto-sync (optional)
 
-For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automatically copying data files via Keybase. If you're not Keng or Laura, change the Keybase filepath in `gulpfile.js`.
+For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
 
 ```shell
+npm install
 npm install --global gulp-cli
-npm install --save-dev gulp gulp-watch gulp-changed
 # run the file watcher
 gulp
 ```
@@ -117,7 +115,6 @@ The extra flags are:
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 
-
 ### Run experiments remotely
 
 Log in via ssh, start a screen, run, then detach screen.
@@ -132,6 +129,12 @@ xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5
 # use screen -r to resume screen next time
 ```
 
+Or to set up multiple jobs and let them run one after the other on the server, edit `experiment_queue.py` and run:
+
+```shell
+npm run queue
+```
+
 
 ## Development
 
@@ -142,15 +145,17 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `data/`: contains all the graphs per experiment sessions, JSON data file per experiment, and csv metrics dataframe per run of multiple experiments
 - `rl/agent/`: custom agents. Refer to `base_agent.py` and `dqn.py` to build your own
 - `rl/asset/`: specify new problems and sess_specs to run experiments for.
-- `rl/model/`: if you decide to save a model, this is the place
-- `rl/experiment.py`: the main high level experiment logic.
-- `rl/memory.py`: RL agent memory classes
-- `rl/policy.py`: RL agent policy classes
-- `rl/preprocessor.py`: RL agent preprocessor (state and memory) classes
+- `rl/memory/`: RL agent memory classes
+- `rl/policy/`: RL agent policy classes
+- `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
+- `rl/analytics.py`: the data analytics module for output experiment data
+- `rl/experiment.py`: the main high level experiment logic
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
-Each run is by specifying a `sess_name` or `sess_id`. This runs experiments sharing the same `prefix_id`. Each experiment runs multiple sessions to take the average metrics and plot graphs. At last the experiments are aggregated into a metrics dataframe, sorted by the best experiments. All these data and graphs are saved into a new folder in `data/` named with the `prefix_id`.
+Each run is an `experiment_grid` that runs multiple `Experiment`s (not restricted to the same `prefix_id` for future cross-training). Each `Experiment` runs multiple (by flag `-t`) `Session`s, so an `experiment` is a `sess_grid`.
+
+Each experiment collects the data from its sessions into `experiment_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment_grid` analyses the aggregate `experiment_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
 
 
 ## Roadmap

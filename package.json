@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "python3 main.py -bgp -s dqn -t 5 | tee -a ./data/terminal.log",
+    "dev": "python3 main.py -bgp -s dev_dqn -t 2 | tee -a ./data/terminal.log",
     "remote": "xvfb-run -a -s \"-screen 0 1400x900x24\" -- npm start",
+    "queue": "xvfb-run -a -s \"-screen 0 1400x900x24\" -- python3 experiment_queue.py -bg | tee -a ./data/terminal.log",
     "test": "python3 setup.py test",
     "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov",
     "clear": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log"

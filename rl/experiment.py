@@ -2,6 +2,7 @@
 RAND_SEED = 42
 import numpy as np
 np.random.seed(RAND_SEED)
+np.seterr(all='raise')
 from keras import backend as K
 if K.backend() == 'tensorflow':
     K.tf.set_random_seed(RAND_SEED)
@@ -10,37 +11,25 @@ else:
 import copy
 import gym
 import json
-import matplotlib
-import warnings
-import platform
-import pandas as pd
 import traceback
 from os import path, environ
 from rl.util import *
 from rl.agent import *
+from rl.analytics import *
 from rl.hyperoptimizer import *
 from rl.memory import *
 from rl.policy import *
 from rl.preprocessor import *
 
-# TODO fix mp breaking on Mac shit,
-# except when running -b with agg backend
-# (no GUI rendered,but saves graphs)
-# set only if it's not MacOS
-if environ.get('CI') or platform.system() == 'Darwin':
-    matplotlib.rcParams['backend'] = 'agg'
-else:
-    matplotlib.rcParams['backend'] = 'TkAgg'
-
-np.seterr(all='raise')
-warnings.filterwarnings("ignore", module="matplotlib")
 
 GREF = globals()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
-SESS_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'sess_specs.json')).read())
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
+SESS_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'sess_specs.json')).read())
+for k in SESS_SPECS:
+    SESS_SPECS[k]['sess_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -62,106 +51,6 @@ REQUIRED_SYS_KEYS = {
     'total_rewards': 0,
     'solved': False,
 }
-
-
-class Grapher(object):
-
-    '''
-    Grapher object that belongs to a Session
-    to draw graphs from its data
-    '''
-
-    def __init__(self, session):
-        if not args.plot_graph:
-            return
-        import matplotlib.pyplot as plt
-        plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
-        self.plt = plt
-        self.session = session
-        self.graph_filename = self.session.graph_filename
-        self.subgraphs = {}
-        self.figure = self.plt.figure(facecolor='white', figsize=(8, 9))
-        self.figure.suptitle(wrap_text(self.session.session_id))
-        self.init_figure()
-
-    def init_figure(self):
-        if environ.get('CI'):
-            return
-        # graph 1
-        ax1 = self.figure.add_subplot(
-            311,
-            frame_on=False,
-            title="\n\ntotal rewards per episode",
-            ylabel='total rewards')
-        p1, = ax1.plot([], [])
-        self.subgraphs['total rewards'] = (ax1, p1)
-
-        ax1e = ax1.twinx()
-        ax1e.set_ylabel('exploration rate').set_color('r')
-        ax1e.set_frame_on(False)
-        p1e, = ax1e.plot([], [], 'r')
-        self.subgraphs['e'] = (ax1e, p1e)
-
-        # graph 2
-        ax2 = self.figure.add_subplot(
-            312,
-            frame_on=False,
-            title='mean rewards over last 100 episodes',
-            ylabel='mean rewards')
-        p2, = ax2.plot([], [], 'g')
-        self.subgraphs['mean rewards'] = (ax2, p2)
-
-        # graph 3
-        ax3 = self.figure.add_subplot(
-            313,
-            frame_on=False,
-            title='loss over time, episode',
-            ylabel='loss')
-        p3, = ax3.plot([], [])
-        self.subgraphs['loss'] = (ax3, p3)
-
-        self.plt.tight_layout()  # auto-fix spacing
-        self.plt.ion()  # for live plot
-
-    def plot(self):
-        '''do live plotting'''
-        if not args.plot_graph or environ.get('CI'):
-            return
-        sys_vars = self.session.sys_vars
-        ax1, p1 = self.subgraphs['total rewards']
-        p1.set_ydata(
-            sys_vars['total_rewards_history'])
-        p1.set_xdata(np.arange(len(p1.get_ydata())))
-        ax1.relim()
-        ax1.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax1e, p1e = self.subgraphs['e']
-        p1e.set_ydata(
-            sys_vars['explore_history'])
-        p1e.set_xdata(np.arange(len(p1e.get_ydata())))
-        ax1e.relim()
-        ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax2, p2 = self.subgraphs['mean rewards']
-        p2.set_ydata(
-            sys_vars['mean_rewards_history'])
-        p2.set_xdata(np.arange(len(p2.get_ydata())))
-        ax2.relim()
-        ax2.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        ax3, p3 = self.subgraphs['loss']
-        p3.set_ydata(sys_vars['loss'])
-        p3.set_xdata(np.arange(len(p3.get_ydata())))
-        ax3.relim()
-        ax3.autoscale_view(tight=True, scalex=True, scaley=True)
-
-        self.plt.draw()
-        self.plt.pause(0.01)
-        self.save()
-
-    def save(self):
-        '''save graph to filename'''
-        self.figure.savefig(self.graph_filename)
 
 
 class Session(object):
@@ -401,12 +290,14 @@ class Experiment(object):
     replottable data, rerunnable specs
     Keys:
     all below X array of hyper param selection:
-    - sess_spec (so we can plug in directly again to rerun)
-    - summary
+    - experiment_id
+    - metrics
+        - <metrics>
         - time_start
         - time_end
         - time_taken
-        - metrics
+    - sess_spec (so we can plug in directly again to rerun)
+    - stats
     - sys_vars_array
     '''
 
@@ -416,9 +307,13 @@ class Experiment(object):
                  prefix_id_override=None):
 
         self.sess_spec = sess_spec
+        self.sess_name = sess_spec.get('sess_name')
+        param_range = SESS_SPECS.get(self.sess_name).get('param_range')
+        self.param_variables = list(
+            param_range.keys()) if param_range else []
+        self.sess_spec.pop('param_range', None)  # single exp, del range
         self.data = None
         self.times = times
-        self.sess_spec.pop('param_range', None)  # single exp, del range
         self.experiment_num = experiment_num
         self.num_of_experiments = num_of_experiments
         self.run_timestamp = run_timestamp
@@ -440,52 +335,6 @@ class Experiment(object):
             self.experiment_num, self.num_of_experiments,
             self.experiment_id), '=')
 
-    def analyze(self):
-        '''mean_rewards_per_epi
-        helper: analyze given data from an experiment
-        return metrics
-        '''
-        sys_vars_array = self.data['sys_vars_array']
-        solved_sys_vars_array = list(filter(
-            lambda sv: sv['solved'], sys_vars_array))
-        mean_rewards_array = np.array(list(map(
-            lambda sv: sv['mean_rewards'], sys_vars_array)))
-        max_total_rewards_array = np.array(list(map(
-            lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
-        epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
-        mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array)
-        t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
-        time_taken_array = np.array(list(map(
-            lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            sys_vars_array)))
-        solved_epi_array = np.array(list(map(
-            lambda sv: sv['epi'], solved_sys_vars_array)))
-        solved_t_array = np.array(list(map(
-            lambda sv: sv['t'], solved_sys_vars_array)))
-        solved_time_taken_array = np.array(list(map(
-            lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
-            solved_sys_vars_array)))
-
-        metrics = {
-            # percentage solved
-            'num_of_sessions': len(sys_vars_array),
-            'solved_num_of_sessions': len(solved_sys_vars_array),
-            'solved_ratio_of_sessions': float(len(
-                solved_sys_vars_array)) / self.times,
-            'mean_rewards_stats': basic_stats(mean_rewards_array),
-            'mean_rewards_per_epi_stats': basic_stats(
-                mean_rewards_per_epi_array),
-            'max_total_rewards_stats': basic_stats(max_total_rewards_array),
-            'epi_stats': basic_stats(epi_array),
-            't_stats': basic_stats(t_array),
-            'time_taken_stats': basic_stats(time_taken_array),
-            'solved_epi_stats': basic_stats(solved_epi_array),
-            'solved_t_stats': basic_stats(solved_t_array),
-            'solved_time_taken_stats': basic_stats(solved_time_taken_array),
-        }
-        self.data['summary'].update({'metrics': metrics})
-        return self.data
-
     def save(self):
         '''save the entire experiment data grid from inside run()'''
         with open(self.data_filename, 'w') as f:
@@ -495,8 +344,7 @@ class Experiment(object):
 
     def to_stop(self):
         '''check of experiment should be continued'''
-        metrics = self.data['summary']['metrics']
-        failed = metrics['solved_ratio_of_sessions'] < 1.
+        failed = self.data['stats']['solved_ratio_of_sessions'] < 1.
         if failed:
             logger.info(
                 'Failed experiment, terminating sessions for {}'.format(
@@ -521,16 +369,16 @@ class Experiment(object):
 
             self.data = {  # experiment data
                 'experiment_id': self.experiment_id,
-                'sess_spec': self.sess_spec,
-                'summary': {
-                    'time_start': time_start,
-                    'time_end': time_end,
+                'metrics': {
+                    # 'time_start': time_start,
+                    # 'time_end': time_end,
                     'time_taken': time_taken,
-                    'metrics': None,
                 },
+                'sess_spec': self.sess_spec,
+                'stats': None,
                 'sys_vars_array': sys_vars_array,
             }
-            self.analyze()
+            compose_data(self)
             self.save()  # progressive update, write every session completion
 
             if self.to_stop():
@@ -544,11 +392,11 @@ class Experiment(object):
         return self.data
 
 
-def plot(experiment_or_prefix_id):
+def plot_experiment(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
     prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
-    experiment_data_array = load_data_array_from_prefix_id(prefix_id)
-    for data in experiment_data_array:
+    experiment_grid_data = load_data_array_from_prefix_id(prefix_id)
+    for data in experiment_grid_data:
         sess_spec = data['sess_spec']
         experiment = Experiment(sess_spec, times=1,
                                 prefix_id_override=prefix_id)
@@ -563,43 +411,6 @@ def plot(experiment_or_prefix_id):
             sess.sys_vars = sys_vars
             sess.grapher.plot()
             sess.clear_session()
-
-
-def analyze_param_space(experiment_data_array_or_prefix_id):
-    '''
-    get all the data from all experiments.run()
-    or read from all data files matching the prefix of experiment_id
-    e.g. usage without running:
-    prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
-    analyze_param_space(prefix_id)
-    '''
-    if isinstance(experiment_data_array_or_prefix_id, str):
-        experiment_data_array = load_data_array_from_prefix_id(
-            experiment_data_array_or_prefix_id)
-    else:
-        experiment_data_array = experiment_data_array_or_prefix_id
-
-    flat_metrics_array = []
-    for data in experiment_data_array:
-        flat_metrics = flatten_dict(data['summary']['metrics'])
-        flat_metrics.update({'experiment_id': data['experiment_id']})
-        flat_metrics_array.append(flat_metrics)
-
-    metrics_df = pd.DataFrame.from_dict(flat_metrics_array)
-    metrics_df.sort_values(
-        ['mean_rewards_per_epi_stats_mean',
-         'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
-        ascending=False
-    )
-
-    experiment_id = experiment_data_array[0]['experiment_id']
-    prefix_id = prefix_id_from_experiment_id(experiment_id)
-    param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
-        prefix_id)
-    metrics_df.to_csv(param_space_data_filename, index=False)
-    logger.info(
-        'Param space data saved to {}'.format(param_space_data_filename))
-    return metrics_df
 
 
 def run(sess_name_id_spec, times=1,
@@ -617,7 +428,7 @@ def run(sess_name_id_spec, times=1,
     '''
     # run plots on data only
     if plot_only:
-        plot(sess_name_id_spec)
+        plot_experiment(sess_name_id_spec)
         return
 
     # set sess_spec based on input
@@ -639,10 +450,10 @@ def run(sess_name_id_spec, times=1,
         hopt_kwargs.update(kwargs)
         hopt = BruteHyperOptimizer(Experiment, **hopt_kwargs)
         # hopt = HyperoptHyperOptimizer(Experiment, **hopt_kwargs)
-        experiment_data_array = hopt.run()
+        experiment_grid_data = hopt.run()
     else:
         experiment = Experiment(sess_spec, times=times)
         experiment_data = experiment.run()
-        experiment_data_array = [experiment_data]
+        experiment_grid_data = [experiment_data]
 
-    return analyze_param_space(experiment_data_array)
+    return analyze_data(experiment_grid_data)
