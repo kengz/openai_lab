@@ -136,6 +136,8 @@ def compose_data(experiment):
     into useful summary and full metrics for analysis
     '''
     sys_vars_array = experiment.data['sys_vars_array']
+
+    # collect all data from sys_vars_array
     solved_sys_vars_array = list(filter(
         lambda sv: sv['solved'], sys_vars_array))
     mean_rewards_array = np.array(list(map(
@@ -156,6 +158,7 @@ def compose_data(experiment):
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
         solved_sys_vars_array)))
 
+    # compose sys_vars stats
     stats = {
         'num_of_sessions': len(sys_vars_array),
         'solved_num_of_sessions': len(solved_sys_vars_array),
@@ -173,36 +176,37 @@ def compose_data(experiment):
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
 
+    # summary metrics
     metrics = {
-        'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
         'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
         'epi_stats_mean': stats['epi_stats']['mean'],
+        'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
         'max_total_rewards_stats_mean': stats[
             'max_total_rewards_stats']['mean'],
         't_stats_mean': stats['t_stats']['mean'],
     }
 
-    # insert variables param into stats for analysis
+    # param variables for independent vars of experiments
     param_variables = {
         pv: experiment.sess_spec['param'][pv] for
         pv in experiment.param_variables}
     param_variables = flat_cast_dict(param_variables)
 
     experiment.data['metrics'].update(metrics)
-    experiment.data['stats'] = stats
     experiment.data['param_variables'] = param_variables
+    experiment.data['stats'] = stats
     return experiment.data
 
 
-def analyze_param_space(experiment_data_array_or_prefix_id):
+def analyze_data(experiment_data_array_or_prefix_id):
     '''
     get all the data from all experiments.run()
     or read from all data files matching the prefix of experiment_id
     e.g. usage without running:
     prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
-    analyze_param_space(prefix_id)
+    analyze_data(prefix_id)
     '''
     if isinstance(experiment_data_array_or_prefix_id, str):
         experiment_data_array = load_data_array_from_prefix_id(
@@ -210,25 +214,33 @@ def analyze_param_space(experiment_data_array_or_prefix_id):
     else:
         experiment_data_array = experiment_data_array_or_prefix_id
 
-    flat_metrics_array = []
+    stats_array, param_variables_array = [], []
     for data in experiment_data_array:
-        flat_metrics = flatten_dict(data['stats'])
-        flat_metrics.update({'experiment_id': data['experiment_id']})
-        flat_metrics_array.append(flat_metrics)
+        stats = flatten_dict(data['stats'])
+        stats.update({'experiment_id': data['experiment_id']})
+        stats_array.append(stats)
+        param_variables = data['param_variables']
+        param_variables_array.append(param_variables)
 
-    stats_df = pd.DataFrame.from_dict(flat_metrics_array)
-    # filter by columns for output analysis
-    stats_df.sort_values(
-        ['mean_rewards_per_epi_stats_mean',
-         'mean_rewards_stats_mean', 'solved_ratio_of_sessions'],
-        ascending=False
-    )
+    stats_columns = [
+        'mean_rewards_per_epi_stats_mean',
+        'mean_rewards_stats_mean',
+        'epi_stats_mean',
+        'solved_ratio_of_sessions',
+        'max_total_rewards_stats_mean',
+        't_stats_mean',
+        'experiment_id'
+    ]
+    raw_stats_df = pd.DataFrame.from_dict(stats_array)
+    stats_df = raw_stats_df[stats_columns]
+
+    param_variables_df = pd.DataFrame.from_dict(param_variables_array)
+    data_df = pd.concat([stats_df, param_variables_df], axis=1)
+
+    data_df.sort_values(
+        ['mean_rewards_per_epi_stats_mean'],
+        inplace=True, ascending=False)
 
     experiment_id = experiment_data_array[0]['experiment_id']
-    prefix_id = prefix_id_from_experiment_id(experiment_id)
-    param_space_data_filename = './data/{0}/param_space_data_{0}.csv'.format(
-        prefix_id)
-    stats_df.to_csv(param_space_data_filename, index=False)
-    logger.info(
-        'Param space data saved to {}'.format(param_space_data_filename))
-    return stats_df
+    save_experiment_grid_data(data_df, experiment_id)
+    return data_df

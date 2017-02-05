@@ -284,6 +284,14 @@ def load_data_array_from_prefix_id(prefix_id):
             for experiment_id in experiment_id_array]
 
 
+def save_experiment_grid_data(data_df, experiment_id):
+    prefix_id = prefix_id_from_experiment_id(experiment_id)
+    filename = './data/{0}/experiment_grid_data_{0}.csv'.format(prefix_id)
+    data_df.to_csv(filename, index=False)
+    logger.info(
+        'Param space data saved to {}'.format(filename))
+
+
 def configure_gpu():
     '''detect GPU options and configure'''
     if K.backend() != 'tensorflow':

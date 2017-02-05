@@ -456,4 +456,4 @@ def run(sess_name_id_spec, times=1,
         experiment_data = experiment.run()
         experiment_data_array = [experiment_data]
 
-    return analyze_param_space(experiment_data_array)
+    return analyze_data(experiment_data_array)
