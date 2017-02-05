@@ -216,6 +216,8 @@ def compose_data(experiment):
 # X are columns with name starting with 'variable_'
 # Y cols are defined below
 def plot_experiment_grid(data_df, experiment_id):
+    if len(data_df) < 2:  # no multi selection
+        return
     prefix_id = prefix_id_from_experiment_id(experiment_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
