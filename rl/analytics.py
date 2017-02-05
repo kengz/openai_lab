@@ -200,6 +200,22 @@ def compose_data(experiment):
     return experiment.data
 
 
+# plot the experiment_grid data from data_df
+# X are columns with name starting with 'variable_'
+# Y cols are defined below
+def plot_experiment_grid(data_df, experiment_id):
+    prefix_id = prefix_id_from_experiment_id(experiment_id)
+    X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
+    Y_cols = ['mean_rewards_per_epi_stats_mean']
+    for x in X_cols:
+        for y in Y_cols:
+            df_plot = data_df.plot(x=x, y=y, title=wrap_text(prefix_id))
+            fig = df_plot.get_figure()
+            filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
+                prefix_id, x, y)
+            fig.savefig(filename)
+
+
 def analyze_data(experiment_grid_data_or_prefix_id):
     '''
     get all the data from all experiments.run()
@@ -235,6 +251,9 @@ def analyze_data(experiment_grid_data_or_prefix_id):
     stats_df = raw_stats_df[stats_columns]
 
     param_variables_df = pd.DataFrame.from_dict(param_variables_array)
+    param_variables_df.columns = [
+        'variable_'+c for c in param_variables_df.columns]
+
     data_df = pd.concat([stats_df, param_variables_df], axis=1)
 
     data_df.sort_values(
@@ -243,4 +262,5 @@ def analyze_data(experiment_grid_data_or_prefix_id):
 
     experiment_id = experiment_grid_data[0]['experiment_id']
     save_experiment_grid_data(data_df, experiment_id)
+    plot_experiment_grid(data_df, experiment_id)
     return data_df
