@@ -200,7 +200,7 @@ def compose_data(experiment):
     return experiment.data
 
 
-def analyze_data(experiment_data_array_or_prefix_id):
+def analyze_data(experiment_grid_data_or_prefix_id):
     '''
     get all the data from all experiments.run()
     or read from all data files matching the prefix of experiment_id
@@ -208,14 +208,14 @@ def analyze_data(experiment_data_array_or_prefix_id):
     prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
     analyze_data(prefix_id)
     '''
-    if isinstance(experiment_data_array_or_prefix_id, str):
-        experiment_data_array = load_data_array_from_prefix_id(
-            experiment_data_array_or_prefix_id)
+    if isinstance(experiment_grid_data_or_prefix_id, str):
+        experiment_grid_data = load_data_array_from_prefix_id(
+            experiment_grid_data_or_prefix_id)
     else:
-        experiment_data_array = experiment_data_array_or_prefix_id
+        experiment_grid_data = experiment_grid_data_or_prefix_id
 
     stats_array, param_variables_array = [], []
-    for data in experiment_data_array:
+    for data in experiment_grid_data:
         stats = flatten_dict(data['stats'])
         stats.update({'experiment_id': data['experiment_id']})
         stats_array.append(stats)
@@ -241,6 +241,6 @@ def analyze_data(experiment_data_array_or_prefix_id):
         ['mean_rewards_per_epi_stats_mean'],
         inplace=True, ascending=False)
 
-    experiment_id = experiment_data_array[0]['experiment_id']
+    experiment_id = experiment_grid_data[0]['experiment_id']
     save_experiment_grid_data(data_df, experiment_id)
     return data_df

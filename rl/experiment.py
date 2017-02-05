@@ -395,8 +395,8 @@ class Experiment(object):
 def plot_experiment(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
     prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
-    experiment_data_array = load_data_array_from_prefix_id(prefix_id)
-    for data in experiment_data_array:
+    experiment_grid_data = load_data_array_from_prefix_id(prefix_id)
+    for data in experiment_grid_data:
         sess_spec = data['sess_spec']
         experiment = Experiment(sess_spec, times=1,
                                 prefix_id_override=prefix_id)
@@ -450,10 +450,10 @@ def run(sess_name_id_spec, times=1,
         hopt_kwargs.update(kwargs)
         hopt = BruteHyperOptimizer(Experiment, **hopt_kwargs)
         # hopt = HyperoptHyperOptimizer(Experiment, **hopt_kwargs)
-        experiment_data_array = hopt.run()
+        experiment_grid_data = hopt.run()
     else:
         experiment = Experiment(sess_spec, times=times)
         experiment_data = experiment.run()
-        experiment_data_array = [experiment_data]
+        experiment_grid_data = [experiment_data]
 
-    return analyze_data(experiment_data_array)
+    return analyze_data(experiment_grid_data)
