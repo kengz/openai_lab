@@ -101,7 +101,7 @@
             "exploration_anneal_episodes": [10, 15, 20]
         }
     },
-    "sarsa_dn": {
+    "sarsa_dqn": {
         "problem": "CartPole-v0",
         "Agent": "DeepSarsa",
         "Memory": "LinearMemoryWithForgetting",

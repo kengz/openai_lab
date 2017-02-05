@@ -115,7 +115,6 @@ The extra flags are:
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 
-
 ### Run experiments remotely
 
 Log in via ssh, start a screen, run, then detach screen.
@@ -128,6 +127,12 @@ npm run remote
 xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
 # use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
 # use screen -r to resume screen next time
+```
+
+Or to set up multiple jobs and let them run one after the other on the server, edit `queue.py` and run:
+
+```shell
+npm run queue
 ```
 
 
