@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from rl.agent.double_dqn import DoubleDQN
 from rl.agent.dqn import DQN
@@ -35,8 +36,10 @@ class DQNFreeze(DoubleDQN):
         return DQN.train_an_epoch(self)
 
     def update_target_model(self):
-        self.model.save('temp_Q_model_freeze.h5')
-        self.model2 = load_model('temp_Q_model_freeze.h5')
+        pid = os.getpid()
+        name = 'temp_Q_model_freeze' + str(pid) + '.h5'
+        self.model.save(name)
+        self.model2 = load_model(name)
         logger.info("Updated target model weights")
 
     def update(self, sys_vars):
