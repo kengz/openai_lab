@@ -3,7 +3,7 @@ const watch = require('gulp-watch')
 const changed = require('gulp-changed')
 
 const source = './data'
-const destination = '/keybase/private/kengz,lgraesser/data';
+const destination = `${process.env.HOME}/Dropbox/openai_lab/data`;
 
 gulp.task('default', function() {
   gulp.src([source + '/**/*', source + '/*'], { base: source })
