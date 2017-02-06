@@ -14,6 +14,7 @@ sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
 import numpy as np
 import pandas as pd
 import warnings
+from functools import partial
 from rl.util import *
 
 warnings.filterwarnings("ignore", module="matplotlib")
@@ -240,7 +241,7 @@ def plot_experiment_grid(data_df, experiment_id):
     fig = sns.PairGrid(
         data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
         hue='solved_ratio_of_sessions')
-    fig.map(sns.swarmplot)
+    fig.map(partial(sns.swarmplot, size=3))
     fig.fig.suptitle(wrap_text(prefix_id))
     fig.add_legend()
     filename = './data/{}/experiment_grid_plot_overview.png'.format(
