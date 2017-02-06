@@ -9,3 +9,4 @@ Keras==1.1.0
 git+https://github.com/openai/gym.git
 codeclimate-test-reporter==0.1.2
 pytest-cov==2.4.0
+hyperopt==0.1
