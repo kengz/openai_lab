@@ -266,7 +266,11 @@ def load_data_from_experiment_id(experiment_id):
         '/').pop().split('.').pop(0)
     prefix_id = prefix_id_from_experiment_id(experiment_id)
     data_filename = './data/{}/{}.json'.format(prefix_id, experiment_id)
-    data = json.loads(open(data_filename).read())
+    try:
+        data = json.loads(open(data_filename).read())
+    except json.JSONDecodeError:
+        logger.warn('Failed to read JSON from {}'.format(data_filename))
+        data = None
     return data
 
 
@@ -280,8 +284,8 @@ def load_data_array_from_prefix_id(prefix_id):
             f.startswith(prefix_id) and
             f.endswith('.json'))
     ]
-    return [load_data_from_experiment_id(experiment_id)
-            for experiment_id in experiment_id_array]
+    return list(filter(None, [load_data_from_experiment_id(experiment_id)
+                              for experiment_id in experiment_id_array]))
 
 
 def save_experiment_grid_data(data_df, experiment_id):
