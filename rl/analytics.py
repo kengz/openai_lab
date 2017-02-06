@@ -261,6 +261,9 @@ def analyze_data(experiment_grid_data_or_prefix_id):
         'variable_'+c for c in param_variables_df.columns]
 
     data_df = pd.concat([stats_df, param_variables_df], axis=1)
+    for c in data_df.columns:
+        if data_df[c].dtype == object:  # guard
+            data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
         ['mean_rewards_per_epi_stats_mean'],
