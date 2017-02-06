@@ -2,6 +2,7 @@ import matplotlib
 import numpy as np
 import pandas as pd
 import platform
+import seaborn as sns
 import warnings
 from os import environ
 from rl.util import *
@@ -16,7 +17,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
-
+sns.set(style="whitegrid", color_codes=True)
 
 STATS_COLS = [
     'mean_rewards_per_epi_stats_mean',
@@ -222,10 +223,9 @@ def plot_experiment_grid(data_df, experiment_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = data_df.plot(
-                x=x, y=y, kind='scatter',
-                title=wrap_text(prefix_id))
+            df_plot = sns.swarmplot(x=x, y=y, data=data_df)
             fig = df_plot.get_figure()
+            fig.suptitle(wrap_text(prefix_id))
             filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
                 prefix_id, x, y)
             fig.savefig(filename)
