@@ -66,6 +66,11 @@ parser.add_argument("-g", "--graph",
                     action="store_true",
                     dest="plot_graph",
                     default=False)
+parser.add_argument("-a", "--analyze",
+                    help="only run analyze_data",
+                    action="store_true",
+                    dest="analyze_only",
+                    default=False)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
