@@ -17,7 +17,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
-sns.set(style="whitegrid", color_codes=True)
+sns.set(style="whitegrid", color_codes=True, rc={"lines.linewidth": 1.0})
 
 STATS_COLS = [
     'mean_rewards_per_epi_stats_mean',
@@ -66,6 +66,7 @@ class Grapher(object):
         ax1e = ax1.twinx()
         ax1e.set_ylabel('exploration rate').set_color('r')
         ax1e.set_frame_on(False)
+        ax1e.grid(False)
         p1e, = ax1e.plot([], [], 'r')
         self.subgraphs['e'] = (ax1e, p1e)
 
