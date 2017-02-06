@@ -17,7 +17,8 @@ if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
-sns.set(style="whitegrid", color_codes=True, rc={"lines.linewidth": 1.0})
+sns.set(style="whitegrid", color_codes=True,
+        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
 
 STATS_COLS = [
     'mean_rewards_per_epi_stats_mean',
