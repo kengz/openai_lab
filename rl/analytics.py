@@ -1,24 +1,23 @@
 import matplotlib
-import numpy as np
-import pandas as pd
 import platform
-import warnings
 from os import environ
-from rl.util import *
-
-warnings.filterwarnings("ignore", module="matplotlib")
-
-# TODO fix mp breaking on Mac shit,
-# except when running -b with agg backend
-# (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
+
 import seaborn as sns
 sns.set(style="whitegrid", color_codes=True,
         rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
+
+import numpy as np
+import pandas as pd
+import warnings
+from rl.util import *
+
+warnings.filterwarnings("ignore", module="matplotlib")
+
 
 STATS_COLS = [
     'mean_rewards_per_epi_stats_mean',
@@ -225,12 +224,14 @@ def plot_experiment_grid(data_df, experiment_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = sns.swarmplot(x=x, y=y, data=data_df)
+            df_plot = sns.swarmplot(x=x, y=y, data=data_df,
+                                    hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
             fig.suptitle(wrap_text(prefix_id))
             filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
                 prefix_id, x, y)
             fig.savefig(filename)
+            fig.clear()
 
 
 def analyze_data(experiment_grid_data_or_prefix_id):
