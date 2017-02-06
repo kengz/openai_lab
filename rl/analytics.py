@@ -2,7 +2,6 @@ import matplotlib
 import numpy as np
 import pandas as pd
 import platform
-import seaborn as sns
 import warnings
 from os import environ
 from rl.util import *
@@ -17,6 +16,7 @@ if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
+import seaborn as sns
 sns.set(style="whitegrid", color_codes=True,
         rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
 
