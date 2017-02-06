@@ -8,7 +8,7 @@ else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
 import seaborn as sns
-sns.set(style="whitegrid", color_codes=True,
+sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
         rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
 
 import numpy as np
@@ -28,7 +28,11 @@ STATS_COLS = [
     't_stats_mean',
     'experiment_id'
 ]
-EXPERIMENT_GRID_Y_COLS = ['mean_rewards_per_epi_stats_mean']
+EXPERIMENT_GRID_Y_COLS = [
+    'mean_rewards_per_epi_stats_mean',
+    'mean_rewards_stats_mean',
+    'max_total_rewards_stats_mean'
+]
 
 
 class Grapher(object):
@@ -224,7 +228,7 @@ def plot_experiment_grid(data_df, experiment_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = sns.swarmplot(x=x, y=y, data=data_df,
+            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
                                     hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
             fig.suptitle(wrap_text(prefix_id))
@@ -232,6 +236,16 @@ def plot_experiment_grid(data_df, experiment_id):
                 prefix_id, x, y)
             fig.savefig(filename)
             fig.clear()
+
+    fig = sns.PairGrid(
+        data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
+        hue='solved_ratio_of_sessions')
+    fig.map(sns.swarmplot)
+    fig.fig.suptitle(wrap_text(prefix_id))
+    fig.add_legend()
+    filename = './data/{}/experiment_grid_plot_overview.png'.format(
+        prefix_id)
+    fig.savefig(filename)
 
 
 def analyze_data(experiment_grid_data_or_prefix_id):
