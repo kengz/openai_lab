@@ -108,12 +108,13 @@ The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`
+- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`. Can be a `prefix_id` too.
 - `-t <times>`: the number of sessions to run per experiment. Default: `1`
 - `-e <experiments>`: the max number of experiments: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
+- `-a`: Run `analyze_data()` only to plot `experiment_grid_data`. Default: `False`
 
 ### Run experiments remotely
 

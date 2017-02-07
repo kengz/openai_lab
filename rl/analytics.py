@@ -1,21 +1,23 @@
 import matplotlib
-import numpy as np
-import pandas as pd
 import platform
-import warnings
 from os import environ
-from rl.util import *
-
-warnings.filterwarnings("ignore", module="matplotlib")
-
-# TODO fix mp breaking on Mac shit,
-# except when running -b with agg backend
-# (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
+
+import seaborn as sns
+sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
+        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
+
+import numpy as np
+import pandas as pd
+import warnings
+from functools import partial
+from rl.util import *
+
+warnings.filterwarnings("ignore", module="matplotlib")
 
 
 STATS_COLS = [
@@ -27,7 +29,11 @@ STATS_COLS = [
     't_stats_mean',
     'experiment_id'
 ]
-EXPERIMENT_GRID_Y_COLS = ['mean_rewards_per_epi_stats_mean']
+EXPERIMENT_GRID_Y_COLS = [
+    'mean_rewards_per_epi_stats_mean',
+    'mean_rewards_stats_mean',
+    'max_total_rewards_stats_mean'
+]
 
 
 class Grapher(object):
@@ -65,6 +71,7 @@ class Grapher(object):
         ax1e = ax1.twinx()
         ax1e.set_ylabel('exploration rate').set_color('r')
         ax1e.set_frame_on(False)
+        ax1e.grid(False)
         p1e, = ax1e.plot([], [], 'r')
         self.subgraphs['e'] = (ax1e, p1e)
 
@@ -222,13 +229,24 @@ def plot_experiment_grid(data_df, experiment_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = data_df.plot(
-                x=x, y=y, kind='scatter',
-                title=wrap_text(prefix_id))
+            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
+                                    hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
+            fig.suptitle(wrap_text(prefix_id))
             filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
                 prefix_id, x, y)
             fig.savefig(filename)
+            fig.clear()
+
+    fig = sns.PairGrid(
+        data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
+        hue='solved_ratio_of_sessions')
+    fig.map(partial(sns.swarmplot, size=3))
+    fig.fig.suptitle(wrap_text(prefix_id))
+    fig.add_legend()
+    filename = './data/{}/experiment_grid_plot_overview.png'.format(
+        prefix_id)
+    fig.savefig(filename)
 
 
 def analyze_data(experiment_grid_data_or_prefix_id):
@@ -261,6 +279,9 @@ def analyze_data(experiment_grid_data_or_prefix_id):
         'variable_'+c for c in param_variables_df.columns]
 
     data_df = pd.concat([stats_df, param_variables_df], axis=1)
+    for c in data_df.columns:
+        if data_df[c].dtype == object:  # guard
+            data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
         ['mean_rewards_per_epi_stats_mean'],

@@ -3,6 +3,7 @@ h5py==2.6.0
 numpy==1.11.1
 scipy==0.18.0
 matplotlib==1.4.3
+seaborn==0.7.1
 pandas==0.18.1
 pytest-cov==2.4.0
 hyperopt==0.1
