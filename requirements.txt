@@ -6,6 +6,7 @@ matplotlib==1.4.3
 seaborn==0.7.1
 pandas==0.18.1
 pytest-cov==2.4.0
+hyperopt==0.1
 git+https://github.com/openai/gym.git
 https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.1-py3-none-any.whl
 Theano==0.8.2
