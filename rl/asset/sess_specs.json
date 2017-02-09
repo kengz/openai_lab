@@ -42,7 +42,7 @@
         "problem": "CartPole-v0",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "BoltzmannPolicy",
+        "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
@@ -54,13 +54,13 @@
             "exploration_anneal_episodes": 50
         },
         "param_range": {
-            "learning_rate": [0.01, 0.05, 0.1],
-            "gamma": [0.95, 0.99],
-            "train_per_n_new_exp": [1,2,4],
+            "learning_rate": [0.01, 0.02, 0.05, 0.1],
+            "gamma": [0.95, 0.97, 0.99],
+            "train_per_n_new_exp": [1,2],
             "hidden_layers_shape": [
                 [4],
-                [8,4],
-                [16,8,4]
+                [8],
+                [8,4]
             ],
             "exploration_anneal_episodes": [10, 15, 20]
         }
