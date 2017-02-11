@@ -219,10 +219,10 @@ def compose_data(trial):
     return trial.data
 
 
-# plot the trial_grid data from data_df
+# plot the experiment data from data_df
 # X are columns with name starting with 'variable_'
 # Y cols are defined below
-def plot_trial_grid(data_df, trial_id):
+def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
     prefix_id = prefix_id_from_trial_id(trial_id)
@@ -233,7 +233,7 @@ def plot_trial_grid(data_df, trial_id):
                                     hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
             fig.suptitle(wrap_text(prefix_id))
-            filename = './data/{}/trial_grid_plot_{}_vs_{}.png'.format(
+            filename = './data/{}/experiment_plot_{}_vs_{}.png'.format(
                 prefix_id, x, y)
             fig.savefig(filename)
             fig.clear()
@@ -244,12 +244,12 @@ def plot_trial_grid(data_df, trial_id):
     fig.map(partial(sns.swarmplot, size=3))
     fig.fig.suptitle(wrap_text(prefix_id))
     fig.add_legend()
-    filename = './data/{}/trial_grid_plot_overview.png'.format(
+    filename = './data/{}/experiment_plot_overview.png'.format(
         prefix_id)
     fig.savefig(filename)
 
 
-def analyze_data(trial_grid_data_or_prefix_id):
+def analyze_data(experiment_data_or_prefix_id):
     '''
     get all the data from all trials.run()
     or read from all data files matching the prefix of trial_id
@@ -257,14 +257,14 @@ def analyze_data(trial_grid_data_or_prefix_id):
     prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
     analyze_data(prefix_id)
     '''
-    if isinstance(trial_grid_data_or_prefix_id, str):
-        trial_grid_data = load_data_array_from_prefix_id(
-            trial_grid_data_or_prefix_id)
+    if isinstance(experiment_data_or_prefix_id, str):
+        experiment_data = load_data_array_from_prefix_id(
+            experiment_data_or_prefix_id)
     else:
-        trial_grid_data = trial_grid_data_or_prefix_id
+        experiment_data = experiment_data_or_prefix_id
 
     stats_array, param_variables_array = [], []
-    for data in trial_grid_data:
+    for data in experiment_data:
         stats = flatten_dict(data['stats'])
         stats.update({'trial_id': data['trial_id']})
         stats_array.append(stats)
@@ -287,7 +287,7 @@ def analyze_data(trial_grid_data_or_prefix_id):
         ['mean_rewards_per_epi_stats_mean'],
         inplace=True, ascending=False)
 
-    trial_id = trial_grid_data[0]['trial_id']
-    save_trial_grid_data(data_df, trial_id)
-    plot_trial_grid(data_df, trial_id)
+    trial_id = experiment_data[0]['trial_id']
+    save_experiment_data(data_df, trial_id)
+    plot_experiment(data_df, trial_id)
     return data_df

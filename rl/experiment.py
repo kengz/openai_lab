@@ -413,11 +413,11 @@ class Trial(object):
         return self.data
 
 
-def analyze_trial(trial_or_prefix_id):
+def analyze_experiment(trial_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
     prefix_id = prefix_id_from_trial_id(trial_or_prefix_id)
-    trial_grid_data = load_data_array_from_prefix_id(prefix_id)
-    return analyze_data(trial_grid_data)
+    experiment_data = load_data_array_from_prefix_id(prefix_id)
+    return analyze_data(experiment_data)
 
 
 def run(sess_name_id_spec, times=1,
@@ -436,7 +436,7 @@ def run(sess_name_id_spec, times=1,
     '''
     # run plots on data only
     if analyze_only:
-        analyze_trial(sess_name_id_spec)
+        analyze_experiment(sess_name_id_spec)
         return
 
     # set sess_spec based on input
@@ -458,10 +458,10 @@ def run(sess_name_id_spec, times=1,
         hopt_kwargs.update(kwargs)
         hopt = BruteHyperOptimizer(Trial, **hopt_kwargs)
         # hopt = HyperoptHyperOptimizer(Trial, **hopt_kwargs)
-        trial_grid_data = hopt.run()
+        experiment_data = hopt.run()
     else:
         trial = Trial(sess_spec, times=times)
         trial_data = trial.run()
-        trial_grid_data = [trial_data]
+        experiment_data = [trial_data]
 
-    return analyze_data(trial_grid_data)
+    return analyze_data(experiment_data)

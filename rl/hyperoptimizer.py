@@ -128,9 +128,9 @@ class HyperoptHyperOptimizer(HyperOptimizer):
              algo=self.algo,
              max_evals=self.max_evals,
              trials=trials)
-        trial_grid_data = [
+        experiment_data = [
             trial['result']['trial_data'] for trial in trials]
-        return trial_grid_data
+        return experiment_data
 
 
 class BruteHyperOptimizer(HyperOptimizer):
@@ -168,8 +168,8 @@ class BruteHyperOptimizer(HyperOptimizer):
 
     def run(self):
         p = mp.Pool(PARALLEL_PROCESS_NUM)
-        trial_grid_data = list(
+        experiment_data = list(
             p.map(self.mp_run_helper, self.trial_array))
         p.close()
         p.join()
-        return trial_grid_data
+        return experiment_data

@@ -114,7 +114,7 @@ The extra flags are:
 - `-p`: run param selection. Default: `False`
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
-- `-a`: Run `analyze_data()` only to plot `trial_grid_data`. Default: `False`
+- `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 
 ### Run experiment remotely
 

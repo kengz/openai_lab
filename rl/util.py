@@ -293,9 +293,9 @@ def load_data_array_from_prefix_id(prefix_id):
                               for trial_id in trial_id_array]))
 
 
-def save_trial_grid_data(data_df, trial_id):
+def save_experiment_data(data_df, trial_id):
     prefix_id = prefix_id_from_trial_id(trial_id)
-    filename = './data/{0}/trial_grid_data_{0}.csv'.format(prefix_id)
+    filename = './data/{0}/experiment_data_{0}.csv'.format(prefix_id)
     data_df.to_csv(filename, index=False)
     logger.info(
         'trial grid data saved to {}'.format(filename))
