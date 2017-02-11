@@ -225,16 +225,16 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
-    prefix_id = prefix_id_from_trial_id(trial_id)
+    experiment_id = experiment_id_from_trial_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
             df_plot = sns.swarmplot(data=data_df, x=x, y=y,
                                     hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
-            fig.suptitle(wrap_text(prefix_id))
+            fig.suptitle(wrap_text(experiment_id))
             filename = './data/{}/experiment_plot_{}_vs_{}.png'.format(
-                prefix_id, x, y)
+                experiment_id, x, y)
             fig.savefig(filename)
             fig.clear()
 
@@ -242,26 +242,26 @@ def plot_experiment(data_df, trial_id):
         data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
         hue='solved_ratio_of_sessions')
     fig.map(partial(sns.swarmplot, size=3))
-    fig.fig.suptitle(wrap_text(prefix_id))
+    fig.fig.suptitle(wrap_text(experiment_id))
     fig.add_legend()
     filename = './data/{}/experiment_plot_overview.png'.format(
-        prefix_id)
+        experiment_id)
     fig.savefig(filename)
 
 
-def analyze_data(experiment_data_or_prefix_id):
+def analyze_data(experiment_data_or_experiment_id):
     '''
     get all the data from all trials.run()
     or read from all data files matching the prefix of trial_id
     e.g. usage without running:
-    prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
-    analyze_data(prefix_id)
+    experiment_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
+    analyze_data(experiment_id)
     '''
-    if isinstance(experiment_data_or_prefix_id, str):
-        experiment_data = load_data_array_from_prefix_id(
-            experiment_data_or_prefix_id)
+    if isinstance(experiment_data_or_experiment_id, str):
+        experiment_data = load_data_array_from_experiment_id(
+            experiment_data_or_experiment_id)
     else:
-        experiment_data = experiment_data_or_prefix_id
+        experiment_data = experiment_data_or_experiment_id
 
     stats_array, param_variables_array = [], []
     for data in experiment_data:

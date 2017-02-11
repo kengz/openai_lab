@@ -93,7 +93,7 @@ class Session(object):
 
         # data file and graph
         self.base_filename = './data/{}/{}'.format(
-            self.trial.prefix_id, self.session_id)
+            self.trial.experiment_id, self.session_id)
         self.graph_filename = self.base_filename + '.png'
 
         # for plotting
@@ -304,7 +304,7 @@ class Trial(object):
     def __init__(self, sess_spec, times=1,
                  trial_num=0, num_of_trials=1,
                  run_timestamp=timestamp(),
-                 prefix_id_override=None):
+                 experiment_id_override=None):
 
         self.sess_spec = sess_spec
         self.sess_name = sess_spec.get('sess_name')
@@ -317,7 +317,7 @@ class Trial(object):
         self.trial_num = trial_num
         self.num_of_trials = num_of_trials
         self.run_timestamp = run_timestamp
-        self.prefix_id = prefix_id_override or '{}_{}_{}_{}_{}_{}'.format(
+        self.experiment_id = experiment_id_override or '{}_{}_{}_{}_{}_{}'.format(
             sess_spec['problem'],
             sess_spec['Agent'].split('.').pop(),
             sess_spec['Memory'].split('.').pop(),
@@ -325,11 +325,11 @@ class Trial(object):
             sess_spec['PreProcessor'].split('.').pop(),
             self.run_timestamp
         )
-        self.trial_id = self.prefix_id + '_t' + str(self.trial_num)
-        self.base_dir = './data/{}'.format(self.prefix_id)
+        self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
+        self.base_dir = './data/{}'.format(self.experiment_id)
         os.makedirs(self.base_dir, exist_ok=True)
         self.base_filename = './data/{}/{}'.format(
-            self.prefix_id, self.trial_id)
+            self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
         log_delimiter('Init Trial #{} of {}:\n{}'.format(
             self.trial_num, self.num_of_trials,
@@ -413,10 +413,10 @@ class Trial(object):
         return self.data
 
 
-def analyze_experiment(trial_or_prefix_id):
+def analyze_experiment(trial_or_experiment_id):
     '''plot from a saved data by init sessions for each sys_vars'''
-    prefix_id = prefix_id_from_trial_id(trial_or_prefix_id)
-    experiment_data = load_data_array_from_prefix_id(prefix_id)
+    experiment_id = experiment_id_from_trial_id(trial_or_experiment_id)
+    experiment_data = load_data_array_from_experiment_id(experiment_id)
     return analyze_data(experiment_data)
 
 
@@ -427,7 +427,7 @@ def run(sess_name_id_spec, times=1,
     primary method:
     specify:
     - sess_name(str) or sess_spec(Dict): run new trial,
-    - prefix_id(str): rerun any incomplete trials from the trial grid
+    - experiment_id(str): rerun any incomplete trials from the experiment
     - trial_id(str): rerun trial from data
     - trial_id(str) with analyze_only=True: plot graphs from data
     This runs all trials, specified by the obtained sess_spec

@@ -108,7 +108,7 @@ The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`. Can be a `prefix_id` too.
+- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-e <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
@@ -154,9 +154,9 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
-Each run is an `experiment_grid` that runs multiple `Trial`s (not restricted to the same `prefix_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
+Each run is an `experiment` that runs multiple `Trial`s (not restricted to the same `experiment_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
 
-Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment_grid` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
+Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
 
 
 ## Roadmap

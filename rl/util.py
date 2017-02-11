@@ -259,7 +259,7 @@ def generate_sess_spec_grid(sess_spec, param_grid):
     return sess_spec_grid
 
 
-def prefix_id_from_trial_id(trial_id):
+def experiment_id_from_trial_id(trial_id):
     str_arr = trial_id.split('_')
     if str_arr[-1].startswith('t'):
         str_arr.pop()
@@ -269,8 +269,8 @@ def prefix_id_from_trial_id(trial_id):
 def load_data_from_trial_id(trial_id):
     trial_id = trial_id.split(
         '/').pop().split('.').pop(0)
-    prefix_id = prefix_id_from_trial_id(trial_id)
-    data_filename = './data/{}/{}.json'.format(prefix_id, trial_id)
+    experiment_id = experiment_id_from_trial_id(trial_id)
+    data_filename = './data/{}/{}.json'.format(experiment_id, trial_id)
     try:
         data = json.loads(open(data_filename).read())
     except (FileNotFoundError, json.JSONDecodeError):
@@ -279,14 +279,14 @@ def load_data_from_trial_id(trial_id):
     return data
 
 
-def load_data_array_from_prefix_id(prefix_id):
+def load_data_array_from_experiment_id(experiment_id):
     # to load all ./data files for a series of trials
-    prefix_id = prefix_id_from_trial_id(prefix_id)
-    data_path = './data/{}'.format(prefix_id)
+    experiment_id = experiment_id_from_trial_id(experiment_id)
+    data_path = './data/{}'.format(experiment_id)
     trial_id_array = [
         f for f in os.listdir(data_path)
         if (path.isfile(path.join(data_path, f)) and
-            f.startswith(prefix_id) and
+            f.startswith(experiment_id) and
             f.endswith('.json'))
     ]
     return list(filter(None, [load_data_from_trial_id(trial_id)
@@ -294,11 +294,11 @@ def load_data_array_from_prefix_id(prefix_id):
 
 
 def save_experiment_data(data_df, trial_id):
-    prefix_id = prefix_id_from_trial_id(trial_id)
-    filename = './data/{0}/experiment_data_{0}.csv'.format(prefix_id)
+    experiment_id = experiment_id_from_trial_id(trial_id)
+    filename = './data/{0}/experiment_data_{0}.csv'.format(experiment_id)
     data_df.to_csv(filename, index=False)
     logger.info(
-        'trial grid data saved to {}'.format(filename))
+        'experiment data saved to {}'.format(filename))
 
 
 def configure_gpu():
