@@ -73,7 +73,7 @@ class Session(object):
         log_delimiter('Init Session #{} of {}:\n{}'.format(
             self.session_num, self.num_of_sessions, self.session_id))
 
-        self.experiment_spec = trial.experiment_spec
+        self.experiment_spec = self.trial.experiment_spec
         self.problem = self.experiment_spec['problem']
         self.Agent = get_module(GREF, self.experiment_spec['Agent'])
         self.Memory = get_module(GREF, self.experiment_spec['Memory'])
@@ -244,29 +244,52 @@ class Session(object):
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
+    def is_completed(self):
+        '''check if the trial is already completed, if so dont run'''
+        trial_data = load_data_from_trial_id(self.trial.trial_id)
+        if trial_data is None:
+            # no data yet, confirmed incomplete
+            return False
+        else:
+            sys_vars_array = trial_data['sys_vars_array']
+            # valid since sessions always ran sequentially
+            # if Trial already wants a rerun,
+            # suffices to check which session hasn't been ran
+            is_incomplete = self.session_num > len(sys_vars_array)
+            return not is_incomplete
+
     def run(self):
         '''run a session of agent'''
-        log_delimiter('Run Session #{} of {}\n{}'.format(
-            self.session_num, self.num_of_sessions, self.session_id))
-        logger.info('Experiment Trial Spec: {}'.format(to_json(self.experiment_spec)))
-        sys_vars = self.sys_vars
-        sys_vars['time_start'] = timestamp()
-        for epi in range(sys_vars['MAX_EPISODES']):
-            sys_vars['epi'] = epi  # update sys_vars epi
-            try:
-                self.run_episode()
-            except Exception:
-                logger.error('Error in trial, terminating '
-                             'further session from {}'.format(self.session_id))
-                traceback.print_exc(file=sys.stdout)
-                break
-            if sys_vars['solved']:
-                break
+        if self.is_completed():
+            log_delimiter('Session #{} of {} already completed:\n{}'.format(
+                self.session_num, self.num_of_sessions, self.session_id))
+            sys_vars = load_data_from_trial_id(self.trial.trial_id)[
+                'sys_vars_array'][self.session_num]
+        else:
+            log_delimiter('Run Session #{} of {}:\n{}'.format(
+                self.session_num, self.num_of_sessions, self.session_id))
+            logger.info(
+                'Experiment Trial Spec: {}'.format(
+                    to_json(self.experiment_spec)))
+            sys_vars = self.sys_vars
+            sys_vars['time_start'] = timestamp()
+            for epi in range(sys_vars['MAX_EPISODES']):
+                sys_vars['epi'] = epi  # update sys_vars epi
+                try:
+                    self.run_episode()
+                except Exception:
+                    logger.error(
+                        'Error in trial, terminating '
+                        'further session from {}'.format(self.session_id))
+                    traceback.print_exc(file=sys.stdout)
+                    break
+                if sys_vars['solved']:
+                    break
 
-        self.clear_session()
-        sys_vars['time_end'] = timestamp()
-        sys_vars['time_taken'] = timestamp_elapse(
-            sys_vars['time_start'], sys_vars['time_end'])
+            self.clear_session()
+            sys_vars['time_end'] = timestamp()
+            sys_vars['time_taken'] = timestamp_elapse(
+                sys_vars['time_start'], sys_vars['time_end'])
 
         progress = 'Progress: Trial #{} Session #{} of {} done'.format(
             self.trial.trial_num,
@@ -369,39 +392,43 @@ class Trial(object):
         helper: run a trial for Session
         a number of times times given a experiment_spec from gym_specs
         '''
-        # TODO fix fresh run warning
         if self.is_completed():
-            return load_data_from_trial_id(self.trial_id)
-        log_delimiter('Run Trial #{} of {}:\n{}'.format(
-            self.trial_num, self.num_of_trials,
-            self.trial_id), '=')
-        configure_gpu()
-        time_start = timestamp()
-        sys_vars_array = []
-        for s in range(self.times):
-            sess = Session(trial=self,
-                           session_num=s, num_of_sessions=self.times)
-            sys_vars = sess.run()
-            sys_vars_array.append(copy.copy(sys_vars))
-            time_end = timestamp()
-            time_taken = timestamp_elapse(time_start, time_end)
+            log_delimiter('Trial #{} of {} already completed:\n{}'.format(
+                self.trial_num, self.num_of_trials,
+                self.trial_id), '=')
+            self.data = load_data_from_trial_id(self.trial_id)
+        else:
+            log_delimiter('Run Trial #{} of {}:\n{}'.format(
+                self.trial_num, self.num_of_trials,
+                self.trial_id), '=')
+            configure_gpu()
+            time_start = timestamp()
+            sys_vars_array = []
+            for s in range(self.times):
+                sess = Session(trial=self,
+                               session_num=s, num_of_sessions=self.times)
+                sys_vars = sess.run()
+                sys_vars_array.append(copy.copy(sys_vars))
+                time_end = timestamp()
+                time_taken = timestamp_elapse(time_start, time_end)
 
-            self.data = {  # trial data
-                'trial_id': self.trial_id,
-                'metrics': {
-                    # 'time_start': time_start,
-                    # 'time_end': time_end,
-                    'time_taken': time_taken,
-                },
-                'experiment_spec': self.experiment_spec,
-                'stats': None,
-                'sys_vars_array': sys_vars_array,
-            }
-            compose_data(self)
-            self.save()  # progressive update, write every session completion
+                self.data = {  # trial data
+                    'trial_id': self.trial_id,
+                    'metrics': {
+                        # 'time_start': time_start,
+                        # 'time_end': time_end,
+                        'time_taken': time_taken,
+                    },
+                    'experiment_spec': self.experiment_spec,
+                    'stats': None,
+                    'sys_vars_array': sys_vars_array,
+                }
+                compose_data(self)
+                # progressive update, write every session completion
+                self.save()
 
-            if self.to_stop():
-                break
+                if self.to_stop():
+                    break
 
         progress = 'Progress: Trial #{} of {} done'.format(
             self.trial_num, self.num_of_trials)
