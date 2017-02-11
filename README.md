@@ -101,16 +101,16 @@ npm run clear
 To customize your run commands, use plain python:
 
 ```shell
-python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
+python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
 ```
 
 The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <experiment_name>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
+- `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
-- `-e <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
+- `-m <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
@@ -125,7 +125,7 @@ screen
 # enter the screen
 npm run remote
 # or full python command goes like
-xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
+xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
 # use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
 # use screen -r to resume screen next time
 ```
