@@ -351,11 +351,31 @@ class Experiment(object):
                     self.experiment_id))
         return failed
 
+    def is_completed(self):
+        '''check if the experiment is already completed, if so dont run'''
+        experiment_data = load_data_from_experiment_id(self.experiment_id)
+        if experiment_data is None:
+            # no data yet, confirmed incomplete
+            return False
+        else:
+            stats = experiment_data['stats']
+            num_of_sessions = stats['num_of_sessions']
+            solved_num_of_sessions = stats['solved_num_of_sessions']
+            # hasn't ran enough times but is promising, is incomplete
+            is_incomplete = (num_of_sessions < self.times and
+                             solved_num_of_sessions == num_of_sessions)
+            return not is_incomplete
+
     def run(self):
         '''
         helper: run a experiment for Session
         a number of times times given a sess_spec from gym_specs
         '''
+        if self.is_completed():
+            return load_data_from_experiment_id(self.experiment_id)
+        log_delimiter('Run Experiment #{} of {}:\n{}'.format(
+            self.experiment_num, self.num_of_experiments,
+            self.experiment_id), '=')
         configure_gpu()
         time_start = timestamp()
         sys_vars_array = []
@@ -406,6 +426,7 @@ def run(sess_name_id_spec, times=1,
     primary method:
     specify:
     - sess_name(str) or sess_spec(Dict): run new experiment,
+    - prefix_id(str): rerun any incomplete experiments from the experiment grid
     - experiment_id(str): rerun experiment from data
     - experiment_id(str) with analyze_only=True: plot graphs from data
     This runs all experiments, specified by the obtained sess_spec
@@ -420,8 +441,8 @@ def run(sess_name_id_spec, times=1,
     # set sess_spec based on input
     if isinstance(sess_name_id_spec, str):
         if len(sess_name_id_spec.split('_')) >= 4:
-            data = load_data_from_experiment_id(sess_name_id_spec)
-            sess_spec = data['sess_spec']
+            experiment_data = load_data_from_experiment_id(sess_name_id_spec)
+            sess_spec = experiment_data['sess_spec']
         else:
             sess_spec = SESS_SPECS.get(sess_name_id_spec)
     else:

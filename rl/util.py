@@ -273,7 +273,7 @@ def load_data_from_experiment_id(experiment_id):
     data_filename = './data/{}/{}.json'.format(prefix_id, experiment_id)
     try:
         data = json.loads(open(data_filename).read())
-    except json.JSONDecodeError:
+    except (FileNotFoundError, json.JSONDecodeError):
         logger.warn('Failed to read JSON from {}'.format(data_filename))
         data = None
     return data
