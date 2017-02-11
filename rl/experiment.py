@@ -26,10 +26,10 @@ GREF = globals()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
-EXPERIMENT_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'experiment_specs.json')).read())
-for k in EXPERIMENT_SPECS:
-    EXPERIMENT_SPECS[k]['experiment_name'] = k
+# EXPERIMENT_SPECS = json.loads(open(
+#     path.join(ASSET_PATH, 'experiment_specs.json')).read())
+# for k in EXPERIMENT_SPECS:
+#     EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -64,7 +64,7 @@ class Session(object):
     Serialized by the parent trial_id with its session_id
     '''
 
-    def __init__(self, trial, session_num=0, num_of_sessions=1):
+    def __init__(self, trial, session_num=0, num_of_sessions=1, **kwargs):
         self.trial = trial
         self.session_num = session_num
         self.num_of_sessions = num_of_sessions
@@ -78,7 +78,8 @@ class Session(object):
         self.Agent = get_module(GREF, self.experiment_spec['Agent'])
         self.Memory = get_module(GREF, self.experiment_spec['Memory'])
         self.Policy = get_module(GREF, self.experiment_spec['Policy'])
-        self.PreProcessor = get_module(GREF, self.experiment_spec['PreProcessor'])
+        self.PreProcessor = get_module(
+            GREF, self.experiment_spec['PreProcessor'])
         self.param = self.experiment_spec['param']
 
         # init all things, so a session can only be ran once
@@ -304,11 +305,13 @@ class Trial(object):
     def __init__(self, experiment_spec, times=1,
                  trial_num=0, num_of_trials=1,
                  run_timestamp=timestamp(),
-                 experiment_id_override=None):
+                 experiment_id_override=None,
+                 **kwargs):
 
         self.experiment_spec = experiment_spec
         self.experiment_name = experiment_spec.get('experiment_name')
-        param_range = EXPERIMENT_SPECS.get(self.experiment_name).get('param_range')
+        param_range = EXPERIMENT_SPECS.get(
+            self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
         self.experiment_spec.pop('param_range', None)  # single exp, del range
@@ -317,14 +320,8 @@ class Trial(object):
         self.trial_num = trial_num
         self.num_of_trials = num_of_trials
         self.run_timestamp = run_timestamp
-        self.experiment_id = experiment_id_override or '{}_{}_{}_{}_{}_{}'.format(
-            experiment_spec['problem'],
-            experiment_spec['Agent'].split('.').pop(),
-            experiment_spec['Memory'].split('.').pop(),
-            experiment_spec['Policy'].split('.').pop(),
-            experiment_spec['PreProcessor'].split('.').pop(),
-            self.run_timestamp
-        )
+        self.experiment_id = experiment_id_override or '{}_{}'.format(
+            self.experiment_name, self.run_timestamp)
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
         self.base_dir = './data/{}'.format(self.experiment_id)
         os.makedirs(self.base_dir, exist_ok=True)
@@ -372,8 +369,8 @@ class Trial(object):
         a number of times times given a experiment_spec from gym_specs
         '''
         # TODO fix fresh run warning
-        # if self.is_completed():
-        #     return load_data_from_trial_id(self.trial_id)
+        if self.is_completed():
+            return load_data_from_trial_id(self.trial_id)
         log_delimiter('Run Trial #{} of {}:\n{}'.format(
             self.trial_num, self.num_of_trials,
             self.trial_id), '=')
@@ -415,12 +412,12 @@ class Trial(object):
 
 def analyze_experiment(trial_or_experiment_id):
     '''plot from a saved data by init sessions for each sys_vars'''
-    experiment_id = experiment_id_from_trial_id(trial_or_experiment_id)
-    experiment_data = load_data_array_from_experiment_id(experiment_id)
+    experiment_data = load_data_array_from_experiment_id(
+        trial_or_experiment_id)
     return analyze_data(experiment_data)
 
 
-def run(experiment_name_id_spec, times=1,
+def run(name_id_spec, times=1,
         param_selection=False,
         analyze_only=False, **kwargs):
     '''
@@ -436,31 +433,44 @@ def run(experiment_name_id_spec, times=1,
     '''
     # run plots on data only
     if analyze_only:
-        analyze_experiment(experiment_name_id_spec)
+        analyze_experiment(name_id_spec)
         return
 
+    experiment_kwargs = {
+        'experiment_spec': None,
+        'experiment_id_override': None,
+        'times': times
+    }
     # set experiment_spec based on input
-    if isinstance(experiment_name_id_spec, str):
-        if len(experiment_name_id_spec.split('_')) >= 4:
-            trial_data = load_data_from_trial_id(experiment_name_id_spec)
-            experiment_spec = trial_data['experiment_spec']
-        else:
-            experiment_spec = EXPERIMENT_SPECS.get(experiment_name_id_spec)
-    else:
-        experiment_spec = experiment_name_id_spec
+    if isinstance(name_id_spec, str):
+        # rerun an incomplete experiment by experiment_id
+        if parse_experiment_id(name_id_spec):
+            experiment_id = parse_experiment_id(name_id_spec)
+            logger.info(
+                'Rerun an incomplete experiment by id {}'.format(
+                    experiment_id))
+            experiment_kwargs['experiment_id_override'] = experiment_id
+            experiment_spec = EXPERIMENT_SPECS.get(
+                parse_experiment_name(name_id_spec))
+        else:  # rerun a new experiment by name
+            experiment_name = parse_experiment_name(name_id_spec)
+            logger.info(
+                'Rerun a new experiment by name'.format(experiment_name))
+            experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
+    else:  # run a new experiment by spec
+        logger.info('Rerun a new experiment by spec')
+        experiment_spec = name_id_spec
+
+    experiment_kwargs['experiment_spec'] = experiment_spec
 
     # compose grid and run param selection
     if param_selection:
-        hopt_kwargs = {
-            'experiment_spec': experiment_spec,
-            'times': times
-        }
-        hopt_kwargs.update(kwargs)
-        hopt = BruteHyperOptimizer(Trial, **hopt_kwargs)
-        # hopt = HyperoptHyperOptimizer(Trial, **hopt_kwargs)
+        experiment_kwargs.update(kwargs)
+        hopt = BruteHyperOptimizer(Trial, **experiment_kwargs)
+        # hopt = HyperoptHyperOptimizer(Trial, **experiment_kwargs)
         experiment_data = hopt.run()
     else:
-        trial = Trial(experiment_spec, times=times)
+        trial = Trial(**experiment_kwargs)
         trial_data = trial.run()
         experiment_data = [trial_data]
 

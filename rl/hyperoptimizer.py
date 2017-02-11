@@ -158,7 +158,8 @@ class BruteHyperOptimizer(HyperOptimizer):
             trial = self.Trial(
                 experiment_spec, times=self.times, trial_num=e,
                 num_of_trials=self.num_of_trials,
-                run_timestamp=self.run_timestamp)
+                run_timestamp=self.run_timestamp,
+                experiment_id_override=self.experiment_id_override)
             self.trial_array.append(trial)
 
         return self.param_space

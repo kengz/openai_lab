@@ -225,7 +225,7 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
-    experiment_id = experiment_id_from_trial_id(trial_id)
+    experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:

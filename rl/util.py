@@ -7,6 +7,7 @@ import logging
 import multiprocessing as mp
 import numpy as np
 import os
+import re
 import sys
 from datetime import datetime, timedelta
 from keras import backend as K
@@ -14,6 +15,12 @@ from os import path, environ
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
+TIMESTAMP_REGEX = r'(\d{4}\-\d{2}\-\d{2}\_\d{6})'
+ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+EXPERIMENT_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'experiment_specs.json')).read())
+for k in EXPERIMENT_SPECS:
+    EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
@@ -111,7 +118,9 @@ def log_delimiter(msg, line='-'):
 
 def timestamp():
     '''timestamp used for filename'''
-    return '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
+    timestamp_str = '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
+    assert re.search(TIMESTAMP_REGEX, timestamp_str)
+    return timestamp_str
 
 
 def timestamp_elapse(s1, s2):
@@ -259,29 +268,58 @@ def generate_experiment_spec_grid(experiment_spec, param_grid):
     return experiment_spec_grid
 
 
-def experiment_id_from_trial_id(trial_id):
-    str_arr = trial_id.split('_')
-    if str_arr[-1].startswith('t'):
-        str_arr.pop()
-    return '_'.join(str_arr)
+def clean_id_str(id_str):
+    return id_str.split('/').pop().split('.').pop(0)
 
 
-def load_data_from_trial_id(trial_id):
-    trial_id = trial_id.split(
-        '/').pop().split('.').pop(0)
-    experiment_id = experiment_id_from_trial_id(trial_id)
+def parse_trial_id(id_str):
+    c_id_str = clean_id_str(id_str)
+    if re.search(TIMESTAMP_REGEX, c_id_str):
+        name_time_trial = re.split(TIMESTAMP_REGEX, c_id_str)
+        if len(name_time_trial) == 3:
+            return c_id_str
+        else:
+            return None
+    else:
+        return None
+
+
+def parse_experiment_id(id_str):
+    c_id_str = clean_id_str(id_str)
+    if re.search(TIMESTAMP_REGEX, c_id_str):
+        name_time_trial = re.split(TIMESTAMP_REGEX, c_id_str)
+        name_time_trial.pop()
+        experiment_id = ''.join(name_time_trial)
+        return experiment_id
+    else:
+        return None
+
+
+def parse_experiment_name(id_str):
+    c_id_str = clean_id_str(id_str)
+    experiment_id = parse_experiment_id(c_id_str)
+    if experiment_id is None:
+        experiment_name = c_id_str
+    else:
+        experiment_name = re.sub(TIMESTAMP_REGEX, '', experiment_id).strip('_')
+    assert experiment_name in EXPERIMENT_SPECS
+    return experiment_name
+
+
+def load_data_from_trial_id(id_str):
+    experiment_id = parse_experiment_id(id_str)
+    trial_id = parse_trial_id(id_str)
     data_filename = './data/{}/{}.json'.format(experiment_id, trial_id)
     try:
         data = json.loads(open(data_filename).read())
     except (FileNotFoundError, json.JSONDecodeError):
-        logger.warn('Failed to read JSON from {}'.format(data_filename))
         data = None
     return data
 
 
-def load_data_array_from_experiment_id(experiment_id):
+def load_data_array_from_experiment_id(id_str):
     # to load all ./data files for a series of trials
-    experiment_id = experiment_id_from_trial_id(experiment_id)
+    experiment_id = parse_experiment_id(id_str)
     data_path = './data/{}'.format(experiment_id)
     trial_id_array = [
         f for f in os.listdir(data_path)
@@ -294,7 +332,7 @@ def load_data_array_from_experiment_id(experiment_id):
 
 
 def save_experiment_data(data_df, trial_id):
-    experiment_id = experiment_id_from_trial_id(trial_id)
+    experiment_id = parse_experiment_id(trial_id)
     filename = './data/{0}/experiment_data_{0}.csv'.format(experiment_id)
     data_df.to_csv(filename, index=False)
     logger.info(
