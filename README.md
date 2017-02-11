@@ -89,7 +89,7 @@ gulp
 
 ### Run experiments locally
 
-Configure the `"start"` scripts in `package.json` for easily running the same experiments over and over again.
+Configure the `"start"` scripts in `package.json` for easily running the same experiment over and over again.
 
 ```shell
 # easy run command
@@ -101,22 +101,22 @@ npm run clear
 To customize your run commands, use plain python:
 
 ```shell
-python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
+python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
 ```
 
 The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`. Can be a `prefix_id` too.
-- `-t <times>`: the number of sessions to run per experiment. Default: `1`
-- `-e <experiments>`: the max number of experiments: hyperopt max_evals to run. Default: `10`
+- `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
+- `-t <times>`: the number of sessions to run per trial. Default: `1`
+- `-m <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
-- `-a`: Run `analyze_data()` only to plot `experiment_grid_data`. Default: `False`
+- `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 
-### Run experiments remotely
+### Run experiment remotely
 
 Log in via ssh, start a screen, run, then detach screen.
 
@@ -125,7 +125,7 @@ screen
 # enter the screen
 npm run remote
 # or full python command goes like
-xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -s lunar_dqn -t 5 | tee -a ./data/terminal.log
+xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
 # use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
 # use screen -r to resume screen next time
 ```
@@ -143,9 +143,9 @@ This is still under active development, and documentation is sparse. The main co
 
 The design of the code is clean enough to simply infer how things work by example.
 
-- `data/`: contains all the graphs per experiment sessions, JSON data file per experiment, and csv metrics dataframe per run of multiple experiments
+- `data/`: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials
 - `rl/agent/`: custom agents. Refer to `base_agent.py` and `dqn.py` to build your own
-- `rl/asset/`: specify new problems and sess_specs to run experiments for.
+- `rl/asset/`: specify new problems and experiment_specs to run experiments for.
 - `rl/memory/`: RL agent memory classes
 - `rl/policy/`: RL agent policy classes
 - `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
@@ -154,9 +154,9 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
 - `rl/util.py`: Generic util
 
-Each run is an `experiment_grid` that runs multiple `Experiment`s (not restricted to the same `prefix_id` for future cross-training). Each `Experiment` runs multiple (by flag `-t`) `Session`s, so an `experiment` is a `sess_grid`.
+Each run is an `experiment` that runs multiple `Trial`s (not restricted to the same `experiment_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
 
-Each experiment collects the data from its sessions into `experiment_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment_grid` analyses the aggregate `experiment_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
+Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
 
 
 ## Roadmap
