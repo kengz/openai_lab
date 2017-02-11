@@ -26,10 +26,10 @@ GREF = globals()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
-SESS_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'sess_specs.json')).read())
-for k in SESS_SPECS:
-    SESS_SPECS[k]['sess_name'] = k
+EXPERIMENT_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'experiment_specs.json')).read())
+for k in EXPERIMENT_SPECS:
+    EXPERIMENT_SPECS[k]['sess_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -58,7 +58,7 @@ class Session(object):
     '''
     The base unit of an Trial
     An Trial for a config on repeat for k time
-    will run k Sessions, each with identical sess_spec
+    will run k Sessions, each with identical experiment_spec
     for a problem, Agent, Memory, Policy, param.
     Handles its own data, plots and saves its own graphs
     Serialized by the parent trial_id with its session_id
@@ -73,13 +73,13 @@ class Session(object):
         log_delimiter('Init Session #{} of {}:\n{}'.format(
             self.session_num, self.num_of_sessions, self.session_id))
 
-        self.sess_spec = trial.sess_spec
-        self.problem = self.sess_spec['problem']
-        self.Agent = get_module(GREF, self.sess_spec['Agent'])
-        self.Memory = get_module(GREF, self.sess_spec['Memory'])
-        self.Policy = get_module(GREF, self.sess_spec['Policy'])
-        self.PreProcessor = get_module(GREF, self.sess_spec['PreProcessor'])
-        self.param = self.sess_spec['param']
+        self.experiment_spec = trial.experiment_spec
+        self.problem = self.experiment_spec['problem']
+        self.Agent = get_module(GREF, self.experiment_spec['Agent'])
+        self.Memory = get_module(GREF, self.experiment_spec['Memory'])
+        self.Policy = get_module(GREF, self.experiment_spec['Policy'])
+        self.PreProcessor = get_module(GREF, self.experiment_spec['PreProcessor'])
+        self.param = self.experiment_spec['param']
 
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
@@ -278,11 +278,11 @@ class Trial(object):
 
     '''
     An Trial for a config on repeat for k time
-    will run k Sessions, each with identical sess_spec
+    will run k Sessions, each with identical experiment_spec
     for a problem, Agent, Memory, Policy, param.
     Will spawn as many Sessions for repetition
     Handles all the data from sessions
-    to provide an trial-level summary for a sess_spec
+    to provide an trial-level summary for a experiment_spec
     Its trial_id is serialized by
     problem, Agent, Memory, Policy and timestamp
     Data Requirements:
@@ -296,33 +296,33 @@ class Trial(object):
         - time_start
         - time_end
         - time_taken
-    - sess_spec (so we can plug in directly again to rerun)
+    - experiment_spec (so we can plug in directly again to rerun)
     - stats
     - sys_vars_array
     '''
 
-    def __init__(self, sess_spec, times=1,
+    def __init__(self, experiment_spec, times=1,
                  trial_num=0, num_of_trials=1,
                  run_timestamp=timestamp(),
                  experiment_id_override=None):
 
-        self.sess_spec = sess_spec
-        self.sess_name = sess_spec.get('sess_name')
-        param_range = SESS_SPECS.get(self.sess_name).get('param_range')
+        self.experiment_spec = experiment_spec
+        self.sess_name = experiment_spec.get('sess_name')
+        param_range = EXPERIMENT_SPECS.get(self.sess_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
-        self.sess_spec.pop('param_range', None)  # single exp, del range
+        self.experiment_spec.pop('param_range', None)  # single exp, del range
         self.data = None
         self.times = times
         self.trial_num = trial_num
         self.num_of_trials = num_of_trials
         self.run_timestamp = run_timestamp
         self.experiment_id = experiment_id_override or '{}_{}_{}_{}_{}_{}'.format(
-            sess_spec['problem'],
-            sess_spec['Agent'].split('.').pop(),
-            sess_spec['Memory'].split('.').pop(),
-            sess_spec['Policy'].split('.').pop(),
-            sess_spec['PreProcessor'].split('.').pop(),
+            experiment_spec['problem'],
+            experiment_spec['Agent'].split('.').pop(),
+            experiment_spec['Memory'].split('.').pop(),
+            experiment_spec['Policy'].split('.').pop(),
+            experiment_spec['PreProcessor'].split('.').pop(),
             self.run_timestamp
         )
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
@@ -369,7 +369,7 @@ class Trial(object):
     def run(self):
         '''
         helper: run a trial for Session
-        a number of times times given a sess_spec from gym_specs
+        a number of times times given a experiment_spec from gym_specs
         '''
         # TODO fix fresh run warning
         # if self.is_completed():
@@ -395,7 +395,7 @@ class Trial(object):
                     # 'time_end': time_end,
                     'time_taken': time_taken,
                 },
-                'sess_spec': self.sess_spec,
+                'experiment_spec': self.experiment_spec,
                 'stats': None,
                 'sys_vars_array': sys_vars_array,
             }
@@ -426,11 +426,11 @@ def run(sess_name_id_spec, times=1,
     '''
     primary method:
     specify:
-    - sess_name(str) or sess_spec(Dict): run new trial,
+    - sess_name(str) or experiment_spec(Dict): run new trial,
     - experiment_id(str): rerun any incomplete trials from the experiment
     - trial_id(str): rerun trial from data
     - trial_id(str) with analyze_only=True: plot graphs from data
-    This runs all trials, specified by the obtained sess_spec
+    This runs all trials, specified by the obtained experiment_spec
     for a specified number of sessions per trial
     Multiple trials are ran if param_selection=True
     '''
@@ -439,20 +439,20 @@ def run(sess_name_id_spec, times=1,
         analyze_experiment(sess_name_id_spec)
         return
 
-    # set sess_spec based on input
+    # set experiment_spec based on input
     if isinstance(sess_name_id_spec, str):
         if len(sess_name_id_spec.split('_')) >= 4:
             trial_data = load_data_from_trial_id(sess_name_id_spec)
-            sess_spec = trial_data['sess_spec']
+            experiment_spec = trial_data['experiment_spec']
         else:
-            sess_spec = SESS_SPECS.get(sess_name_id_spec)
+            experiment_spec = EXPERIMENT_SPECS.get(sess_name_id_spec)
     else:
-        sess_spec = sess_name_id_spec
+        experiment_spec = sess_name_id_spec
 
     # compose grid and run param selection
     if param_selection:
         hopt_kwargs = {
-            'sess_spec': sess_spec,
+            'experiment_spec': experiment_spec,
             'times': times
         }
         hopt_kwargs.update(kwargs)
@@ -460,7 +460,7 @@ def run(sess_name_id_spec, times=1,
         # hopt = HyperoptHyperOptimizer(Trial, **hopt_kwargs)
         experiment_data = hopt.run()
     else:
-        trial = Trial(sess_spec, times=times)
+        trial = Trial(experiment_spec, times=times)
         trial_data = trial.run()
         experiment_data = [trial_data]
 

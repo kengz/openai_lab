@@ -11,7 +11,7 @@ class HyperOptimizer(object):
 
     def __init__(self, Trial, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
+            'experiment_spec',
             'times'
         ]
         self.check_set_keys(**kwargs)
@@ -35,18 +35,18 @@ class HyperoptHyperOptimizer(HyperOptimizer):
 
     def check_set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
+            'experiment_spec',
             'times',
             'max_evals'
         ]
-        raw_sess_spec = kwargs.pop('sess_spec')
-        assert 'param' in raw_sess_spec
-        assert 'param_range' in raw_sess_spec
-        self.common_sess_spec = copy.deepcopy(raw_sess_spec)
-        self.common_sess_spec.pop('param')
-        self.common_sess_spec.pop('param_range')
-        self.default_param = raw_sess_spec['param']
-        self.param_range = raw_sess_spec['param_range']
+        raw_experiment_spec = kwargs.pop('experiment_spec')
+        assert 'param' in raw_experiment_spec
+        assert 'param_range' in raw_experiment_spec
+        self.common_experiment_spec = copy.deepcopy(raw_experiment_spec)
+        self.common_experiment_spec.pop('param')
+        self.common_experiment_spec.pop('param_range')
+        self.default_param = raw_experiment_spec['param']
+        self.param_range = raw_experiment_spec['param_range']
         self.trial_num = 0
         self.algo = tpe.suggest
 
@@ -80,9 +80,9 @@ class HyperoptHyperOptimizer(HyperOptimizer):
             return space
         else:
             raise TypeError(
-                'sess_spec param_range value must be a list or dict')
+                'experiment_spec param_range value must be a list or dict')
 
-    # generate param_space for hyperopt from sess_spec
+    # generate param_space for hyperopt from experiment_spec
     def generate_param_space(self):
         self.param_space = copy.copy(self.default_param)
         for k in self.param_range:
@@ -99,14 +99,14 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         return self.__dict__
 
     def hyperopt_run_trial(self, param):
-        # use param to carry those params other than sess_spec
+        # use param to carry those params other than experiment_spec
         # set a global gvs: global variable source
         gv = self.get_next_var()
-        sess_spec = gv['common_sess_spec']
-        sess_spec.update({'param': param})
+        experiment_spec = gv['common_experiment_spec']
+        experiment_spec.update({'param': param})
 
         trial = self.Trial(
-            sess_spec,
+            experiment_spec,
             times=gv['times'],
             trial_num=gv['trial_num'],
             num_of_trials=gv['max_evals'],
@@ -137,26 +137,26 @@ class BruteHyperOptimizer(HyperOptimizer):
 
     def check_set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
-            'sess_spec',
+            'experiment_spec',
             'times',
             'line_search'
         ]
         super(BruteHyperOptimizer, self).check_set_keys(**kwargs)
 
-    # generate param_space for hyperopt from sess_spec
+    # generate param_space for hyperopt from experiment_spec
     def generate_param_space(self):
         if self.line_search:
-            param_grid = param_line_search(self.sess_spec)
+            param_grid = param_line_search(self.experiment_spec)
         else:
-            param_grid = param_product(self.sess_spec)
-        self.param_space = generate_sess_spec_grid(self.sess_spec, param_grid)
+            param_grid = param_product(self.experiment_spec)
+        self.param_space = generate_experiment_spec_grid(self.experiment_spec, param_grid)
         self.num_of_trials = len(self.param_space)
 
         self.trial_array = []
         for e in range(self.num_of_trials):
-            sess_spec = self.param_space[e]
+            experiment_spec = self.param_space[e]
             trial = self.Trial(
-                sess_spec, times=self.times, trial_num=e,
+                experiment_spec, times=self.times, trial_num=e,
                 num_of_trials=self.num_of_trials,
                 run_timestamp=self.run_timestamp)
             self.trial_array.append(trial)

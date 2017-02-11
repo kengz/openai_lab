@@ -108,7 +108,7 @@ The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <sess_name>`: specify which of `rl/asset/sess_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
+- `-s <sess_name>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-e <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
@@ -145,7 +145,7 @@ The design of the code is clean enough to simply infer how things work by exampl
 
 - `data/`: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials
 - `rl/agent/`: custom agents. Refer to `base_agent.py` and `dqn.py` to build your own
-- `rl/asset/`: specify new problems and sess_specs to run experiments for.
+- `rl/asset/`: specify new problems and experiment_specs to run experiments for.
 - `rl/memory/`: RL agent memory classes
 - `rl/policy/`: RL agent policy classes
 - `rl/preprocessor/`: RL agent preprocessor (state and memory) classes

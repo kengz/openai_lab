@@ -209,7 +209,7 @@ def compose_data(trial):
 
     # param variables for independent vars of trials
     param_variables = {
-        pv: trial.sess_spec['param'][pv] for
+        pv: trial.experiment_spec['param'][pv] for
         pv in trial.param_variables}
     param_variables = flat_cast_dict(param_variables)
 

@@ -30,7 +30,7 @@ parser.add_argument("-b", "--blind",
                     const=False,
                     default=True)
 parser.add_argument("-s", "--sess",
-                    help="specifies session to run, see sess_specs.json",
+                    help="specifies session to run, see experiment_specs.json",
                     action="store",
                     type=str,
                     nargs='?',
@@ -214,9 +214,9 @@ def get_module(GREF, dot_path):
 # to a line search of the param range
 # for each param
 # All other parameters set to default vals
-def param_line_search(sess_spec):
-    default_param = sess_spec['param']
-    param_range = sess_spec['param_range']
+def param_line_search(experiment_spec):
+    default_param = experiment_spec['param']
+    param_range = experiment_spec['param_range']
     keys = param_range.keys()
     param_list = []
     for key in keys:
@@ -232,9 +232,9 @@ def param_line_search(sess_spec):
 # a list of cartesian products of param_range
 # e.g. {'a': [1,2], 'b': [3]} into
 # [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(sess_spec):
-    default_param = sess_spec['param']
-    param_range = sess_spec['param_range']
+def param_product(experiment_spec):
+    default_param = experiment_spec['param']
+    param_range = experiment_spec['param_range']
     keys = param_range.keys()
     range_vals = param_range.values()
     param_grid = []
@@ -246,17 +246,17 @@ def param_product(sess_spec):
 
 
 # for param selection
-def generate_sess_spec_grid(sess_spec, param_grid):
-    sess_spec_grid = [{
-        'sess_name': sess_spec['sess_name'],
-        'problem': sess_spec['problem'],
-        'Agent': sess_spec['Agent'],
-        'Memory': sess_spec['Memory'],
-        'Policy': sess_spec['Policy'],
-        'PreProcessor': sess_spec['PreProcessor'],
+def generate_experiment_spec_grid(experiment_spec, param_grid):
+    experiment_spec_grid = [{
+        'sess_name': experiment_spec['sess_name'],
+        'problem': experiment_spec['problem'],
+        'Agent': experiment_spec['Agent'],
+        'Memory': experiment_spec['Memory'],
+        'Policy': experiment_spec['Policy'],
+        'PreProcessor': experiment_spec['PreProcessor'],
         'param': param,
     } for param in param_grid]
-    return sess_spec_grid
+    return experiment_spec_grid
 
 
 def experiment_id_from_trial_id(trial_id):
