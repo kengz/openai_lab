@@ -149,7 +149,8 @@ class BruteHyperOptimizer(HyperOptimizer):
             param_grid = param_line_search(self.experiment_spec)
         else:
             param_grid = param_product(self.experiment_spec)
-        self.param_space = generate_experiment_spec_grid(self.experiment_spec, param_grid)
+        self.param_space = generate_experiment_spec_grid(
+            self.experiment_spec, param_grid)
         self.num_of_trials = len(self.param_space)
 
         self.trial_array = []
