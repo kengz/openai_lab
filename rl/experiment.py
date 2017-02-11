@@ -483,7 +483,7 @@ def run(name_id_spec, times=1,
         else:  # rerun a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
-                'Rerun a new experiment by name'.format(experiment_name))
+                'Rerun a new experiment by name {}'.format(experiment_name))
             experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
         logger.info('Rerun a new experiment by spec')
