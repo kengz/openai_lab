@@ -91,7 +91,7 @@ logger.propagate = False
 
 
 def log_self(subject):
-    logger.info('{}, params: {}'.format(
+    logger.debug('{}, params: {}'.format(
         subject.__class__.__name__,
         to_json(subject.__dict__)))
 
@@ -109,11 +109,11 @@ def print_line(line='-'):
 
 
 def log_delimiter(msg, line='-'):
-    print('{:\n>3}'.format(''))
+    print('{:\n>2}'.format(''))
     print_line(line)
     print(msg)
     print_line(line)
-    print('{:\n>3}'.format(''))
+    print('{:\n>2}'.format(''))
 
 
 def timestamp():

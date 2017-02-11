@@ -180,7 +180,7 @@ class Session(object):
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info(
-                'Problem solved? {}\nAt episode: {}\nParams: {}'.format(
+                'Problem solved? {}\nAt episode: {}\nparams: {}'.format(
                     sys_vars['solved'], sys_vars['epi'],
                     to_json(self.param)))
             self.env.close()
@@ -248,6 +248,7 @@ class Session(object):
         '''run a session of agent'''
         log_delimiter('Run Session #{} of {}\n{}'.format(
             self.session_num, self.num_of_sessions, self.session_id))
+        logger.info('Experiment Trial Spec: {}'.format(to_json(self.experiment_spec)))
         sys_vars = self.sys_vars
         sys_vars['time_start'] = timestamp()
         for epi in range(sys_vars['MAX_EPISODES']):
