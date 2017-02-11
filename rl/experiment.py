@@ -396,21 +396,6 @@ def analyze_experiment(experiment_or_prefix_id):
     '''plot from a saved data by init sessions for each sys_vars'''
     prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
     experiment_grid_data = load_data_array_from_prefix_id(prefix_id)
-    # for data in experiment_grid_data:
-    #     sess_spec = data['sess_spec']
-    #     experiment = Experiment(sess_spec, times=1,
-    #                             prefix_id_override=prefix_id)
-    #     # save with the right serialized filename
-    #     experiment.experiment_id = data['experiment_id']
-    #     num_of_sessions = len(data['sys_vars_array'])
-
-    #     for s in range(num_of_sessions):
-    #         sess = Session(experiment=experiment,
-    #                        session_num=s, num_of_sessions=num_of_sessions)
-    #         sys_vars = data['sys_vars_array'][s]
-    #         sess.sys_vars = sys_vars
-    #         sess.grapher.plot()
-    #         sess.clear_session()
     return analyze_data(experiment_grid_data)
 
 
