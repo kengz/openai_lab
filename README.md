@@ -108,7 +108,7 @@ The extra flags are:
 
 - `-d`: log debug info. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
-- `-s <sess_name>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
+- `-s <experiment_name>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-s dev_dqn`. Can be a `experiment_id` too.
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-e <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`

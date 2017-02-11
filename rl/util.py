@@ -34,7 +34,7 @@ parser.add_argument("-s", "--sess",
                     action="store",
                     type=str,
                     nargs='?',
-                    dest="sess_name",
+                    dest="experiment_name",
                     default="dev_dqn")
 parser.add_argument("-t", "--times",
                     help="number of times session is run",
@@ -248,7 +248,7 @@ def param_product(experiment_spec):
 # for param selection
 def generate_experiment_spec_grid(experiment_spec, param_grid):
     experiment_spec_grid = [{
-        'sess_name': experiment_spec['sess_name'],
+        'experiment_name': experiment_spec['experiment_name'],
         'problem': experiment_spec['problem'],
         'Agent': experiment_spec['Agent'],
         'Memory': experiment_spec['Memory'],

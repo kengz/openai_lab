@@ -29,7 +29,7 @@ PROBLEMS = json.loads(open(
 EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for k in EXPERIMENT_SPECS:
-    EXPERIMENT_SPECS[k]['sess_name'] = k
+    EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -307,8 +307,8 @@ class Trial(object):
                  experiment_id_override=None):
 
         self.experiment_spec = experiment_spec
-        self.sess_name = experiment_spec.get('sess_name')
-        param_range = EXPERIMENT_SPECS.get(self.sess_name).get('param_range')
+        self.experiment_name = experiment_spec.get('experiment_name')
+        param_range = EXPERIMENT_SPECS.get(self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
         self.experiment_spec.pop('param_range', None)  # single exp, del range
@@ -420,13 +420,13 @@ def analyze_experiment(trial_or_experiment_id):
     return analyze_data(experiment_data)
 
 
-def run(sess_name_id_spec, times=1,
+def run(experiment_name_id_spec, times=1,
         param_selection=False,
         analyze_only=False, **kwargs):
     '''
     primary method:
     specify:
-    - sess_name(str) or experiment_spec(Dict): run new trial,
+    - experiment_name(str) or experiment_spec(Dict): run new trial,
     - experiment_id(str): rerun any incomplete trials from the experiment
     - trial_id(str): rerun trial from data
     - trial_id(str) with analyze_only=True: plot graphs from data
@@ -436,18 +436,18 @@ def run(sess_name_id_spec, times=1,
     '''
     # run plots on data only
     if analyze_only:
-        analyze_experiment(sess_name_id_spec)
+        analyze_experiment(experiment_name_id_spec)
         return
 
     # set experiment_spec based on input
-    if isinstance(sess_name_id_spec, str):
-        if len(sess_name_id_spec.split('_')) >= 4:
-            trial_data = load_data_from_trial_id(sess_name_id_spec)
+    if isinstance(experiment_name_id_spec, str):
+        if len(experiment_name_id_spec.split('_')) >= 4:
+            trial_data = load_data_from_trial_id(experiment_name_id_spec)
             experiment_spec = trial_data['experiment_spec']
         else:
-            experiment_spec = EXPERIMENT_SPECS.get(sess_name_id_spec)
+            experiment_spec = EXPERIMENT_SPECS.get(experiment_name_id_spec)
     else:
-        experiment_spec = sess_name_id_spec
+        experiment_spec = experiment_name_id_spec
 
     # compose grid and run param selection
     if param_selection:
