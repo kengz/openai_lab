@@ -497,8 +497,8 @@ def run(name_id_spec, times=1,
     # compose grid and run param selection
     if param_selection:
         experiment_kwargs.update(kwargs)
-        hopt = BruteHyperOptimizer(Trial, **experiment_kwargs)
-        # hopt = HyperoptHyperOptimizer(Trial, **experiment_kwargs)
+        Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
+        hopt = Hopt(Trial, **experiment_kwargs)
         experiment_data = hopt.run()
     else:
         trial = Trial(**experiment_kwargs)

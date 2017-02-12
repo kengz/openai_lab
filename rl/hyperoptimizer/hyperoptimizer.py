@@ -31,7 +31,7 @@ class HyperOptimizer(object):
         raise NotImplementedError()
 
 
-class HyperoptHyperOptimizer(HyperOptimizer):
+class TPE(HyperOptimizer):
 
     def check_set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
@@ -50,7 +50,7 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         self.trial_num = 0
         self.algo = tpe.suggest
 
-        super(HyperoptHyperOptimizer, self).check_set_keys(**kwargs)
+        super(TPE, self).check_set_keys(**kwargs)
 
     @classmethod
     def convert_to_hp(cls, k, v):
@@ -134,7 +134,7 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         return experiment_data
 
 
-class BruteHyperOptimizer(HyperOptimizer):
+class GridSearch(HyperOptimizer):
 
     def check_set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
@@ -142,7 +142,7 @@ class BruteHyperOptimizer(HyperOptimizer):
             'times',
             'line_search'
         ]
-        super(BruteHyperOptimizer, self).check_set_keys(**kwargs)
+        super(GridSearch, self).check_set_keys(**kwargs)
 
     # generate param_space for hyperopt from experiment_spec
     def generate_param_space(self):

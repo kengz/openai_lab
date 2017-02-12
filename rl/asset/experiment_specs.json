@@ -25,6 +25,7 @@
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
+        "HyperOptimizer": "GridSearch",
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.02,
@@ -44,6 +45,7 @@
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
+        "HyperOptimizer": "GridSearch",
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.02,
