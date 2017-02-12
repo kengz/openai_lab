@@ -86,7 +86,7 @@ class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
         self.decay = 0.9997
 
     def update(self, sys_vars):
-        epi = sys_vars['epi']
+        _epi = sys_vars['epi']
         if self.e > self.final_e:
             self.e = self.e * self.decay
         return self.e

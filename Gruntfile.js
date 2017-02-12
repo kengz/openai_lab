@@ -52,7 +52,7 @@ module.exports = function(grunt) {
       },
       remote: {
         command(experiment) {
-          return "xvfb-run -a -s '-screen 0 1400x900x24' -- grunt"
+          return 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt'
         }
       },
     },

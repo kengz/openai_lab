@@ -1,4 +1,4 @@
-# OpenAI Gym [![CircleCI](https://circleci.com/gh/kengz/openai_gym.svg?style=shield)](https://circleci.com/gh/kengz/openai_gym) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_gym?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_gym&amp;utm_campaign=Badge_Grade)
+# OpenAI Lab [![CircleCI](https://circleci.com/gh/kengz/openai_lab.svg?style=shield)](https://circleci.com/gh/kengz/openai_lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Grade)
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
@@ -10,8 +10,8 @@
 ### Basic
 
 ```shell
-git clone https://github.com/kengz/openai_gym.git
-cd openai_gym
+git clone https://github.com/kengz/openai_lab.git
+cd openai_lab
 ./bin/setup
 ```
 
@@ -27,6 +27,7 @@ TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.
 # install from the TF_BINARY_URL
 sudo pip3 install -U $TF_BINARY_URL
 ```
+
 
 ### Data files auto-sync (optional)
 
@@ -163,7 +164,7 @@ Each trial collects the data from its sessions into `trial_data`, which is saved
 
 ## Roadmap
 
-Check the latest under the [Github Projects](https://github.com/kengz/openai_gym/projects)
+Check the latest under the [Github Projects](https://github.com/kengz/openai_lab/projects)
 
 ## Authors
 
