@@ -52,7 +52,8 @@ class HyperoptHyperOptimizer(HyperOptimizer):
 
         super(HyperoptHyperOptimizer, self).check_set_keys(**kwargs)
 
-    def convert_to_hp(self, k, v):
+    @classmethod
+    def convert_to_hp(cls, k, v):
         '''
         convert to hyperopt param expressions. refer:
         https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
@@ -165,7 +166,8 @@ class BruteHyperOptimizer(HyperOptimizer):
 
         return self.param_space
 
-    def mp_run_helper(self, trial):
+    @classmethod
+    def mp_run_helper(cls, trial):
         return trial.run()
 
     def run(self):
