@@ -2,7 +2,7 @@
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
-(Under work) An experimentation system for Reinforcement Learning using OpenAI and Keras.
+An experimentation system for Reinforcement Learning using OpenAI and Keras. _(Hyperoptimizer is under work, the rest is ready to use)_
 
 
 ## Installation
