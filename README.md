@@ -28,6 +28,7 @@ TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.
 sudo pip3 install -U $TF_BINARY_URL
 ```
 
+
 ### Data files auto-sync (optional)
 
 For auto-syncing `data/` files, we use Grunt. If you ran `./bin/setup` the dependencies for this are installed. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
