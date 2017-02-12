@@ -15,7 +15,7 @@ cd openai_gym
 ./bin/setup
 ```
 
-Then, setup your `~/.keras/keras.json`. See example files in `rl/asset/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
+Then, setup your `~/.keras/keras.json`. See example files in `config/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
 
 The binary at `./bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (for dev), Theano(for faster production), Keras.
 
