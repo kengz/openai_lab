@@ -3,7 +3,19 @@
   "NOTI_SLACK_DEST": "CREATE_YOUR_SLACK_CHANNEL_#rl-monitor",
   "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
   "experiments": [
-    "python3 main.py -bg -e dev_dqn -t 2",
-    "dev_dqn"
+        "dqn",
+        "double_dqn",
+        "dqn_freeze",
+        "sarsa -x 400",
+        "sarsa_exp -x 400",
+        "sarsa_offpol",
+        "mountain_dqn",
+        "mountain_sarsa -x 800",
+        "mountain_double_dqn",
+        "lunar_dqn",
+        "lunar_double_dqn",
+        "lunar_freeze",
+        "lunar_sarsa -x 1200",
+        "lunar_offpol_sarsa"
   ]
 }
