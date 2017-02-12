@@ -61,7 +61,7 @@
         "problem": "CartPole-v0",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
@@ -70,18 +70,43 @@
             "gamma": 0.99,
             "hidden_layers_shape": [4],
             "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 50
+            "exploration_anneal_episodes": 30
         },
         "param_range": {
-            "learning_rate": [0.01, 0.02, 0.05, 0.1],
-            "gamma": [0.95, 0.97, 0.99],
-            "train_per_n_new_exp": [1,2],
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
             "hidden_layers_shape": [
                 [4],
                 [8],
-                [8,4]
+                [16]
             ],
-            "exploration_anneal_episodes": [10, 15, 20]
+            "exploration_anneal_episodes": [10, 25, 40]
+        }
+    },
+    "double_dqn": {
+        "problem": "CartPole-v0",
+        "Agent": "DoubleDQN",
+        "Memory": "LinearMemoryWithForgetting",
+        "Policy": "DoubleDQNBoltzmannPolicy",
+        "PreProcessor": "NoPreProcessor",
+        "param": {
+            "train_per_n_new_exp": 1,
+            "learning_rate": 0.02,
+            "batch_size": 16,
+            "gamma": 0.99,
+            "hidden_layers_shape": [4],
+            "hidden_layers_activation": "sigmoid",
+            "exploration_anneal_episodes": 30
+        },
+        "param_range": {
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "hidden_layers_shape": [
+                [4],
+                [8],
+                [16]
+            ],
+            "exploration_anneal_episodes": [10, 25, 40]
         }
     },
     "hyperopt_dqn": {
@@ -123,7 +148,7 @@
     },
     "dqn_freeze": {
         "problem": "CartPole-v0",
-        "Agent": "dqn_freeze.DQNFreeze",
+        "Agent": "DQNFreeze",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
@@ -134,32 +159,43 @@
             "gamma": 0.99,
             "hidden_layers_shape": [4],
             "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 50
+            "exploration_anneal_episodes": 30
         },
         "param_range": {
-            "learning_rate": [0.01, 0.1],
-            "gamma": [0.95, 0.99],
-            "exploration_anneal_episodes": [10, 20]
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "hidden_layers_shape": [
+                [4],
+                [8],
+                [16]
+            ],
+            "exploration_anneal_episodes": [10, 25, 40]
         }
     },
     "sarsa": {
         "problem": "CartPole-v0",
         "Agent": "DeepSarsa",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
-        "param": {
+       "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.02,
+            "batch_size": 1,
             "gamma": 0.99,
             "hidden_layers_shape": [4],
             "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 150
+            "exploration_anneal_episodes": 75
         },
         "param_range": {
-            "learning_rate": [0.01, 0.1],
-            "gamma": [0.95, 0.99],
-            "exploration_anneal_episodes": [10, 20]
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.97, 0.99],
+            "hidden_layers_shape": [
+                [4],
+                [8],
+                [16]
+            ],
+            "exploration_anneal_episodes": [50, 75, 100, 125, 150]
         }
     },
     "sarsa_exp": {
@@ -171,15 +207,21 @@
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.02,
+            "batch_size": 1,
             "gamma": 0.99,
             "hidden_layers_shape": [4],
             "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 125
+            "exploration_anneal_episodes": 75
         },
         "param_range": {
-            "learning_rate": [0.01, 0.1],
-            "gamma": [0.95, 0.99],
-            "exploration_anneal_episodes": [10, 20]
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.97, 0.99],
+            "hidden_layers_shape": [
+                [4],
+                [8],
+                [16]
+            ],
+            "exploration_anneal_episodes": [50, 75, 100, 125, 150]
         }
     },
     "sarsa_offpol": {
@@ -191,102 +233,118 @@
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.02,
-            "gamma": 0.99,
-            "hidden_layers_shape": [4],
-            "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 75
-        },
-        "param_range": {
-            "learning_rate": [0.01, 0.1],
-            "gamma": [0.95, 0.99],
-            "exploration_anneal_episodes": [10, 20]
-        }
-    },
-    "double_dqn": {
-        "problem": "CartPole-v0",
-        "Agent": "DoubleDQN",
-        "Memory": "LinearMemoryWithForgetting",
-        "Policy": "DoubleDQNBoltzmannPolicy",
-        "PreProcessor": "NoPreProcessor",
-        "param": {
-            "train_per_n_new_exp": 1,
-            "learning_rate": 0.01,
             "batch_size": 16,
             "gamma": 0.99,
             "hidden_layers_shape": [4],
             "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 50
+            "exploration_anneal_episodes": 30
+        },
+        "param_range": {
+            "learning_rate": [0.01, 0.02, 0.05],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "hidden_layers_shape": [
+                [4],
+                [8],
+                [16]
+            ],
+            "exploration_anneal_episodes": [10, 25, 40]
         }
     },
     "mountain_dqn": {
         "problem": "MountainCar-v0",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "DecayingEpsilonGreedyPolicy",
-        "PreProcessor": "NoPreProcessor",
+        "Policy": "BoltzmannPolicy",
+        "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.001,
-            "batch_size": 32,
+            "batch_size": 16,
             "gamma": 0.99,
             "n_epoch": 2,
             "hidden_layers_shape": [128, 64],
             "hidden_layers_activation": "relu",
             "exploration_anneal_episodes": 200,
-            "epi_change_learning_rate": 100
+            "epi_change_learning_rate": 1000
         },
         "param_range": {
-            "learning_rate": [0.001, 0.01],
+            "learning_rate": [0.001, 0.005, 0.01],
+            "gamma": [0.95, 0.97, 0.99],
             "hidden_layers_shape": [
-                [200, 100],
-                [200, 100, 50]
-            ]
+                [128],
+                [256],
+                [128, 64],
+                [256, 128],
+                [256, 128, 64]
+            ],
+            "exploration_anneal_episodes": [100, 200, 300]
         }
     },
     "mountain_sarsa": {
         "problem": "MountainCar-v0",
         "Agent": "DeepSarsa",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
             "learning_rate": 0.001,
-            "batch_size": 32,
+            "batch_size": 1,
             "gamma": 0.99,
+            "n_epoch": 2,
             "hidden_layers_shape": [128, 64],
             "hidden_layers_activation": "relu",
-            "exploration_anneal_episodes": 100
+            "exploration_anneal_episodes": 200,
+            "epi_change_learning_rate": 1000
         },
         "param_range": {
-            "learning_rate": [0.001, 0.01],
+            "learning_rate": [0.0001, 0.001, 0.005, 0.01],
+            "gamma": [0.95, 0.97, 0.99],
             "hidden_layers_shape": [
-                [200, 100],
-                [200, 100, 50]
-            ]
+                [128],
+                [256],
+                [128, 64],
+                [256, 128],
+                [256, 128, 64]
+            ],
+            "exploration_anneal_episodes": [200, 300, 400]
         }
     },
     "mountain_double_dqn": {
         "problem": "MountainCar-v0",
         "Agent": "DoubleDQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "DoubleDQNPolicy",
+        "Policy": "DoubleDQNBoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
-            "learning_rate": 0.01,
-            "batch_size": 128,
+            "learning_rate": 0.001,
+            "batch_size": 16,
             "gamma": 0.99,
-            "hidden_layers_shape": [8, 8],
-            "hidden_layers_activation": "sigmoid",
-            "exploration_anneal_episodes": 300
+            "n_epoch": 2,
+            "hidden_layers_shape": [128, 64],
+            "hidden_layers_activation": "relu",
+            "exploration_anneal_episodes": 200,
+            "epi_change_learning_rate": 1000
+        },
+        "param_range": {
+            "learning_rate": [0.001, 0.005, 0.01],
+            "gamma": [0.95, 0.97, 0.99],
+            "hidden_layers_shape": [
+                [128],
+                [256],
+                [128, 64],
+                [256, 128],
+                [256, 128, 64]
+            ],
+            "exploration_anneal_episodes": [100, 200, 300]
         }
     },
     "lunar_dqn": {
         "problem": "LunarLander-v2",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BolztmannPolicy",
         "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 5,
@@ -297,19 +355,15 @@
             "hidden_layers_activation": "relu",
             "output_layer_activation": "linear",
             "exploration_anneal_episodes": 100,
-            "epi_change_learning_rate": 200
+            "epi_change_learning_rate": 100
         },
         "param_range": {
-            "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-            "epi_change_learning_rate": [75, 150, 200, 250],
+            "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
-                [200, 100],
-                [300, 150],
-                [300, 200],
                 [300, 150, 75],
-                [400, 200],
-                [400, 200, 100],
-                [400, 300]
+                [400, 200, 100]
             ]
         }
     },
@@ -327,20 +381,16 @@
             "hidden_layers_shape": [300, 150, 75],
             "hidden_layers_activation": "relu",
             "output_layer_activation": "linear",
-            "exploration_anneal_episodes": 300,
+            "exploration_anneal_episodes": 100,
             "epi_change_learning_rate": 1000
         },
         "param_range": {
-            "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-            "epi_change_learning_rate": [75, 150, 200, 250],
+            "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "exploration_anneal_episodes": [200, 300, 400],
             "hidden_layers_shape": [
-                [200, 100],
-                [300, 150],
-                [300, 200],
                 [300, 150, 75],
-                [400, 200],
-                [400, 200, 100],
-                [400, 300]
+                [400, 200, 100]
             ]
         }
     },
@@ -359,25 +409,21 @@
             "hidden_layers_activation": "relu",
             "output_layer_activation": "linear",
             "exploration_anneal_episodes": 100,
-            "epi_change_learning_rate": 200
+            "epi_change_learning_rate": 100
         },
         "param_range": {
-            "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-            "epi_change_learning_rate": [75, 150, 200, 250],
+            "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
-                [200, 100],
-                [300, 150],
-                [300, 200],
                 [300, 150, 75],
-                [400, 200],
-                [400, 200, 100],
-                [400, 300]
+                [400, 200, 100]
             ]
         }
     },
     "lunar_freeze": {
         "problem": "LunarLander-v2",
-        "Agent": "dqn_freeze.DQNFreeze",
+        "Agent": "DQNFreeze",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "BoltzmannPolicy",
         "PreProcessor": "StackStates",
@@ -390,27 +436,23 @@
             "hidden_layers_activation": "relu",
             "output_layer_activation": "linear",
             "exploration_anneal_episodes": 100,
-            "epi_change_learning_rate": 200
+            "epi_change_learning_rate": 100
         },
         "param_range": {
-            "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-            "epi_change_learning_rate": [75, 150, 200, 250],
+            "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
-                [200, 100],
-                [300, 150],
-                [300, 200],
                 [300, 150, 75],
-                [400, 200],
-                [400, 200, 100],
-                [400, 300]
+                [400, 200, 100]
             ]
         }
     },
-    "lunar_aug": {
+    "lunar_offpol_sarsa": {
         "problem": "LunarLander-v2",
-        "Agent": "dqn_aug.DQNAugmented",
+        "Agent": "OffPolicySarsa",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "BoltzmannPolicy",
+        "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 5,
@@ -421,19 +463,15 @@
             "hidden_layers_activation": "relu",
             "output_layer_activation": "linear",
             "exploration_anneal_episodes": 100,
-            "epi_change_learning_rate": 200
+            "epi_change_learning_rate": 100
         },
         "param_range": {
-            "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
-            "epi_change_learning_rate": [75, 150, 200, 250],
+            "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+            "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+            "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
-                [200, 100],
-                [300, 150],
-                [300, 200],
                 [300, 150, 75],
-                [400, 200],
-                [400, 200, 100],
-                [400, 300]
+                [400, 200, 100]
             ]
         }
     },

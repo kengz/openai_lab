@@ -98,9 +98,12 @@ logger.propagate = False
 
 
 def log_self(subject):
-    logger.debug('{}, params: {}'.format(
+    max_info_len = 300
+    info = '{}, params: {}'.format(
         subject.__class__.__name__,
-        to_json(subject.__dict__)))
+        to_json(subject.__dict__))
+    trunc_info = (info[:max_info_len] + '...' if len(info) > max_info_len else info)
+    logger.debug(trunc_info)
 
 
 def wrap_text(text):
