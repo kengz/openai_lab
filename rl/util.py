@@ -78,6 +78,13 @@ parser.add_argument("-a", "--analyze",
                     action="store_true",
                     dest="analyze_only",
                     default=False)
+parser.add_argument("-x", "--max_episodes",
+                    help="manually set environment max episodes",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="max_epis",
+                    default=-1)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger

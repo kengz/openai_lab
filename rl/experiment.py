@@ -107,6 +107,8 @@ class Session(object):
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
         sys_vars = PROBLEMS[self.problem]
+        if args.max_epis >= 0:
+            sys_vars['MAX_EPISODES'] = args.max_epis
         if not args.render:
             sys_vars['RENDER'] = False
         if environ.get('CI'):

@@ -137,6 +137,7 @@ The extra flags are:
 - `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
+- `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in problems.json
 
 
 
