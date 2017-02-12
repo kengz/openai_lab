@@ -1,4 +1,4 @@
-# OpenAI Lab [![CircleCI](https://circleci.com/gh/kengz/openai_lab.svg?style=shield)](https://circleci.com/gh/kengz/openai_lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Grade)
+# OpenAI Lab [![CircleCI](https://circleci.com/gh/kengz/openai-lab.svg?style=shield)](https://circleci.com/gh/kengz/openai-lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai-lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai-lab&amp;utm_campaign=Badge_Grade)
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
@@ -10,8 +10,8 @@
 ### Basic
 
 ```shell
-git clone https://github.com/kengz/openai_lab.git
-cd openai_lab
+git clone https://github.com/kengz/openai-lab.git
+cd openai-lab
 ./bin/setup
 ```
 
@@ -30,7 +30,7 @@ sudo pip3 install -U $TF_BINARY_URL
 
 ### Data files auto-sync (optional)
 
-For auto-syncing `data/` files, we use Grunt. If you ran `./bin/setup` the dependencies for this are installed. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
+For auto-syncing `data/` files, we use Grunt. If you ran `./bin/setup` the dependencies for this are installed. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai-lab/data`.
 
 Also there's an automatic notification system that posts on your Slack when the experiment is completed. You'll need to install noti, get SLACK_TOKEN, set up config/default.json and Gruntfile.js. (More info soon when writing the API page).
 
@@ -163,7 +163,7 @@ Each trial collects the data from its sessions into `trial_data`, which is saved
 
 ## Roadmap
 
-Check the latest under the [Github Projects](https://github.com/kengz/openai_lab/projects)
+Check the latest under the [Github Projects](https://github.com/kengz/openai-lab/projects)
 
 ## Authors
 
