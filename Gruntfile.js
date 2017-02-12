@@ -16,9 +16,9 @@ function composeCommand(experiment) {
 }
 
 const finishMsg = `
-==========================================
-Experiments complete. Press Cmd+C to exit.
-==========================================
+===========================================
+Experiments complete. Press Ctrl+C to exit.
+===========================================
 `
 
 module.exports = function(grunt) {
