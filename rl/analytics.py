@@ -10,6 +10,9 @@ else:
 import seaborn as sns
 sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
         rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
+palette = sns.color_palette("Blues_d")
+palette.reverse()
+sns.set_palette(palette)
 
 import numpy as np
 import pandas as pd
