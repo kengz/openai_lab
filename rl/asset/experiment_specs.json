@@ -450,7 +450,7 @@
     },
     "lunar_offpoll_sarsa": {
         "problem": "LunarLander-v2",
-        "Agent": "DQNFreeze",
+        "Agent": "OffPolicySarsa",
         "Memory": "LinearMemoryWithForgetting",
         "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "StackStates",
