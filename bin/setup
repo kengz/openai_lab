@@ -45,6 +45,16 @@ if [ -d ./node_modules ]; then
   echo "Npm modules already installed"
 else
   npm install
+  sudo npm i -g grunt-cli
+fi
+
+# install noti
+if [ $(uname) == "Darwin" ]; then
+  curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz
+  sudo mv noti /usr/local/bin/
+else
+  curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.linux-amd64.tar.gz | tar -xz
+  sudo mv noti /usr/bin/
 fi
 
 # install common dependencies from from
