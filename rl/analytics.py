@@ -1,21 +1,26 @@
 import matplotlib
-import numpy as np
-import pandas as pd
 import platform
-import warnings
 from os import environ
-from rl.util import *
-
-warnings.filterwarnings("ignore", module="matplotlib")
-
-# TODO fix mp breaking on Mac shit,
-# except when running -b with agg backend
-# (no GUI rendered,but saves graphs)
 # set only if it's not MacOS
 if environ.get('CI') or platform.system() == 'Darwin':
     matplotlib.rcParams['backend'] = 'agg'
 else:
     matplotlib.rcParams['backend'] = 'TkAgg'
+
+import seaborn as sns
+sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
+        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
+palette = sns.color_palette("Blues_d")
+palette.reverse()
+sns.set_palette(palette)
+
+import numpy as np
+import pandas as pd
+import warnings
+from functools import partial
+from rl.util import *
+
+warnings.filterwarnings("ignore", module="matplotlib")
 
 
 STATS_COLS = [
@@ -25,9 +30,13 @@ STATS_COLS = [
     'solved_ratio_of_sessions',
     'max_total_rewards_stats_mean',
     't_stats_mean',
-    'experiment_id'
+    'trial_id'
 ]
-EXPERIMENT_GRID_Y_COLS = ['mean_rewards_per_epi_stats_mean']
+EXPERIMENT_GRID_Y_COLS = [
+    'mean_rewards_per_epi_stats_mean',
+    'mean_rewards_stats_mean',
+    'max_total_rewards_stats_mean'
+]
 
 
 class Grapher(object):
@@ -65,6 +74,7 @@ class Grapher(object):
         ax1e = ax1.twinx()
         ax1e.set_ylabel('exploration rate').set_color('r')
         ax1e.set_frame_on(False)
+        ax1e.grid(False)
         p1e, = ax1e.plot([], [], 'r')
         self.subgraphs['e'] = (ax1e, p1e)
 
@@ -142,12 +152,12 @@ def basic_stats(array):
     }
 
 
-def compose_data(experiment):
+def compose_data(trial):
     '''
-    compose raw data from an experiment object
+    compose raw data from an trial object
     into useful summary and full metrics for analysis
     '''
-    sys_vars_array = experiment.data['sys_vars_array']
+    sys_vars_array = trial.data['sys_vars_array']
 
     # collect all data from sys_vars_array
     solved_sys_vars_array = list(filter(
@@ -175,7 +185,7 @@ def compose_data(experiment):
         'num_of_sessions': len(sys_vars_array),
         'solved_num_of_sessions': len(solved_sys_vars_array),
         'solved_ratio_of_sessions': float(len(
-            solved_sys_vars_array)) / experiment.times,
+            solved_sys_vars_array)) / trial.times,
         'mean_rewards_stats': basic_stats(mean_rewards_array),
         'mean_rewards_per_epi_stats': basic_stats(
             mean_rewards_per_epi_array),
@@ -200,55 +210,66 @@ def compose_data(experiment):
         't_stats_mean': stats['t_stats']['mean'],
     }
 
-    # param variables for independent vars of experiments
+    # param variables for independent vars of trials
     param_variables = {
-        pv: experiment.sess_spec['param'][pv] for
-        pv in experiment.param_variables}
+        pv: trial.experiment_spec['param'][pv] for
+        pv in trial.param_variables}
     param_variables = flat_cast_dict(param_variables)
 
-    experiment.data['metrics'].update(metrics)
-    experiment.data['param_variables'] = param_variables
-    experiment.data['stats'] = stats
-    return experiment.data
+    trial.data['metrics'].update(metrics)
+    trial.data['param_variables'] = param_variables
+    trial.data['stats'] = stats
+    return trial.data
 
 
-# plot the experiment_grid data from data_df
+# plot the experiment data from data_df
 # X are columns with name starting with 'variable_'
 # Y cols are defined below
-def plot_experiment_grid(data_df, experiment_id):
+def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
-    prefix_id = prefix_id_from_experiment_id(experiment_id)
+    experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = data_df.plot(
-                x=x, y=y, kind='scatter',
-                title=wrap_text(prefix_id))
+            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
+                                    hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
-            filename = './data/{}/experiment_grid_plot_{}_vs_{}.png'.format(
-                prefix_id, x, y)
+            fig.suptitle(wrap_text(experiment_id))
+            filename = './data/{}/experiment_plot_{}_vs_{}.png'.format(
+                experiment_id, x, y)
             fig.savefig(filename)
+            fig.clear()
+
+    fig = sns.PairGrid(
+        data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
+        hue='solved_ratio_of_sessions')
+    fig.map(partial(sns.swarmplot, size=3))
+    fig.fig.suptitle(wrap_text(experiment_id))
+    fig.add_legend()
+    filename = './data/{}/experiment_plot_overview.png'.format(
+        experiment_id)
+    fig.savefig(filename)
 
 
-def analyze_data(experiment_grid_data_or_prefix_id):
+def analyze_data(experiment_data_or_experiment_id):
     '''
-    get all the data from all experiments.run()
-    or read from all data files matching the prefix of experiment_id
+    get all the data from all trials.run()
+    or read from all data files matching the prefix of trial_id
     e.g. usage without running:
-    prefix_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
-    analyze_data(prefix_id)
+    experiment_id = 'DevCartPole-v0_DQN_LinearMemoryWithForgetting_BoltzmannPolicy_2017-01-15_142810'
+    analyze_data(experiment_id)
     '''
-    if isinstance(experiment_grid_data_or_prefix_id, str):
-        experiment_grid_data = load_data_array_from_prefix_id(
-            experiment_grid_data_or_prefix_id)
+    if isinstance(experiment_data_or_experiment_id, str):
+        experiment_data = load_data_array_from_experiment_id(
+            experiment_data_or_experiment_id)
     else:
-        experiment_grid_data = experiment_grid_data_or_prefix_id
+        experiment_data = experiment_data_or_experiment_id
 
     stats_array, param_variables_array = [], []
-    for data in experiment_grid_data:
+    for data in experiment_data:
         stats = flatten_dict(data['stats'])
-        stats.update({'experiment_id': data['experiment_id']})
+        stats.update({'trial_id': data['trial_id']})
         stats_array.append(stats)
         param_variables = data['param_variables']
         param_variables_array.append(param_variables)
@@ -261,12 +282,15 @@ def analyze_data(experiment_grid_data_or_prefix_id):
         'variable_'+c for c in param_variables_df.columns]
 
     data_df = pd.concat([stats_df, param_variables_df], axis=1)
+    for c in data_df.columns:
+        if data_df[c].dtype == object:  # guard
+            data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
         ['mean_rewards_per_epi_stats_mean'],
         inplace=True, ascending=False)
 
-    experiment_id = experiment_grid_data[0]['experiment_id']
-    save_experiment_grid_data(data_df, experiment_id)
-    plot_experiment_grid(data_df, experiment_id)
+    trial_id = experiment_data[0]['trial_id']
+    save_experiment_data(data_df, trial_id)
+    plot_experiment(data_df, trial_id)
     return data_df

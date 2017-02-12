@@ -1,4 +1,4 @@
-# The experiment logic and analysis
+# The trial logic and analysis
 RAND_SEED = 42
 import numpy as np
 np.random.seed(RAND_SEED)
@@ -26,10 +26,10 @@ GREF = globals()
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
-SESS_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'sess_specs.json')).read())
-for k in SESS_SPECS:
-    SESS_SPECS[k]['sess_name'] = k
+# EXPERIMENT_SPECS = json.loads(open(
+#     path.join(ASSET_PATH, 'experiment_specs.json')).read())
+# for k in EXPERIMENT_SPECS:
+#     EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -56,30 +56,31 @@ REQUIRED_SYS_KEYS = {
 class Session(object):
 
     '''
-    The base unit of an Experiment
-    An Experiment for a config on repeat for k time
-    will run k Sessions, each with identical sess_spec
+    The base unit of an Trial
+    An Trial for a config on repeat for k time
+    will run k Sessions, each with identical experiment_spec
     for a problem, Agent, Memory, Policy, param.
     Handles its own data, plots and saves its own graphs
-    Serialized by the parent experiment_id with its session_id
+    Serialized by the parent trial_id with its session_id
     '''
 
-    def __init__(self, experiment, session_num=0, num_of_sessions=1):
-        self.experiment = experiment
+    def __init__(self, trial, session_num=0, num_of_sessions=1, **kwargs):
+        self.trial = trial
         self.session_num = session_num
         self.num_of_sessions = num_of_sessions
-        self.session_id = self.experiment.experiment_id + \
+        self.session_id = self.trial.trial_id + \
             '_s' + str(self.session_num)
         log_delimiter('Init Session #{} of {}:\n{}'.format(
             self.session_num, self.num_of_sessions, self.session_id))
 
-        self.sess_spec = experiment.sess_spec
-        self.problem = self.sess_spec['problem']
-        self.Agent = get_module(GREF, self.sess_spec['Agent'])
-        self.Memory = get_module(GREF, self.sess_spec['Memory'])
-        self.Policy = get_module(GREF, self.sess_spec['Policy'])
-        self.PreProcessor = get_module(GREF, self.sess_spec['PreProcessor'])
-        self.param = self.sess_spec['param']
+        self.experiment_spec = self.trial.experiment_spec
+        self.problem = self.experiment_spec['problem']
+        self.Agent = get_module(GREF, self.experiment_spec['Agent'])
+        self.Memory = get_module(GREF, self.experiment_spec['Memory'])
+        self.Policy = get_module(GREF, self.experiment_spec['Policy'])
+        self.PreProcessor = get_module(
+            GREF, self.experiment_spec['PreProcessor'])
+        self.param = self.experiment_spec['param']
 
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
@@ -93,7 +94,7 @@ class Session(object):
 
         # data file and graph
         self.base_filename = './data/{}/{}'.format(
-            self.experiment.prefix_id, self.session_id)
+            self.trial.experiment_id, self.session_id)
         self.graph_filename = self.base_filename + '.png'
 
         # for plotting
@@ -106,11 +107,13 @@ class Session(object):
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
         sys_vars = PROBLEMS[self.problem]
+        if args.max_epis >= 0:
+            sys_vars['MAX_EPISODES'] = args.max_epis
         if not args.render:
             sys_vars['RENDER'] = False
         if environ.get('CI'):
             sys_vars['RENDER'] = False
-            if self.problem != 'DevCartPole-v0':
+            if self.problem != 'TestCartPole-v0':
                 sys_vars['MAX_EPISODES'] = 4
         self.sys_vars = sys_vars
         self.reset_sys_vars()
@@ -179,7 +182,7 @@ class Session(object):
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info(
-                'Problem solved? {}\nAt episode: {}\nParams: {}'.format(
+                'Problem solved? {}\nAt episode: {}\nparams: {}'.format(
                     sys_vars['solved'], sys_vars['epi'],
                     to_json(self.param)))
             self.env.close()
@@ -239,221 +242,267 @@ class Session(object):
         self.update_history()
         return sys_vars
 
-    def clear_session(self):
+    @classmethod
+    def clear_session(cls):
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
+    def is_completed(self):
+        '''check if the trial is already completed, if so dont run'''
+        trial_data = load_data_from_trial_id(self.trial.trial_id)
+        if trial_data is None:
+            # no data yet, confirmed incomplete
+            return False
+        else:
+            sys_vars_array = trial_data['sys_vars_array']
+            # valid since sessions always ran sequentially
+            # if Trial already wants a rerun,
+            # suffices to check which session hasn't been ran
+            is_incomplete = self.session_num + 1 > len(sys_vars_array)
+            return not is_incomplete
+
     def run(self):
         '''run a session of agent'''
-        log_delimiter('Run Session #{} of {}\n{}'.format(
-            self.session_num, self.num_of_sessions, self.session_id))
-        sys_vars = self.sys_vars
-        sys_vars['time_start'] = timestamp()
-        for epi in range(sys_vars['MAX_EPISODES']):
-            sys_vars['epi'] = epi  # update sys_vars epi
-            try:
-                self.run_episode()
-            except Exception:
-                logger.error('Error in experiment, terminating '
-                             'further session from {}'.format(self.session_id))
-                traceback.print_exc(file=sys.stdout)
-                break
-            if sys_vars['solved']:
-                break
+        if self.is_completed():
+            log_delimiter('Session #{} of {} already completed:\n{}'.format(
+                self.session_num, self.num_of_sessions, self.session_id))
+            sys_vars = load_data_from_trial_id(self.trial.trial_id)[
+                'sys_vars_array'][self.session_num]
+        else:
+            log_delimiter('Run Session #{} of {}:\n{}'.format(
+                self.session_num, self.num_of_sessions, self.session_id))
+            logger.info(
+                'Experiment Trial Spec: {}'.format(
+                    to_json(self.experiment_spec)))
+            sys_vars = self.sys_vars
+            sys_vars['time_start'] = timestamp()
+            for epi in range(sys_vars['MAX_EPISODES']):
+                sys_vars['epi'] = epi  # update sys_vars epi
+                try:
+                    self.run_episode()
+                except Exception:
+                    logger.error(
+                        'Error in trial, terminating '
+                        'further session from {}'.format(self.session_id))
+                    traceback.print_exc(file=sys.stdout)
+                    break
+                if sys_vars['solved']:
+                    break
 
-        self.clear_session()
-        sys_vars['time_end'] = timestamp()
-        sys_vars['time_taken'] = timestamp_elapse(
-            sys_vars['time_start'], sys_vars['time_end'])
+            self.clear_session()
+            sys_vars['time_end'] = timestamp()
+            sys_vars['time_taken'] = timestamp_elapse(
+                sys_vars['time_start'], sys_vars['time_end'])
 
-        progress = 'Progress: Experiment #{} Session #{} of {} done'.format(
-            self.experiment.experiment_num,
+        progress = 'Progress: Trial #{} Session #{} of {} done'.format(
+            self.trial.trial_num,
             self.session_num, self.num_of_sessions)
         log_delimiter('End Session:\n{}\n{}'.format(
             self.session_id, progress))
         return sys_vars
 
 
-class Experiment(object):
+class Trial(object):
 
     '''
-    An Experiment for a config on repeat for k time
-    will run k Sessions, each with identical sess_spec
+    An Trial for a config on repeat for k time
+    will run k Sessions, each with identical experiment_spec
     for a problem, Agent, Memory, Policy, param.
     Will spawn as many Sessions for repetition
     Handles all the data from sessions
-    to provide an experiment-level summary for a sess_spec
-    Its experiment_id is serialized by
+    to provide an trial-level summary for a experiment_spec
+    Its trial_id is serialized by
     problem, Agent, Memory, Policy and timestamp
     Data Requirements:
     JSON, single file, quick and useful summary,
     replottable data, rerunnable specs
     Keys:
     all below X array of hyper param selection:
-    - experiment_id
+    - trial_id
     - metrics
         - <metrics>
         - time_start
         - time_end
         - time_taken
-    - sess_spec (so we can plug in directly again to rerun)
+    - experiment_spec (so we can plug in directly again to rerun)
     - stats
     - sys_vars_array
     '''
 
-    def __init__(self, sess_spec, times=1,
-                 experiment_num=0, num_of_experiments=1,
+    def __init__(self, experiment_spec, times=1,
+                 trial_num=0, num_of_trials=1,
                  run_timestamp=timestamp(),
-                 prefix_id_override=None):
+                 experiment_id_override=None,
+                 **kwargs):
 
-        self.sess_spec = sess_spec
-        self.sess_name = sess_spec.get('sess_name')
-        param_range = SESS_SPECS.get(self.sess_name).get('param_range')
+        self.experiment_spec = experiment_spec
+        self.experiment_name = experiment_spec.get('experiment_name')
+        param_range = EXPERIMENT_SPECS.get(
+            self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
-        self.sess_spec.pop('param_range', None)  # single exp, del range
+        self.experiment_spec.pop('param_range', None)  # single exp, del range
         self.data = None
         self.times = times
-        self.experiment_num = experiment_num
-        self.num_of_experiments = num_of_experiments
+        self.trial_num = trial_num
+        self.num_of_trials = num_of_trials
         self.run_timestamp = run_timestamp
-        self.prefix_id = prefix_id_override or '{}_{}_{}_{}_{}_{}'.format(
-            sess_spec['problem'],
-            sess_spec['Agent'].split('.').pop(),
-            sess_spec['Memory'].split('.').pop(),
-            sess_spec['Policy'].split('.').pop(),
-            sess_spec['PreProcessor'].split('.').pop(),
-            self.run_timestamp
-        )
-        self.experiment_id = self.prefix_id + '_e' + str(self.experiment_num)
-        self.base_dir = './data/{}'.format(self.prefix_id)
+        self.experiment_id = experiment_id_override or '{}_{}'.format(
+            self.experiment_name, self.run_timestamp)
+        self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
+        self.base_dir = './data/{}'.format(self.experiment_id)
         os.makedirs(self.base_dir, exist_ok=True)
         self.base_filename = './data/{}/{}'.format(
-            self.prefix_id, self.experiment_id)
+            self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Experiment #{} of {}:\n{}'.format(
-            self.experiment_num, self.num_of_experiments,
-            self.experiment_id), '=')
+        log_delimiter('Init Trial #{} of {}:\n{}'.format(
+            self.trial_num, self.num_of_trials,
+            self.trial_id), '=')
 
     def save(self):
-        '''save the entire experiment data grid from inside run()'''
+        '''save the entire trial data grid from inside run()'''
         with open(self.data_filename, 'w') as f:
             f.write(to_json(self.data))
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
     def to_stop(self):
-        '''check of experiment should be continued'''
-        failed = self.data['stats']['solved_ratio_of_sessions'] < 1.
+        '''check of trial should be continued'''
+        failed = self.data['stats']['solved_ratio_of_sessions'] == 0.
         if failed:
             logger.info(
-                'Failed experiment, terminating sessions for {}'.format(
-                    self.experiment_id))
+                'Failed trial, terminating sessions for {}'.format(
+                    self.trial_id))
         return failed
+
+    def is_completed(self):
+        '''check if the trial is already completed, if so dont run'''
+        trial_data = load_data_from_trial_id(self.trial_id)
+        if trial_data is None:
+            # no data yet, confirmed incomplete
+            return False
+        else:
+            stats = trial_data['stats']
+            num_of_sessions = stats['num_of_sessions']
+            solved_num_of_sessions = stats['solved_num_of_sessions']
+            # hasn't ran enough times but is promising, is incomplete
+            is_incomplete = (num_of_sessions < self.times and
+                             solved_num_of_sessions == num_of_sessions)
+            return not is_incomplete
 
     def run(self):
         '''
-        helper: run a experiment for Session
-        a number of times times given a sess_spec from gym_specs
+        helper: run a trial for Session
+        a number of times times given a experiment_spec from gym_specs
         '''
-        configure_gpu()
-        time_start = timestamp()
-        sys_vars_array = []
-        for s in range(self.times):
-            sess = Session(experiment=self,
-                           session_num=s, num_of_sessions=self.times)
-            sys_vars = sess.run()
-            sys_vars_array.append(copy.copy(sys_vars))
-            time_end = timestamp()
-            time_taken = timestamp_elapse(time_start, time_end)
+        if self.is_completed():
+            log_delimiter('Trial #{} of {} already completed:\n{}'.format(
+                self.trial_num, self.num_of_trials,
+                self.trial_id), '=')
+            self.data = load_data_from_trial_id(self.trial_id)
+        else:
+            log_delimiter('Run Trial #{} of {}:\n{}'.format(
+                self.trial_num, self.num_of_trials,
+                self.trial_id), '=')
+            configure_gpu()
+            time_start = timestamp()
+            sys_vars_array = []
+            for s in range(self.times):
+                sess = Session(trial=self,
+                               session_num=s, num_of_sessions=self.times)
+                sys_vars = sess.run()
+                sys_vars_array.append(copy.copy(sys_vars))
+                time_end = timestamp()
+                time_taken = timestamp_elapse(time_start, time_end)
 
-            self.data = {  # experiment data
-                'experiment_id': self.experiment_id,
-                'metrics': {
-                    # 'time_start': time_start,
-                    # 'time_end': time_end,
-                    'time_taken': time_taken,
-                },
-                'sess_spec': self.sess_spec,
-                'stats': None,
-                'sys_vars_array': sys_vars_array,
-            }
-            compose_data(self)
-            self.save()  # progressive update, write every session completion
+                self.data = {  # trial data
+                    'trial_id': self.trial_id,
+                    'metrics': {
+                        # 'time_start': time_start,
+                        # 'time_end': time_end,
+                        'time_taken': time_taken,
+                    },
+                    'experiment_spec': self.experiment_spec,
+                    'stats': None,
+                    'sys_vars_array': sys_vars_array,
+                }
+                compose_data(self)
+                # progressive update, write every session completion
+                self.save()
 
-            if self.to_stop():
-                break
+                if self.to_stop():
+                    break
 
-        progress = 'Progress: Experiment #{} of {} done'.format(
-            self.experiment_num, self.num_of_experiments)
+        progress = 'Progress: Trial #{} of {} done'.format(
+            self.trial_num, self.num_of_trials)
         log_delimiter(
-            'End Experiment:\n{}\n{}'.format(
-                self.experiment_id, progress), '=')
+            'End Trial:\n{}\n{}'.format(
+                self.trial_id, progress), '=')
         return self.data
 
 
-def plot_experiment(experiment_or_prefix_id):
+def analyze_experiment(trial_or_experiment_id):
     '''plot from a saved data by init sessions for each sys_vars'''
-    prefix_id = prefix_id_from_experiment_id(experiment_or_prefix_id)
-    experiment_grid_data = load_data_array_from_prefix_id(prefix_id)
-    for data in experiment_grid_data:
-        sess_spec = data['sess_spec']
-        experiment = Experiment(sess_spec, times=1,
-                                prefix_id_override=prefix_id)
-        # save with the right serialized filename
-        experiment.experiment_id = data['experiment_id']
-        num_of_sessions = len(data['sys_vars_array'])
-
-        for s in range(num_of_sessions):
-            sess = Session(experiment=experiment,
-                           session_num=s, num_of_sessions=num_of_sessions)
-            sys_vars = data['sys_vars_array'][s]
-            sess.sys_vars = sys_vars
-            sess.grapher.plot()
-            sess.clear_session()
+    experiment_data = load_data_array_from_experiment_id(
+        trial_or_experiment_id)
+    return analyze_data(experiment_data)
 
 
-def run(sess_name_id_spec, times=1,
+def run(name_id_spec, times=1,
         param_selection=False,
-        plot_only=False, **kwargs):
+        analyze_only=False, **kwargs):
     '''
     primary method:
     specify:
-    - sess_name(str) or sess_spec(Dict): run new experiment,
-    - experiment_id(str): rerun experiment from data
-    - experiment_id(str) with plot_only=True: plot graphs from data
-    This runs all experiments, specified by the obtained sess_spec
-    for a specified number of sessions per experiment
-    Multiple experiments are ran if param_selection=True
+    - experiment_name(str) or experiment_spec(Dict): run new trial,
+    - experiment_id(str): rerun any incomplete trials from the experiment
+    - trial_id(str): rerun trial from data
+    - trial_id(str) with analyze_only=True: plot graphs from data
+    This runs all trials, specified by the obtained experiment_spec
+    for a specified number of sessions per trial
+    Multiple trials are ran if param_selection=True
     '''
     # run plots on data only
-    if plot_only:
-        plot_experiment(sess_name_id_spec)
+    if analyze_only:
+        analyze_experiment(name_id_spec)
         return
 
-    # set sess_spec based on input
-    if isinstance(sess_name_id_spec, str):
-        if len(sess_name_id_spec.split('_')) >= 4:
-            data = load_data_from_experiment_id(sess_name_id_spec)
-            sess_spec = data['sess_spec']
-        else:
-            sess_spec = SESS_SPECS.get(sess_name_id_spec)
-    else:
-        sess_spec = sess_name_id_spec
+    experiment_kwargs = {
+        'experiment_spec': None,
+        'experiment_id_override': None,
+        'times': times
+    }
+    # set experiment_spec based on input
+    if isinstance(name_id_spec, str):
+        # rerun an incomplete experiment by experiment_id
+        if parse_experiment_id(name_id_spec):
+            experiment_id = parse_experiment_id(name_id_spec)
+            logger.info(
+                'Rerun an incomplete experiment by id {}'.format(
+                    experiment_id))
+            experiment_kwargs['experiment_id_override'] = experiment_id
+            experiment_spec = EXPERIMENT_SPECS.get(
+                parse_experiment_name(name_id_spec))
+        else:  # rerun a new experiment by name
+            experiment_name = parse_experiment_name(name_id_spec)
+            logger.info(
+                'Rerun a new experiment by name {}'.format(experiment_name))
+            experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
+    else:  # run a new experiment by spec
+        logger.info('Rerun a new experiment by spec')
+        experiment_spec = name_id_spec
+
+    experiment_kwargs['experiment_spec'] = experiment_spec
 
     # compose grid and run param selection
     if param_selection:
-        hopt_kwargs = {
-            'sess_spec': sess_spec,
-            'times': times
-        }
-        hopt_kwargs.update(kwargs)
-        hopt = BruteHyperOptimizer(Experiment, **hopt_kwargs)
-        # hopt = HyperoptHyperOptimizer(Experiment, **hopt_kwargs)
-        experiment_grid_data = hopt.run()
+        experiment_kwargs.update(kwargs)
+        hopt = BruteHyperOptimizer(Trial, **experiment_kwargs)
+        # hopt = HyperoptHyperOptimizer(Trial, **experiment_kwargs)
+        experiment_data = hopt.run()
     else:
-        experiment = Experiment(sess_spec, times=times)
-        experiment_data = experiment.run()
-        experiment_grid_data = [experiment_data]
+        trial = Trial(**experiment_kwargs)
+        trial_data = trial.run()
+        experiment_data = [trial_data]
 
-    return analyze_data(experiment_grid_data)
+    return analyze_data(experiment_data)

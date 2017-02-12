@@ -7,6 +7,7 @@ import logging
 import multiprocessing as mp
 import numpy as np
 import os
+import re
 import sys
 from datetime import datetime, timedelta
 from keras import backend as K
@@ -14,6 +15,12 @@ from os import path, environ
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
+TIMESTAMP_REGEX = r'(\d{4}\-\d{2}\-\d{2}\_\d{6})'
+ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+EXPERIMENT_SPECS = json.loads(open(
+    path.join(ASSET_PATH, 'experiment_specs.json')).read())
+for k in EXPERIMENT_SPECS:
+    EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
@@ -29,12 +36,12 @@ parser.add_argument("-b", "--blind",
                     dest="render",
                     const=False,
                     default=True)
-parser.add_argument("-s", "--sess",
-                    help="specifies session to run, see sess_specs.json",
+parser.add_argument("-e", "--experiment",
+                    help="specify experiment to run",
                     action="store",
                     type=str,
                     nargs='?',
-                    dest="sess_name",
+                    dest="experiment",
                     default="dev_dqn")
 parser.add_argument("-t", "--times",
                     help="number of times session is run",
@@ -43,8 +50,8 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
-parser.add_argument("-e", "--experiments",
-                    help="number of max experiments ran: hyperopt max_evals",
+parser.add_argument("-m", "--max_evals",
+                    help="number of max trials ran: hyperopt max_evals",
                     action="store",
                     nargs='?',
                     type=int,
@@ -66,6 +73,18 @@ parser.add_argument("-g", "--graph",
                     action="store_true",
                     dest="plot_graph",
                     default=False)
+parser.add_argument("-a", "--analyze",
+                    help="only run analyze_data",
+                    action="store_true",
+                    dest="analyze_only",
+                    default=False)
+parser.add_argument("-x", "--max_episodes",
+                    help="manually set environment max episodes",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="max_epis",
+                    default=-1)
 args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
 
 # Goddam python logger
@@ -79,7 +98,7 @@ logger.propagate = False
 
 
 def log_self(subject):
-    logger.info('{}, params: {}'.format(
+    logger.debug('{}, params: {}'.format(
         subject.__class__.__name__,
         to_json(subject.__dict__)))
 
@@ -91,22 +110,24 @@ def wrap_text(text):
 def print_line(line='-'):
     if environ.get('CI'):
         return
-    _rows, columns = os.popen('stty size', 'r').read().split()
+    columns = 80
     line_str = line*int(columns)
     print(line_str)
 
 
 def log_delimiter(msg, line='-'):
-    print('{:\n>3}'.format(''))
+    print('{:\n>2}'.format(''))
     print_line(line)
     print(msg)
     print_line(line)
-    print('{:\n>3}'.format(''))
+    print('{:\n>2}'.format(''))
 
 
 def timestamp():
     '''timestamp used for filename'''
-    return '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
+    timestamp_str = '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
+    assert re.search(TIMESTAMP_REGEX, timestamp_str)
+    return timestamp_str
 
 
 def timestamp_elapse(s1, s2):
@@ -209,9 +230,9 @@ def get_module(GREF, dot_path):
 # to a line search of the param range
 # for each param
 # All other parameters set to default vals
-def param_line_search(sess_spec):
-    default_param = sess_spec['param']
-    param_range = sess_spec['param_range']
+def param_line_search(experiment_spec):
+    default_param = experiment_spec['param']
+    param_range = experiment_spec['param_range']
     keys = param_range.keys()
     param_list = []
     for key in keys:
@@ -227,9 +248,9 @@ def param_line_search(sess_spec):
 # a list of cartesian products of param_range
 # e.g. {'a': [1,2], 'b': [3]} into
 # [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(sess_spec):
-    default_param = sess_spec['param']
-    param_range = sess_spec['param_range']
+def param_product(experiment_spec):
+    default_param = experiment_spec['param']
+    param_range = experiment_spec['param_range']
     keys = param_range.keys()
     range_vals = param_range.values()
     param_grid = []
@@ -241,55 +262,88 @@ def param_product(sess_spec):
 
 
 # for param selection
-def generate_sess_spec_grid(sess_spec, param_grid):
-    sess_spec_grid = [{
-        'sess_name': sess_spec['sess_name'],
-        'problem': sess_spec['problem'],
-        'Agent': sess_spec['Agent'],
-        'Memory': sess_spec['Memory'],
-        'Policy': sess_spec['Policy'],
-        'PreProcessor': sess_spec['PreProcessor'],
+def generate_experiment_spec_grid(experiment_spec, param_grid):
+    experiment_spec_grid = [{
+        'experiment_name': experiment_spec['experiment_name'],
+        'problem': experiment_spec['problem'],
+        'Agent': experiment_spec['Agent'],
+        'Memory': experiment_spec['Memory'],
+        'Policy': experiment_spec['Policy'],
+        'PreProcessor': experiment_spec['PreProcessor'],
         'param': param,
     } for param in param_grid]
-    return sess_spec_grid
+    return experiment_spec_grid
 
 
-def prefix_id_from_experiment_id(experiment_id):
-    str_arr = experiment_id.split('_')
-    if str_arr[-1].startswith('e'):
-        str_arr.pop()
-    return '_'.join(str_arr)
+def clean_id_str(id_str):
+    return id_str.split('/').pop().split('.').pop(0)
 
 
-def load_data_from_experiment_id(experiment_id):
-    experiment_id = experiment_id.split(
-        '/').pop().split('.').pop(0)
-    prefix_id = prefix_id_from_experiment_id(experiment_id)
-    data_filename = './data/{}/{}.json'.format(prefix_id, experiment_id)
-    data = json.loads(open(data_filename).read())
+def parse_trial_id(id_str):
+    c_id_str = clean_id_str(id_str)
+    if re.search(TIMESTAMP_REGEX, c_id_str):
+        name_time_trial = re.split(TIMESTAMP_REGEX, c_id_str)
+        if len(name_time_trial) == 3:
+            return c_id_str
+        else:
+            return None
+    else:
+        return None
+
+
+def parse_experiment_id(id_str):
+    c_id_str = clean_id_str(id_str)
+    if re.search(TIMESTAMP_REGEX, c_id_str):
+        name_time_trial = re.split(TIMESTAMP_REGEX, c_id_str)
+        name_time_trial.pop()
+        experiment_id = ''.join(name_time_trial)
+        return experiment_id
+    else:
+        return None
+
+
+def parse_experiment_name(id_str):
+    c_id_str = clean_id_str(id_str)
+    experiment_id = parse_experiment_id(c_id_str)
+    if experiment_id is None:
+        experiment_name = c_id_str
+    else:
+        experiment_name = re.sub(TIMESTAMP_REGEX, '', experiment_id).strip('_')
+    assert experiment_name in EXPERIMENT_SPECS
+    return experiment_name
+
+
+def load_data_from_trial_id(id_str):
+    experiment_id = parse_experiment_id(id_str)
+    trial_id = parse_trial_id(id_str)
+    data_filename = './data/{}/{}.json'.format(experiment_id, trial_id)
+    try:
+        data = json.loads(open(data_filename).read())
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = None
     return data
 
 
-def load_data_array_from_prefix_id(prefix_id):
-    # to load all ./data files for a series of experiments
-    prefix_id = prefix_id_from_experiment_id(prefix_id)
-    data_path = './data/{}'.format(prefix_id)
-    experiment_id_array = [
+def load_data_array_from_experiment_id(id_str):
+    # to load all ./data files for a series of trials
+    experiment_id = parse_experiment_id(id_str)
+    data_path = './data/{}'.format(experiment_id)
+    trial_id_array = [
         f for f in os.listdir(data_path)
         if (path.isfile(path.join(data_path, f)) and
-            f.startswith(prefix_id) and
+            f.startswith(experiment_id) and
             f.endswith('.json'))
     ]
-    return [load_data_from_experiment_id(experiment_id)
-            for experiment_id in experiment_id_array]
+    return list(filter(None, [load_data_from_trial_id(trial_id)
+                              for trial_id in trial_id_array]))
 
 
-def save_experiment_grid_data(data_df, experiment_id):
-    prefix_id = prefix_id_from_experiment_id(experiment_id)
-    filename = './data/{0}/experiment_grid_data_{0}.csv'.format(prefix_id)
+def save_experiment_data(data_df, trial_id):
+    experiment_id = parse_experiment_id(trial_id)
+    filename = './data/{0}/experiment_data_{0}.csv'.format(experiment_id)
     data_df.to_csv(filename, index=False)
     logger.info(
-        'Param space data saved to {}'.format(filename))
+        'experiment data saved to {}'.format(filename))
 
 
 def configure_gpu():

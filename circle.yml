@@ -14,7 +14,9 @@ dependencies:
     - pip install numpy
     - pip install scipy
     - pip install matplotlib
+    - pip install seaborn
     - pip install pandas
+    - pip install hyperopt
     - pip install pytest-cov
   override:
     - pip install git+https://github.com/openai/gym.git

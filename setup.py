@@ -50,12 +50,12 @@ def read(fname):
 
 # the setup
 setup(
-    name='openai_gym',
+    name='openai_lab',
     version='0.0.1',
-    description='Working out at the OpenAI Gym',
+    description='An experimentation system for Reinforcement Learning using OpenAI and Keras',
     long_description=read('README.md'),
     keywords='openai gym',
-    url='https://github.com/kengz/openai_gym',
+    url='https://github.com/kengz/openai_lab',
     author='keng',
     author_email='kengzwl@gmail.com',
     license='MIT',
