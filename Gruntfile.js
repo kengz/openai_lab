@@ -12,8 +12,14 @@ const experimentTasks = _.map(experiments, function(name) {
 function composeCommand(experiment) {
   // override with custom command if has 'python'
   var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-  return `(${cmd} | tee -a ./data/terminal.log) & NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t '${experiment}' -pwatch $! &`
+  return `${cmd} | tee -a ./data/terminal.log; NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'`
 }
+
+const finishMsg = `
+===========================================
+Experiments complete. Press Ctrl+C to exit.
+===========================================
+`
 
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt)
@@ -50,15 +56,18 @@ module.exports = function(grunt) {
           return composeCommand(experiment)
         }
       },
-      remote: {
-        command(experiment) {
-          return 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt'
+      remote: 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt',
+      killnoti: {
+        command: 'killall noti',
+        options: {
+          failOnError: false
         }
       },
+      finish: `echo "${finishMsg}"`
     },
 
     concurrent: {
-      local: ['watch', 'lab'],
+      local: ['watch', ['lab', 'kill_noti', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
@@ -70,4 +79,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('remote', ['shell:remote'])
+  grunt.registerTask('kill_noti', ['shell:killnoti'])
 }
