@@ -111,7 +111,7 @@ class Session(object):
             sys_vars['RENDER'] = False
         if environ.get('CI'):
             sys_vars['RENDER'] = False
-            if self.problem != 'DevCartPole-v0':
+            if self.problem != 'TestCartPole-v0':
                 sys_vars['MAX_EPISODES'] = 4
         self.sys_vars = sys_vars
         self.reset_sys_vars()

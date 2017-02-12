@@ -24,7 +24,7 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     def test_dev_dqn_pass(self):
-        data_df = run('dev_dqn')
+        data_df = run('test_dqn')
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
         print(max_total_rewards)
         assert max_total_rewards > 100

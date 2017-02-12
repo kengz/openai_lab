@@ -78,13 +78,17 @@ env.render()
 
 ### Data files auto-sync (optional)
 
-For auto-syncing `data/` files, we use Gulp. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
+For auto-syncing `data/` files, we use Grunt. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
+
+Also there's an automatic notification system that posts on your Slack when the experiment is completed. You'll need to install noti, get SLACK_TOKEN, set up config/default.json and Gruntfile.js. (More info soon when writing the API page).
 
 ```shell
 npm install
-npm install --global gulp-cli
+npm install --global grunt-cli
 # run the file watcher
-gulp
+grunt watch
+# run the entire lab
+grunt
 ```
 
 ### Run experiments locally
@@ -130,10 +134,10 @@ xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -e lunar_dqn -t 5
 # use screen -r to resume screen next time
 ```
 
-Or to set up multiple jobs and let them run one after the other on the server, edit `experiment_queue.py` and run:
+Or to set up multiple jobs and let them run one after the other on the server, edit `config/default.json` and run:
 
 ```shell
-npm run queue
+grunt
 ```
 
 
