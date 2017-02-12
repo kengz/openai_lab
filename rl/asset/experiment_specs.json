@@ -448,7 +448,7 @@
             ]
         }
     },
-    "lunar_offpoll_sarsa": {
+    "lunar_offpol_sarsa": {
         "problem": "LunarLander-v2",
         "Agent": "OffPolicySarsa",
         "Memory": "LinearMemoryWithForgetting",
