@@ -39,6 +39,7 @@
     "grunt-shell": "^2.1.0",
     "grunt-sync": "^0.6.2",
     "load-grunt-tasks": "^3.5.2",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "resolve-dir": "^1.0.0"
   }
 }
