@@ -363,7 +363,7 @@
             "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
                 [300, 150, 75],
-                [400, 200, 100],
+                [400, 200, 100]
             ]
         }
     },
@@ -390,7 +390,7 @@
             "exploration_anneal_episodes": [200, 300, 400],
             "hidden_layers_shape": [
                 [300, 150, 75],
-                [400, 200, 100],
+                [400, 200, 100]
             ]
         }
     },
@@ -417,7 +417,7 @@
             "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
                 [300, 150, 75],
-                [400, 200, 100],
+                [400, 200, 100]
             ]
         }
     },
@@ -444,7 +444,7 @@
             "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
                 [300, 150, 75],
-                [400, 200, 100],
+                [400, 200, 100]
             ]
         }
     },
@@ -471,7 +471,7 @@
             "epi_change_learning_rate": [150, 200],
             "hidden_layers_shape": [
                 [300, 150, 75],
-                [400, 200, 100],
+                [400, 200, 100]
             ]
         }
     },
