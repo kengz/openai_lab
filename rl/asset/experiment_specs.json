@@ -23,7 +23,7 @@
         "problem": "DevCartPole-v0",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
@@ -42,7 +42,7 @@
         "problem": "TestCartPole-v0",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "EpsilonGreedyPolicy",
+        "Policy": "BoltzmannPolicy",
         "PreProcessor": "NoPreProcessor",
         "param": {
             "train_per_n_new_exp": 1,
