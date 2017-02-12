@@ -12,7 +12,7 @@ const experimentTasks = _.map(experiments, function(name) {
 function composeCommand(experiment) {
   // override with custom command if has 'python'
   var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-  return `(${cmd} | tee -a ./data/terminal.log) & NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t '${experiment}' -pwatch $! &`
+  return `(${cmd} | tee -a ./data/terminal.log) & NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t '${experiment}' -m '[${new Date().toISOString()}] Experiment completed on ${process.env.USER}' -pwatch $! &`
 }
 
 module.exports = function(grunt) {
