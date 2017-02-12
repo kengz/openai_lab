@@ -12,12 +12,12 @@
 ```shell
 git clone https://github.com/kengz/openai_gym.git
 cd openai_gym
-bin/setup
+./bin/setup
 ```
 
-Then, setup your `~/.keras/keras.json`. See example files in `rl/asset/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
+Then, setup your `~/.keras/keras.json`. See example files in `config/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
 
-The binary at `bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (for dev), Theano(for faster production), Keras.
+The binary at `./bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (for dev), Theano(for faster production), Keras.
 
 *Note the Tensorflow is defaulted to CPU Mac or GPU Linux. [If you're on a different platform, choose the correct binary to install from TF.](https://www.tensorflow.org/get_started/os_setup#pip_installation)*
 
@@ -27,6 +27,19 @@ TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.
 # install from the TF_BINARY_URL
 sudo pip3 install -U $TF_BINARY_URL
 ```
+
+### Data files auto-sync (optional)
+
+For auto-syncing `data/` files, we use Grunt. If you ran `./bin/setup` the dependencies for this are installed. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
+
+Also there's an automatic notification system that posts on your Slack when the experiment is completed. You'll need to install noti, get SLACK_TOKEN, set up config/default.json and Gruntfile.js. (More info soon when writing the API page).
+
+```shell
+# install if you haven't ran ./bin/setup
+npm install --global grunt-cli
+npm install
+```
+
 
 ### Full OpenAI Gym Environments
 
@@ -76,33 +89,37 @@ env.render()
 
 ## Usage
 
-### Data files auto-sync (optional)
+### (Pending unified command section) Run experiments
 
-For auto-syncing `data/` files, we use Grunt. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
-
-Also there's an automatic notification system that posts on your Slack when the experiment is completed. You'll need to install noti, get SLACK_TOKEN, set up config/default.json and Gruntfile.js. (More info soon when writing the API page).
+To set up the lab experiments, edit `config/default.json`.
 
 ```shell
-npm install
-npm install --global grunt-cli
-# run the file watcher
-grunt watch
-# run the entire lab
+# pure python command (you still need to know this to customize Grunt)
+python3 main.py -bgp -e dev_dqn -t 2 | tee -a ./data/terminal.log
+# run the lab locally (no virtual display)
 grunt
+# run the lab remotely
+grunt remote
+# for development of an experiment, quick run
+npm run dev
 ```
 
-### Run experiments locally
+### Running remotely
 
-Configure the `"start"` scripts in `package.json` for easily running the same experiment over and over again.
+If you're running things remotely on a server, log in via ssh, start a screen, run, then detach screen.
 
 ```shell
-# easy run command
-npm start
-# to clear data/
-npm run clear
+screen -S run
+# enter the screen with the name "run"
+grunt remote
+# use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
+# to resume screen next time
+screen -r run
 ```
 
-To customize your run commands, use plain python:
+### Customize experiment commands
+
+To customize your experiment commands, refer:
 
 ```shell
 python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
@@ -120,25 +137,6 @@ The extra flags are:
 - `-g`: plot graphs live. Default: `False`
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 
-### Run experiment remotely
-
-Log in via ssh, start a screen, run, then detach screen.
-
-```shell
-screen
-# enter the screen
-npm run remote
-# or full python command goes like
-xvfb-run -a -s "-screen 0 1400x900x24" -- python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
-# use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
-# use screen -r to resume screen next time
-```
-
-Or to set up multiple jobs and let them run one after the other on the server, edit `config/default.json` and run:
-
-```shell
-grunt
-```
 
 
 ## Development
