@@ -150,22 +150,17 @@ class HighLowMemory(LinearMemory):
         log_self(self)
 
     def reassign_episodes(self):
-        temp_high = self.epi_memory_high
-        temp_low = self.epi_memory_low
-        self.epi_memory_high = []
-        self.epi_memory_low = []
+        new_high, new_low = []
 
-        for epi in temp_high:
-            if (epi['total_rewards'] > self.threshold):
-                self.epi_memory_high.append(epi)
-            else:
-                self.epi_memory_low.append(epi)
+        for mem in (self.epi_memory_high, self.epi_memory_low):
+            for epi_exp in mem:
+                if (epi_exp['total_rewards'] > self.threshold):
+                    new_high.append(epi_exp)
+                else:
+                    new_low.append(epi_exp)
 
-        for epi in temp_low:
-            if (epi['total_rewards'] > self.threshold):
-                self.epi_memory_high.append(epi)
-            else:
-                self.epi_memory_low.append(epi)
+        self.epi_memory_high = new_high
+        self.epi_memory_low = new_low
 
     def compute_threshold(self):
         self.threshold_history.append([self.threshold,
@@ -290,21 +285,15 @@ class HighLowMemoryWithForgetting(HighLowMemory):
         log_self(self)
 
     def reassign_episodes(self):
-        temp_high = self.epi_memory_high
-        temp_low = self.epi_memory_low
-        self.epi_memory_high = []
-        self.epi_memory_low = []
+        new_high, new_low = []
 
-        for epi in temp_high:
-            if (self.epi_num - epi['epi_num'] <= self.max_epis_in_mem):
-                if (epi['total_rewards'] > self.threshold):
-                    self.epi_memory_high.append(epi)
-                else:
-                    self.epi_memory_low.append(epi)
+        for mem in (self.epi_memory_high, self.epi_memory_low):
+            for epi_exp in mem:
+                if (self.epi_num - epi_exp['epi_num'] <= self.max_epis_in_mem):
+                    if (epi_exp['total_rewards'] > self.threshold):
+                        new_high.append(epi_exp)
+                    else:
+                        new_low.append(epi_exp)
 
-        for epi in temp_low:
-            if (self.epi_num - epi['epi_num'] <= self.max_epis_in_mem):
-                if (epi['total_rewards'] > self.threshold):
-                    self.epi_memory_high.append(epi)
-                else:
-                    self.epi_memory_low.append(epi)
+        self.epi_memory_high = new_high
+        self.epi_memory_low = new_low
