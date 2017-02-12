@@ -1,4 +1,4 @@
-from util import logger
+from rl.util import logger
 
 
 class Agent(object):
