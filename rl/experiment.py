@@ -255,7 +255,7 @@ class Session(object):
             # valid since sessions always ran sequentially
             # if Trial already wants a rerun,
             # suffices to check which session hasn't been ran
-            is_incomplete = self.session_num > len(sys_vars_array)
+            is_incomplete = self.session_num + 1 > len(sys_vars_array)
             return not is_incomplete
 
     def run(self):
