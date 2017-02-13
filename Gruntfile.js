@@ -64,6 +64,7 @@ module.exports = function(grunt) {
 
     concurrent: {
       local: ['watch', ['lab', 'shell:finish']],
+      plot: ['watch', ['shell:plot', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
@@ -75,5 +76,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('remote', ['shell:remote'])
-  grunt.registerTask('plot', ['shell:plot'])
+  grunt.registerTask('plot', ['concurrent:plot'])
 }
