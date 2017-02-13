@@ -103,6 +103,8 @@ grunt
 grunt remote
 # for development of an experiment, quick run
 npm run dev
+# run analysis only, even when shits half-running
+grunt plot -e dev_dqn_2017-02-12_183415
 ```
 
 ### Running remotely

@@ -57,7 +57,9 @@ module.exports = function(grunt) {
         }
       },
       remote: 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt',
-      finish: `echo "${finishMsg}"`
+      finish: `echo "${finishMsg}"`,
+      // TODO make smarter by autosearch
+      plot: `python3 main.py -e ${grunt.option('e')} -a`,
     },
 
     concurrent: {
@@ -73,4 +75,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('remote', ['shell:remote'])
+  grunt.registerTask('plot', ['shell:plot'])
 }
