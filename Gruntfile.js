@@ -9,11 +9,6 @@ const experimentTasks = _.map(experiments, function(name) {
   return `shell:local:${name}`
 })
 
-function composeCommand(experiment) {
-  // override with custom command if has 'python'
-  var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-  return `${cmd} | tee -a ./data/terminal.log; NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'`
-}
 
 const finishMsg = `
 ===========================================
@@ -23,6 +18,16 @@ Experiments complete. Press Ctrl+C to exit.
 
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt)
+
+  function remoteCmd() {
+    return (grunt.option('remote') || grunt.option('r')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
+  }
+
+  function composeCommand(experiment) {
+    // override with custom command if has 'python'
+    var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
+    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'`
+  }
 
   grunt.initConfig({
     sync: {
@@ -56,10 +61,9 @@ module.exports = function(grunt) {
           return composeCommand(experiment)
         }
       },
-      remote: 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt',
       finish: `echo "${finishMsg}"`,
       // TODO make smarter by autosearch
-      plot: `python3 main.py -e ${grunt.option('e')} -a`,
+      plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
     },
 
     concurrent: {
@@ -75,6 +79,5 @@ module.exports = function(grunt) {
   grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:local'])
   grunt.registerTask('default', ['lab_sync'])
 
-  grunt.registerTask('remote', ['shell:remote'])
   grunt.registerTask('plot', ['concurrent:plot'])
 }

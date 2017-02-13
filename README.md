@@ -100,11 +100,13 @@ python3 main.py -bgp -e dev_dqn -t 2 | tee -a ./data/terminal.log
 # run the lab locally (no virtual display)
 grunt
 # run the lab remotely
-grunt remote
+grunt -remote
 # for development of an experiment, quick run
 npm run dev
 # run analysis only, even when shits half-running
 grunt plot -e=dev_dqn_2017-02-12_183415
+# if you're running it on a remote server
+grunt plot -e=dev_dqn_2017-02-12_183415 -remote
 ```
 
 ### Running remotely
