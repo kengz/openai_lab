@@ -57,17 +57,11 @@ module.exports = function(grunt) {
         }
       },
       remote: 'xvfb-run -a -s "-screen 0 1400x900x24" -- grunt',
-      killnoti: {
-        command: 'killall noti',
-        options: {
-          failOnError: false
-        }
-      },
       finish: `echo "${finishMsg}"`
     },
 
     concurrent: {
-      local: ['watch', ['lab', 'kill_noti', 'shell:finish']],
+      local: ['watch', ['lab', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
@@ -79,5 +73,4 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('remote', ['shell:remote'])
-  grunt.registerTask('kill_noti', ['shell:killnoti'])
 }
