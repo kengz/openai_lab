@@ -64,6 +64,8 @@ module.exports = function(grunt) {
       finish: `echo "${finishMsg}"`,
       // TODO make smarter by autosearch
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
+      // TODO add a dev mode clear vs prod mode clear
+      clear: `rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log`,
     },
 
     concurrent: {
@@ -80,4 +82,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('plot', ['concurrent:plot'])
+  grunt.registerTask('clear', ['shell:clear'])
 }

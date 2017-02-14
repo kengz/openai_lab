@@ -1,7 +1,7 @@
 {
   "name": "openai_lab",
   "version": "1.0.0",
-  "description": "working out at the OpenAI gym",
+  "description": "An experimentation system for Reinforcement Learning using OpenAI and Keras",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -21,6 +21,7 @@
   "keywords": [
     "openai",
     "gym",
+    "lab",
     "reinforcement",
     "learning"
   ],
