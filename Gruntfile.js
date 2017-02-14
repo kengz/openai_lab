@@ -1,14 +1,5 @@
 const _ = require('lodash')
-const config = require('config')
 const resolve = require('resolve-dir')
-
-const source = './data'
-const destination = resolve(config.data_sync_destination)
-const experiments = config.experiments
-const experimentTasks = _.map(experiments, function(name) {
-  return `shell:local:${name}`
-})
-
 
 const finishMsg = `
 ===========================================
@@ -17,17 +8,34 @@ Experiments complete. Press Ctrl+C to exit.
 `
 
 module.exports = function(grunt) {
-  require('load-grunt-tasks')(grunt)
+  process.env.NODE_ENV = grunt.option('prod') ? 'production' : 'development'
+  const config = require('config')
+  const source = './data'
+  const destination = resolve(config.data_sync_destination)
+  const experiments = config.experiments
+  const experimentTasks = _.map(experiments, function(name) {
+    return `shell:exp:${name}`
+  })
 
   function remoteCmd() {
     return (grunt.option('remote') || grunt.option('r')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
+  function notiCmd() {
+    return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
+  }
+
+  function watchCmd() {
+    return grunt.option('prod') ? 'watch' : 'shell:nowatch'
+  }
+
   function composeCommand(experiment) {
     // override with custom command if has 'python'
     var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'`
+    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; ${notiCmd()}`
   }
+
+  require('load-grunt-tasks')(grunt)
 
   grunt.initConfig({
     sync: {
@@ -45,7 +53,10 @@ module.exports = function(grunt) {
     watch: {
       data: {
         files: `${source}/**`,
-        tasks: ['sync']
+        tasks: ['sync'],
+        options: {
+          debounceDelay: 5000,
+        },
       }
     },
 
@@ -56,11 +67,12 @@ module.exports = function(grunt) {
           env: process.env
         }
       },
-      local: {
+      exp: {
         command(experiment) {
           return composeCommand(experiment)
         }
       },
+      nowatch: 'echo "in development; watch mode not activated"',
       finish: `echo "${finishMsg}"`,
       // TODO make smarter by autosearch
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
@@ -69,16 +81,23 @@ module.exports = function(grunt) {
     },
 
     concurrent: {
-      local: ['watch', ['lab', 'shell:finish']],
-      plot: ['watch', ['shell:plot', 'shell:finish']],
+      default: [watchCmd(), ['lab', 'shell:finish']],
+      plot: [watchCmd(), ['shell:plot', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
     },
   })
 
+  // grunt.event.on('watch', function(action, filepath) {
+  //   // do a folder path extraction here, save to persistent file
+  //   changedFiles[filepath] = action;
+  //   onChange();
+  // });
+
+
   grunt.registerTask('lab', 'run all the experiments', experimentTasks)
-  grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:local'])
+  grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:default'])
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('plot', ['concurrent:plot'])
