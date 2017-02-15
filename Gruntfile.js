@@ -45,8 +45,7 @@ module.exports = function(grunt) {
           src: ['**'],
           dest: destination,
         }],
-        // pretend: true, // Don't do real IO; log only
-        // verbose: true // Display log messages when copying files
+        pretend: !grunt.option('prod'), // Don't do real IO; log only
       }
     },
 
@@ -76,7 +75,6 @@ module.exports = function(grunt) {
       finish: `echo "${finishMsg}"`,
       // TODO make smarter by autosearch
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
-      // TODO add a dev mode clear vs prod mode clear
       clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log',
     },
 
