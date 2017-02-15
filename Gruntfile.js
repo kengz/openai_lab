@@ -41,11 +41,14 @@ module.exports = function(grunt) {
   let history = readHistory()
 
   function writeHistory(history) {
-    fs.writeFile(historyPath, JSON.stringify(history, null, 2))
+    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2))
   }
 
   function updateHistory(filepath) {
-    const matchedPath = filepath.match(expIdRegex)
+    if (fs.lstatSync(filepath).isFile()) {
+      return
+    }
+    const matchedPath = filepath.split('/').pop().match(expIdRegex)
     if (matchedPath) {
       const experimentId = matchedPath[2]
       const experimentName = matchedPath[3] || matchedPath[4]
@@ -63,15 +66,23 @@ module.exports = function(grunt) {
   }
 
   function composeCommand(experiment) {
+    var modExperiment = experiment
     if (grunt.option('resume')) {
-      // search and replace using history
-      // but if preinit hmm history is empty, so just dont replace
+      const matchedExp = experiment.match(expIdRegex)
+      if (matchedExp) {
+        const experimentIdOrName = matchedExp[2]
+        const experimentName = matchedExp[3] || matchedExp[4]
+        if (history[experimentName]) {
+          modExperiment = modExperiment.replace(experimentIdOrName, history[experimentName])
+        }
+      }
     }
     // override with custom command if has 'python'
-    var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; ${notiCmd(experiment)}`
+    var pyCmd = _.includes(modExperiment, 'python') ? modExperiment : `python3 main.py -bgp -e ${modExperiment} -t 5`
+    const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(modExperiment)}`
+    console.log(`Composed command: ${cmd}`)
+    return cmd
   }
-
 
 
   require('load-grunt-tasks')(grunt)
