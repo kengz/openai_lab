@@ -62,6 +62,10 @@ module.exports = function(grunt) {
     return (grunt.option('remote') || grunt.option('r')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
+  function plotCmd() {
+    return grunt.option('plotOnly') ? '-a' : ''
+  }
+
   function notiCmd(experiment) {
     return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
@@ -79,7 +83,7 @@ module.exports = function(grunt) {
       }
     }
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5 ${plotCmd()}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
     console.log(`Composed command: ${cmd}`)
     return cmd
@@ -125,14 +129,11 @@ module.exports = function(grunt) {
         }
       },
       finish: `echo "${finishMsg}"`,
-      // TODO make smarter by autosearch from history
-      plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
       clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log config/history.json',
     },
 
     concurrent: {
       default: ['watch', ['lab', 'shell:finish']],
-      plot: ['watch', ['shell:plot', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
@@ -147,6 +148,10 @@ module.exports = function(grunt) {
   grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:default'])
   grunt.registerTask('default', ['lab_sync'])
 
-  grunt.registerTask('plot', ['concurrent:plot'])
+  grunt.registerTask('plot', function() {
+    grunt.option('plotOnly', true)
+    grunt.option('resume', true)
+    grunt.task.run('default')
+  })
   grunt.registerTask('clear', ['shell:clear'])
 }
