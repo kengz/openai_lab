@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       try {
         return JSON.parse(fs.readFileSync(historyPath, 'utf8'))
       } catch (err) {
-        console.log(`No existing ${historyPath} to resume, creating new`)
+        grunt.log.ok(`No existing ${historyPath} to resume, creating new`)
         return writeHistory({})
       }
     } else {
@@ -63,29 +63,34 @@ module.exports = function(grunt) {
   }
 
   function plotCmd() {
-    return grunt.option('plotOnly') ? '-a' : ''
+    return grunt.option('plotOnly') ? ' -a' : ''
   }
 
   function notiCmd(experiment) {
     return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
+  function resumeExperimentStr(eStr) {
+    const matchedExp = eStr.match(expIdRegex)
+    if (matchedExp) {
+      const experimentIdOrName = matchedExp[2]
+      const experimentName = matchedExp[3] || matchedExp[4]
+      if (history[experimentName]) {
+        return eStr.replace(experimentIdOrName, history[experimentName])
+      }
+    }
+  }
+
   function composeCommand(experimentStr) {
     var eStr = experimentStr
     if (grunt.option('resume')) {
-      const matchedExp = eStr.match(expIdRegex)
-      if (matchedExp) {
-        const experimentIdOrName = matchedExp[2]
-        const experimentName = matchedExp[3] || matchedExp[4]
-        if (history[experimentName]) {
-          eStr = eStr.replace(experimentIdOrName, history[experimentName])
-        }
-      }
+      eStr = resumeExperimentStr(eStr)
     }
+
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5 ${plotCmd()}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5${plotCmd()}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
-    console.log(`Composed command: ${cmd}`)
+    grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
   }
 
@@ -110,6 +115,7 @@ module.exports = function(grunt) {
         tasks: ['sync'],
         options: {
           debounceDelay: 60000,
+          interval: 60000,
         },
       }
     },
