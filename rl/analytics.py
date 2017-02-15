@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore", module="matplotlib")
 
 
 STATS_COLS = [
+    'mean_rewards_per_epi_stats_mean_times_solved_ratio_of_sessions',
     'mean_rewards_per_epi_stats_mean',
     'mean_rewards_stats_mean',
     'epi_stats_mean',
@@ -33,7 +34,7 @@ STATS_COLS = [
     'trial_id'
 ]
 EXPERIMENT_GRID_Y_COLS = [
-    'mean_rewards_per_epi_stats_mean',
+    'mean_rewards_per_epi_stats_mean_times_solved_ratio_of_sessions',
     'mean_rewards_stats_mean',
     'max_total_rewards_stats_mean'
 ]
@@ -197,9 +198,19 @@ def compose_data(trial):
         'solved_t_stats': basic_stats(solved_t_array),
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
+    stats.update({
+        'mean_rewards_per_epi_stats_mean_'
+        'times_solved_ratio_of_sessions': stats[
+            'mean_rewards_per_epi_stats']['mean'] * stats[
+            'solved_ratio_of_sessions']
+    })
 
     # summary metrics
     metrics = {
+        'mean_rewards_per_epi_stats_mean_'
+        'times_solved_ratio_of_sessions': stats[
+            'mean_rewards_per_epi_stats_mean_'
+            'times_solved_ratio_of_sessions'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
         'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
@@ -287,7 +298,7 @@ def analyze_data(experiment_data_or_experiment_id):
             data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
-        ['mean_rewards_per_epi_stats_mean'],
+        ['mean_rewards_per_epi_stats_mean_times_solved_ratio_of_sessions'],
         inplace=True, ascending=False)
 
     trial_id = experiment_data[0]['trial_id']
