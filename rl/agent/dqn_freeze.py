@@ -5,6 +5,7 @@ from rl.agent.dqn import DQN
 from keras.models import load_model
 from rl.util import logger
 
+
 class DQNFreeze(DoubleDQN):
 
     '''
@@ -16,6 +17,7 @@ class DQNFreeze(DoubleDQN):
     http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf
     Exploration model periodically saved and loaded into target Q network
     '''
+
     def __init__(self, *args, **kwargs):
         super(DQNFreeze, self).__init__(*args, **kwargs)
         # Exploration model = self.model
@@ -25,7 +27,8 @@ class DQNFreeze(DoubleDQN):
         clip_val = 10000
         Q_states = np.clip(
             self.model.predict(minibatch['states']), -clip_val, clip_val)
-        # Use frozen target network to find max of the estimated next state Q-val
+        # Use frozen target network to find max of the estimated next state
+        # Q-val
         Q_next_states = np.clip(
             self.model2.predict(minibatch['next_states']), -clip_val, clip_val)
         Q_next_states_max = np.amax(Q_next_states, axis=1)
@@ -51,5 +54,3 @@ class DQNFreeze(DoubleDQN):
         if done or timestep_check:
             self.update_target_model()
         super(DQNFreeze, self).update(sys_vars)
-
-
