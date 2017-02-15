@@ -1,18 +1,15 @@
 {
   "name": "openai_lab",
   "version": "1.0.0",
-  "description": "working out at the OpenAI gym",
+  "description": "An experimentation system for Reinforcement Learning using OpenAI and Keras",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "start": "grunt",
-    "remote": "xvfb-run -a -s \"-screen 0 1400x900x24\" -- grunt",
-    "dev": "python3 main.py -bgp -e dev_dqn -t 2 | tee -a ./data/terminal.log",
     "test": "python3 setup.py test",
-    "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov",
-    "clear": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log"
+    "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov"
   },
   "repository": {
     "type": "git",
@@ -21,6 +18,7 @@
   "keywords": [
     "openai",
     "gym",
+    "lab",
     "reinforcement",
     "learning"
   ],
