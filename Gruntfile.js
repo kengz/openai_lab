@@ -16,7 +16,7 @@ Experiments complete. Press Ctrl+C to exit.
 module.exports = function(grunt) {
   process.env.NODE_ENV = grunt.option('prod') ? 'production' : 'development'
   const config = require('config')
-  const source = './data'
+  const source = 'data'
   const destination = resolve(config.data_sync_destination)
   const experiments = config.experiments
   const experimentTasks = _.map(experiments, function(name) {
@@ -91,7 +91,8 @@ module.exports = function(grunt) {
     sync: {
       main: {
         files: [{
-          src: [`${source}/**`],
+          cwd: source,
+          src: [`**/*`],
           dest: destination,
         }],
         pretend: !grunt.option('prod'), // Don't do real IO
@@ -118,6 +119,9 @@ module.exports = function(grunt) {
       exp: {
         command(experiment) {
           return composeCommand(experiment)
+        },
+        options: {
+          stdout: true
         }
       },
       finish: `echo "${finishMsg}"`,
