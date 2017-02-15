@@ -1,11 +1,17 @@
 const _ = require('lodash')
+const fs = require('fs')
 const resolve = require('resolve-dir')
 
+
+// generic experimentId matcher. index 2: experimentId, 3: experimentName
+const expIdRegex = /(\-e\s+)?(([a-zA-Z0-9_]+)_\d{4}\-\d{2}\-\d{2}_\d{6})/
+const historyPath = './config/history.json'
 const finishMsg = `
 ===========================================
 Experiments complete. Press Ctrl+C to exit.
 ===========================================
 `
+
 
 module.exports = function(grunt) {
   process.env.NODE_ENV = grunt.option('prod') ? 'production' : 'development'
@@ -31,17 +37,48 @@ module.exports = function(grunt) {
     return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; ${notiCmd(experiment)}`
   }
 
+  function readHistory() {
+    if (grunt.option('resume')) {
+      try {
+        return JSON.parse(fs.readFileSync(historyPath, 'utf8'))
+      } catch (err) {
+        console.log(`No existing ${historyPath} to resume, creating new`)
+        newHistory = {}
+        writeHistory(newHistory)
+        return newHistory
+      }
+    } else {
+      return {}
+    }
+  }
+
+  let history = readHistory()
+
+  function writeHistory(history) {
+    fs.writeFile(historyPath, JSON.stringify(history, null, 4))
+  }
+
+  function updateHistory(filepath) {
+    const matchedPath = filepath.match(expIdRegex)
+    if (matchedPath) {
+      const experimentId = matchedPath[2]
+      const experimentName = matchedPath[3]
+      history[experimentName] = experimentId
+      writeHistory(history)
+    }
+  }
+
+
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig({
     sync: {
       main: {
         files: [{
-          cwd: source,
-          src: ['**'],
+          src: [`${source}/**`],
           dest: destination,
         }],
-        pretend: !grunt.option('prod'), // Don't do real IO; log only
+        pretend: !grunt.option('prod'), // Don't do real IO
       }
     },
 
@@ -82,11 +119,9 @@ module.exports = function(grunt) {
     },
   })
 
-  // grunt.event.on('watch', function(action, filepath) {
-  //   // do a folder path extraction here, save to persistent file
-  //   changedFiles[filepath] = action;
-  //   onChange();
-  // });
+  grunt.event.on('watch', function(action, filepath) {
+    updateHistory(filepath)
+  })
 
 
   grunt.registerTask('lab', 'run all the experiments', experimentTasks)
