@@ -59,7 +59,7 @@ module.exports = function(grunt) {
   }
 
   function remoteCmd() {
-    return (grunt.option('remote') || grunt.option('r')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
+    return (grunt.option('remote')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
   function plotCmd() {
