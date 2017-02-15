@@ -15,13 +15,19 @@ Experiments complete. Press Ctrl+C to exit.
 
 module.exports = function(grunt) {
   process.env.NODE_ENV = grunt.option('prod') ? 'production' : 'development'
+
   const config = require('config')
-  const source = 'data'
-  const destination = resolve(config.data_sync_destination)
+  const dataSrc = 'data'
+  const dataDest = resolve(config.data_sync_destination)
   const experiments = config.experiments
   const experimentTasks = _.map(experiments, function(name) {
-    return `shell:exp:${name}`
+    return `shell:experiment:${name}`
   })
+
+  function writeHistory(history) {
+    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2))
+    return history
+  }
 
   function readHistory() {
     if (grunt.option('resume')) {
@@ -29,9 +35,7 @@ module.exports = function(grunt) {
         return JSON.parse(fs.readFileSync(historyPath, 'utf8'))
       } catch (err) {
         console.log(`No existing ${historyPath} to resume, creating new`)
-        newHistory = {}
-        writeHistory(newHistory)
-        return newHistory
+        return writeHistory({})
       }
     } else {
       return {}
@@ -40,12 +44,9 @@ module.exports = function(grunt) {
 
   let history = readHistory()
 
-  function writeHistory(history) {
-    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2))
-  }
-
   function updateHistory(filepath) {
     if (fs.lstatSync(filepath).isFile()) {
+      // only interested in data folder, skip otherwise
       return
     }
     const matchedPath = filepath.split('/').pop().match(expIdRegex)
@@ -65,21 +66,21 @@ module.exports = function(grunt) {
     return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
-  function composeCommand(experiment) {
-    var modExperiment = experiment
+  function composeCommand(experimentStr) {
+    var eStr = experimentStr
     if (grunt.option('resume')) {
-      const matchedExp = experiment.match(expIdRegex)
+      const matchedExp = eStr.match(expIdRegex)
       if (matchedExp) {
         const experimentIdOrName = matchedExp[2]
         const experimentName = matchedExp[3] || matchedExp[4]
         if (history[experimentName]) {
-          modExperiment = modExperiment.replace(experimentIdOrName, history[experimentName])
+          eStr = eStr.replace(experimentIdOrName, history[experimentName])
         }
       }
     }
     // override with custom command if has 'python'
-    var pyCmd = _.includes(modExperiment, 'python') ? modExperiment : `python3 main.py -bgp -e ${modExperiment} -t 5`
-    const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(modExperiment)}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5`
+    const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
     console.log(`Composed command: ${cmd}`)
     return cmd
   }
@@ -91,9 +92,8 @@ module.exports = function(grunt) {
     sync: {
       main: {
         files: [{
-          cwd: source,
-          src: [`**/*`],
-          dest: destination,
+          src: [`${dataSrc}/**`],
+          dest: dataDest,
         }],
         pretend: !grunt.option('prod'), // Don't do real IO
       }
@@ -101,7 +101,7 @@ module.exports = function(grunt) {
 
     watch: {
       data: {
-        files: `${source}/**`,
+        files: `${dataSrc}/**`,
         tasks: ['sync'],
         options: {
           debounceDelay: 60000,
@@ -116,18 +116,18 @@ module.exports = function(grunt) {
           env: process.env
         }
       },
-      exp: {
-        command(experiment) {
-          return composeCommand(experiment)
+      experiment: {
+        command(experimentStr) {
+          return composeCommand(experimentStr)
         },
         options: {
           stdout: true
         }
       },
       finish: `echo "${finishMsg}"`,
-      // TODO make smarter by autosearch
+      // TODO make smarter by autosearch from history
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
-      clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log',
+      clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log config/history.json',
     },
 
     concurrent: {
@@ -142,7 +142,6 @@ module.exports = function(grunt) {
   grunt.event.on('watch', function(action, filepath) {
     updateHistory(filepath)
   })
-
 
   grunt.registerTask('lab', 'run all the experiments', experimentTasks)
   grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:default'])
