@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       try {
         return JSON.parse(fs.readFileSync(historyPath, 'utf8'))
       } catch (err) {
-        console.log(`No existing ${historyPath} to resume, creating new`)
+        grunt.log.writeln(`No existing ${historyPath} to resume, creating new`)
         return writeHistory({})
       }
     } else {
@@ -85,7 +85,7 @@ module.exports = function(grunt) {
     // override with custom command if has 'python'
     var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5 ${plotCmd()}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
-    console.log(`Composed command: ${cmd}`)
+    grunt.log.writeln(`Composed command: ${cmd}`)
     return cmd
   }
 
