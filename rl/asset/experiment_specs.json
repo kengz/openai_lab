@@ -344,7 +344,7 @@
         "problem": "LunarLander-v2",
         "Agent": "DQN",
         "Memory": "LinearMemoryWithForgetting",
-        "Policy": "BolztmannPolicy",
+        "Policy": "EpsilonGreedyPolicy",
         "PreProcessor": "StackStates",
         "param": {
             "train_per_n_new_exp": 5,
