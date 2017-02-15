@@ -236,8 +236,8 @@ def plot_experiment(data_df, trial_id):
                                     hue='solved_ratio_of_sessions')
             fig = df_plot.get_figure()
             fig.suptitle(wrap_text(experiment_id))
-            filename = './data/{}/experiment_plot_{}_vs_{}.png'.format(
-                experiment_id, x, y)
+            filename = './data/{}/{}_analysis_{}_vs_{}.png'.format(
+                experiment_id, experiment_id, x, y)
             fig.savefig(filename)
             fig.clear()
 
@@ -247,7 +247,7 @@ def plot_experiment(data_df, trial_id):
     fig.map(partial(sns.swarmplot, size=3))
     fig.fig.suptitle(wrap_text(experiment_id))
     fig.add_legend()
-    filename = './data/{}/experiment_plot_overview.png'.format(
+    filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
     fig.savefig(filename)
 
