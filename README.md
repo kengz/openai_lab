@@ -99,16 +99,16 @@ To set up the lab experiments, edit `config/default.json`.
 python3 main.py -bgp -e dev_dqn -t 2 | tee -a ./data/terminal.log
 # run the lab in development mode (no watcher, no noti)
 grunt
-# run the lab in production mode
+# run analysis and plot only, even when lab is still running
+grunt plot
+# clean out dev data files and trash after dev
+grunt clear
+# add flag to run the lab in production mode
 grunt -prod
-# run the lab remotely
+# add flag to run the lab remotely (over ssh)
 grunt -remote
-# for development of an experiment, quick run
-npm run dev
-# run analysis only, even when shits half-running (in production, but don't need watcher)
-grunt plot -e=dev_dqn_2017-02-12_183415
-# if you're running it on a remote server
-grunt plot -e=dev_dqn_2017-02-12_183415 -remote
+# resume the past lab run, uses config/history.json
+grunt -resume
 ```
 
 ### Running remotely
