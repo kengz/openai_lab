@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         files: `${source}/**`,
         tasks: ['sync'],
         options: {
-          debounceDelay: 5000,
+          debounceDelay: 60000,
         },
       }
     },
