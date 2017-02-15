@@ -21,7 +21,7 @@ module.exports = function(grunt) {
     return (grunt.option('remote') || grunt.option('r')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
-  function notiCmd() {
+  function notiCmd(experiment) {
     return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
   function composeCommand(experiment) {
     // override with custom command if has 'python'
     var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
-    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; ${notiCmd()}`
+    return `${remoteCmd()} ${cmd} | tee -a ./data/terminal.log; ${notiCmd(experiment)}`
   }
 
   require('load-grunt-tasks')(grunt)
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
       // TODO make smarter by autosearch
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
       // TODO add a dev mode clear vs prod mode clear
-      clear: `rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log`,
+      clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage data/**/ data/*.log',
     },
 
     concurrent: {
