@@ -25,10 +25,6 @@ module.exports = function(grunt) {
     return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
-  function watchCmd() {
-    return grunt.option('prod') ? 'watch' : 'shell:nowatch'
-  }
-
   function composeCommand(experiment) {
     // override with custom command if has 'python'
     var cmd = _.includes(experiment, 'python') ? experiment : `python3 main.py -bgp -e ${experiment} -t 5`
@@ -71,7 +67,6 @@ module.exports = function(grunt) {
           return composeCommand(experiment)
         }
       },
-      nowatch: 'echo "in development; watch mode not activated"',
       finish: `echo "${finishMsg}"`,
       // TODO make smarter by autosearch
       plot: `${remoteCmd()} python3 main.py -e ${grunt.option('e')} -a`,
@@ -79,8 +74,8 @@ module.exports = function(grunt) {
     },
 
     concurrent: {
-      default: [watchCmd(), ['lab', 'shell:finish']],
-      plot: [watchCmd(), ['shell:plot', 'shell:finish']],
+      default: ['watch', ['lab', 'shell:finish']],
+      plot: ['watch', ['shell:plot', 'shell:finish']],
       options: {
         logConcurrentOutput: true
       }
