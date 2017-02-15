@@ -96,7 +96,8 @@ module.exports = function(grunt) {
     sync: {
       main: {
         files: [{
-          src: [`${dataSrc}/**`],
+          cwd: dataSrc,
+          src: ['**'],
           dest: dataDest,
         }],
         pretend: !grunt.option('prod'), // Don't do real IO
