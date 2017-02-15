@@ -110,6 +110,7 @@ module.exports = function(grunt) {
         tasks: ['sync'],
         options: {
           debounceDelay: 60000,
+          interval: 60000,
         },
       }
     },
