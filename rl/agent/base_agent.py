@@ -28,6 +28,9 @@ class Agent(object):
                     self, memory, policy, preprocessor, optimizer]])
             ))
 
+    def compile_model(self):
+        raise NotImplementedError()
+
     def select_action(self, state):
         self.policy.select_action(state)
         raise NotImplementedError()

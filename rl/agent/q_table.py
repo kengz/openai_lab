@@ -22,6 +22,9 @@ class Dummy(Agent):
     def train(self, sys_vars):
         return
 
+    def compile_model(self):
+        return
+
 
 class QTable(Agent):
 
