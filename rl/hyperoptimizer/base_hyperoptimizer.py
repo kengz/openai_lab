@@ -49,6 +49,7 @@ class HyperOptimizer(object):
             'Memory': self.experiment_spec['Memory'],
             'Policy': self.experiment_spec['Policy'],
             'PreProcessor': self.experiment_spec['PreProcessor'],
+            'HyperOptimizer': self.experiment_spec['HyperOptimizer'],
             'param': param,
         }
 
