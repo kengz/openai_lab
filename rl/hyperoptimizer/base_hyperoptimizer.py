@@ -41,14 +41,6 @@ class HyperOptimizer(object):
         for k in kwargs:
             setattr(self, k, kwargs[k])
 
-    def next_param(self):
-        '''retrieve trial_num and param, advance the class next_param_idx'''
-        assert self.next_param_idx < len(self.param_search_list)
-        trial_num = self.next_param_idx
-        param = self.param_search_list[self.next_param_idx]
-        self.next_param_idx = self.next_param_idx + 1
-        return (trial_num, param)
-
     def compose_experiment_spec(self, param):
         return {
             'experiment_name': self.experiment_spec['experiment_name'],
@@ -59,9 +51,6 @@ class HyperOptimizer(object):
             'PreProcessor': self.experiment_spec['PreProcessor'],
             'param': param,
         }
-
-    def append_experiment_data(self, trial_data):
-        self.experiment_data.append(trial_data)
 
     def init_search(self):
         '''initialize the search algo and the search space'''
@@ -74,31 +63,39 @@ class HyperOptimizer(object):
         '''
         raise NotImplementedError()
 
-    def run_trial(self, trial_num, experiment_spec):
+    def next_param(self):
+        '''retrieve trial_num and param, advance the class next_param_idx'''
+        assert self.next_param_idx < len(self.param_search_list)
+        trial_num = self.next_param_idx
+        param = self.param_search_list[self.next_param_idx]
+        self.next_param_idx = self.next_param_idx + 1
+        return (trial_num, param)
+
+    def run_trial(self, trial_num, param):
         '''
         algo step 2, construct and run Trial with the next param
         '''
+        experiment_spec = self.compose_experiment_spec(param)
+
         trial = self.Trial(
             experiment_spec, trial_num=trial_num,
             times=self.times,
             num_of_trials=self.num_of_trials,
             run_timestamp=self.run_timestamp,
             experiment_id_override=self.experiment_id_override)
-        return trial.run()
+        trial_data = trial.run()
+        return trial_data
 
     def update_search(self):
-        '''algo step 3, update search algo using score'''
+        '''algo step 3, update search algo using self.experiment_data'''
         raise NotImplementedError()
 
     def to_terminate(self):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
-    def run_step(self, trial_num, param):
-        experiment_spec = self.compose_experiment_spec(param)
-        trial_data = self.run_trial(trial_num, experiment_spec)
-        self.update_search()
-        return trial_data
+    def append_experiment_data(self, trial_data):
+        self.experiment_data.append(trial_data)
 
     def run(self):
         '''
@@ -111,8 +108,9 @@ class HyperOptimizer(object):
             self.search()  # add to self.param_search_list
             trial_num, param = self.next_param()
             pool.apply_async(
-                self.run_step, (trial_num, param),
+                self.run_trial, (trial_num, param),
                 callback=self.append_experiment_data)
+            self.update_search()
         pool.close()
         pool.join()
         return self.experiment_data
