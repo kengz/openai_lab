@@ -34,6 +34,7 @@ class HyperOptimizer(object):
         self.param_search_list = []
         # the index of next param to try in param_search_list
         self.next_param_idx = 0
+        self.experiment_data = []
         assert all(k in kwargs for k in self.REQUIRED_ARGS)
         for k in kwargs:
             setattr(self, k, kwargs[k])
@@ -43,8 +44,19 @@ class HyperOptimizer(object):
         assert self.next_param_idx < len(self.param_search_list)
         trial_num = self.next_param_idx
         param = self.param_search_list[self.next_param_idx]
-        self.next_param_idx += 1
+        self.next_param_idx = self.next_param_idx + 1
+        print('NEXT PARAM')
+        print('NEXT PARAM')
+        print('NEXT PARAM')
+        print('NEXT PARAM')
+        print('NEXT PARAM')
+        print('NEXT PARAM')
+        print(trial_num)
+        print(self.next_param_idx)
         return (trial_num, param)
+
+    def append_experiment_data(self, trial_data):
+        self.experiment_data.append(trial_data)
 
     def init_search(self):
         '''initialize the search algo and the search space'''
@@ -68,7 +80,7 @@ class HyperOptimizer(object):
         '''algo step 3, update search algo using score'''
         raise NotImplementedError()
 
-    def termination_check(self):
+    def to_terminate(self):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
