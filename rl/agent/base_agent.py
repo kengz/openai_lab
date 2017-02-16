@@ -11,19 +11,21 @@ class Agent(object):
                  **kwargs):  # absorb generic param without breaking
         self.env_spec = env_spec
 
-    def compile(self, memory, policy, preprocessor):
+    def compile(self, memory, policy, preprocessor, optimizer):
         # set 2 way references
         self.memory = memory
         self.policy = policy
         self.preprocessor = preprocessor
+        self.optimizer = optimizer
         # back references
         setattr(memory, 'agent', self)
         setattr(policy, 'agent', self)
         setattr(preprocessor, 'agent', self)
+        setattr(optimizer, 'agent', self)
         logger.info(
-            'Compiled:\nAgent, Memory, Policy, Preprocessor:\n{}'.format(
+            'Compiled:\nAgent, Memory, Policy, Preprocessor, Optimizer:\n{}'.format(
                 ', '.join([comp.__class__.__name__ for comp in [
-                    self, memory, policy, preprocessor]])
+                    self, memory, policy, preprocessor, optimizer]])
             ))
 
     def select_action(self, state):

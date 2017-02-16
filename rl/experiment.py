@@ -19,6 +19,7 @@ from rl.analytics import *
 from rl.hyperoptimizer import *
 from rl.memory import *
 from rl.policy import *
+from rl.optimizer import *
 from rl.preprocessor import *
 
 
@@ -80,8 +81,9 @@ class Session(object):
         self.Policy = get_module(GREF, self.experiment_spec['Policy'])
         self.PreProcessor = get_module(
             GREF, self.experiment_spec['PreProcessor'])
+        self.Optimizer = get_module(
+            GREF, self.experiment_spec['Optimizer'])
         self.param = self.experiment_spec['param']
-
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
@@ -90,7 +92,9 @@ class Session(object):
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.agent.compile(self.memory, self.policy, self.preprocessor)
+        self.optimizer = self.Optimizer(self.param)
+        self.agent.compile(self.memory, self.policy, self.preprocessor, self.optimizer)
+        self.agent.compile_model()
 
         # data file and graph
         self.base_filename = './data/{}/{}'.format(
