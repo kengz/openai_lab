@@ -1,3 +1,4 @@
+import multiprocessing as mp
 from rl.util import *
 
 
@@ -45,14 +46,6 @@ class HyperOptimizer(object):
         trial_num = self.next_param_idx
         param = self.param_search_list[self.next_param_idx]
         self.next_param_idx = self.next_param_idx + 1
-        print('NEXT PARAM')
-        print('NEXT PARAM')
-        print('NEXT PARAM')
-        print('NEXT PARAM')
-        print('NEXT PARAM')
-        print('NEXT PARAM')
-        print(trial_num)
-        print(self.next_param_idx)
         return (trial_num, param)
 
     def append_experiment_data(self, trial_data):
@@ -69,12 +62,17 @@ class HyperOptimizer(object):
         '''
         raise NotImplementedError()
 
-    def run_trial(self, param):
+    def run_trial(self, trial_num, experiment_spec):
         '''
         algo step 2, construct and run Trial with the next param
-
         '''
-        raise NotImplementedError()
+        trial = self.Trial(
+            experiment_spec, trial_num=trial_num,
+            times=self.times,
+            num_of_trials=self.num_of_trials,
+            run_timestamp=self.run_timestamp,
+            experiment_id_override=self.experiment_id_override)
+        return trial.run()
 
     def update_search(self, score):
         '''algo step 3, update search algo using score'''
@@ -84,9 +82,23 @@ class HyperOptimizer(object):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
+    def run_step(self, trial_num, experiment_spec):
+        trial_data = self.run_trial(trial_num, experiment_spec)
+        self.update_search()
+        return trial_data
+
     def run(self):
         '''
         top level method to run the entire hyperoptimizer
         will gather and compose experiment_data, then return it
         '''
-        raise NotImplementedError()
+        pool = mp.Pool(PARALLEL_PROCESS_NUM)
+        while (not self.to_terminate()):
+            self.search()  # add to param_search_list
+            trial_num, experiment_spec = self.next_param()
+            pool.apply_async(
+                self.run_step, (trial_num, experiment_spec),
+                callback=self.append_experiment_data)
+        pool.close()
+        pool.join()
+        return self.experiment_data
