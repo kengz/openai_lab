@@ -140,7 +140,6 @@ The extra flags are:
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-m <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
-- `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in problems.json

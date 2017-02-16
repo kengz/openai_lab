@@ -57,12 +57,6 @@ parser.add_argument("-m", "--max_evals",
                     type=int,
                     dest="max_evals",
                     default=2)
-parser.add_argument("-l", "--line_search",
-                    help="to use line_search instead of param_product",
-                    action="store_const",
-                    dest="line_search",
-                    const=False,
-                    default=False)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
