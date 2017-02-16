@@ -86,7 +86,7 @@ class HyperOptimizer(object):
             experiment_id_override=self.experiment_id_override)
         return trial.run()
 
-    def update_search(self, score):
+    def update_search(self):
         '''algo step 3, update search algo using score'''
         raise NotImplementedError()
 

@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 from rl.util import *
 
