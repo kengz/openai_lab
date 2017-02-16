@@ -12,7 +12,7 @@ class SGD_L(Optimizer):
         nesterov
     '''
 
-    def __init__(self, param): 
+    def __init__(self, param):
         super(SGD_L, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()

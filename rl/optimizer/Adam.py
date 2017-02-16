@@ -14,7 +14,7 @@ class Adam_L(Optimizer):
         Suggested to leave at default params with the expected of lr
     '''
 
-    def __init__(self, param):  
+    def __init__(self, param):
         super(Adam_L, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()
@@ -48,7 +48,7 @@ class Adam_L(Optimizer):
             self.optim_param['lr'] = lr
         if 'beta_1' in new_params:
             beta_1 = new_params['beta_1']
-            self.optim_param['beta_1'] = momentum
+            self.optim_param['beta_1'] = beta_1
         if 'beta_2' in new_params:
             beta_2 = new_params['beta_2']
             self.optim_param['beta_2'] = beta_2

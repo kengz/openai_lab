@@ -12,7 +12,7 @@ class RMSprop_L(Optimizer):
         epsilon
     '''
 
-    def __init__(self, param):  
+    def __init__(self, param):
         super(RMSprop_L, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()
