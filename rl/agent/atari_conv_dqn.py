@@ -1,7 +1,6 @@
 from rl.agent.dqn import DQN
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
-# from keras.optimizers import RMSprop
 
 
 class ConvDQN(DQN):

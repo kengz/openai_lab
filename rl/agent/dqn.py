@@ -3,7 +3,6 @@ from rl.agent.base_agent import Agent
 from rl.util import logger, log_self
 from keras.models import Sequential
 from keras.layers.core import Dense
-# from keras.optimizers import SGD
 
 
 class DQN(Agent):

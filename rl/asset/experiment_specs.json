@@ -23,7 +23,7 @@
   },
   "dev_dqn": {
     "problem": "DevCartPole-v0",
-    "Agent": "DoubleDQN",
+    "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
