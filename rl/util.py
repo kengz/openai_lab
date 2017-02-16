@@ -248,24 +248,8 @@ def param_line_search(experiment_spec):
     return param_list
 
 
-# convert a dict of param ranges into
-# a list of cartesian products of param_range
-# e.g. {'a': [1,2], 'b': [3]} into
-# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(experiment_spec):
-    default_param = experiment_spec['param']
-    param_range = experiment_spec['param_range']
-    keys = param_range.keys()
-    range_vals = param_range.values()
-    param_grid = []
-    for vals in itertools.product(*range_vals):
-        param = copy.deepcopy(default_param)
-        param.update(dict(zip(keys, vals)))
-        param_grid.append(param)
-    return param_grid
-
-
 # for param selection
+# TODO move to base_hyperoptimizer
 def generate_experiment_spec_grid(experiment_spec, param_grid):
     experiment_spec_grid = [{
         'experiment_name': experiment_spec['experiment_name'],

@@ -177,7 +177,7 @@ A hyperoptimizer is a function h that takes:
 - a param space `P` (implemented in `experiment_spec`)
 
 and run the algorithm:
-1. search the next p in P using its internal search algo
+1. search the next p in P using its internal search algo, add to its internal `param_search_list`
 2. run a (slow) function Trial(p) = score (inside trial data)
 3. update search using feedback score
 4. repeat till max steps or fitness condition met
@@ -212,8 +212,10 @@ Note that whether a variable is real or discrete can be up to the author; some v
 The experiment will run it as:
 
 ```python
-hyperopt = HyperOptimizer(Trial, **experiment_kwargs)
-experiment_data = hyperopt.run()
+# specify which hyperoptimizer class to use in spec for bookkeeping
+Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
+hopt = Hopt(Trial, **experiment_kwargs)
+experiment_data = hopt.run()
 ```
 
 
