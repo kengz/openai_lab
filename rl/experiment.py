@@ -10,9 +10,8 @@ else:
     K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
 import gym
-import json
 import traceback
-from os import path, environ
+from os import environ
 from rl.util import *
 from rl.agent import *
 from rl.analytics import *

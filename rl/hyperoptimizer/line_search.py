@@ -1,5 +1,5 @@
+import copy
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
-from rl.util import *
 
 
 class LineSearch(HyperOptimizer):

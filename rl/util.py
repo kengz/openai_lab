@@ -1,7 +1,5 @@
 import argparse
 import collections
-import copy
-import itertools
 import json
 import logging
 import multiprocessing as mp

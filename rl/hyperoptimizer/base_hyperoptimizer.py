@@ -1,5 +1,6 @@
+import copy
 import multiprocessing as mp
-from rl.util import *
+from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM
 
 
 class HyperOptimizer(object):

@@ -1,6 +1,7 @@
+import copy
+import itertools
 from collections import OrderedDict
 from rl.hyperoptimizer.line_search import LineSearch
-from rl.util import *
 
 
 class GridSearch(LineSearch):
