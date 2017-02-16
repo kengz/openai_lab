@@ -27,6 +27,7 @@ class HyperOptimizer(object):
             'experiment_id_override',
             'times'
         ]
+        logger.info('Initialize {}'.format(self.__class__.__name__))
         self.set_keys(**kwargs)
         self.init_search()
 
@@ -92,6 +93,7 @@ class HyperOptimizer(object):
         top level method to run the entire hyperoptimizer
         will gather and compose experiment_data, then return it
         '''
+        logger.info('Run {}'.format(self.__class__.__name__))
         pool = mp.Pool(PARALLEL_PROCESS_NUM)
         while (not self.to_terminate()):
             self.search()  # add to param_search_list

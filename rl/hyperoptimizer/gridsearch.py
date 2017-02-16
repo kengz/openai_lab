@@ -15,7 +15,6 @@ class GridSearch(HyperOptimizer):
         default_param = self.experiment_spec['param']
         param_range = self.experiment_spec['param_range']
         ordered_param_range = OrderedDict(sorted(param_range.items()))
-        print(ordered_param_range)
         keys = sorted(ordered_param_range.keys())
         range_vals = ordered_param_range.values()
         param_grid = []

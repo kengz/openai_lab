@@ -483,13 +483,13 @@ def run(name_id_spec, times=1,
             experiment_kwargs['experiment_id_override'] = experiment_id
             experiment_spec = EXPERIMENT_SPECS.get(
                 parse_experiment_name(name_id_spec))
-        else:  # rerun a new experiment by name
+        else:  # run a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
-                'Rerun a new experiment by name {}'.format(experiment_name))
+                'Run a new experiment by name {}'.format(experiment_name))
             experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
-        logger.info('Rerun a new experiment by spec')
+        logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec
 
     experiment_kwargs['experiment_spec'] = experiment_spec
