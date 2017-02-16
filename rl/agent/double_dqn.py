@@ -18,10 +18,13 @@ class DoubleDQN(DQN):
         model2.summary()
         self.model2 = model2
 
-        self.model2.compile(
-            loss='mean_squared_error', optimizer=self.optimizer)
-        logger.info("Models built and compiled")
+        logger.info("Models 1 and 2 built")
         return self.model, self.model2
+
+    def compile_model(self):
+        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer.optimizer)
+        self.model2.compile(loss='mean_squared_error', optimizer=self.optimizer.optimizer)
+        logger.info("Models 1 and 2 compiled")
 
     def compute_Q_states(self, minibatch):
         clip_val = 10000
