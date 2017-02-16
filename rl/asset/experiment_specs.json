@@ -5,6 +5,7 @@
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {}
   },
   "q_table": {
@@ -13,6 +14,7 @@
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "learning_rate": 0.01,
       "gamma": 0.99,
@@ -65,6 +67,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -90,6 +93,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -116,6 +120,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -153,6 +158,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -179,6 +185,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -205,6 +212,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -231,6 +239,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.02,
@@ -257,6 +266,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.001,
@@ -287,6 +297,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.001,
@@ -317,6 +328,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.001,
@@ -347,6 +359,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 5,
       "learning_rate": 0.001,
@@ -374,6 +387,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 1,
       "learning_rate": 0.001,
@@ -401,6 +415,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 5,
       "learning_rate": 0.001,
@@ -428,6 +443,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 5,
       "learning_rate": 0.001,
@@ -455,6 +471,7 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 5,
       "learning_rate": 0.001,
@@ -482,6 +499,7 @@
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 4,
       "learning_rate": 0.001,
@@ -510,6 +528,7 @@
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
+    "HyperOptimizer": "GridSearch",
     "param": {
       "train_per_n_new_exp": 4,
       "learning_rate": 0.001,
