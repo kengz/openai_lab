@@ -98,9 +98,13 @@ logger.propagate = False
 
 
 def log_self(subject):
-    logger.debug('{}, params: {}'.format(
+    max_info_len = 300
+    info = '{}, params: {}'.format(
         subject.__class__.__name__,
-        to_json(subject.__dict__)))
+        to_json(subject.__dict__))
+    trunc_info = (
+        info[:max_info_len] + '...' if len(info) > max_info_len else info)
+    logger.debug(trunc_info)
 
 
 def wrap_text(text):
@@ -340,7 +344,7 @@ def load_data_array_from_experiment_id(id_str):
 
 def save_experiment_data(data_df, trial_id):
     experiment_id = parse_experiment_id(trial_id)
-    filename = './data/{0}/experiment_data_{0}.csv'.format(experiment_id)
+    filename = './data/{0}/{0}_analysis_data.csv'.format(experiment_id)
     data_df.to_csv(filename, index=False)
     logger.info(
         'experiment data saved to {}'.format(filename))

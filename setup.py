@@ -51,7 +51,7 @@ def read(fname):
 # the setup
 setup(
     name='openai_lab',
-    version='0.0.1',
+    version='1.0.0',
     description='An experimentation system for Reinforcement Learning using OpenAI and Keras',
     long_description=read('README.md'),
     keywords='openai gym',

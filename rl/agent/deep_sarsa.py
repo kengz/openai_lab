@@ -9,6 +9,7 @@ class DeepSarsa(DQN):
     On policy, with updates after each experience
     Policy = epsilonGreedyPolicy
     '''
+
     def __init__(self, *args, **kwargs):
         super(DeepSarsa, self).__init__(*args, **kwargs)
         self.train_per_n_new_exp = 1
@@ -34,4 +35,3 @@ class DeepSarsa(DQN):
 
         loss = self.model.train_on_batch(last_exp['states'], Q_targets)
         return loss
-

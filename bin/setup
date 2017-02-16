@@ -98,3 +98,7 @@ python3 -c "import theano; print('theano version:'); print(theano.__version__)"
 
 # install keras
 sudo python3 -m pip install keras
+
+# copy keys file if not already exist
+BIN_DIR=`pwd`/bin
+$BIN_DIR/copy-config

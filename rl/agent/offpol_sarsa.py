@@ -3,6 +3,7 @@ from rl.agent.dqn import DQN
 
 
 class OffPolicySarsa(DQN):
+
     '''
     Deep Sarsa agent.
     Off policy. Reduces to Q learning when eval_e = 0
@@ -23,8 +24,8 @@ class OffPolicySarsa(DQN):
             self.model.predict(last_exp['next_states']), -clip_val, clip_val)
 
         e_per_action = self.eval_e / self.env_spec['action_dim']
-        
+
         Q_next_states_max = np.amax(Q_next_states, axis=1)
         expected_Q = (1 - self.eval_e) * Q_next_states_max + \
-                        np.sum(Q_next_states * e_per_action, axis=1)
+            np.sum(Q_next_states * e_per_action, axis=1)
         return (Q_states, expected_Q)
