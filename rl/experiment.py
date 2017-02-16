@@ -366,9 +366,9 @@ class Trial(object):
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
-    def to_stop(self):
+    def to_stop(self, s):
         '''check of trial should be continued'''
-        failed = self.data['stats']['solved_ratio_of_sessions'] == 0.
+        failed = (s >= 2) and (self.data['stats']['solved_ratio_of_sessions'] == 0.)
         if failed:
             logger.info(
                 'Failed trial, terminating sessions for {}'.format(
@@ -430,7 +430,7 @@ class Trial(object):
                 # progressive update, write every session completion
                 self.save()
 
-                if s >= 2 and self.to_stop():
+                if self.to_stop(s):
                     break
 
         progress = 'Progress: Trial #{} of {} done'.format(
