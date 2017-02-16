@@ -229,40 +229,6 @@ def get_module(GREF, dot_path):
     return mod
 
 
-# convert a dict of param ranges into
-# a list parameter settings corresponding
-# to a line search of the param range
-# for each param
-# All other parameters set to default vals
-def param_line_search(experiment_spec):
-    default_param = experiment_spec['param']
-    param_range = experiment_spec['param_range']
-    keys = param_range.keys()
-    param_list = []
-    for key in keys:
-        vals = param_range[key]
-        for val in vals:
-            param = copy.deepcopy(default_param)
-            param[key] = val
-            param_list.append(param)
-    return param_list
-
-
-# for param selection
-# TODO move to base_hyperoptimizer
-def generate_experiment_spec_grid(experiment_spec, param_grid):
-    experiment_spec_grid = [{
-        'experiment_name': experiment_spec['experiment_name'],
-        'problem': experiment_spec['problem'],
-        'Agent': experiment_spec['Agent'],
-        'Memory': experiment_spec['Memory'],
-        'Policy': experiment_spec['Policy'],
-        'PreProcessor': experiment_spec['PreProcessor'],
-        'param': param,
-    } for param in param_grid]
-    return experiment_spec_grid
-
-
 def clean_id_str(id_str):
     return id_str.split('/').pop().split('.').pop(0)
 

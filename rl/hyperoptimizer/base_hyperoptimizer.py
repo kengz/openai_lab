@@ -49,6 +49,17 @@ class HyperOptimizer(object):
         self.next_param_idx = self.next_param_idx + 1
         return (trial_num, param)
 
+    def compose_experiment_spec(self, param):
+        return {
+            'experiment_name': self.experiment_spec['experiment_name'],
+            'problem': self.experiment_spec['problem'],
+            'Agent': self.experiment_spec['Agent'],
+            'Memory': self.experiment_spec['Memory'],
+            'Policy': self.experiment_spec['Policy'],
+            'PreProcessor': self.experiment_spec['PreProcessor'],
+            'param': param,
+        }
+
     def append_experiment_data(self, trial_data):
         self.experiment_data.append(trial_data)
 
@@ -83,7 +94,8 @@ class HyperOptimizer(object):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
-    def run_step(self, trial_num, experiment_spec):
+    def run_step(self, trial_num, param):
+        experiment_spec = self.compose_experiment_spec(param)
         trial_data = self.run_trial(trial_num, experiment_spec)
         self.update_search()
         return trial_data
@@ -96,10 +108,10 @@ class HyperOptimizer(object):
         logger.info('Run {}'.format(self.__class__.__name__))
         pool = mp.Pool(PARALLEL_PROCESS_NUM)
         while (not self.to_terminate()):
-            self.search()  # add to param_search_list
-            trial_num, experiment_spec = self.next_param()
+            self.search()  # add to self.param_search_list
+            trial_num, param = self.next_param()
             pool.apply_async(
-                self.run_step, (trial_num, experiment_spec),
+                self.run_step, (trial_num, param),
                 callback=self.append_experiment_data)
         pool.close()
         pool.join()
