@@ -430,7 +430,7 @@ class Trial(object):
                 # progressive update, write every session completion
                 self.save()
 
-                if self.to_stop():
+                if s >= 3 and self.to_stop():
                     break
 
         progress = 'Progress: Trial #{} of {} done'.format(
