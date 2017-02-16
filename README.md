@@ -178,8 +178,8 @@ A hyperoptimizer is a function h that takes:
 
 and run the algorithm:
 1. search the next p in P using its internal search algo
-2. run a (slow) function Trial(p) = score
-3. feedback score to inform its search algo
+2. run a (slow) function Trial(p) = score (inside trial data)
+3. update search using feedback score
 4. repeat till max steps or fitness condition met
 
 Furthermore, the search space P is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`.
@@ -208,6 +208,13 @@ Furthermore, the search space P is a tensor space product of `m` bounded real sp
 The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.
 
 Note that whether a variable is real or discrete can be up to the author; some variable such as learning_rate can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
+
+The experiment will run it as:
+
+```python
+hyperopt = HyperOptimizer(Trial, **experiment_kwargs)
+experiment_data = hyperopt.run()
+```
 
 
 ## Roadmap
