@@ -23,13 +23,6 @@ from rl.preprocessor import *
 
 
 GREF = globals()
-ASSET_PATH = path.join(path.dirname(__file__), 'asset')
-PROBLEMS = json.loads(open(
-    path.join(ASSET_PATH, 'problems.json')).read())
-# EXPERIMENT_SPECS = json.loads(open(
-#     path.join(ASSET_PATH, 'experiment_specs.json')).read())
-# for k in EXPERIMENT_SPECS:
-#     EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,

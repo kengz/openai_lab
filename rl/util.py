@@ -17,6 +17,8 @@ from textwrap import wrap
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}\-\d{2}\-\d{2}\_\d{6})'
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+PROBLEMS = json.loads(open(
+    path.join(ASSET_PATH, 'problems.json')).read())
 EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for k in EXPERIMENT_SPECS:

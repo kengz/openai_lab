@@ -42,16 +42,12 @@ class HyperOptimizer(object):
             setattr(self, k, kwargs[k])
 
     def compose_experiment_spec(self, param):
-        return {
-            'experiment_name': self.experiment_spec['experiment_name'],
-            'problem': self.experiment_spec['problem'],
-            'Agent': self.experiment_spec['Agent'],
-            'Memory': self.experiment_spec['Memory'],
-            'Policy': self.experiment_spec['Policy'],
-            'PreProcessor': self.experiment_spec['PreProcessor'],
-            'HyperOptimizer': self.experiment_spec['HyperOptimizer'],
+        new_experiment_spec = copy.deepcopy(self.experiment_spec)
+        new_experiment_spec.pop('param_range', None)
+        new_experiment_spec.update({
             'param': param,
-        }
+        })
+        return new_experiment_spec
 
     def init_search(self):
         '''initialize the search algo and the search space'''
