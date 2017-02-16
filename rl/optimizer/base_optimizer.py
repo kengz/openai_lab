@@ -4,12 +4,13 @@ class Optimizer(object):
     The base class of Optimizer, with the core methods
     '''
 
-    def __init__(self,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, param):  
         '''Construct externally, and set at Agent.compile()'''
         self.agent = None
-        self.optim_name = optim_name
         self.param = param
+
+    def set_init_optim_params(self):
+        raise NotImplementedError()
 
     def init_optimizer(self):
         raise NotImplementedError()
