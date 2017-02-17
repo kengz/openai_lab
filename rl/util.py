@@ -180,10 +180,10 @@ def to_json(o, level=0):
     elif isinstance(o, np.ndarray) and np.issubdtype(o.dtype, np.inexact):
         ret += "[" + \
             ','.join(map(lambda x: '%.7g' % x, o.flatten().tolist())) + "]"
-    elif hasattr(o, '__class__'):
-        ret += o.__class__.__name__
     elif o is None:
         ret += 'null'
+    elif hasattr(o, '__class__'):
+        ret += '"' + o.__class__.__name__ + '"'
     else:
         raise TypeError(
             "Unknown type '%s' for json serialization" % str(type(o)))
