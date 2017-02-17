@@ -22,6 +22,7 @@ class Agent(object):
         setattr(optimizer, 'agent', self)
         setattr(policy, 'agent', self)
         setattr(preprocessor, 'agent', self)
+        self.compile_model()
         logger.info(
             'Compiled:\nAgent, Memory, Optimizer, Policy, '
             'Preprocessor:\n{}'.format(

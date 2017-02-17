@@ -95,7 +95,6 @@ class Session(object):
         self.policy = self.Policy(**self.param)
         self.agent.compile(
             self.memory, self.optimizer, self.policy, self.preprocessor)
-        self.agent.compile_model()
 
         # data file and graph
         self.base_filename = './data/{}/{}'.format(
