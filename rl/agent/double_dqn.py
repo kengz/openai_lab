@@ -22,8 +22,12 @@ class DoubleDQN(DQN):
         return self.model, self.model2
 
     def compile_model(self):
-        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer.keras_optimizer)
-        self.model2.compile(loss='mean_squared_error', optimizer=self.optimizer.keras_optimizer)
+        self.model.compile(
+            loss='mean_squared_error',
+            optimizer=self.optimizer.keras_optimizer)
+        self.model2.compile(
+            loss='mean_squared_error',
+            optimizer=self.optimizer.keras_optimizer)
         logger.info("Models 1 and 2 compiled")
 
     def compute_Q_states(self, minibatch):
