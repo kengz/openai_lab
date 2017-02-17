@@ -3,6 +3,7 @@
     "problem": "CartPole-v0",
     "Agent": "Dummy",
     "Memory": "LinearMemory",
+    "Optimizer": "SGDOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {}
@@ -11,10 +12,11 @@
     "problem": "CartPole-v0",
     "Agent": "QTable",
     "Memory": "LinearMemory",
+    "Optimizer": "SGDOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "learning_rate": 0.01,
+      "lr": 0.01,
       "gamma": 0.99,
       "exploration_anneal_episodes": 200
     }
@@ -23,11 +25,19 @@
     "problem": "DevCartPole-v0",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.01,
+      "momentum": 0.6,
+      "decay": 0.0,
+      "epsilon": 1e-08,
+      "rho": 0.9,
+      "nesterov": true,
+      "beta_1": 0.9,
+      "beta_2": 0.999,
       "gamma": 0.96,
       "hidden_layers_shape": [16],
       "hidden_layers_activation": "sigmoid",
@@ -35,18 +45,19 @@
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
-      "learning_rate": [0.02, 0.2]
+      "lr": [0.02, 0.2]
     }
   },
   "test_dqn": {
     "problem": "TestCartPole-v0",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "SGDOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "gamma": 0.96,
       "hidden_layers_shape": [16],
       "hidden_layers_activation": "sigmoid",
@@ -54,25 +65,26 @@
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
-      "learning_rate": [0.02, 0.2]
+      "lr": [0.02, 0.2]
     }
   },
   "dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
-      "gamma": 0.96,
-      "hidden_layers_shape": [16],
+      "lr": 0.001,
+      "gamma": 0.98,
+      "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -86,11 +98,12 @@
     "problem": "CartPole-v0",
     "Agent": "DoubleDQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.01,
       "batch_size": 16,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
@@ -98,7 +111,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -112,18 +125,19 @@
     "problem": "CartPole-v0",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "SGDOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "learning_rate": {
+      "lr": {
         "uniform": {
           "low": 0.0001,
           "high": 1.0
@@ -149,11 +163,12 @@
     "problem": "CartPole-v0",
     "Agent": "DQNFreeze",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
@@ -161,7 +176,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -175,11 +190,12 @@
     "problem": "CartPole-v0",
     "Agent": "DeepSarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
@@ -187,7 +203,7 @@
       "exploration_anneal_episodes": 75
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -201,11 +217,12 @@
     "problem": "CartPole-v0",
     "Agent": "DeepExpectedSarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
@@ -213,7 +230,7 @@
       "exploration_anneal_episodes": 75
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -227,11 +244,12 @@
     "problem": "CartPole-v0",
     "Agent": "OffPolicySarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
       "hidden_layers_shape": [4],
@@ -239,7 +257,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.02, 0.05],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hidden_layers_shape": [
         [4],
@@ -253,21 +271,22 @@
     "problem": "MountainCar-v0",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hidden_layers_shape": [
         [128],
@@ -283,21 +302,22 @@
     "problem": "MountainCar-v0",
     "Agent": "DeepSarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 1,
       "gamma": 0.99,
       "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
-      "learning_rate": [0.0001, 0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hidden_layers_shape": [
         [128],
@@ -313,21 +333,22 @@
     "problem": "MountainCar-v0",
     "Agent": "DoubleDQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hidden_layers_shape": [
         [128],
@@ -343,23 +364,24 @@
     "problem": "LunarLander-v2",
     "Agent": "DQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -370,21 +392,22 @@
     "problem": "LunarLander-v2",
     "Agent": "DeepExpectedSarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 1,
       "gamma": 0.99,
       "hidden_layers_shape": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "exploration_anneal_episodes": [200, 300, 400],
       "hidden_layers_shape": [
@@ -397,23 +420,24 @@
     "problem": "LunarLander-v2",
     "Agent": "DoubleDQN",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -424,23 +448,24 @@
     "problem": "LunarLander-v2",
     "Agent": "DQNFreeze",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -451,23 +476,24 @@
     "problem": "LunarLander-v2",
     "Agent": "OffPolicySarsa",
     "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001, 0.0005],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -478,11 +504,12 @@
     "problem": "AirRaid-v0",
     "Agent": "ConvDQN",
     "Memory": "LongLinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [
@@ -491,10 +518,10 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 1000000,
-      "epi_change_learning_rate": 1000000
+      "epi_change_lr": 1000000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.01],
+      "lr": [0.001, 0.0001],
       "hidden_layers_shape": [
         [200, 100],
         [300, 200],
@@ -506,11 +533,12 @@
     "problem": "Breakout-v0",
     "Agent": "ConvDQN",
     "Memory": "LongLinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hidden_layers_shape": [
@@ -519,10 +547,10 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_change_learning_rate": 5000
+      "epi_change_lr": 5000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.01],
+      "lr": [0.001, 0.0001],
       "hidden_layers_shape": [
         [
           [16, 8, 8, [4, 4]],

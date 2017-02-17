@@ -99,7 +99,7 @@ logger.propagate = False
 
 def log_self(subject):
     max_info_len = 300
-    info = '{}, params: {}'.format(
+    info = '{}, param: {}'.format(
         subject.__class__.__name__,
         to_json(subject.__dict__))
     trunc_info = (
@@ -182,6 +182,8 @@ def to_json(o, level=0):
             ','.join(map(lambda x: '%.7g' % x, o.flatten().tolist())) + "]"
     elif o is None:
         ret += 'null'
+    elif hasattr(o, '__class__'):
+        ret += '"' + o.__class__.__name__ + '"'
     else:
         raise TypeError(
             "Unknown type '%s' for json serialization" % str(type(o)))
@@ -272,6 +274,7 @@ def generate_experiment_spec_grid(experiment_spec, param_grid):
         'problem': experiment_spec['problem'],
         'Agent': experiment_spec['Agent'],
         'Memory': experiment_spec['Memory'],
+        'Optimizer': experiment_spec['Optimizer'],
         'Policy': experiment_spec['Policy'],
         'PreProcessor': experiment_spec['PreProcessor'],
         'param': param,

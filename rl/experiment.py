@@ -18,6 +18,7 @@ from rl.agent import *
 from rl.analytics import *
 from rl.hyperoptimizer import *
 from rl.memory import *
+from rl.optimizer import *
 from rl.policy import *
 from rl.preprocessor import *
 
@@ -77,11 +78,12 @@ class Session(object):
         self.problem = self.experiment_spec['problem']
         self.Agent = get_module(GREF, self.experiment_spec['Agent'])
         self.Memory = get_module(GREF, self.experiment_spec['Memory'])
+        self.Optimizer = get_module(
+            GREF, self.experiment_spec['Optimizer'])
         self.Policy = get_module(GREF, self.experiment_spec['Policy'])
         self.PreProcessor = get_module(
             GREF, self.experiment_spec['PreProcessor'])
         self.param = self.experiment_spec['param']
-
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
         self.env = gym.make(self.sys_vars['GYM_ENV_NAME'])
@@ -89,8 +91,10 @@ class Session(object):
         self.env_spec = self.set_env_spec()
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
+        self.optimizer = self.Optimizer(**self.param)
         self.policy = self.Policy(**self.param)
-        self.agent.compile(self.memory, self.policy, self.preprocessor)
+        self.agent.compile(
+            self.memory, self.optimizer, self.policy, self.preprocessor)
 
         # data file and graph
         self.base_filename = './data/{}/{}'.format(
@@ -158,9 +162,12 @@ class Session(object):
             "Agent info: {}".format(
                 format_obj_dict(
                     self.agent,
-                    ['learning_rate', 'n_epoch'])))
+                    ['lr', 'n_epoch'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
+        logger.debug(
+            "Optimizer info: {}".format(
+                format_obj_dict(self.agent.optimizer, [])))
         logger.debug(
             "Policy info: {}".format(
                 format_obj_dict(self.agent.policy, ['e', 'tau'])))
@@ -182,7 +189,7 @@ class Session(object):
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info(
-                'Problem solved? {}\nAt episode: {}\nparams: {}'.format(
+                'Problem solved? {}\nAt episode: {}\nparam: {}'.format(
                     sys_vars['solved'], sys_vars['epi'],
                     to_json(self.param)))
             self.env.close()
@@ -368,7 +375,8 @@ class Trial(object):
 
     def to_stop(self, s):
         '''check of trial should be continued'''
-        failed = (s >= 2) and (self.data['stats']['solved_ratio_of_sessions'] == 0.)
+        failed = (s < self.times and s >= 2) and (
+            self.data['stats']['solved_ratio_of_sessions'] == 0.)
         if failed:
             logger.info(
                 'Failed trial, terminating sessions for {}'.format(
