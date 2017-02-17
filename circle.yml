@@ -11,7 +11,7 @@ dependencies:
   override:
     - pip install git+https://github.com/openai/gym.git
     - pip install tensorflow
-    - pip install git+https://github.com/Theano/Theano.git
+    - pip install theano
     - pip install keras
 test:
   override:
