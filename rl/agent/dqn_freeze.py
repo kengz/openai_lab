@@ -24,15 +24,14 @@ class DQNFreeze(DoubleDQN):
         # Target Q network = self.model2
 
     def compute_Q_states(self, minibatch):
-        clip_val = 10000
-        Q_states = np.clip(
-            self.model.predict(minibatch['states']), -clip_val, clip_val)
+        Q_states = np.clip(self.model.predict(minibatch['states']),
+                           -self.clip_val, self.clip_val)
         # Use frozen target network to find max of the estimated next state
         # Q-val
-        Q_next_states = np.clip(
-            self.model2.predict(minibatch['next_states']), -clip_val, clip_val)
+        Q_next_states = np.clip(self.model2.predict(minibatch['next_states']),
+                                -self.clip_val, self.clip_val)
         Q_next_states_max = np.amax(Q_next_states, axis=1)
-        return (Q_states, Q_next_states_max)
+        return (Q_states, Q_next_states, Q_next_states_max)
 
     def train_an_epoch(self):
         # Should call DQN to train an epoch, not DoubleDQN

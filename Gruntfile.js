@@ -79,6 +79,7 @@ module.exports = function(grunt) {
         return eStr.replace(experimentIdOrName, history[experimentName])
       }
     }
+    return eStr
   }
 
   function composeCommand(experimentStr) {
