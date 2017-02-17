@@ -17,7 +17,7 @@ class OffPolicySarsa(DQN):
         self.eval_e = 0.05
 
     def compute_Q_states(self, last_exp):
-        (Q_states, Q_next_states, _Q_next_states_max) = super(
+        (Q_states, Q_next_states, _max) = super(
             OffPolicySarsa, self).compute_Q_states(last_exp)
 
         e_per_action = self.eval_e / self.env_spec['action_dim']

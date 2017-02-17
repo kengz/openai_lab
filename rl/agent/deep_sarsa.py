@@ -1,4 +1,3 @@
-import numpy as np
 from rl.agent.dqn import DQN
 
 
@@ -18,7 +17,7 @@ class DeepSarsa(DQN):
         self.final_n_epoch = 1
 
     def compute_Q_states(self, last_exp):
-        (Q_states, Q_next_states, _Q_next_states_max) = super(
+        (Q_states, Q_next_states, _max) = super(
             DeepSarsa, self).compute_Q_states(last_exp)
         next_action = self.select_action(last_exp['next_states'][0])
         Q_next_states_selected = Q_next_states[:, next_action]

@@ -31,7 +31,7 @@ class DoubleDQN(DQN):
         logger.info("Models 1 and 2 compiled")
 
     def compute_Q_states(self, minibatch):
-        (Q_states, Q_next_states_select, _Q_next_states_max) = super(
+        (Q_states, Q_next_states_select, _max) = super(
             DoubleDQN, self).compute_Q_states(minibatch)
         # Different from (single) dqn: Select max using model 2
         Q_next_states_max_ind = np.argmax(Q_next_states_select, axis=1)

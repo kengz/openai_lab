@@ -152,7 +152,7 @@ class DQN(Agent):
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        (Q_states, Q_next_states, Q_next_states_max) = self.compute_Q_states(
+        (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
             minibatch)
         Q_targets = self.compute_Q_targets(
             minibatch, Q_states, Q_next_states_max)
