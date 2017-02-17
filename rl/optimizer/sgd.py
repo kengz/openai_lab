@@ -6,7 +6,7 @@ class SGDOptimizer(Optimizer):
 
     '''
     Stochastic gradient descent
-    Potential params:
+    Potential param:
         lr (learning rate)
         momentum
         decay

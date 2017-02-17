@@ -99,7 +99,7 @@ logger.propagate = False
 
 def log_self(subject):
     max_info_len = 300
-    info = '{}, params: {}'.format(
+    info = '{}, param: {}'.format(
         subject.__class__.__name__,
         to_json(subject.__dict__))
     trunc_info = (

@@ -6,7 +6,7 @@ class RMSpropOptimizer(Optimizer):
 
     '''
     RMS prop
-    Potential params:
+    Potential param:
         lr (learning rate)
         rho
         decay
