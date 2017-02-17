@@ -34,6 +34,7 @@ class DQN(Agent):
         self.hidden_layers = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
+        self.clip_val = 10000
         log_self(self)
         self.build_model()
 
@@ -132,13 +133,12 @@ class DQN(Agent):
 
     def compute_Q_states(self, minibatch):
         # note the computed values below are batched in array
-        clip_val = 10000
-        Q_states = np.clip(
-            self.model.predict(minibatch['states']), -clip_val, clip_val)
-        Q_next_states = np.clip(
-            self.model.predict(minibatch['next_states']), -clip_val, clip_val)
+        Q_states = np.clip(self.model.predict(minibatch['states']),
+                           -self.clip_val, self.clip_val)
+        Q_next_states = np.clip(self.model.predict(minibatch['next_states']),
+                                -self.clip_val, self.clip_val)
         Q_next_states_max = np.amax(Q_next_states, axis=1)
-        return (Q_states, Q_next_states_max)
+        return (Q_states, Q_next_states, Q_next_states_max)
 
     def compute_Q_targets(self, minibatch, Q_states, Q_next_states_max):
         # make future reward 0 if exp is terminal
@@ -152,7 +152,8 @@ class DQN(Agent):
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        (Q_states, Q_next_states_max) = self.compute_Q_states(minibatch)
+        (Q_states, Q_next_states, Q_next_states_max) = self.compute_Q_states(
+            minibatch)
         Q_targets = self.compute_Q_targets(
             minibatch, Q_states, Q_next_states_max)
 

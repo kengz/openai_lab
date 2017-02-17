@@ -17,15 +17,12 @@ class OffPolicySarsa(DQN):
         self.eval_e = 0.05
 
     def compute_Q_states(self, last_exp):
-        clip_val = 10000
-        Q_states = np.clip(
-            self.model.predict(last_exp['states']), -clip_val, clip_val)
-        Q_next_states = np.clip(
-            self.model.predict(last_exp['next_states']), -clip_val, clip_val)
+        (Q_states, Q_next_states, _Q_next_states_max) = super(
+            OffPolicySarsa, self).compute_Q_states(last_exp)
 
         e_per_action = self.eval_e / self.env_spec['action_dim']
 
         Q_next_states_max = np.amax(Q_next_states, axis=1)
         expected_Q = (1 - self.eval_e) * Q_next_states_max + \
             np.sum(Q_next_states * e_per_action, axis=1)
-        return (Q_states, expected_Q)
+        return (Q_states, None, expected_Q)

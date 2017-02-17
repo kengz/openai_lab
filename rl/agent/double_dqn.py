@@ -31,16 +31,14 @@ class DoubleDQN(DQN):
         logger.info("Models 1 and 2 compiled")
 
     def compute_Q_states(self, minibatch):
-        clip_val = 10000
-        Q_states = np.clip(
-            self.model.predict(minibatch['states']), -clip_val, clip_val)
+        (Q_states, Q_next_states_select, _Q_next_states_max) = super(
+            DoubleDQN, self).compute_Q_states(minibatch)
         # Different from (single) dqn: Select max using model 2
-        Q_next_states_select = np.clip(
-            self.model.predict(minibatch['next_states']), -clip_val, clip_val)
         Q_next_states_max_ind = np.argmax(Q_next_states_select, axis=1)
         # same as dqn again, but use Q_next_states_max_ind above
         Q_next_states = np.clip(
-            self.model2.predict(minibatch['next_states']), -clip_val, clip_val)
+            self.model2.predict(minibatch['next_states']),
+            -self.clip_val, self.clip_val)
         rows = np.arange(Q_next_states_max_ind.shape[0])
         Q_next_states_max = Q_next_states[rows, Q_next_states_max_ind]
 
