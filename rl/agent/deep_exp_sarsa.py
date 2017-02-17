@@ -18,7 +18,7 @@ class DeepExpectedSarsa(DQN):
         self.final_n_epoch = 1
 
     def compute_Q_states(self, last_exp):
-        (Q_states, Q_next_states, _Q_next_states_max) = super(
+        (Q_states, Q_next_states, _max) = super(
             DeepExpectedSarsa, self).compute_Q_states(last_exp)
 
         curr_e = self.policy.e
