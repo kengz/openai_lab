@@ -16,3 +16,9 @@ dependencies:
 test:
   override:
     - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
+
+general:
+  branches:
+    ignore:
+      - doc
+      - gh-pages
