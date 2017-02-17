@@ -376,7 +376,7 @@ class Trial(object):
 
     def to_stop(self, s):
         '''check of trial should be continued'''
-        failed = (s >= 2) and (
+        failed = (s < self.times and s >= 2) and (
             self.data['stats']['solved_ratio_of_sessions'] == 0.)
         if failed:
             logger.info(
