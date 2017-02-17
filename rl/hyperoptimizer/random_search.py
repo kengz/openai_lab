@@ -45,9 +45,9 @@ class RandomSearch(HyperOptimizer):
         # self.default_param
         # self.param_range
         # iterate, if is dict do init_sampler
-        self.sampler = {
-            'lr': 
-        }
+        # self.sampler = {
+        #     'lr': 
+        # }
         return
 
     def search(self):
