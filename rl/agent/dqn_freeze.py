@@ -18,16 +18,9 @@ class DQNFreeze(DoubleDQN):
     Exploration model periodically saved and loaded into target Q network
     '''
 
-    def __init__(self, *args, **kwargs):
-        super(DQNFreeze, self).__init__(*args, **kwargs)
-        # Exploration model = self.model
-        # Target Q network = self.model2
-
     def compute_Q_states(self, minibatch):
         Q_states = np.clip(self.model.predict(minibatch['states']),
                            -self.clip_val, self.clip_val)
-        # Use frozen target network to find max of the estimated next state
-        # Q-val
         Q_next_states = np.clip(self.model2.predict(minibatch['next_states']),
                                 -self.clip_val, self.clip_val)
         Q_next_states_max = np.amax(Q_next_states, axis=1)

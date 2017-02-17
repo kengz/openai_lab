@@ -29,6 +29,5 @@ class DeepSarsa(DQN):
             last_exp)
         Q_targets = self.compute_Q_targets(
             last_exp, Q_states, Q_next_states_selected)
-
         loss = self.model.train_on_batch(last_exp['states'], Q_targets)
         return loss

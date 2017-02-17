@@ -32,4 +32,4 @@ class DQNTest(unittest.TestCase):
         data_df = run('test_dqn')
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
         print(max_total_rewards)
-        assert max_total_rewards > 100
+        assert max_total_rewards > 50
