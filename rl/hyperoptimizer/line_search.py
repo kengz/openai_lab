@@ -13,14 +13,12 @@ class LineSearch(HyperOptimizer):
         All other parameters set to default vals
         note that this is order-preserving, as required by design
         '''
-        default_param = self.experiment_spec['param']
-        param_range = self.experiment_spec['param_range']
-        keys = sorted(param_range.keys())
+        keys = sorted(self.param_range.keys())
         self.param_search_list = []
         for key in keys:
-            vals = param_range[key]
+            vals = self.param_range[key]
             for val in vals:
-                param = copy.deepcopy(default_param)
+                param = copy.deepcopy(self.default_param)
                 param[key] = val
                 self.param_search_list.append(param)
         self.num_of_trials = len(self.param_search_list)
