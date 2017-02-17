@@ -1,5 +1,6 @@
 import argparse
 import collections
+import inspect
 import json
 import logging
 import multiprocessing as mp
@@ -19,8 +20,8 @@ PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
 EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
-for k in EXPERIMENT_SPECS:
-    EXPERIMENT_SPECS[k]['experiment_name'] = k
+for experiment_name in EXPERIMENT_SPECS:
+    EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
@@ -225,6 +226,32 @@ def get_module(GREF, dot_path):
     return mod
 
 
+def import_package_files(globals_, locals_, __file__):
+    '''
+    Dynamically import all the public attributes of the python modules in this
+    file's directory (the package directory) and return a list of their names.
+    '''
+    exports = []
+    # globals_, locals_ = globals(), locals()
+    package_path = os.path.dirname(__file__)
+    package_name = os.path.basename(package_path)
+
+    for filename in os.listdir(package_path):
+        modulename, ext = os.path.splitext(filename)
+        if modulename[0] != '_' and ext in ('.py', '.pyw'):
+            subpackage = '{}.{}'.format(
+                package_name, modulename)  # pkg relative
+            module = __import__(subpackage, globals_, locals_, [modulename])
+            modict = module.__dict__
+            names = (modict['__all__'] if '__all__' in modict else
+                     [name for name in
+                      modict if inspect.isclass(modict[name])])  # all public
+            exports.extend(names)
+            globals_.update((name, modict[name]) for name in names)
+
+    return exports
+
+
 def clean_id_str(id_str):
     return id_str.split('/').pop().split('.').pop(0)
 
@@ -301,8 +328,8 @@ def configure_gpu():
     if K.backend() != 'tensorflow':
         # skip directly if is not tensorflow
         return
-    real_parallel_process_num = 1 if mp.current_process(
-    ).name == 'MainProcess' else PARALLEL_PROCESS_NUM
+    real_parallel_process_num = 1 if (
+        mp.current_process().name == 'MainProcess') else PARALLEL_PROCESS_NUM
     tf = K.tf
     gpu_options = tf.GPUOptions(
         allow_growth=True,

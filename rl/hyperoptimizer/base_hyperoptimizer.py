@@ -41,6 +41,9 @@ class HyperOptimizer(object):
         assert all(k in kwargs for k in self.REQUIRED_ARGS)
         for k in kwargs:
             setattr(self, k, kwargs[k])
+        # careful with the key ordering at init_search
+        self.default_param = self.experiment_spec['param']
+        self.param_range = self.experiment_spec['param_range']
 
     def compose_experiment_spec(self, param):
         new_experiment_spec = copy.deepcopy(self.experiment_spec)
