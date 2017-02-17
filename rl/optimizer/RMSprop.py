@@ -2,7 +2,7 @@ from rl.util import *
 from rl.optimizer.base_optimizer import Optimizer
 from keras.optimizers import RMSprop
 
-class RMSprop_L(Optimizer):
+class RMSprop(Optimizer):
     '''
     RMS prop
     Potential params:
@@ -13,7 +13,7 @@ class RMSprop_L(Optimizer):
     '''
 
     def __init__(self, param):
-        super(RMSprop_L, self).__init__(param)
+        super(RMSprop, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()
         logger.info("RMS Prop optimizer initialized. Params: {}".format(self.optim_param))

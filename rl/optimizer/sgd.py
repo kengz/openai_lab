@@ -2,7 +2,7 @@ from rl.util import *
 from rl.optimizer.base_optimizer import Optimizer
 from keras.optimizers import SGD
 
-class SGD_L(Optimizer):
+class SGD(Optimizer):
     '''
     Stochastic gradient descent
     Potential params:
@@ -13,7 +13,7 @@ class SGD_L(Optimizer):
     '''
 
     def __init__(self, param):
-        super(SGD_L, self).__init__(param)
+        super(SGD, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()
         logger.info("SGD optimizer initialized. Params: {}".format(self.optim_param))

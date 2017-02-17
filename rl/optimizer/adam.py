@@ -2,7 +2,7 @@ from rl.util import *
 from rl.optimizer.base_optimizer import Optimizer
 from keras.optimizers import Adam
 
-class Adam_L(Optimizer):
+class Adam(Optimizer):
     '''
     Adam optimizer
     Potential params:
@@ -15,7 +15,7 @@ class Adam_L(Optimizer):
     '''
 
     def __init__(self, param):
-        super(Adam_L, self).__init__(param)
+        super(Adam, self).__init__(param)
         self.set_init_optim_params()
         self.init_optimizer()
         logger.info("Adam optimizer initialized. Params: {}".format(self.optim_param))
