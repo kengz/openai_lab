@@ -17,16 +17,7 @@ cd openai_lab
 
 Then, setup your `~/.keras/keras.json`. See example files in `config/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
 
-The binary at `./bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (for dev), Theano(for faster production), Keras.
-
-*Note the Tensorflow is defaulted to CPU Mac or GPU Linux. [If you're on a different platform, choose the correct binary to install from TF.](https://www.tensorflow.org/get_started/os_setup#pip_installation)*
-
-```shell
-# default option
-TF_BINARY_URL=https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.1-py3-none-any.whl
-# install from the TF_BINARY_URL
-sudo pip3 install -U $TF_BINARY_URL
-```
+The binary at `./bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (defaulted to CPU Mac or GPU Linux), Theano(for faster production), Keras.
 
 
 ### Data files auto-sync (optional)
