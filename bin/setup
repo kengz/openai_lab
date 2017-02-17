@@ -58,21 +58,17 @@ else
 fi
 
 # install common dependencies from from
-if python3 -m pip show six h5py numpy scipy matplotlib seaborn pandas gym >/dev/null; then
-  echo "Pip modules already installed"
-else
-  sudo python3 -m pip install -U pip
-  sudo python3 -m pip install six
-  sudo python3 -m pip install h5py
-  sudo python3 -m pip install numpy
-  sudo python3 -m pip install scipy
-  sudo python3 -m pip install matplotlib
-  sudo python3 -m pip install seaborn
-  sudo python3 -m pip install pandas
-  sudo python3 -m pip install pytest-cov
-  sudo python3 -m pip install git+https://github.com/openai/gym.git
-  git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && python3 setup.py clean && python3 setup.py build && python3 setup.py install
-fi
+sudo python3 -m pip install -U pip
+sudo python3 -m pip install six
+sudo python3 -m pip install h5py
+sudo python3 -m pip install numpy
+sudo python3 -m pip install scipy
+sudo python3 -m pip install matplotlib
+sudo python3 -m pip install seaborn
+sudo python3 -m pip install pandas
+sudo python3 -m pip install pytest-cov
+sudo python3 -m pip install git+https://github.com/openai/gym.git
+git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install
 
 # install tensorflow
 if [ $(uname) == "Darwin" ]; then
@@ -84,7 +80,7 @@ python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__
 
 # install theano
 if which clang >/dev/null; then
-  echo "Python3 is already installed"
+  echo "clang is already installed"
 else
   if [ $(uname) == "Darwin" ]; then
     brew install --with-clang llvm
