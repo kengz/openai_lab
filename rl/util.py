@@ -180,6 +180,8 @@ def to_json(o, level=0):
     elif isinstance(o, np.ndarray) and np.issubdtype(o.dtype, np.inexact):
         ret += "[" + \
             ','.join(map(lambda x: '%.7g' % x, o.flatten().tolist())) + "]"
+    elif hasattr(o, '__class__'):
+        ret += o.__class__.__name__
     elif o is None:
         ret += 'null'
     else:
@@ -274,6 +276,7 @@ def generate_experiment_spec_grid(experiment_spec, param_grid):
         'Memory': experiment_spec['Memory'],
         'Policy': experiment_spec['Policy'],
         'PreProcessor': experiment_spec['PreProcessor'],
+        'Optimizer': experiment_spec['Optimizer'],
         'param': param,
     } for param in param_grid]
     return experiment_spec_grid
