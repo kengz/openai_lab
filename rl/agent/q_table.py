@@ -22,6 +22,9 @@ class Dummy(Agent):
     def train(self, sys_vars):
         return
 
+    def compile_model(self):
+        return
+
 
 class QTable(Agent):
 
@@ -33,13 +36,13 @@ class QTable(Agent):
 
     def __init__(self, env_spec,
                  resolution=10,
-                 gamma=0.95, learning_rate=0.1,
+                 gamma=0.95, lr=0.1,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=1000,
                  **kwargs):  # absorb generic param without breaking
         super(QTable, self).__init__(env_spec)
         self.resolution = resolution
         self.gamma = gamma
-        self.learning_rate = learning_rate
+        self.lr = lr
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
@@ -59,6 +62,9 @@ class QTable(Agent):
             low=-1, high=1,
             size=(flat_state_size, self.env_spec['action_dim']))
         return self.qtable
+
+    def compile_model(self):
+        return
 
     def pixelate_state_space(self, resolution=10):
         '''chunk up the state space hypercube to specified resolution'''
@@ -119,5 +125,5 @@ class QTable(Agent):
         sys_vars['loss'].append(loss)
 
         self.qtable[flat_state, action] = Q_state_action + \
-            self.learning_rate * loss
+            self.lr * loss
         return self.qtable

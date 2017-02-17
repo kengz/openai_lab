@@ -1,7 +1,6 @@
 from rl.agent.dqn import DQN
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
-from keras.optimizers import RMSprop
 
 
 class ConvDQN(DQN):
@@ -40,7 +39,3 @@ class ConvDQN(DQN):
                         activation=self.hidden_layers_activation))
 
         return model
-
-    def build_optimizer(self):
-        '''Optimizer is RMSprop, default learning rate used'''
-        self.optimizer = RMSprop()

@@ -31,7 +31,8 @@ STATS_COLS = [
     'solved_ratio_of_sessions',
     'max_total_rewards_stats_mean',
     't_stats_mean',
-    'trial_id'
+    'trial_id',
+    'num_of_sessions'
 ]
 EXPERIMENT_GRID_Y_COLS = [
     'mean_rewards_per_epi_stats_mean_times_solved_ratio_of_sessions',
