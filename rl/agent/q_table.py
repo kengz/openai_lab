@@ -63,6 +63,9 @@ class QTable(Agent):
             size=(flat_state_size, self.env_spec['action_dim']))
         return self.qtable
 
+    def compile_model(self):
+        return
+
     def pixelate_state_space(self, resolution=10):
         '''chunk up the state space hypercube to specified resolution'''
         state_bounds = self.env_spec['state_bounds']
