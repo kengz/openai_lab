@@ -78,11 +78,11 @@ class Session(object):
         self.problem = self.experiment_spec['problem']
         self.Agent = get_module(GREF, self.experiment_spec['Agent'])
         self.Memory = get_module(GREF, self.experiment_spec['Memory'])
+        self.Optimizer = get_module(
+            GREF, self.experiment_spec['Optimizer'])
         self.Policy = get_module(GREF, self.experiment_spec['Policy'])
         self.PreProcessor = get_module(
             GREF, self.experiment_spec['PreProcessor'])
-        self.Optimizer = get_module(
-            GREF, self.experiment_spec['Optimizer'])
         self.param = self.experiment_spec['param']
         # init all things, so a session can only be ran once
         self.sys_vars = self.init_sys_vars()
@@ -90,11 +90,11 @@ class Session(object):
         self.preprocessor = self.PreProcessor(**self.param)
         self.env_spec = self.set_env_spec()
         self.agent = self.Agent(self.env_spec, **self.param)
+        self.optimizer = self.Optimizer(**self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.optimizer = self.Optimizer(**self.param)
         self.agent.compile(
-            self.memory, self.policy, self.preprocessor, self.optimizer)
+            self.memory, self.optimizer, self.policy, self.preprocessor)
         self.agent.compile_model()
 
         # data file and graph
@@ -167,14 +167,14 @@ class Session(object):
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
+            "Optimizer info: {}".format(
+                format_obj_dict(self.agent.optimizer, [])))
+        logger.debug(
             "Policy info: {}".format(
                 format_obj_dict(self.agent.policy, ['e', 'tau'])))
         logger.debug(
             "PreProcessor info: {}".format(
                 format_obj_dict(self.agent.preprocessor, [])))
-        logger.debug(
-            "Optimizer info: {}".format(
-                format_obj_dict(self.agent.optimizer, [])))
 
     def check_end(self):
         '''check if session ends (if is last episode)

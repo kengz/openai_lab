@@ -274,9 +274,9 @@ def generate_experiment_spec_grid(experiment_spec, param_grid):
         'problem': experiment_spec['problem'],
         'Agent': experiment_spec['Agent'],
         'Memory': experiment_spec['Memory'],
+        'Optimizer': experiment_spec['Optimizer'],
         'Policy': experiment_spec['Policy'],
         'PreProcessor': experiment_spec['PreProcessor'],
-        'Optimizer': experiment_spec['Optimizer'],
         'param': param,
     } for param in param_grid]
     return experiment_spec_grid
