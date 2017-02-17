@@ -193,10 +193,10 @@ Furthermore, the search space P is a tensor space product of `m` bounded real sp
 1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
 
     ```json
-    'learning_rate': {
-        'uniform': {
-            'low': 0.0001,
-            'high': 1.0
+    "learning_rate": {
+        "uniform": {
+            "low": 0.0001,
+            "high": 1.0
         }
     }
     ```
