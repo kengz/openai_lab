@@ -1,7 +1,5 @@
 import argparse
 import collections
-import copy
-import itertools
 import json
 import logging
 import multiprocessing as mp
@@ -17,6 +15,8 @@ from textwrap import wrap
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}\-\d{2}\-\d{2}\_\d{6})'
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+PROBLEMS = json.loads(open(
+    path.join(ASSET_PATH, 'problems.json')).read())
 EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for k in EXPERIMENT_SPECS:
@@ -57,12 +57,6 @@ parser.add_argument("-m", "--max_evals",
                     type=int,
                     dest="max_evals",
                     default=2)
-parser.add_argument("-l", "--line_search",
-                    help="to use line_search instead of param_product",
-                    action="store_const",
-                    dest="line_search",
-                    const=False,
-                    default=False)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
@@ -229,57 +223,6 @@ def get_module(GREF, dot_path):
     for deeper_path in path_arr:
         mod = getattr(mod, deeper_path)
     return mod
-
-
-# convert a dict of param ranges into
-# a list parameter settings corresponding
-# to a line search of the param range
-# for each param
-# All other parameters set to default vals
-def param_line_search(experiment_spec):
-    default_param = experiment_spec['param']
-    param_range = experiment_spec['param_range']
-    keys = param_range.keys()
-    param_list = []
-    for key in keys:
-        vals = param_range[key]
-        for val in vals:
-            param = copy.deepcopy(default_param)
-            param[key] = val
-            param_list.append(param)
-    return param_list
-
-
-# convert a dict of param ranges into
-# a list of cartesian products of param_range
-# e.g. {'a': [1,2], 'b': [3]} into
-# [{'a': 1, 'b': 3}, {'a': 2, 'b': 3}]
-def param_product(experiment_spec):
-    default_param = experiment_spec['param']
-    param_range = experiment_spec['param_range']
-    keys = param_range.keys()
-    range_vals = param_range.values()
-    param_grid = []
-    for vals in itertools.product(*range_vals):
-        param = copy.deepcopy(default_param)
-        param.update(dict(zip(keys, vals)))
-        param_grid.append(param)
-    return param_grid
-
-
-# for param selection
-def generate_experiment_spec_grid(experiment_spec, param_grid):
-    experiment_spec_grid = [{
-        'experiment_name': experiment_spec['experiment_name'],
-        'problem': experiment_spec['problem'],
-        'Agent': experiment_spec['Agent'],
-        'Memory': experiment_spec['Memory'],
-        'Optimizer': experiment_spec['Optimizer'],
-        'Policy': experiment_spec['Policy'],
-        'PreProcessor': experiment_spec['PreProcessor'],
-        'param': param,
-    } for param in param_grid]
-    return experiment_spec_grid
 
 
 def clean_id_str(id_str):

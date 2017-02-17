@@ -1,37 +1,9 @@
-import multiprocessing as mp
+from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 from rl.util import *
 
 
-class HyperOptimizer(object):
-
-    '''
-    The base class of hyperparam optimizer, with core methods
-    '''
-
-    def __init__(self, Trial, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'experiment_spec',
-            'times'
-        ]
-        self.check_set_keys(**kwargs)
-        self.run_timestamp = timestamp()
-        self.Trial = Trial
-        self.generate_param_space()
-
-    def check_set_keys(self, **kwargs):
-        assert all(k in kwargs for k in self.REQUIRED_GLOBAL_VARS)
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
-
-    def generate_param_space(self):
-        raise NotImplementedError()
-
-    def run(self):
-        raise NotImplementedError()
-
-
-class HyperoptHyperOptimizer(HyperOptimizer):
+class TPE(HyperOptimizer):
 
     def check_set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
@@ -50,7 +22,7 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         self.trial_num = 0
         self.algo = tpe.suggest
 
-        super(HyperoptHyperOptimizer, self).check_set_keys(**kwargs)
+        super(TPE, self).check_set_keys(**kwargs)
 
     @classmethod
     def convert_to_hp(cls, k, v):
@@ -131,49 +103,4 @@ class HyperoptHyperOptimizer(HyperOptimizer):
              trials=trials)
         experiment_data = [
             trial['result']['trial_data'] for trial in trials]
-        return experiment_data
-
-
-class BruteHyperOptimizer(HyperOptimizer):
-
-    def check_set_keys(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'experiment_spec',
-            'times',
-            'line_search'
-        ]
-        super(BruteHyperOptimizer, self).check_set_keys(**kwargs)
-
-    # generate param_space for hyperopt from experiment_spec
-    def generate_param_space(self):
-        if self.line_search:
-            param_grid = param_line_search(self.experiment_spec)
-        else:
-            param_grid = param_product(self.experiment_spec)
-        self.param_space = generate_experiment_spec_grid(
-            self.experiment_spec, param_grid)
-        self.num_of_trials = len(self.param_space)
-
-        self.trial_array = []
-        for e in range(self.num_of_trials):
-            experiment_spec = self.param_space[e]
-            trial = self.Trial(
-                experiment_spec, times=self.times, trial_num=e,
-                num_of_trials=self.num_of_trials,
-                run_timestamp=self.run_timestamp,
-                experiment_id_override=self.experiment_id_override)
-            self.trial_array.append(trial)
-
-        return self.param_space
-
-    @classmethod
-    def mp_run_helper(cls, trial):
-        return trial.run()
-
-    def run(self):
-        p = mp.Pool(PARALLEL_PROCESS_NUM)
-        experiment_data = list(
-            p.map(self.mp_run_helper, self.trial_array))
-        p.close()
-        p.join()
         return experiment_data

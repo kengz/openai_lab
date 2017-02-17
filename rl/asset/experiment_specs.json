@@ -2,6 +2,7 @@
   "dummy": {
     "problem": "CartPole-v0",
     "Agent": "Dummy",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemory",
     "Optimizer": "SGDOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -11,6 +12,7 @@
   "q_table": {
     "problem": "CartPole-v0",
     "Agent": "QTable",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemory",
     "Optimizer": "SGDOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -24,6 +26,7 @@
   "dev_dqn": {
     "problem": "DevCartPole-v0",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -51,6 +54,7 @@
   "test_dqn": {
     "problem": "TestCartPole-v0",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "SGDOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -71,6 +75,7 @@
   "dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -97,6 +102,7 @@
   "double_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DoubleDQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
@@ -124,6 +130,7 @@
   "hyperopt_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "SGDOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -162,6 +169,7 @@
   "dqn_freeze": {
     "problem": "CartPole-v0",
     "Agent": "DQNFreeze",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -189,6 +197,7 @@
   "sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepSarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -216,6 +225,7 @@
   "sarsa_exp": {
     "problem": "CartPole-v0",
     "Agent": "DeepExpectedSarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -243,6 +253,7 @@
   "sarsa_offpol": {
     "problem": "CartPole-v0",
     "Agent": "OffPolicySarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -270,6 +281,7 @@
   "mountain_dqn": {
     "problem": "MountainCar-v0",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -301,6 +313,7 @@
   "mountain_sarsa": {
     "problem": "MountainCar-v0",
     "Agent": "DeepSarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -332,6 +345,7 @@
   "mountain_double_dqn": {
     "problem": "MountainCar-v0",
     "Agent": "DoubleDQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
@@ -363,6 +377,7 @@
   "lunar_dqn": {
     "problem": "LunarLander-v2",
     "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -391,6 +406,7 @@
   "lunar_sarsa": {
     "problem": "LunarLander-v2",
     "Agent": "DeepExpectedSarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -419,6 +435,7 @@
   "lunar_double_dqn": {
     "problem": "LunarLander-v2",
     "Agent": "DoubleDQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "DoubleDQNBoltzmannPolicy",
@@ -447,6 +464,7 @@
   "lunar_freeze": {
     "problem": "LunarLander-v2",
     "Agent": "DQNFreeze",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
@@ -475,6 +493,7 @@
   "lunar_offpol_sarsa": {
     "problem": "LunarLander-v2",
     "Agent": "OffPolicySarsa",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -503,6 +522,7 @@
   "air_raid_dqn": {
     "problem": "AirRaid-v0",
     "Agent": "ConvDQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LongLinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
@@ -532,6 +552,7 @@
   "breakout_dqn": {
     "problem": "Breakout-v0",
     "Agent": "ConvDQN",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LongLinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",

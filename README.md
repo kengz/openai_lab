@@ -2,7 +2,7 @@
 
 [OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
 
-(Under work) An experimentation system for Reinforcement Learning using OpenAI and Keras.
+An experimentation system for Reinforcement Learning using OpenAI and Keras. _(Hyperoptimizer is under work, the rest is ready to use)_
 
 
 ## Installation
@@ -140,7 +140,6 @@ The extra flags are:
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-m <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
 - `-p`: run param selection. Default: `False`
-- `-l`: run `line_search` instead of Cartesian product in param selection. Default: `False`
 - `-g`: plot graphs live. Default: `False`
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in problems.json
@@ -167,6 +166,56 @@ The design of the code is clean enough to simply infer how things work by exampl
 Each run is an `experiment` that runs multiple `Trial`s (not restricted to the same `experiment_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
 
 Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
+
+
+## Hyperparameter Optimization Module
+
+A hyperoptimizer is a function h that takes:
+
+- a trial (objective) function `Trial`
+- a param space `P` (implemented in `experiment_spec`)
+
+and run the algorithm:
+1. search the next p in P using its internal search algo, add to its internal `param_search_list`
+2. run a (slow) function Trial(p) = score (inside trial data)
+3. update search using feedback score
+4. repeat till max steps or fitness condition met
+
+Furthermore, the search space P is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`.
+
+#### Implementation-wise:
+1. we want order-preserving and persistence for the ability to resume/reproduce an experiment
+2. the search algo may save its belief data to facilitate search
+3. the Trial function shall be kept as a blackbox for generality of implementation
+
+
+#### Specification of search space:
+1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
+
+    ```json
+    'learning_rate': {
+        'uniform': {
+            'low': 0.0001,
+            'high': 1.0
+        }
+    }
+    ```
+
+2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in `experiment_grid.param` like so:
+`'learning_rate': [0.01, 0.02, 0.05, 0.1, 0.2]`
+
+The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.
+
+Note that whether a variable is real or discrete can be up to the author; some variable such as learning_rate can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
+
+The experiment will run it as:
+
+```python
+# specify which hyperoptimizer class to use in spec for bookkeeping
+Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
+hopt = Hopt(Trial, **experiment_kwargs)
+experiment_data = hopt.run()
+```
 
 
 ## Roadmap

@@ -10,9 +10,8 @@ else:
     K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
 import gym
-import json
 import traceback
-from os import path, environ
+from os import environ
 from rl.util import *
 from rl.agent import *
 from rl.analytics import *
@@ -24,13 +23,6 @@ from rl.preprocessor import *
 
 
 GREF = globals()
-ASSET_PATH = path.join(path.dirname(__file__), 'asset')
-PROBLEMS = json.loads(open(
-    path.join(ASSET_PATH, 'problems.json')).read())
-# EXPERIMENT_SPECS = json.loads(open(
-#     path.join(ASSET_PATH, 'experiment_specs.json')).read())
-# for k in EXPERIMENT_SPECS:
-#     EXPERIMENT_SPECS[k]['experiment_name'] = k
 
 # the keys and their defaults need to be implemented by a sys_var
 # the constants (capitalized) are problem configs,
@@ -491,13 +483,13 @@ def run(name_id_spec, times=1,
             experiment_kwargs['experiment_id_override'] = experiment_id
             experiment_spec = EXPERIMENT_SPECS.get(
                 parse_experiment_name(name_id_spec))
-        else:  # rerun a new experiment by name
+        else:  # run a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
-                'Rerun a new experiment by name {}'.format(experiment_name))
+                'Run a new experiment by name {}'.format(experiment_name))
             experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
-        logger.info('Rerun a new experiment by spec')
+        logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec
 
     experiment_kwargs['experiment_spec'] = experiment_spec
@@ -505,8 +497,8 @@ def run(name_id_spec, times=1,
     # compose grid and run param selection
     if param_selection:
         experiment_kwargs.update(kwargs)
-        hopt = BruteHyperOptimizer(Trial, **experiment_kwargs)
-        # hopt = HyperoptHyperOptimizer(Trial, **experiment_kwargs)
+        Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
+        hopt = Hopt(Trial, **experiment_kwargs)
         experiment_data = hopt.run()
     else:
         trial = Trial(**experiment_kwargs)
