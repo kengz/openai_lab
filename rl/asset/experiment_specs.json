@@ -39,8 +39,8 @@
       "beta_1" : 0.9,
       "beta_2" : 0.999,
       "gamma": 0.96,
-      "hiddenayers_shape": [16],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [16],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
     "param_range": {
@@ -59,8 +59,8 @@
       "train_per_n_new_exp": 1,
       "lr": 0.02,
       "gamma": 0.96,
-      "hiddenayers_shape": [16],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [16],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
     "param_range": {
@@ -79,14 +79,14 @@
       "train_per_n_new_exp": 1,
       "lr": 0.001,
       "gamma": 0.98,
-      "hiddenayers_shape": [32],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [32],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -106,14 +106,14 @@
       "lr": 0.01,
       "batch_size": 16,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 30
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -132,8 +132,8 @@
       "train_per_n_new_exp": 1,
       "lr": 0.02,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 10
     },
     "param_range": {
@@ -151,7 +151,7 @@
       },
       "gamma": [0.95, 0.99],
       "train_per_n_new_exp": [1, 2, 4],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8, 4],
         [16, 8, 4]
@@ -171,14 +171,14 @@
       "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 30
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -198,14 +198,14 @@
       "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 75
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -225,14 +225,14 @@
       "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 75
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -252,14 +252,14 @@
       "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
-      "hiddenayers_shape": [4],
-      "hiddenayers_activation": "sigmoid",
+      "hidden_layers_shape": [4],
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 30
     },
     "param_range": {
       "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [4],
         [8],
         [16]
@@ -280,15 +280,15 @@
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
-      "hiddenayers_shape": [128, 64],
-      "hiddenayers_activation": "relu",
+      "hidden_layers_shape": [128, 64],
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_changeearning_rate": 1000
+      "epi_change_learning_rate": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [128],
         [256],
         [128, 64],
@@ -311,15 +311,15 @@
       "batch_size": 1,
       "gamma": 0.99,
       "n_epoch": 2,
-      "hiddenayers_shape": [128, 64],
-      "hiddenayers_activation": "relu",
+      "hidden_layers_shape": [128, 64],
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_changeearning_rate": 1000
+      "epi_change_learning_rate": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [128],
         [256],
         [128, 64],
@@ -342,15 +342,15 @@
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
-      "hiddenayers_shape": [128, 64],
-      "hiddenayers_activation": "relu",
+      "hidden_layers_shape": [128, 64],
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_changeearning_rate": 1000
+      "epi_change_learning_rate": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [128],
         [256],
         [128, 64],
@@ -372,17 +372,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [300, 150, 75],
-      "hiddenayers_activation": "relu",
-      "outputayer_activation": "linear",
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_changeearning_rate": 100
+      "epi_change_learning_rate": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_changeearning_rate": [150, 200],
-      "hiddenayers_shape": [
+      "epi_change_learning_rate": [150, 200],
+      "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
       ]
@@ -400,17 +400,17 @@
       "lr": 0.001,
       "batch_size": 1,
       "gamma": 0.99,
-      "hiddenayers_shape": [300, 150, 75],
-      "hiddenayers_activation": "relu",
-      "outputayer_activation": "linear",
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_changeearning_rate": 1000
+      "epi_change_learning_rate": 1000
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "exploration_anneal_episodes": [200, 300, 400],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
       ]
@@ -428,17 +428,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [300, 150, 75],
-      "hiddenayers_activation": "relu",
-      "outputayer_activation": "linear",
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_changeearning_rate": 100
+      "epi_change_learning_rate": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_changeearning_rate": [150, 200],
-      "hiddenayers_shape": [
+      "epi_change_learning_rate": [150, 200],
+      "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
       ]
@@ -456,17 +456,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [300, 150, 75],
-      "hiddenayers_activation": "relu",
-      "outputayer_activation": "linear",
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_changeearning_rate": 100
+      "epi_change_learning_rate": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_changeearning_rate": [150, 200],
-      "hiddenayers_shape": [
+      "epi_change_learning_rate": [150, 200],
+      "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
       ]
@@ -484,17 +484,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [300, 150, 75],
-      "hiddenayers_activation": "relu",
-      "outputayer_activation": "linear",
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_changeearning_rate": 100
+      "epi_change_learning_rate": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_changeearning_rate": [150, 200],
-      "hiddenayers_shape": [
+      "epi_change_learning_rate": [150, 200],
+      "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
       ]
@@ -512,17 +512,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
-      "hiddenayers_activation": "relu",
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 1000000,
-      "epi_changeearning_rate": 1000000
+      "epi_change_learning_rate": 1000000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [200, 100],
         [300, 200],
         [200, 100, 50]
@@ -541,17 +541,17 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
-      "hiddenayers_activation": "relu",
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_changeearning_rate": 5000
+      "epi_change_learning_rate": 5000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hiddenayers_shape": [
+      "hidden_layers_shape": [
         [
           [16, 8, 8, [4, 4]],
           [32, 4, 4, [2, 2]]
