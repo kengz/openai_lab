@@ -92,7 +92,7 @@ class Session(object):
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
-        self.optimizer = self.Optimizer(self.param)
+        self.optimizer = self.Optimizer(**self.param)
         self.agent.compile(self.memory, self.policy, self.preprocessor, self.optimizer)
         self.agent.compile_model()
 
@@ -171,6 +171,9 @@ class Session(object):
         logger.debug(
             "PreProcessor info: {}".format(
                 format_obj_dict(self.agent.preprocessor, [])))
+        logger.debug(
+            "Optimizer info: {}".format(
+                format_obj_dict(self.agent.optimizer, [])))
 
     def check_end(self):
         '''check if session ends (if is last episode)

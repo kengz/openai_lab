@@ -5,7 +5,7 @@
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "SGD",
+    "Optimizer": "SGDOptimizer",
     "param": {}
   },
   "q_table": {
@@ -14,9 +14,9 @@
     "Memory": "LinearMemory",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "SGD",
+    "Optimizer": "SGDOptimizer",
     "param": {
-      "learning_rate": 0.01,
+      "lr": 0.01,
       "gamma": 0.99,
       "exploration_anneal_episodes": 200
     }
@@ -27,10 +27,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "RMSprop",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.01,
+      "lr": 0.01,
       "momentum": 0.6,
       "decay": 0.0,
       "epsilon": 1e-08,
@@ -45,7 +45,7 @@
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
-      "learning_rate": [0.02, 0.2]
+      "lr": [0.02, 0.2]
     }
   },
   "test_dqn": {
@@ -54,10 +54,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "SGD",
+    "Optimizer": "SGDOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "gamma": 0.96,
       "hiddenayers_shape": [16],
       "hiddenayers_activation": "sigmoid",
@@ -65,7 +65,7 @@
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
-      "learning_rate": [0.02, 0.2]
+      "lr": [0.02, 0.2]
     }
   },
   "dqn": {
@@ -74,17 +74,17 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "gamma": 0.98,
       "hiddenayers_shape": [32],
       "hiddenayers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -100,10 +100,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.01,
+      "lr": 0.01,
       "batch_size": 16,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
@@ -111,7 +111,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -127,17 +127,17 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "SGD",
+    "Optimizer": "SGDOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
       "hiddenayers_activation": "sigmoid",
       "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "learning_rate": {
+      "lr": {
         "uniform": {
           "low": 0.0001,
           "high": 1.0
@@ -165,10 +165,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
@@ -176,7 +176,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -192,10 +192,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
@@ -203,7 +203,7 @@
       "exploration_anneal_episodes": 75
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -219,10 +219,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 1,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
@@ -230,7 +230,7 @@
       "exploration_anneal_episodes": 75
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.97, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -246,10 +246,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.02,
+      "lr": 0.02,
       "batch_size": 16,
       "gamma": 0.99,
       "hiddenayers_shape": [4],
@@ -257,7 +257,7 @@
       "exploration_anneal_episodes": 30
     },
     "param_range": {
-      "learning_rate": [0.01, 0.005, 0.001],
+      "lr": [0.01, 0.005, 0.001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "hiddenayers_shape": [
         [4],
@@ -273,10 +273,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
@@ -286,7 +286,7 @@
       "epi_changeearning_rate": 1000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hiddenayers_shape": [
         [128],
@@ -304,10 +304,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 1,
       "gamma": 0.99,
       "n_epoch": 2,
@@ -317,7 +317,7 @@
       "epi_changeearning_rate": 1000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hiddenayers_shape": [
         [128],
@@ -335,10 +335,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 16,
       "gamma": 0.99,
       "n_epoch": 2,
@@ -348,7 +348,7 @@
       "epi_changeearning_rate": 1000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.95, 0.97, 0.99],
       "hiddenayers_shape": [
         [128],
@@ -366,10 +366,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [300, 150, 75],
@@ -379,7 +379,7 @@
       "epi_changeearning_rate": 100
     },
     "param_range": {
-      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "epi_changeearning_rate": [150, 200],
       "hiddenayers_shape": [
@@ -394,10 +394,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 1,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 1,
       "gamma": 0.99,
       "hiddenayers_shape": [300, 150, 75],
@@ -407,7 +407,7 @@
       "epi_changeearning_rate": 1000
     },
     "param_range": {
-      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "exploration_anneal_episodes": [200, 300, 400],
       "hiddenayers_shape": [
@@ -422,10 +422,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [300, 150, 75],
@@ -435,7 +435,7 @@
       "epi_changeearning_rate": 100
     },
     "param_range": {
-      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "epi_changeearning_rate": [150, 200],
       "hiddenayers_shape": [
@@ -450,10 +450,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [300, 150, 75],
@@ -463,7 +463,7 @@
       "epi_changeearning_rate": 100
     },
     "param_range": {
-      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "epi_changeearning_rate": [150, 200],
       "hiddenayers_shape": [
@@ -478,10 +478,10 @@
     "Memory": "LinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "StackStates",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 5,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [300, 150, 75],
@@ -491,7 +491,7 @@
       "epi_changeearning_rate": 100
     },
     "param_range": {
-      "learning_rate": [0.005, 0.001, 0.0005, 0.0001],
+      "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
       "epi_changeearning_rate": [150, 200],
       "hiddenayers_shape": [
@@ -506,10 +506,10 @@
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 4,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [
@@ -521,7 +521,7 @@
       "epi_changeearning_rate": 1000000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.0001],
+      "lr": [0.001, 0.0001],
       "hiddenayers_shape": [
         [200, 100],
         [300, 200],
@@ -535,10 +535,10 @@
     "Memory": "LongLinearMemoryWithForgetting",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
-    "Optimizer": "Adam",
+    "Optimizer": "AdamOptimizer",
     "param": {
       "train_per_n_new_exp": 4,
-      "learning_rate": 0.001,
+      "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
       "hiddenayers_shape": [
@@ -550,7 +550,7 @@
       "epi_changeearning_rate": 5000
     },
     "param_range": {
-      "learning_rate": [0.001, 0.0001],
+      "lr": [0.001, 0.0001],
       "hiddenayers_shape": [
         [
           [16, 8, 8, [4, 4]],

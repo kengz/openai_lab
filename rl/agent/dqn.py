@@ -69,7 +69,7 @@ class DQN(Agent):
         return self.model
 
     def compile_model(self):
-        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer.optimizer)
+        self.model.compile(loss='mean_squared_error', optimizer=self.optimizer.keras_optimizer)
         logger.info("Model compiled")
 
     def recompile_model(self, sys_vars):
@@ -84,7 +84,7 @@ class DQN(Agent):
                 self.learning_rate = self.learning_rate / 10.0
                 self.optimizer.change_optim_params({'learning_rate': self.learning_rate})
                 self.model.compile(
-                    loss='mean_squared_error', optimizer=self.optimizer.optimizer)
+                    loss='mean_squared_error', optimizer=self.optimizer.keras_optimizer)
                 logger.info('Model recompiled with new settings: '
                             'Learning rate: {}'.format(self.learning_rate))
         return self.model
