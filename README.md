@@ -184,7 +184,7 @@ Furthermore, the search space P is a tensor space product of `m` bounded real sp
 1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
 
     ```json
-    "learning_rate": {
+    "lr": {
         "uniform": {
             "low": 0.0001,
             "high": 1.0
@@ -193,11 +193,11 @@ Furthermore, the search space P is a tensor space product of `m` bounded real sp
     ```
 
 2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in `experiment_grid.param` like so:
-`'learning_rate': [0.01, 0.02, 0.05, 0.1, 0.2]`
+`'lr': [0.01, 0.02, 0.05, 0.1, 0.2]`
 
 The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.
 
-Note that whether a variable is real or discrete can be up to the author; some variable such as learning_rate can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
+Note that whether a variable is real or discrete can be up to the author; some variable such as `lr` can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
 
 The experiment will run it as:
 

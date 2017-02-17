@@ -19,8 +19,8 @@ PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
 EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
-for k in EXPERIMENT_SPECS:
-    EXPERIMENT_SPECS[k]['experiment_name'] = k
+for experiment_name in EXPERIMENT_SPECS:
+    EXPERIMENT_SPECS[k]['experiment_name'] = experiment_name
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flag for functions')
