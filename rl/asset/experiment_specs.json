@@ -33,14 +33,8 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "lr": 0.01,
-      "momentum": 0.6,
+      "lr": 0.02,
       "decay": 0.0,
-      "epsilon": 1e-08,
-      "rho": 0.9,
-      "nesterov": true,
-      "beta_1": 0.9,
-      "beta_2": 0.999,
       "gamma": 0.96,
       "hidden_layers_shape": [16],
       "hidden_layers_activation": "sigmoid",
@@ -83,8 +77,8 @@
     "param": {
       "train_per_n_new_exp": 1,
       "lr": 0.001,
-      "gamma": 0.98,
-      "hidden_layers_shape": [32],
+      "gamma": 0.96,
+      "hidden_layers_shape": [16],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
     },
