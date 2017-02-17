@@ -42,7 +42,7 @@ class DoubleDQN(DQN):
         rows = np.arange(Q_next_states_max_ind.shape[0])
         Q_next_states_max = Q_next_states[rows, Q_next_states_max_ind]
 
-        return (Q_states, Q_next_states_max)
+        return (Q_states, Q_next_states, Q_next_states_max)
 
     def switch_models(self):
          # Switch model 1 and model 2
