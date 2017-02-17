@@ -10,6 +10,7 @@ dependencies:
     - pip install six h5py numpy scipy matplotlib seaborn pandas pytest-cov
   override:
     - pip install git+https://github.com/openai/gym.git
+    - pip uninstall tensorflow
     - pip install tensorflow
     - pip install git+https://github.com/Theano/Theano.git
     - pip install keras
