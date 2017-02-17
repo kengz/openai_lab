@@ -58,7 +58,7 @@ class HyperoptHyperOptimizer(HyperOptimizer):
         convert to hyperopt param expressions. refer:
         https://github.com/hyperopt/hyperopt/wiki/FMin#21-parameter-expressions
         param = {
-            'learning_rate': {
+            'lr': {
                 'uniform': {
                     'low': 0.0001,
                     'high': 1.0

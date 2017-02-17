@@ -16,8 +16,8 @@ class DQN(Agent):
 
     def __init__(self, env_spec,
                  train_per_n_new_exp=1,
-                 gamma=0.95, learning_rate=0.1,
-                 epi_change_learning_rate=None,
+                 gamma=0.95, lr=0.1,
+                 epi_change_lr=None,
                  batch_size=16, n_epoch=5, hidden_layers_shape=[4],
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
@@ -26,8 +26,8 @@ class DQN(Agent):
 
         self.train_per_n_new_exp = train_per_n_new_exp
         self.gamma = gamma
-        self.learning_rate = learning_rate
-        self.epi_change_learning_rate = epi_change_learning_rate
+        self.lr = lr
+        self.epi_change_lr = epi_change_lr
         self.batch_size = batch_size
         self.n_epoch = 1
         self.final_n_epoch = n_epoch
@@ -78,15 +78,15 @@ class DQN(Agent):
         Currently only used for changing the learning rate
         Compiling does not affect the model weights
         '''
-        if self.epi_change_learning_rate is not None:
-            if (sys_vars['epi'] == self.epi_change_learning_rate and
+        if self.epi_change_lr is not None:
+            if (sys_vars['epi'] == self.epi_change_lr and
                     sys_vars['t'] == 0):
-                self.learning_rate = self.learning_rate / 10.0
-                self.optimizer.change_optim_params({'learning_rate': self.learning_rate})
+                self.lr = self.lr / 10.0
+                self.optimizer.change_optim_params({'lr': self.lr})
                 self.model.compile(
                     loss='mean_squared_error', optimizer=self.optimizer.keras_optimizer)
                 logger.info('Model recompiled with new settings: '
-                            'Learning rate: {}'.format(self.learning_rate))
+                            'Learning rate: {}'.format(self.lr))
         return self.model
 
     def update_n_epoch(self, sys_vars):

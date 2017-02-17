@@ -36,13 +36,13 @@ class QTable(Agent):
 
     def __init__(self, env_spec,
                  resolution=10,
-                 gamma=0.95, learning_rate=0.1,
+                 gamma=0.95, lr=0.1,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=1000,
                  **kwargs):  # absorb generic param without breaking
         super(QTable, self).__init__(env_spec)
         self.resolution = resolution
         self.gamma = gamma
-        self.learning_rate = learning_rate
+        self.lr = lr
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
@@ -125,5 +125,5 @@ class QTable(Agent):
         sys_vars['loss'].append(loss)
 
         self.qtable[flat_state, action] = Q_state_action + \
-            self.learning_rate * loss
+            self.lr * loss
         return self.qtable

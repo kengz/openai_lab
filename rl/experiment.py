@@ -93,7 +93,8 @@ class Session(object):
         self.memory = self.Memory(**self.param)
         self.policy = self.Policy(**self.param)
         self.optimizer = self.Optimizer(**self.param)
-        self.agent.compile(self.memory, self.policy, self.preprocessor, self.optimizer)
+        self.agent.compile(
+            self.memory, self.policy, self.preprocessor, self.optimizer)
         self.agent.compile_model()
 
         # data file and graph
@@ -162,7 +163,7 @@ class Session(object):
             "Agent info: {}".format(
                 format_obj_dict(
                     self.agent,
-                    ['learning_rate', 'n_epoch'])))
+                    ['lr', 'n_epoch'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
@@ -375,7 +376,8 @@ class Trial(object):
 
     def to_stop(self, s):
         '''check of trial should be continued'''
-        failed = (s >= 2) and (self.data['stats']['solved_ratio_of_sessions'] == 0.)
+        failed = (s >= 2) and (
+            self.data['stats']['solved_ratio_of_sessions'] == 0.)
         if failed:
             logger.info(
                 'Failed trial, terminating sessions for {}'.format(

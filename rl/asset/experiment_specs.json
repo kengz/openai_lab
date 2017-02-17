@@ -36,8 +36,8 @@
       "epsilon": 1e-08,
       "rho": 0.9,
       "nesterov": true,
-      "beta_1" : 0.9,
-      "beta_2" : 0.999,
+      "beta_1": 0.9,
+      "beta_2": 0.999,
       "gamma": 0.96,
       "hidden_layers_shape": [16],
       "hidden_layers_activation": "sigmoid",
@@ -283,7 +283,7 @@
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
@@ -314,7 +314,7 @@
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
@@ -345,7 +345,7 @@
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
@@ -376,12 +376,12 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -404,7 +404,7 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 1000
+      "epi_change_lr": 1000
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
@@ -432,12 +432,12 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -460,12 +460,12 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -488,12 +488,12 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 100,
-      "epi_change_learning_rate": 100
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.005, 0.001, 0.0005, 0.0001],
       "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
-      "epi_change_learning_rate": [150, 200],
+      "epi_change_lr": [150, 200],
       "hidden_layers_shape": [
         [300, 150, 75],
         [400, 200, 100]
@@ -518,7 +518,7 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 1000000,
-      "epi_change_learning_rate": 1000000
+      "epi_change_lr": 1000000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -547,7 +547,7 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_change_learning_rate": 5000
+      "epi_change_lr": 5000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
