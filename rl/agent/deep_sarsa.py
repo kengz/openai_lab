@@ -25,7 +25,7 @@ class DeepSarsa(DQN):
 
     def train_an_epoch(self):
         last_exp = self.memory.pop()
-        (Q_states, _q_next_states, Q_next_states_selected
+        (Q_states, _next, Q_next_states_selected
          ) = self.compute_Q_states(last_exp)
         Q_targets = self.compute_Q_targets(
             last_exp, Q_states, Q_next_states_selected)
