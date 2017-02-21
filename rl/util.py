@@ -14,7 +14,7 @@ from os import path, environ
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
-TIMESTAMP_REGEX = r'(\d{4}\-\d{2}\-\d{2}\_\d{6})'
+TIMESTAMP_REGEX = r'(\d{4}_\d{2}_\d{2}_\d{6})'
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
@@ -124,14 +124,14 @@ def log_delimiter(msg, line='-'):
 
 def timestamp():
     '''timestamp used for filename'''
-    timestamp_str = '{:%Y-%m-%d_%H%M%S}'.format(datetime.now())
+    timestamp_str = '{:%Y_%m_%d_%H%M%S}'.format(datetime.now())
     assert re.search(TIMESTAMP_REGEX, timestamp_str)
     return timestamp_str
 
 
 def timestamp_elapse(s1, s2):
     '''calculate the time elapsed between timestamps from s1 to s2'''
-    FMT = '%Y-%m-%d_%H%M%S'
+    FMT = '%Y_%m_%d_%H%M%S'
     delta_t = datetime.strptime(s2, FMT) - datetime.strptime(s1, FMT)
     return str(delta_t)
 
@@ -285,7 +285,7 @@ def parse_experiment_name(id_str):
     if experiment_id is None:
         experiment_name = c_id_str
     else:
-        experiment_name = re.sub(TIMESTAMP_REGEX, '', experiment_id).strip('_')
+        experiment_name = re.sub(TIMESTAMP_REGEX, '', experiment_id).strip('-')
     assert experiment_name in EXPERIMENT_SPECS
     return experiment_name
 

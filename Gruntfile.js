@@ -4,7 +4,7 @@ const resolve = require('resolve-dir')
 
 
 // generic experimentId matcher. index 2: experimentId, 3 or 4: experimentName
-const expIdRegex = /(\-e\s+)?(([a-zA-Z0-9_]+)_\d{4}\-\d{2}\-\d{2}_\d{6}|([a-zA-Z0-9_]+))/
+const expIdRegex = /(\-e\s+)?(([a-zA-Z0-9_]+)\-\d{4}_\d{2}_\d{2}_\d{6}|([a-zA-Z0-9_]+))/
 const historyPath = './config/history.json'
 const finishMsg = `
 ===========================================

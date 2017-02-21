@@ -347,7 +347,7 @@ class Trial(object):
         self.trial_num = trial_num
         self.num_of_trials = num_of_trials
         self.run_timestamp = run_timestamp
-        self.experiment_id = experiment_id_override or '{}_{}'.format(
+        self.experiment_id = experiment_id_override or '{}-{}'.format(
             self.experiment_name, self.run_timestamp)
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
         self.base_dir = './data/{}'.format(self.experiment_id)
