@@ -5,6 +5,10 @@
 set -e
 trap "exit" INT
 
+# copy keys file if not already exist
+BIN_DIR=`pwd`/bin
+$BIN_DIR/copy-config
+
 # install system dependencies
 if [ $(uname) == "Darwin" ]; then
   if which brew >/dev/null; then
@@ -67,8 +71,9 @@ sudo python3 -m pip install matplotlib
 sudo python3 -m pip install seaborn
 sudo python3 -m pip install pandas
 sudo python3 -m pip install pytest-cov
-sudo python3 -m pip install git+https://github.com/openai/gym.git
-git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install
+sudo python3 -m pip install atari_py
+sudo python3 -m pip install Pillow
+sudo python3 -m pip install PyOpenGL
 
 # install tensorflow
 if [ $(uname) == "Darwin" ]; then
@@ -90,10 +95,16 @@ fi
 sudo python3 -m pip install theano==0.8.2
 python3 -c "import theano; print('theano version:'); print(theano.__version__)"
 
-
 # install keras
 sudo python3 -m pip install keras
 
-# copy keys file if not already exist
-BIN_DIR=`pwd`/bin
-$BIN_DIR/copy-config
+# install full openai gym
+if [ $(uname) == "Darwin" ]; then
+  brew install cmake boost boost-python sdl2 swig wget
+else
+  sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
+fi
+sudo python3 -m pip install git+https://github.com/openai/gym.git -e '.[all]'
+git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install && cd ..
+python3 -c "import gym; gym.make('LunarLander-v2')"
+python3 -c "import gym; gym.make('SpaceInvaders-v0')"
