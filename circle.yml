@@ -12,7 +12,7 @@ dependencies:
     - pip install tensorflow
     - pip install theano
     - pip install keras
-    - pip install git+https://github.com/openai/gym.git -e '[.all]'
+    - pip install 'gym[all]'
 test:
   override:
     - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
