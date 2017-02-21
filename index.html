@@ -218,6 +218,8 @@
 By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
 </aside>
 
+<p>All the OpenAI gym environments (except for Mujoco) are installed.</p>
+
 <p>Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
 
 <aside class="notice">
@@ -243,43 +245,6 @@ We recommend Tensorflow for experimentation with multi-GPU for stability. Use Th
 </ul>
 
 <p>Configure these before <a href="#usage">usage</a> of the lab (more info about the keys below).</p>
-
-<h2 id="install-all-openai-gym-environments">Install All OpenAI Gym Environments</h2>
-
-<p>To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the <a href="https://github.com/openai/gym#installing-everything">Install Everything</a> of the repo (which is still broken at the time of writing).</p>
-<pre class="highlight shell"><code>brew install cmake boost boost-python sdl2 swig wget
-git clone https://github.com/openai/gym.git
-<span class="nb">cd </span>gym
-pip3 install -e <span class="s1">'.[all]'</span>
-</code></pre>
-<p>Try to run a Lunar Lander env, it will break (unless they fix it):
-<code class="prettyprint">python
-import gym
-env = gym.make(&#39;LunarLander-v2&#39;)
-env.reset()
-env.render()
-</code></p>
-
-<p>If it fails, debug as follow (and repeat once more if it fails again, glorious python):</p>
-<pre class="highlight shell"><code>pip3 uninstall Box2D box2d-py
-git clone https://github.com/pybox2d/pybox2d
-<span class="nb">cd </span>pybox2d/
-python3 setup.py clean
-python3 setup.py build
-python3 setup.py install
-</code></pre>
-<p>To run Atari envs three additional dependencies are required</p>
-<pre class="highlight shell"><code>pip3 install atari_py
-pip3 install Pillow
-pip3 install PyOpenGL
-</code></pre>
-<p>Then check that it works with
-<code class="prettyprint">python
-import gym
-env = gym.make(&#39;SpaceInvaders-v0&#39;)
-env.reset()
-env.render()
-</code></p>
 
 <h2 id="data-files-auto-sync">Data files auto-sync</h2>
 
