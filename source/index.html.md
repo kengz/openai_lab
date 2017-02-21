@@ -1,12 +1,12 @@
 ---
-title: API Reference
+title: OpenAI Lab Doc
 
 language_tabs:
   - python
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a>
+  - <a href='https://github.com/openai/gym'>OpenAI Gym Github</a>
 
 includes:
   - INSTALLATION
