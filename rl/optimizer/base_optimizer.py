@@ -1,4 +1,4 @@
-from rl.util import log_self
+from rl.util import log_self, logger
 
 
 class Optimizer(object):

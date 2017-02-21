@@ -20,4 +20,4 @@ class DeepExpectedSarsa(DeepSarsa):
         Q_next_states_max = np.amax(Q_next_states, axis=1)
         Q_next_states_selected = (1 - curr_e) * Q_next_states_max + \
             np.sum(Q_next_states * curr_e_per_a, axis=1)
-        return (Q_states, None, Q_next_states_selected)
+        return (Q_states, Q_next_states, Q_next_states_selected)

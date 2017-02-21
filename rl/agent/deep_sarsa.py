@@ -21,12 +21,12 @@ class DeepSarsa(DQN):
             DeepSarsa, self).compute_Q_states(last_exp)
         next_action = self.select_action(last_exp['next_states'][0])
         Q_next_states_selected = Q_next_states[:, next_action]
-        return (Q_states, None, Q_next_states_selected)
+        return (Q_states, Q_next_states, Q_next_states_selected)
 
     def train_an_epoch(self):
         last_exp = self.memory.pop()
-        (Q_states, _none, Q_next_states_selected) = self.compute_Q_states(
-            last_exp)
+        (Q_states, _next, Q_next_states_selected
+         ) = self.compute_Q_states(last_exp)
         Q_targets = self.compute_Q_targets(
             last_exp, Q_states, Q_next_states_selected)
         loss = self.model.train_on_batch(last_exp['states'], Q_targets)
