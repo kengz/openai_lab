@@ -12,6 +12,8 @@ cd openai_lab
 By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
 </aside>
 
+All the OpenAI gym environments (except for Mujoco) are installed.
+
 Keras needs a backend in the home directory; setup your `~/.keras/keras.json` using example file in `config/keras.json`.
 
 <aside class="notice">
@@ -38,53 +40,6 @@ We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/r
 - `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`
 
 Configure these before [usage](#usage) of the lab (more info about the keys below).
-
-
-## Install All OpenAI Gym Environments
-
-To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the [Install Everything](https://github.com/openai/gym#installing-everything) of the repo (which is still broken at the time of writing).
-
-```shell
-brew install cmake boost boost-python sdl2 swig wget
-git clone https://github.com/openai/gym.git
-cd gym
-pip3 install -e '.[all]'
-```
-
-Try to run a Lunar Lander env, it will break (unless they fix it):
-```python
-import gym
-env = gym.make('LunarLander-v2')
-env.reset()
-env.render()
-```
-
-If it fails, debug as follow (and repeat once more if it fails again, glorious python):
-
-```shell
-pip3 uninstall Box2D box2d-py
-git clone https://github.com/pybox2d/pybox2d
-cd pybox2d/
-python3 setup.py clean
-python3 setup.py build
-python3 setup.py install
-```
-
-To run Atari envs three additional dependencies are required
-
-```shell
-pip3 install atari_py
-pip3 install Pillow
-pip3 install PyOpenGL
-```
-
-Then check that it works with
-```python
-import gym
-env = gym.make('SpaceInvaders-v0')
-env.reset()
-env.render()
-```
 
 
 ## Data files auto-sync
