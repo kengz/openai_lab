@@ -46,7 +46,7 @@ Use Theano once your lab produces a final model for a single retraining, since i
 ```
 
 
-## Data files auto-sync
+## Setup Data Auto-sync
 
 We find it extremely useful to have data file sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app on a computer or a smartphone.
 
@@ -57,7 +57,7 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 </aside>
 
 
-## Notification
+## Setup Auto-notification
 
 Experiments take a while to run, and we find it useful also to be notified automatically when it's complete. We use [noti](https://github.com/variadico/noti), which is also installed with `bin/setup`.
 
