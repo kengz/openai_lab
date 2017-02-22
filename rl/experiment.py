@@ -242,8 +242,9 @@ class Session(object):
         self.update_history()
         return sys_vars
 
-    @classmethod
-    def clear_session(cls):
+    def clear_session(self):
+        self.grapher.plt.close()
+        del self.grapher.plt
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
