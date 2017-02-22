@@ -205,13 +205,15 @@
       <div class="content">
         <h1 id="openai-lab">OpenAI Lab <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0" alt="Codacy Badge" /></a></h1>
 
+<p><strong>(DOC UNDER CONSTRUCTION)</strong></p>
+
 <p><em>An experimentation system for Reinforcement Learning using OpenAI and Keras.</em></p>
 
 <p>This lab is created to let us do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. We can theorize as fast as we think, and experiment as fast as the computers can run.</p>
 
 <p>With the <em>OpenAI Lab</em>, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.</p>
 
-<p>The <em>OpenAI Lab</em> lowers the experimental complexity and causes an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.</p>
+<p>The <em>OpenAI Lab</em> lowers the experimental complexity and enables an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.</p>
 
 <h2 id="lab-demo">Lab Demo</h2>
 
@@ -268,6 +270,8 @@
 </ul></li>
 <li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
 </ul>
+
+<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">96</code> param combinations (trials), and <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run <code class="prettyprint">96 x 5 = 480</code> sessions.</p>
 
 <h3 id="lab-workflow">Lab Workflow</h3>
 
