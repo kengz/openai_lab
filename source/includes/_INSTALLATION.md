@@ -1,28 +1,37 @@
 # <a name="installation"></a>Installation
 
+1\. Run the setup script:
+
 ```shell
 git clone https://github.com/kengz/openai_lab.git
 cd openai_lab
 ./bin/setup
 ```
 
-`bin/setup` installs the dependencies the same way as our servers and CircleCI builds; inspect or change it as needed.
+`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed.
+
+
+2\. Keras needs a backend in the home directory; setup your `~/.keras/keras.json` using example file in `config/keras.json`.
+
+```json
+{
+  "epsilon": 1e-07,
+  "image_dim_ordering": "tf",
+  "floatx": "float32",
+  "backend": "tensorflow"
+}
+```
 
 <aside class="notice">
-By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
+We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
+Use Theano once your lab produces a final model for a single retraining, since it's faster.
 </aside>
 
-All the OpenAI gym environments (except for Mujoco) are installed.
 
-Keras needs a backend in the home directory; setup your `~/.keras/keras.json` using example file in `config/keras.json`.
+3\. `bin/setup` also creates the needed config files needed for lab [usage](#usage). See sections below for more info.
 
-<aside class="notice">
-We recommend Tensorflow for experimentation with multi-GPU for stability. Use Theano once your lab produces a final model for a single retraining, since it's faster.
-</aside>
-
-We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on progress. The related dependencies are installed with `bin/setup` already.
-
-`bin/setup` also creates the needed config files:
+- `config/default.json` for local development, used when `grunt` is ran without a production flag.
+- `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`
 
 ```json
 {
@@ -35,11 +44,6 @@ We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/r
   ]
 }
 ```
-
-- `config/default.json` for local development, used when `grunt` is ran without a production flag.
-- `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`
-
-Configure these before [usage](#usage) of the lab (more info about the keys below).
 
 
 ## Data files auto-sync
