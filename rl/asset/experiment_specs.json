@@ -83,14 +83,14 @@
       "exploration_anneal_episodes": 20
     },
     "param_range": {
-      "lr": [0.01, 0.005, 0.001],
-      "gamma": [0.95, 0.96, 0.97, 0.98, 0.99],
+      "lr": [0.001, 0.01, 0.02, 0.05],
+      "gamma": [0.95, 0.96, 0.97, 0.99],
       "hidden_layers_shape": [
-        [4],
         [8],
-        [16]
+        [16],
+        [32]
       ],
-      "exploration_anneal_episodes": [10, 25, 40]
+      "exploration_anneal_episodes": [10, 20]
     }
   },
   "double_dqn": {
