@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Reference</title>
+    <title>OpenAI Lab Doc</title>
 
     <style>
       .highlight table td { padding: 5px; }
@@ -196,8 +196,8 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='#'>Sign Up for a Developer Key</a></li>
-            <li><a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+            <li><a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a></li>
+            <li><a href='https://github.com/openai/gym'>OpenAI Gym Github</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -205,30 +205,128 @@
       <div class="content">
         <h1 id="openai-lab">OpenAI Lab <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0" alt="Codacy Badge" /></a></h1>
 
-<p>An experimentation system for Reinforcement Learning using OpenAI and Keras.</p>
+<p><em>An experimentation system for Reinforcement Learning using OpenAI and Keras.</em></p>
+
+<p>This lab is created to let us do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. We can theorize as fast as we think, and experiment as fast as the computers can run.</p>
+
+<p>With the <em>OpenAI Lab</em>, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.</p>
+
+<p>The <em>OpenAI Lab</em> lowers the experimental complexity and causes an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.</p>
+
+<h2 id="lab-demo">Lab Demo</h2>
+
+<p>Each experiment involves:
+- a problem - an <a href="https://gym.openai.com/envs">OpenAI Gym environment</a>
+- a RL agent with modular components <code class="prettyprint">agent, memory, optimizer, policy, preprocessor</code>, each of which is an experimental variable.</p>
+
+<p>We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.</p>
+
+<h3 id="specify-experiment">Specify Experiment</h3>
+
+<p>The example below is fully specified in <code class="prettyprint">rl/asset/experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+      </span><span class="nt">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
+      </span><span class="nt">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
+      </span><span class="nt">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<ul>
+<li><em>experiment</em>: <code class="prettyprint">dqn</code></li>
+<li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
+<li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
+<li><em>control agent variables</em>:
+
+<ul>
+<li><code class="prettyprint">DQN</code> agent</li>
+<li><code class="prettyprint">LinearMemoryWithForgetting</code></li>
+<li><code class="prettyprint">AdamOptimizer</code></li>
+<li><code class="prettyprint">NoPreProcessor</code></li>
+</ul></li>
+<li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
+</ul>
+
+<h3 id="lab-workflow">Lab Workflow</h3>
+
+<p>The workflow to setup this experiment is as follow:</p>
+
+<ol>
+<li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
+<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">experiment_spec.json</code> to include this new variable,  reuse the other existing RL components, and specify the param range.</li>
+<li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
+<li>Run <code class="prettyprint">grunt -prod</code></li>
+<li>Analyze the graphs and data (live-synced)</li>
+</ol>
+
+<h3 id="lab-results">Lab Results</h3>
+
+<p><em>The dqn experiment analytics generated by the lab (zoom/download to see). This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves.</em>
+<img alt="The dqn experiment analytics" src="./images/dqn.png" /></p>
+
+<p>On completion, from the analytics (zoom on the graph), we conclude that the experiment is a success, and the best agent that solves the problem has parameters:</p>
+
+<ul>
+<li><em>lr</em>: (pending below)</li>
+<li><em>gamma</em>: </li>
+<li><em>hidden_layers_shape</em>: </li>
+<li><em>exploration_anneal_episodes</em>: </li>
+</ul>
+
+<h3 id="run-your-own-lab">Run Your Own Lab</h3>
+
+<p>Want to run the lab? Go to <a href="#installation">Installation</a>, <a href="#Usage">Usage</a> and <a href="#development">Development</a>.</p>
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
+
+<p>1. Run the setup script:</p>
 <pre class="highlight shell"><code>git clone https://github.com/kengz/openai_lab.git
 <span class="nb">cd </span>openai_lab
 ./bin/setup
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs the dependencies the same way as our servers and CircleCI builds; inspect or change it as needed.</p>
+<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed.</p>
 
+<p>2. Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"floatx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float32"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"backend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tensorflow"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 <aside class="notice">
-By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
+We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
+Use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
 </aside>
 
-<p>All the OpenAI gym environments (except for Mujoco) are installed.</p>
+<p>3. <code class="prettyprint">bin/setup</code> also creates the needed config files needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
 
-<p>Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
-
-<aside class="notice">
-We recommend Tensorflow for experimentation with multi-GPU for stability. Use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
-</aside>
-
-<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on progress. The related dependencies are installed with <code class="prettyprint">bin/setup</code> already.</p>
-
-<p><code class="prettyprint">bin/setup</code> also creates the needed config files:</p>
+<ul>
+<li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
+<li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code></li>
+</ul>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="nt">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"NOTI_SLACK_DEST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#rl-monitor"</span><span class="p">,</span><span class="w">
@@ -239,14 +337,7 @@ We recommend Tensorflow for experimentation with multi-GPU for stability. Use Th
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<ul>
-<li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
-<li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code></li>
-</ul>
-
-<p>Configure these before <a href="#usage">usage</a> of the lab (more info about the keys below).</p>
-
-<h2 id="data-files-auto-sync">Data files auto-sync</h2>
+<h2 id="setup-data-auto-sync">Setup Data Auto-sync</h2>
 
 <p>We find it extremely useful to have data file sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app on a computer or a smartphone.</p>
 
@@ -256,7 +347,7 @@ We recommend Tensorflow for experimentation with multi-GPU for stability. Use Th
 Setup the config key <code>data_sync_destination</code> in <code>config/{default.json, production.json}</code>.
 </aside>
 
-<h2 id="notification">Notification</h2>
+<h2 id="setup-auto-notification">Setup Auto-notification</h2>
 
 <p>Experiments take a while to run, and we find it useful also to be notified automatically when it&rsquo;s complete. We use <a href="https://github.com/variadico/noti">noti</a>, which is also installed with <code class="prettyprint">bin/setup</code>.</p>
 
@@ -266,12 +357,12 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> in <code>config/{default.json, production.json}</code>.
 </aside>
 
-<blockquote>
 <p>Notifications from the lab running on our remote server beast:
 <img alt="Notifications from the lab running on our remote server beast" src="./images/noti.png" /></p>
-</blockquote>
 
           <h1 id="usage"><a name="usage"></a>Usage</h1>
+
+<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on progress. The related dependencies are installed with <code class="prettyprint">bin/setup</code> already.</p>
 
           <h1 id="features"><a name="features"></a>Features</h1>
 
