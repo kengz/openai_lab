@@ -65,7 +65,7 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
             state = np.reshape(state, (1, state.shape[0]))
             # extract from batch predict
             Q_state1 = agent.model.predict(state)[0]
-            Q_state2 = agent.model.predict(state)[0]
+            Q_state2 = agent.model2.predict(state)[0]
             Q_state = Q_state1 + Q_state2
             assert Q_state.ndim == 1
             action = np.argmax(Q_state)
