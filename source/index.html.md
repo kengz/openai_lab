@@ -27,6 +27,8 @@ This lab is created to let us do Reinforcement Learning (RL) like science - _the
 
 With the _OpenAI Lab_, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.
 
+The _OpenAI Lab_ lowers the experimental complexity and causes an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
+
 
 ## Lab Demo
 
@@ -96,7 +98,7 @@ The workflow to setup this experiment is as follow:
 
 ### Lab Results
 
->The `dqn` experiment analytics (zoom/download to see):
+The dqn experiment analytics (zoom/download to see):
 <img alt="The dqn experiment analytics" src="./images/dqn.png" />
 
 On completion, from the analytics (zoom on the graph), we conclude that the experiment is a success, and the best agent that solves the problem has parameters:
@@ -106,3 +108,7 @@ On completion, from the analytics (zoom on the graph), we conclude that the expe
 - *hidden_layers_shape*: 
 - *exploration_anneal_episodes*: 
 
+
+### Run Your Own Lab
+
+Want to run the lab? Go to [Installation](#installation), [Usage](#Usage) and [Development](#development).
