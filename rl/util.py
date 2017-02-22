@@ -328,12 +328,11 @@ def configure_gpu():
     if K.backend() != 'tensorflow':
         # skip directly if is not tensorflow
         return
-    real_parallel_process_num = 1 if (
-        mp.current_process().name == 'MainProcess') else PARALLEL_PROCESS_NUM
+    process_num = PARALLEL_PROCESS_NUM if args.param_selection else 1
     tf = K.tf
     gpu_options = tf.GPUOptions(
         allow_growth=True,
-        per_process_gpu_memory_fraction=1./float(real_parallel_process_num))
+        per_process_gpu_memory_fraction=1./float(process_num))
     config = tf.ConfigProto(
         gpu_options=gpu_options,
         allow_soft_placement=True)
