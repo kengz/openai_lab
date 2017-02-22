@@ -27,7 +27,7 @@ This lab is created to let us do Reinforcement Learning (RL) like science - _the
 
 With the _OpenAI Lab_, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.
 
-The _OpenAI Lab_ lowers the experimental complexity and causes an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
+The _OpenAI Lab_ lowers the experimental complexity and enables an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
 
 
 ## Lab Demo
@@ -83,6 +83,8 @@ The example below is fully specified in `rl/asset/experiment_specs.json` under `
     - `AdamOptimizer`
     - `NoPreProcessor`
 - *parameter variables values*: the `"param_range"` JSON
+
+An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `96` param combinations (trials), and `5` repeated sessions per trial. Overall, this experiment will run `96 x 5 = 480` sessions.
 
 
 ### Lab Workflow
