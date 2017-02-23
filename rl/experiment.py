@@ -249,25 +249,22 @@ class Session(object):
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        trial_data = load_data_from_trial_id(self.trial.trial_id)
-        if trial_data is None:
-            # no data yet, confirmed incomplete
-            return False
-        else:
-            sys_vars_array = trial_data['sys_vars_array']
-            # valid since sessions always ran sequentially
-            # if Trial already wants a rerun,
-            # suffices to check which session hasn't been ran
-            is_incomplete = self.session_num + 1 > len(sys_vars_array)
-            return not is_incomplete
+        if not hasattr(self, 'sys_vars'):
+            if self.trial.data is None:
+                self.sys_vars = None
+            else:
+                sys_vars_array = self.trial.data['sys_vars_array']
+                self.sys_vars = sys_vars_array[self.session_num] if len(
+                    sys_vars_array) > self.session_num else None
+        is_incomplete = (
+            not self.trial.to_stop(self.session_num) and self.sys_vars is None)
+        return not is_incomplete
 
     def run(self):
         '''run a session of agent'''
         if self.is_completed():
             log_delimiter('Session #{} of {} already completed:\n{}'.format(
                 self.session_num, self.num_of_sessions, self.session_id))
-            sys_vars = load_data_from_trial_id(self.trial.trial_id)[
-                'sys_vars_array'][self.session_num]
         else:
             log_delimiter('Run Session #{} of {}:\n{}'.format(
                 self.session_num, self.num_of_sessions, self.session_id))
@@ -378,18 +375,16 @@ class Trial(object):
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        trial_data = load_data_from_trial_id(self.trial_id)
-        if trial_data is None:
+        if not hasattr(self, 'data'):  # guard for resume loading
+            self.data = load_data_from_trial_id(self.trial_id)
+
+        if self.data is None:
             # no data yet, confirmed incomplete
             return False
         else:
-            stats = trial_data['stats']
+            stats = self.data['stats']
             num_of_sessions = stats['num_of_sessions']
-            solved_num_of_sessions = stats['solved_num_of_sessions']
-            # hasn't ran enough times but is promising, is incomplete
-            is_incomplete = (num_of_sessions < self.times and
-                             solved_num_of_sessions == num_of_sessions)
-            return not is_incomplete
+            return not self.to_stop(num_of_sessions)
 
     def run(self):
         '''
@@ -400,7 +395,6 @@ class Trial(object):
             log_delimiter('Trial #{} of {} already completed:\n{}'.format(
                 self.trial_num, self.num_of_trials,
                 self.trial_id), '=')
-            self.data = load_data_from_trial_id(self.trial_id)
         else:
             log_delimiter('Run Trial #{} of {}:\n{}'.format(
                 self.trial_num, self.num_of_trials,
