@@ -382,7 +382,7 @@ class Trial(object):
             # no data yet, confirmed incomplete
             return False
         else:
-            s = len(self.data['sys_vars_array']) - 1  # current session num
+            s = len(self.data['sys_vars_array']) # next session to run
             return self.to_stop(s)
 
     def run(self):
