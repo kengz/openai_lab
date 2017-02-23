@@ -77,7 +77,6 @@ class HyperOptimizer(object):
         algo step 2, construct and run Trial with the next param
         '''
         import gc
-        gc.collect()
         experiment_spec = self.compose_experiment_spec(param)
         trial = self.Trial(
             experiment_spec, trial_num=trial_num,
