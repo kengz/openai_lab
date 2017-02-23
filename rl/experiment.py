@@ -265,6 +265,7 @@ class Session(object):
         if self.is_completed():
             log_delimiter('Session #{} of {} already completed:\n{}'.format(
                 self.session_num, self.num_of_sessions, self.session_id))
+            sys_vars = self.sys_vars
         else:
             log_delimiter('Run Session #{} of {}:\n{}'.format(
                 self.session_num, self.num_of_sessions, self.session_id))
@@ -365,7 +366,7 @@ class Trial(object):
 
     def to_stop(self, s):
         '''check of trial should be continued'''
-        failed = (s < self.times and s >= 2) and (
+        failed = (2 < s and s < self.times) and (
             self.data['stats']['solved_ratio_of_sessions'] == 0.)
         if failed:
             logger.info(
@@ -379,10 +380,9 @@ class Trial(object):
             self.data = load_data_from_trial_id(self.trial_id)
 
         if self.data is None:
-            # no data yet, confirmed incomplete
-            return False
+            return False # no data yet, confirmed not complete
         else:
-            s = len(self.data['sys_vars_array']) # next session to run
+            next_s = len(self.data['sys_vars_array'])
             return self.to_stop(s)
 
     def run(self):
@@ -402,6 +402,9 @@ class Trial(object):
             time_start = timestamp()
             sys_vars_array = []
             for s in range(self.times):
+                if self.is_completed():
+                    break
+
                 sess = Session(trial=self,
                                session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
@@ -426,8 +429,8 @@ class Trial(object):
                 del sess
                 gc.collect()
 
-                if self.to_stop(s):
-                    break
+                # if self.to_stop(s):
+                #     break
 
         progress = 'Progress: Trial #{} of {} done'.format(
             self.trial_num, self.num_of_trials)
