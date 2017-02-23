@@ -256,9 +256,7 @@ class Session(object):
                 sys_vars_array = self.trial.data['sys_vars_array']
                 self.sys_vars = sys_vars_array[self.session_num] if len(
                     sys_vars_array) > self.session_num else None
-        is_incomplete = (
-            not self.trial.to_stop(self.session_num) and self.sys_vars is None)
-        return not is_incomplete
+        return (not self.trial.to_stop(self.session_num)) and (not self.sys_vars is None)
 
     def run(self):
         '''run a session of agent'''
