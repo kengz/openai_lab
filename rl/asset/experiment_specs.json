@@ -38,7 +38,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
@@ -60,7 +60,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
@@ -82,7 +82,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -110,7 +110,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -138,7 +138,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -166,7 +166,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -194,7 +194,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -217,12 +217,12 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
-      "lr": 0.02,
-      "batch_size": 16,
+      "lr": 0.001,
+      "decay": 0.0,
       "gamma": 0.99,
-      "hidden_layers_shape": [4],
+      "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 30
+      "exploration_anneal_episodes": 20
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
