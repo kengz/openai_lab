@@ -256,8 +256,9 @@ class Session(object):
                 sys_vars_array = self.trial.data['sys_vars_array']
                 self.sys_vars = sys_vars_array[self.session_num] if len(
                     sys_vars_array) > self.session_num else None
+        return not (self.sys_vars is None)
         # previous session wasn't last, and this session is not ran
-        return (not self.trial.to_stop(self.session_num - 1)) and (self.sys_vars is None)
+        # return (not self.trial.to_stop(self.session_num - 1)) and (self.sys_vars is None)
 
     def run(self):
         '''run a session of agent'''
