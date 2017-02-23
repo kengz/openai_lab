@@ -29,10 +29,10 @@ STATS_COLS = [
     'mean_rewards_stats_mean',
     'epi_stats_mean',
     'solved_ratio_of_sessions',
+    'num_of_sessions',
     'max_total_rewards_stats_mean',
     't_stats_mean',
-    'trial_id',
-    'num_of_sessions'
+    'trial_id'
 ]
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
