@@ -69,3 +69,8 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
 _Notifications from the lab running on our remote server beast:_
 <img alt="Notifications from the lab running on our remote server beast" src="./images/noti.png" />
+
+
+## Setup Experiments
+
+There are many existing experiments specified in `rl/asset/experiment_specs.json`, and you can add more. Pick the `experiment_name`s (the JSON key, e.g. `"dqn", "lunar_dqn"`), list under config key `experiment`. Then check [usage](#usage) to run the lab.
