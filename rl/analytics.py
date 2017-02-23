@@ -262,7 +262,7 @@ def plot_experiment(data_df, trial_id):
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
     fig.savefig(filename)
-    fig.clear()
+    fig.fig.clear()
     sns.plt.close()
 
 
