@@ -47,6 +47,8 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code> (which is insta
 </aside>
 
 <img alt="Glances to monitor your system" src="./images/glances.png" />
+_Glances on remote server beast._
+
 
 ### Run Remotely
 
