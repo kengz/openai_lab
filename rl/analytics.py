@@ -205,8 +205,8 @@ def compose_data(trial):
     }
     stats.update({
         'performance_score': stats[
-            'mean_rewards_per_epi_stats']['mean'] * stats[
-            'solved_ratio_of_sessions']
+            'mean_rewards_per_epi_stats']['mean'] * (stats[
+            'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics
