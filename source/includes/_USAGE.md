@@ -4,7 +4,7 @@ We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/r
 
 The general gist for running a production lab is:
 
-1. Specify experiments in `rl/asset/experiment_specs.json`. e.g. `"dqn"`
+1. Specify experiments in `rl/asset/experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
 2. Specify the names of the experiments to run in `config/production.json`
 3. Run the lab, e.g. `grunt -prod -resume`
 
@@ -45,6 +45,8 @@ grunt plot -prod
 <aside class="notice">
 To monitor your system (CPU, RAM, GPU), run <code>glances</code> (which is installed in <code>bin/setup</code>)
 </aside>
+
+<img alt="Glances to monitor your system" src="./images/glances.png" />
 
 ### Run Remotely
 
