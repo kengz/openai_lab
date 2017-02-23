@@ -256,7 +256,8 @@ class Session(object):
                 sys_vars_array = self.trial.data['sys_vars_array']
                 self.sys_vars = sys_vars_array[self.session_num] if len(
                     sys_vars_array) > self.session_num else None
-        return (not self.trial.to_stop(self.session_num)) and (not self.sys_vars is None)
+        # previous session wasn't last, and this session is not ran
+        return (not self.trial.to_stop(self.session_num - 1)) and (not self.sys_vars is None)
 
     def run(self):
         '''run a session of agent'''
@@ -284,11 +285,11 @@ class Session(object):
                 if sys_vars['solved']:
                     break
 
-            self.clear_session()
             sys_vars['time_end'] = timestamp()
             sys_vars['time_taken'] = timestamp_elapse(
                 sys_vars['time_start'], sys_vars['time_end'])
 
+        self.clear_session()
         progress = 'Progress: Trial #{} Session #{} of {} done'.format(
             self.trial.trial_num,
             self.session_num, self.num_of_sessions)
@@ -380,7 +381,7 @@ class Trial(object):
             # no data yet, confirmed incomplete
             return False
         else:
-            s = len(self.data['sys_vars_array'])  # next session num
+            s = len(self.data['sys_vars_array']) - 1  # current session num
             return self.to_stop(s)
 
     def run(self):
