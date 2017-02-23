@@ -382,9 +382,8 @@ class Trial(object):
             # no data yet, confirmed incomplete
             return False
         else:
-            stats = self.data['stats']
-            num_of_sessions = stats['num_of_sessions']
-            return not self.to_stop(num_of_sessions)
+            s = len(self.data['sys_vars_array']) - 1
+            return self.to_stop(s)
 
     def run(self):
         '''
