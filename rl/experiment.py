@@ -249,25 +249,16 @@ class Session(object):
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        # the fact we made it here means self.trial.data is not None
-        # and that this session needs to be ran since it's initialized
-        # FUCK INIT ISNT NONE FOR SYS_VARS
         if self.trial.data is None:  # need to run for sure
             return False
         else:
             sys_vars_array = self.trial.data['sys_vars_array']
             if self.session_num < len(sys_vars_array):
-                # has data, already completed
+                # has data, already completed. set data
                 self.sys_vars = sys_vars_array[self.session_num]
                 return True
             else:
                 return False
-        #         self.sys_vars = sys_vars_array[self.session_num] if len(
-        #             sys_vars_array) > self.session_num else None
-        # return not (self.sys_vars is None)
-        # previous session wasn't last, and this session is not ran
-        # return (not self.trial.to_stop(self.session_num - 1)) and
-        # (self.sys_vars is None)
 
     def run(self):
         '''run a session of agent'''
@@ -411,8 +402,7 @@ class Trial(object):
                     trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
                 sys_vars_array.append(copy.copy(sys_vars))
-                time_end = timestamp()
-                time_taken = timestamp_elapse(time_start, time_end)
+                time_taken = timestamp_elapse(time_start, timestamp())
 
                 self.data = {  # trial data
                     'trial_id': self.trial_id,
