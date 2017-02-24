@@ -249,6 +249,8 @@ class Session(object):
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
+        # the fact we made it here means self.trial.data is not None
+        # and that this session needs to be ran since it's initialized
         # FUCK INIT ISNT NONE FOR SYS_VARS
         if self.trial.data is None:  # need to run for sure
             return False
@@ -378,9 +380,9 @@ class Trial(object):
 
         if self.data is None:  # if no data, confirmed not complete
             return False
-        else:  # has data, but check if need to run next session
-            next_s = len(self.data['sys_vars_array'])
-            failed = (2 < next_s and next_s < self.times) and (
+        else:  # has data, check if the latest session is the last
+            s = len(self.data['sys_vars_array']) - 1
+            failed = (2 < s and s < self.times) and (
                 self.data['stats']['solved_ratio_of_sessions'] == 0.)
             if failed:
                 logger.info(
@@ -405,9 +407,6 @@ class Trial(object):
             time_start = timestamp()
             sys_vars_array = []
             for s in range(self.times):
-                if self.is_completed():
-                    break
-
                 sess = Session(
                     trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
@@ -428,6 +427,9 @@ class Trial(object):
                 self.save()  # progressive update, write per session done
                 del sess
                 gc.collect()
+
+                if self.is_completed():
+                    break
 
         progress = 'Progress: Trial #{} of {} done'.format(
             self.trial_num, self.num_of_trials)
