@@ -118,6 +118,7 @@ module.exports = function(grunt) {
         options: {
           debounceDelay: 60000,
           interval: 60000,
+          spawn: false,
         },
       }
     },
