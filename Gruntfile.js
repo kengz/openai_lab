@@ -46,9 +46,8 @@ module.exports = function(grunt) {
   let history = readHistory()
 
   function updateHistory(filepath) {
-    if (fs.lstatSync(filepath).isFile() && _.endsWith(filepath, '.json')) {
-      filepath = _.join(_.initial(filepath.split('_')), '_')
-    } else {
+    if (fs.lstatSync(filepath).isFile()) {
+      // only interested in data folder, skip otherwise
       return
     }
     const matchedPath = filepath.split('/').pop().match(expIdRegex)
