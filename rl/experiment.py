@@ -242,7 +242,7 @@ class Session(object):
         self.update_history()
         return sys_vars
 
-    def clear_session(self):
+    def clear(self):
         self.grapher.clear()
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
@@ -264,7 +264,8 @@ class Session(object):
         #             sys_vars_array) > self.session_num else None
         # return not (self.sys_vars is None)
         # previous session wasn't last, and this session is not ran
-        # return (not self.trial.to_stop(self.session_num - 1)) and (self.sys_vars is None)
+        # return (not self.trial.to_stop(self.session_num - 1)) and
+        # (self.sys_vars is None)
 
     def run(self):
         '''run a session of agent'''
@@ -297,7 +298,7 @@ class Session(object):
             sys_vars['time_taken'] = timestamp_elapse(
                 sys_vars['time_start'], sys_vars['time_end'])
 
-        self.clear_session()
+        self.clear()
         progress = 'Progress: Trial #{} Session #{} of {} done'.format(
             self.trial.trial_num,
             self.session_num, self.num_of_sessions)
@@ -370,26 +371,22 @@ class Trial(object):
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
-    def to_stop(self, s):
-        '''check of trial should be continued'''
-        failed = (2 < s and s < self.times) and (
-            self.data['stats']['solved_ratio_of_sessions'] == 0.)
-        if failed:
-            logger.info(
-                'Failed trial, terminating sessions for {}'.format(
-                    self.trial_id))
-        return failed
-
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        if not hasattr(self, 'data'):  # guard for resume loading
-            self.data = load_data_from_trial_id(self.trial_id)
+        # guard for resume loading, already init to None
+        self.data = self.data or load_data_from_trial_id(self.trial_id)
 
-        if self.data is None:
-            return False # no data yet, confirmed not complete
-        else:
-            next_s = len(self.data['sys_vars_array']) - 1
-            return self.to_stop(next_s)
+        if self.data is None:  # if no data, confirmed not complete
+            return False
+        else:  # has data, but check if need to run next session
+            next_s = len(self.data['sys_vars_array'])
+            failed = (2 < next_s and next_s < self.times) and (
+                self.data['stats']['solved_ratio_of_sessions'] == 0.)
+            if failed:
+                logger.info(
+                    'Failed trial, terminating sessions for {}'.format(
+                        self.trial_id))
+            return failed
 
     def run(self):
         '''
@@ -411,8 +408,8 @@ class Trial(object):
                 if self.is_completed():
                     break
 
-                sess = Session(trial=self,
-                               session_num=s, num_of_sessions=self.times)
+                sess = Session(
+                    trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
                 sys_vars_array.append(copy.copy(sys_vars))
                 time_end = timestamp()
@@ -421,8 +418,6 @@ class Trial(object):
                 self.data = {  # trial data
                     'trial_id': self.trial_id,
                     'metrics': {
-                        # 'time_start': time_start,
-                        # 'time_end': time_end,
                         'time_taken': time_taken,
                     },
                     'experiment_spec': self.experiment_spec,
@@ -430,13 +425,9 @@ class Trial(object):
                     'sys_vars_array': sys_vars_array,
                 }
                 compose_data(self)
-                # progressive update, write every session completion
-                self.save()
+                self.save()  # progressive update, write per session done
                 del sess
                 gc.collect()
-
-                # if self.to_stop(s):
-                #     break
 
         progress = 'Progress: Trial #{} of {} done'.format(
             self.trial_num, self.num_of_trials)
