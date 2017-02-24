@@ -64,8 +64,9 @@ class Session(object):
         self.num_of_sessions = num_of_sessions
         self.session_id = self.trial.trial_id + \
             '_s' + str(self.session_num)
-        log_delimiter('Init Session #{} of {}:\n{}'.format(
-            self.session_num, self.num_of_sessions, self.session_id))
+        log_delimiter('Init Session #{}/{} of Trial #{}/{}:\n{}'.format(
+            self.session_num, self.num_of_sessions,
+            self.trial.trial_num, self.trial.num_of_trials, self.session_id))
 
         self.experiment_spec = self.trial.experiment_spec
         self.problem = self.experiment_spec['problem']
@@ -263,12 +264,17 @@ class Session(object):
     def run(self):
         '''run a session of agent'''
         if self.is_completed():
-            log_delimiter('Session #{} of {} already completed:\n{}'.format(
-                self.session_num, self.num_of_sessions, self.session_id))
+            log_delimiter(
+                'Session #{}/{} of Trial #{}/{} already completed:\n{}'.format(
+                    self.session_num, self.num_of_sessions,
+                    self.trial.trial_num, self.trial.num_of_trials,
+                    self.session_id))
             sys_vars = self.sys_vars
         else:
-            log_delimiter('Run Session #{} of {}:\n{}'.format(
-                self.session_num, self.num_of_sessions, self.session_id))
+            log_delimiter('Run Session #{}/{} of Trial #{}/{}:\n{}'.format(
+                self.session_num, self.num_of_sessions,
+                self.trial.trial_num, self.trial.num_of_trials,
+                self.session_id))
             logger.info(
                 'Experiment Trial Spec: {}'.format(
                     to_json(self.experiment_spec)))
@@ -292,11 +298,10 @@ class Session(object):
                 sys_vars['time_start'], sys_vars['time_end'])
 
         self.clear()
-        progress = 'Progress: Trial #{} Session #{} of {} done'.format(
-            self.trial.trial_num,
-            self.session_num, self.num_of_sessions)
-        log_delimiter('End Session:\n{}\n{}'.format(
-            self.session_id, progress))
+        progress = 'Progress: Session #{}/{} of Trial #{}/{} done'.format(
+            self.session_num, self.num_of_sessions,
+            self.trial.trial_num, self.trial.num_of_trials)
+        log_delimiter('End Session:\n{}\n{}'.format(self.session_id, progress))
         return sys_vars
 
 
@@ -353,9 +358,8 @@ class Trial(object):
         self.base_filename = './data/{}/{}'.format(
             self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Trial #{} of {}:\n{}'.format(
-            self.trial_num, self.num_of_trials,
-            self.trial_id), '=')
+        log_delimiter('Init Trial #{}/{}:\n{}'.format(
+            self.trial_num, self.num_of_trials, self.trial_id), '=')
 
     def save(self):
         '''save the entire trial data grid from inside run()'''
@@ -387,13 +391,11 @@ class Trial(object):
         a number of times times given a experiment_spec from gym_specs
         '''
         if self.is_completed():
-            log_delimiter('Trial #{} of {} already completed:\n{}'.format(
-                self.trial_num, self.num_of_trials,
-                self.trial_id), '=')
+            log_delimiter('Trial #{}/{} already completed:\n{}'.format(
+                self.trial_num, self.num_of_trials, self.trial_id), '=')
         else:
-            log_delimiter('Run Trial #{} of {}:\n{}'.format(
-                self.trial_num, self.num_of_trials,
-                self.trial_id), '=')
+            log_delimiter('Run Trial #{}/{}:\n{}'.format(
+                self.trial_num, self.num_of_trials, self.trial_id), '=')
             configure_gpu()
             time_start = timestamp()
             sys_vars_array = []
@@ -421,11 +423,10 @@ class Trial(object):
                 if self.is_completed():
                     break
 
-        progress = 'Progress: Trial #{} of {} done'.format(
+        progress = 'Progress: Trial #{}/{} done'.format(
             self.trial_num, self.num_of_trials)
         log_delimiter(
-            'End Trial:\n{}\n{}'.format(
-                self.trial_id, progress), '=')
+            'End Trial:\n{}\n{}'.format(self.trial_id, progress), '=')
         return self.data
 
 
