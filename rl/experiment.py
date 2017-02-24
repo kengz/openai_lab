@@ -388,7 +388,7 @@ class Trial(object):
         if self.data is None:
             return False # no data yet, confirmed not complete
         else:
-            next_s = len(self.data['sys_vars_array'])
+            next_s = len(self.data['sys_vars_array']) - 1
             return self.to_stop(next_s)
 
     def run(self):
