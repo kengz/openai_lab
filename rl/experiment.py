@@ -248,54 +248,31 @@ class Session(object):
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
-    def is_completed(self):
-        '''check if the trial is already completed, if so dont run'''
-        if self.trial.data is None:  # need to run for sure
-            return False
-        else:
-            sys_vars_array = self.trial.data['sys_vars_array']
-            if self.session_num < len(sys_vars_array):
-                # has data, already completed. set data
-                self.sys_vars = sys_vars_array[self.session_num]
-                return True
-            else:
-                return False
-
     def run(self):
         '''run a session of agent'''
-        if self.is_completed():
-            log_delimiter(
-                'Session #{}/{} of Trial #{}/{} already completed:\n{}'.format(
-                    self.session_num, self.num_of_sessions,
-                    self.trial.trial_num, self.trial.num_of_trials,
-                    self.session_id))
-            sys_vars = self.sys_vars
-        else:
-            log_delimiter('Run Session #{}/{} of Trial #{}/{}:\n{}'.format(
-                self.session_num, self.num_of_sessions,
-                self.trial.trial_num, self.trial.num_of_trials,
-                self.session_id))
-            logger.info(
-                'Experiment Trial Spec: {}'.format(
-                    to_json(self.experiment_spec)))
-            sys_vars = self.sys_vars
-            sys_vars['time_start'] = timestamp()
-            for epi in range(sys_vars['MAX_EPISODES']):
-                sys_vars['epi'] = epi  # update sys_vars epi
-                try:
-                    self.run_episode()
-                except Exception:
-                    logger.error(
-                        'Error in trial, terminating '
-                        'further session from {}'.format(self.session_id))
-                    traceback.print_exc(file=sys.stdout)
-                    break
-                if sys_vars['solved']:
-                    break
+        log_delimiter('Run Session #{}/{} of Trial #{}/{}:\n{}'.format(
+            self.session_num, self.num_of_sessions,
+            self.trial.trial_num, self.trial.num_of_trials, self.session_id))
+        logger.info(
+            'Experiment Trial Spec: {}'.format(to_json(self.experiment_spec)))
+        sys_vars = self.sys_vars
+        sys_vars['time_start'] = timestamp()
+        for epi in range(sys_vars['MAX_EPISODES']):
+            sys_vars['epi'] = epi  # update sys_vars epi
+            try:
+                self.run_episode()
+            except Exception:
+                logger.error(
+                    'Error in trial, terminating '
+                    'further session from {}'.format(self.session_id))
+                traceback.print_exc(file=sys.stdout)
+                break
+            if sys_vars['solved']:
+                break
 
-            sys_vars['time_end'] = timestamp()
-            sys_vars['time_taken'] = timestamp_elapse(
-                sys_vars['time_start'], sys_vars['time_end'])
+        sys_vars['time_end'] = timestamp()
+        sys_vars['time_taken'] = timestamp_elapse(
+            sys_vars['time_start'], sys_vars['time_end'])
 
         self.clear()
         progress = 'Progress: Session #{}/{} of Trial #{}/{} done'.format(
@@ -368,7 +345,7 @@ class Trial(object):
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
-    def is_completed(self):
+    def is_completed(self, s=None):
         '''check if the trial is already completed, if so dont run'''
         # guard for resume loading, already init to None
         self.data = self.data or load_data_from_trial_id(self.trial_id)
@@ -376,8 +353,9 @@ class Trial(object):
         if self.data is None:  # if no data, confirmed not complete
             return False
         else:  # has data, check if the latest session is the last
-            s = len(self.data['sys_vars_array']) - 1
-            failed = (2 < s and s < self.times) and (
+            if s is None:  # used for when reading from data
+                s = len(self.data['sys_vars_array']) - 1
+            failed = (1 < s and s < self.times) and (
                 self.data['stats']['solved_ratio_of_sessions'] == 0.)
             if failed:
                 logger.info(
@@ -398,8 +376,11 @@ class Trial(object):
                 self.trial_num, self.num_of_trials, self.trial_id), '=')
             configure_gpu()
             time_start = timestamp()
-            sys_vars_array = []
-            for s in range(self.times):
+            sys_vars_array = [] if (self.data is None) else self.data[
+                'sys_vars_array']
+            # skip session if already has its data
+            s_start = len(sys_vars_array)
+            for s in range(s_start, self.times):
                 sess = Session(
                     trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
@@ -420,7 +401,7 @@ class Trial(object):
                 del sess
                 gc.collect()
 
-                if self.is_completed():
+                if self.is_completed(s):
                     break
 
         progress = 'Progress: Trial #{}/{} done'.format(
