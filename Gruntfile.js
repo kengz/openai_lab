@@ -150,7 +150,9 @@ module.exports = function(grunt) {
     },
   })
 
-  grunt.event.on('watch', function(action, filepath) {
+  // grunt.event.on('watch', function(action, filepath) {
+  grunt.event.on('watch', function(action, filepath, target) {
+    grunt.log.ok(`Grunt watching ${filepath}`);
     updateHistory(filepath)
   })
 
