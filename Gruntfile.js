@@ -25,6 +25,7 @@ module.exports = function(grunt) {
   })
 
   function writeHistory(history) {
+    grunt.log.ok(`Writing updated lab history ${JSON.stringify(history, null, 2)}`)
     fs.writeFileSync(historyPath, JSON.stringify(history, null, 2))
     return history
   }
@@ -45,8 +46,9 @@ module.exports = function(grunt) {
   let history = readHistory()
 
   function updateHistory(filepath) {
-    if (fs.lstatSync(filepath).isFile()) {
-      // only interested in data folder, skip otherwise
+    if (fs.lstatSync(filepath).isFile() && _.endsWith(filepath, '.json')) {
+      filepath = _.join(_.initial(filepath.split('_')), '_')
+    } else {
       return
     }
     const matchedPath = filepath.split('/').pop().match(expIdRegex)
