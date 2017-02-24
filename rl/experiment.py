@@ -389,7 +389,7 @@ class Trial(object):
             return False # no data yet, confirmed not complete
         else:
             next_s = len(self.data['sys_vars_array'])
-            return self.to_stop(s)
+            return self.to_stop(next_s)
 
     def run(self):
         '''
