@@ -67,7 +67,7 @@ module.exports = function(grunt) {
   }
 
   function notiCmd(experiment) {
-    return grunt.option('prod') ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
+    return (grunt.option('prod') && !grunt.option('plotOnly')) ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
   function resumeExperimentStr(eStr) {

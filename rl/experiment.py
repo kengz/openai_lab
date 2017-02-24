@@ -64,8 +64,9 @@ class Session(object):
         self.num_of_sessions = num_of_sessions
         self.session_id = self.trial.trial_id + \
             '_s' + str(self.session_num)
-        log_delimiter('Init Session #{} of {}:\n{}'.format(
-            self.session_num, self.num_of_sessions, self.session_id))
+        log_delimiter('Init Session #{}/{} of Trial #{}/{}:\n{}'.format(
+            self.session_num, self.num_of_sessions,
+            self.trial.trial_num, self.trial.num_of_trials, self.session_id))
 
         self.experiment_spec = self.trial.experiment_spec
         self.problem = self.experiment_spec['problem']
@@ -242,35 +243,38 @@ class Session(object):
         self.update_history()
         return sys_vars
 
-    @classmethod
-    def clear_session(cls):
+    def clear(self):
+        self.grapher.clear()
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        trial_data = load_data_from_trial_id(self.trial.trial_id)
-        if trial_data is None:
-            # no data yet, confirmed incomplete
+        if self.trial.data is None:  # need to run for sure
             return False
         else:
-            sys_vars_array = trial_data['sys_vars_array']
-            # valid since sessions always ran sequentially
-            # if Trial already wants a rerun,
-            # suffices to check which session hasn't been ran
-            is_incomplete = self.session_num + 1 > len(sys_vars_array)
-            return not is_incomplete
+            sys_vars_array = self.trial.data['sys_vars_array']
+            if self.session_num < len(sys_vars_array):
+                # has data, already completed. set data
+                self.sys_vars = sys_vars_array[self.session_num]
+                return True
+            else:
+                return False
 
     def run(self):
         '''run a session of agent'''
         if self.is_completed():
-            log_delimiter('Session #{} of {} already completed:\n{}'.format(
-                self.session_num, self.num_of_sessions, self.session_id))
-            sys_vars = load_data_from_trial_id(self.trial.trial_id)[
-                'sys_vars_array'][self.session_num]
+            log_delimiter(
+                'Session #{}/{} of Trial #{}/{} already completed:\n{}'.format(
+                    self.session_num, self.num_of_sessions,
+                    self.trial.trial_num, self.trial.num_of_trials,
+                    self.session_id))
+            sys_vars = self.sys_vars
         else:
-            log_delimiter('Run Session #{} of {}:\n{}'.format(
-                self.session_num, self.num_of_sessions, self.session_id))
+            log_delimiter('Run Session #{}/{} of Trial #{}/{}:\n{}'.format(
+                self.session_num, self.num_of_sessions,
+                self.trial.trial_num, self.trial.num_of_trials,
+                self.session_id))
             logger.info(
                 'Experiment Trial Spec: {}'.format(
                     to_json(self.experiment_spec)))
@@ -289,16 +293,15 @@ class Session(object):
                 if sys_vars['solved']:
                     break
 
-            self.clear_session()
             sys_vars['time_end'] = timestamp()
             sys_vars['time_taken'] = timestamp_elapse(
                 sys_vars['time_start'], sys_vars['time_end'])
 
-        progress = 'Progress: Trial #{} Session #{} of {} done'.format(
-            self.trial.trial_num,
-            self.session_num, self.num_of_sessions)
-        log_delimiter('End Session:\n{}\n{}'.format(
-            self.session_id, progress))
+        self.clear()
+        progress = 'Progress: Session #{}/{} of Trial #{}/{} done'.format(
+            self.session_num, self.num_of_sessions,
+            self.trial.trial_num, self.trial.num_of_trials)
+        log_delimiter('End Session:\n{}\n{}'.format(self.session_id, progress))
         return sys_vars
 
 
@@ -355,9 +358,8 @@ class Trial(object):
         self.base_filename = './data/{}/{}'.format(
             self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Trial #{} of {}:\n{}'.format(
-            self.trial_num, self.num_of_trials,
-            self.trial_id), '=')
+        log_delimiter('Init Trial #{}/{}:\n{}'.format(
+            self.trial_num, self.num_of_trials, self.trial_id), '=')
 
     def save(self):
         '''save the entire trial data grid from inside run()'''
@@ -366,30 +368,22 @@ class Trial(object):
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
-    def to_stop(self, s):
-        '''check of trial should be continued'''
-        failed = (s < self.times and s >= 2) and (
-            self.data['stats']['solved_ratio_of_sessions'] == 0.)
-        if failed:
-            logger.info(
-                'Failed trial, terminating sessions for {}'.format(
-                    self.trial_id))
-        return failed
-
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
-        trial_data = load_data_from_trial_id(self.trial_id)
-        if trial_data is None:
-            # no data yet, confirmed incomplete
+        # guard for resume loading, already init to None
+        self.data = self.data or load_data_from_trial_id(self.trial_id)
+
+        if self.data is None:  # if no data, confirmed not complete
             return False
-        else:
-            stats = trial_data['stats']
-            num_of_sessions = stats['num_of_sessions']
-            solved_num_of_sessions = stats['solved_num_of_sessions']
-            # hasn't ran enough times but is promising, is incomplete
-            is_incomplete = (num_of_sessions < self.times and
-                             solved_num_of_sessions == num_of_sessions)
-            return not is_incomplete
+        else:  # has data, check if the latest session is the last
+            s = len(self.data['sys_vars_array']) - 1
+            failed = (2 < s and s < self.times) and (
+                self.data['stats']['solved_ratio_of_sessions'] == 0.)
+            if failed:
+                logger.info(
+                    'Failed trial, terminating sessions for {}'.format(
+                        self.trial_id))
+            return failed
 
     def run(self):
         '''
@@ -397,30 +391,24 @@ class Trial(object):
         a number of times times given a experiment_spec from gym_specs
         '''
         if self.is_completed():
-            log_delimiter('Trial #{} of {} already completed:\n{}'.format(
-                self.trial_num, self.num_of_trials,
-                self.trial_id), '=')
-            self.data = load_data_from_trial_id(self.trial_id)
+            log_delimiter('Trial #{}/{} already completed:\n{}'.format(
+                self.trial_num, self.num_of_trials, self.trial_id), '=')
         else:
-            log_delimiter('Run Trial #{} of {}:\n{}'.format(
-                self.trial_num, self.num_of_trials,
-                self.trial_id), '=')
+            log_delimiter('Run Trial #{}/{}:\n{}'.format(
+                self.trial_num, self.num_of_trials, self.trial_id), '=')
             configure_gpu()
             time_start = timestamp()
             sys_vars_array = []
             for s in range(self.times):
-                sess = Session(trial=self,
-                               session_num=s, num_of_sessions=self.times)
+                sess = Session(
+                    trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
                 sys_vars_array.append(copy.copy(sys_vars))
-                time_end = timestamp()
-                time_taken = timestamp_elapse(time_start, time_end)
+                time_taken = timestamp_elapse(time_start, timestamp())
 
                 self.data = {  # trial data
                     'trial_id': self.trial_id,
                     'metrics': {
-                        # 'time_start': time_start,
-                        # 'time_end': time_end,
                         'time_taken': time_taken,
                     },
                     'experiment_spec': self.experiment_spec,
@@ -428,19 +416,17 @@ class Trial(object):
                     'sys_vars_array': sys_vars_array,
                 }
                 compose_data(self)
-                # progressive update, write every session completion
-                self.save()
+                self.save()  # progressive update, write per session done
                 del sess
                 gc.collect()
 
-                if self.to_stop(s):
+                if self.is_completed():
                     break
 
-        progress = 'Progress: Trial #{} of {} done'.format(
+        progress = 'Progress: Trial #{}/{} done'.format(
             self.trial_num, self.num_of_trials)
         log_delimiter(
-            'End Trial:\n{}\n{}'.format(
-                self.trial_id, progress), '=')
+            'End Trial:\n{}\n{}'.format(self.trial_id, progress), '=')
         return self.data
 
 

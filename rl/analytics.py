@@ -29,10 +29,10 @@ STATS_COLS = [
     'mean_rewards_stats_mean',
     'epi_stats_mean',
     'solved_ratio_of_sessions',
+    'num_of_sessions',
     'max_total_rewards_stats_mean',
     't_stats_mean',
-    'trial_id',
-    'num_of_sessions'
+    'trial_id'
 ]
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
@@ -49,7 +49,7 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
-        if not args.plot_graph:
+        if not args.plot_graph or environ.get('CI'):
             return
         import matplotlib.pyplot as plt
         plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
@@ -62,8 +62,6 @@ class Grapher(object):
         self.init_figure()
 
     def init_figure(self):
-        if environ.get('CI'):
-            return
         # graph 1
         ax1 = self.figure.add_subplot(
             311,
@@ -141,6 +139,12 @@ class Grapher(object):
         '''save graph to filename'''
         self.figure.savefig(self.graph_filename)
 
+    def clear(self):
+        if not args.plot_graph or environ.get('CI'):
+            return
+        self.plt.close()
+        del self.plt
+
 
 def basic_stats(array):
     '''generate the basic stats for a numerical array'''
@@ -201,8 +205,8 @@ def compose_data(trial):
     }
     stats.update({
         'performance_score': stats[
-            'mean_rewards_per_epi_stats']['mean'] * stats[
-            'solved_ratio_of_sessions']
+            'mean_rewards_per_epi_stats']['mean'] * (stats[
+            'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics
@@ -258,6 +262,8 @@ def plot_experiment(data_df, trial_id):
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
     fig.savefig(filename)
+    fig.fig.clear()
+    sns.plt.close()
 
 
 def analyze_data(experiment_data_or_experiment_id):

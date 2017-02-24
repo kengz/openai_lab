@@ -1,5 +1,4 @@
 import copy
-import gc
 import multiprocessing as mp
 from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM
 
@@ -77,8 +76,8 @@ class HyperOptimizer(object):
         '''
         algo step 2, construct and run Trial with the next param
         '''
+        import gc
         experiment_spec = self.compose_experiment_spec(param)
-
         trial = self.Trial(
             experiment_spec, trial_num=trial_num,
             times=self.times,
