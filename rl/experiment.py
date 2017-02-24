@@ -368,7 +368,7 @@ class Trial(object):
         logger.info(
             'Session complete, data saved to {}'.format(self.data_filename))
 
-    def is_completed(self):
+    def is_completed(self, s=None):
         '''check if the trial is already completed, if so dont run'''
         # guard for resume loading, already init to None
         self.data = self.data or load_data_from_trial_id(self.trial_id)
@@ -376,7 +376,8 @@ class Trial(object):
         if self.data is None:  # if no data, confirmed not complete
             return False
         else:  # has data, check if the latest session is the last
-            s = len(self.data['sys_vars_array']) - 1
+            if s is None:  # used for when reading from data
+                s = len(self.data['sys_vars_array']) - 1
             failed = (2 < s and s < self.times) and (
                 self.data['stats']['solved_ratio_of_sessions'] == 0.)
             if failed:
@@ -420,7 +421,7 @@ class Trial(object):
                 del sess
                 gc.collect()
 
-                if self.is_completed():
+                if self.is_completed(s):
                     break
 
         progress = 'Progress: Trial #{}/{} done'.format(
