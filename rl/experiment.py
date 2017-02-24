@@ -249,14 +249,21 @@ class Session(object):
 
     def is_completed(self):
         '''check if the trial is already completed, if so dont run'''
+        # FUCK INIT ISNT NONE FOR SYS_VARS
         if not hasattr(self, 'sys_vars'):
-            if self.trial.data is None:
-                self.sys_vars = None
+            if self.trial.data is None:  # need to run for sure
+                return False
             else:
                 sys_vars_array = self.trial.data['sys_vars_array']
-                self.sys_vars = sys_vars_array[self.session_num] if len(
-                    sys_vars_array) > self.session_num else None
-        return not (self.sys_vars is None)
+                if self.session_num < len(sys_vars_array):
+                    # has data, already completed
+                    self.sys_vars = sys_vars_array[self.session_num]
+                    return True
+                else:
+                    return False
+        #         self.sys_vars = sys_vars_array[self.session_num] if len(
+        #             sys_vars_array) > self.session_num else None
+        # return not (self.sys_vars is None)
         # previous session wasn't last, and this session is not ran
         # return (not self.trial.to_stop(self.session_num - 1)) and (self.sys_vars is None)
 
