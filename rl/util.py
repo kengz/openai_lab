@@ -31,6 +31,12 @@ parser.add_argument("-d", "--debug",
                     dest="loglevel",
                     const=logging.DEBUG,
                     default=logging.INFO)
+parser.add_argument("-q", "--quiet",
+                    help="activate debug log",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.WARNING,
+                    default=logging.INFO)
 parser.add_argument("-b", "--blind",
                     help="dont render graphics",
                     action="store_const",
