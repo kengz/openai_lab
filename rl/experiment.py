@@ -246,6 +246,8 @@ class Session(object):
         self.grapher.clear()
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
+        import gc
+        gc.collect()
 
     def run(self):
         '''run a session of agent'''
