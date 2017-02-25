@@ -9,7 +9,6 @@ if K.backend() == 'tensorflow':
 else:
     K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
-import gc
 import gym
 import traceback
 from os import environ
@@ -399,6 +398,7 @@ class Trial(object):
                 compose_data(self)
                 self.save()  # progressive update, write per session done
                 del sess
+                import gc
                 gc.collect()
 
                 if self.is_completed(s):
