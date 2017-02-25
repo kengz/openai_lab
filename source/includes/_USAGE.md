@@ -91,6 +91,7 @@ The python command flags are:
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-d`: log debug info. Default: `False`
+- `-q`: quiet mode, log warning only. Default: `False`
 - `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
 - `-g`: plot graphs live. Default: `False`
 - `-m <max_evals>`: the max number of trials for hyperopt. Default: `100`
