@@ -1,25 +1,28 @@
 # <a name="usage"></a>Usage
 
-We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command which is harder to use, but we will include the details below for reference.
-
-The general gist for running a production lab is:
+The general flow for running a production lab is:
 
 1. Specify experiments in `rl/asset/experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
 2. Specify the names of the experiments to run in `config/production.json`
 3. Run the lab, e.g. `grunt -prod -resume`
 
 
+We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command which is harder to use, but we will include the details below for reference.
+
+
 ## Commands
 
 ```shell
-# when developing
+# when developing experiment, specify in default.json
 grunt
-# locally run lab experiments in production.json
+
+# run real lab experiments specified in production.json
 grunt -prod
-# run lab on remote server
+# run lab over ssh on remote server
 grunt -prod -remote
 # resume lab (previously incomplete experiments)
 grunt -prod -remote -resume
+
 # plot analysis graphs only
 grunt plot -prod
 ```
