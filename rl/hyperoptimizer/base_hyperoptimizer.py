@@ -1,6 +1,6 @@
 import copy
 import multiprocessing as mp
-from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM
+from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM, debug_mem_usage
 
 
 class HyperOptimizer(object):
@@ -87,6 +87,7 @@ class HyperOptimizer(object):
         del trial
         import gc
         gc.collect()
+        debug_mem_usage()
         return trial_data
 
     def update_search(self):

@@ -344,3 +344,14 @@ def configure_gpu():
     sess = tf.Session(config=config)
     K.set_session(sess)
     return sess
+
+
+def debug_mem_usage():
+    import os
+    import psutil
+    from mem_top import mem_top
+    pid = os.getpid()
+    mem_info = psutil.Process().memory_info()
+    logger.debug(
+        'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
+            pid, mem_info, mem_top()))
