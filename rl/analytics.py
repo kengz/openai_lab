@@ -143,9 +143,7 @@ class Grapher(object):
         if not args.plot_graph or environ.get('CI'):
             return
         self.plt.close()
-        del self.plt
-        import gc
-        gc.collect()
+        del_self_attr(self)
 
 
 def basic_stats(array):
@@ -208,7 +206,7 @@ def compose_data(trial):
     stats.update({
         'performance_score': stats[
             'mean_rewards_per_epi_stats']['mean'] * (stats[
-            'solved_ratio_of_sessions'] ** 2)
+                'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics

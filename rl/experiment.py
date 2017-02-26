@@ -246,9 +246,7 @@ class Session(object):
         self.grapher.clear()
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
-        # TODO delete self properties
-        import gc
-        gc.collect()
+        del_self_attr(self)
 
     def run(self):
         '''run a session of agent'''
@@ -276,11 +274,11 @@ class Session(object):
         sys_vars['time_taken'] = timestamp_elapse(
             sys_vars['time_start'], sys_vars['time_end'])
 
-        self.clear()
         progress = 'Progress: Session #{}/{} of Trial #{}/{} done'.format(
             self.session_num, self.num_of_sessions,
             self.trial.trial_num, self.trial.num_of_trials)
         log_delimiter('End Session:\n{}\n{}'.format(self.session_id, progress))
+        self.clear()
         return sys_vars
 
 
@@ -368,6 +366,9 @@ class Trial(object):
                         self.trial_id))
             return failed
 
+    def clear(self):
+        del_self_attr(self)
+
     def run(self):
         '''
         helper: run a trial for Session
@@ -414,7 +415,9 @@ class Trial(object):
             self.trial_num, self.num_of_trials)
         log_delimiter(
             'End Trial:\n{}\n{}'.format(self.trial_id, progress), '=')
-        return self.data
+        trial_data = copy.deepcopy(self.data)
+        self.clear()
+        return trial_data
 
 
 def analyze_experiment(trial_or_experiment_id):

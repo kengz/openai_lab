@@ -354,3 +354,11 @@ def debug_mem_usage():
     logger.debug(
         'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
             pid, mem_info, mem_top()))
+
+
+def del_self_attr(subject):
+    self_attrs = list(subject.__dict__.keys())
+    for attr in self_attrs:
+        delattr(subject, attr)
+    import gc
+    gc.collect()
