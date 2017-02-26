@@ -24,7 +24,7 @@ for experiment_name in EXPERIMENT_SPECS:
     EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
 
 # parse_args to add flag
-parser = argparse.ArgumentParser(description='Set flag for functions')
+parser = argparse.ArgumentParser(description='Set flags for functions')
 parser.add_argument("-d", "--debug",
                     help="activate debug log",
                     action="store_const",
@@ -96,6 +96,7 @@ handler.setFormatter(
 logger.setLevel(args.loglevel)
 logger.addHandler(handler)
 logger.propagate = False
+environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # mute tf warnings on optimized setup
 
 
 def log_self(subject):
