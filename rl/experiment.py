@@ -182,9 +182,9 @@ class Session(object):
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info(
-                'Problem solved? {}\nAt episode: {}\nTrial Spec: {}'.format(
+                'Problem solved? {}\nAt episode: {}\nsession_id: {}'.format(
                     sys_vars['solved'], sys_vars['epi'],
-                    to_json(self.experiment_spec)))
+                    self.session_id))
             self.env.close()
 
     def update_history(self):
