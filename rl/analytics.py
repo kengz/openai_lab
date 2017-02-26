@@ -144,6 +144,8 @@ class Grapher(object):
             return
         self.plt.close()
         del self.plt
+        import gc
+        gc.collect()
 
 
 def basic_stats(array):

@@ -25,6 +25,7 @@ module.exports = function(grunt) {
   })
 
   function writeHistory(history) {
+    grunt.log.ok(`Writing updated lab history ${JSON.stringify(history, null, 2)}`)
     fs.writeFileSync(historyPath, JSON.stringify(history, null, 2))
     return history
   }
@@ -45,11 +46,18 @@ module.exports = function(grunt) {
   let history = readHistory()
 
   function updateHistory(filepath) {
-    if (fs.lstatSync(filepath).isFile()) {
-      // only interested in data folder, skip otherwise
+    let expId = ''
+    if (!fs.lstatSync(filepath).isFile()) {
+      // write history on folder being created
+      expId = filepath
+    } else if (_.endsWith(filepath, '.json')) {
+      // write history on json written (fallback guard)
+      let expIdPath = _.join(_.initial(filepath.split('_')), '_')
+      expId = expIdPath.split('/').pop()
+    } else {
       return
     }
-    const matchedPath = filepath.split('/').pop().match(expIdRegex)
+    const matchedPath = expId.split('/').pop().match(expIdRegex)
     if (matchedPath) {
       const experimentId = matchedPath[2]
       const experimentName = matchedPath[3] || matchedPath[4]
@@ -59,15 +67,19 @@ module.exports = function(grunt) {
   }
 
   function remoteCmd() {
-    return (grunt.option('remote')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
+    return grunt.option('remote') ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
-  function plotCmd() {
-    return grunt.option('plotOnly') ? ' -a' : ''
+  function analyzeCmd() {
+    return grunt.option('analyze') ? ' -a' : ''
+  }
+
+  function quietCmd() {
+    return grunt.option('quiet') ? ' -q' : ''
   }
 
   function notiCmd(experiment) {
-    return (grunt.option('prod') && !grunt.option('plotOnly')) ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
+    return (grunt.option('prod') && !grunt.option('analyze')) ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
   function resumeExperimentStr(eStr) {
@@ -89,7 +101,7 @@ module.exports = function(grunt) {
     }
 
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5${plotCmd()}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp${quietCmd()} -e ${eStr} -t 5${analyzeCmd()}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
@@ -115,7 +127,7 @@ module.exports = function(grunt) {
         files: `${dataSrc}/**`,
         tasks: ['sync'],
         options: {
-          debounceDelay: 60000,
+          debounceDelay: 20 * 60 * 1000,
           interval: 60000,
         },
       }
@@ -148,7 +160,8 @@ module.exports = function(grunt) {
     },
   })
 
-  grunt.event.on('watch', function(action, filepath) {
+  // grunt.event.on('watch', function(action, filepath) {
+  grunt.event.on('watch', function(action, filepath, target) {
     updateHistory(filepath)
   })
 
@@ -157,7 +170,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('plot', function() {
-    grunt.option('plotOnly', true)
+    grunt.option('analyze', true)
     grunt.option('resume', true)
     grunt.task.run('default')
   })
