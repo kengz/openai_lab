@@ -41,7 +41,7 @@
       "exploration_anneal_episodes": 20
     },
     "param_range": {
-      "exploration_anneal_episodes": [1,2,3,4],
+      "exploration_anneal_episodes": [10, 20],
       "lr": [0.02, 0.2]
     }
   },
