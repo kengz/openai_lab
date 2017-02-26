@@ -347,7 +347,6 @@ def configure_gpu():
 
 
 def debug_mem_usage():
-    import os
     import psutil
     from mem_top import mem_top
     pid = os.getpid()
