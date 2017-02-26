@@ -46,11 +46,18 @@ module.exports = function(grunt) {
   let history = readHistory()
 
   function updateHistory(filepath) {
-    if (fs.lstatSync(filepath).isFile()) {
-      // only interested in data folder, skip otherwise
+    let expId = ''
+    if (!fs.lstatSync(filepath).isFile()) {
+      // write history on folder being created
+      expId = filepath
+    } else if (_.endsWith(filepath, '.json')) {
+      // write history on json written (fallback guard)
+      let expIdPath = _.join(_.initial(filepath.split('_')), '_')
+      expId = expIdPath.split('/').pop()
+    } else {
       return
     }
-    const matchedPath = filepath.split('/').pop().match(expIdRegex)
+    const matchedPath = expId.split('/').pop().match(expIdRegex)
     if (matchedPath) {
       const experimentId = matchedPath[2]
       const experimentName = matchedPath[3] || matchedPath[4]
@@ -151,7 +158,6 @@ module.exports = function(grunt) {
 
   // grunt.event.on('watch', function(action, filepath) {
   grunt.event.on('watch', function(action, filepath, target) {
-    grunt.log.ok(`Grunt watching ${filepath}`);
     updateHistory(filepath)
   })
 
