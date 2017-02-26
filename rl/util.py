@@ -113,20 +113,18 @@ def wrap_text(text):
     return '\n'.join(wrap(text, 60))
 
 
-def print_line(line='-'):
+def make_line(line='-'):
     if environ.get('CI'):
         return
     columns = 80
     line_str = line*int(columns)
-    print(line_str)
+    return line_str
 
 
 def log_delimiter(msg, line='-'):
-    print('{:\n>2}'.format(''))
-    print_line(line)
-    print(msg)
-    print_line(line)
-    print('{:\n>2}'.format(''))
+    delim_msg = '''\n{0}\n{1}\n{0}\n\n'''.format(
+        make_line(line), msg)
+    logger.info(delim_msg)
 
 
 def timestamp():
