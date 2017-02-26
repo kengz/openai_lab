@@ -32,7 +32,7 @@ parser.add_argument("-d", "--debug",
                     const=logging.DEBUG,
                     default=logging.INFO)
 parser.add_argument("-q", "--quiet",
-                    help="activate debug log",
+                    help="change log to warning level",
                     action="store_const",
                     dest="loglevel",
                     const=logging.WARNING,

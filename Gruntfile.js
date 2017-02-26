@@ -67,15 +67,19 @@ module.exports = function(grunt) {
   }
 
   function remoteCmd() {
-    return (grunt.option('remote')) ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
+    return grunt.option('remote') ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
-  function plotCmd() {
-    return grunt.option('plotOnly') ? ' -a' : ''
+  function analyzeCmd() {
+    return grunt.option('analyze') ? ' -a' : ''
+  }
+
+  function quietCmd() {
+    return grunt.option('quiet') ? ' -q' : ''
   }
 
   function notiCmd(experiment) {
-    return (grunt.option('prod') && !grunt.option('plotOnly')) ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
+    return (grunt.option('prod') && !grunt.option('analyze')) ? `NOTI_SLACK_DEST='${config.NOTI_SLACK_DEST}' NOTI_SLACK_TOK='${config.NOTI_SLACK_TOK}' noti -k -t 'Experiment completed' -m '[${new Date().toISOString()}] ${experiment} on ${process.env.USER}'` : ''
   }
 
   function resumeExperimentStr(eStr) {
@@ -97,7 +101,7 @@ module.exports = function(grunt) {
     }
 
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp -e ${eStr} -t 5${plotCmd()}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp${quietCmd()} -e ${eStr} -t 5${analyzeCmd()}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
@@ -166,7 +170,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['lab_sync'])
 
   grunt.registerTask('plot', function() {
-    grunt.option('plotOnly', true)
+    grunt.option('analyze', true)
     grunt.option('resume', true)
     grunt.task.run('default')
   })
