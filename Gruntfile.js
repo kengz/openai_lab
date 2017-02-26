@@ -127,7 +127,7 @@ module.exports = function(grunt) {
         files: `${dataSrc}/**`,
         tasks: ['sync'],
         options: {
-          debounceDelay: 60000,
+          debounceDelay: 20 * 60 * 1000,
           interval: 60000,
         },
       }
