@@ -89,3 +89,14 @@ There is more than a dozen of dependencies. For the full list, inspect `bin/setu
 - `theano == 0.8.2`
 - `keras >= 1.2`
 - `gym[all] >= 0.7`
+
+
+## Hardware
+
+For setting up your own hardware, especially with a GPI, googling will help more than we could. Also, setup is usually non-trivial since there're so many moving parts. Here's what we referred:
+
+- [Getting CUDA 8 to Work With openAI Gym on AWS and Compiling Tensorflow for CUDA 8 Compatibility](http://christopher5106.github.io/nvidia/2016/12/30/commands-nvidia-install-ubuntu-16-04.html)
+- [Major OpenAI issue with SSH with xvfb failing with NVIDIA Driver due to opengl files](https://github.com/openai/gym/issues/366)
+- [NVIDIA installation guide](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4ZrJBKeSk)
+- [NVIDIA cannot install due to X server running](http://askubuntu.com/questions/149206/how-to-install-nvidia-run)
+- [when login fails on Ubuntu after Nvidia installation](http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login)
