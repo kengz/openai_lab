@@ -43,6 +43,7 @@ REQUIRED_SYS_KEYS = {
     'mean_rewards': 0,
     'total_rewards': 0,
     'solved': False,
+    'errored': False,
 }
 
 
@@ -154,8 +155,7 @@ class Session(object):
         logger.debug(
             "Agent info: {}".format(
                 format_obj_dict(
-                    self.agent,
-                    ['lr', 'n_epoch'])))
+                    self.agent, ['lr', 'n_epoch'])))
         logger.debug(
             "Memory info: size: {}".format(self.agent.memory.size()))
         logger.debug(
@@ -266,6 +266,7 @@ class Session(object):
                     'Error in trial, terminating '
                     'further session from {}'.format(self.session_id))
                 traceback.print_exc(file=sys.stdout)
+                sys_vars['errored'] = True,
                 break
             if sys_vars['solved']:
                 break

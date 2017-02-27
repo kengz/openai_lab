@@ -169,6 +169,8 @@ def compose_data(trial):
     # collect all data from sys_vars_array
     solved_sys_vars_array = list(filter(
         lambda sv: sv['solved'], sys_vars_array))
+    errored_array = list(map(
+        lambda sv: sv['errored'], sys_vars_array))
     mean_rewards_array = np.array(list(map(
         lambda sv: sv['mean_rewards'], sys_vars_array)))
     max_total_rewards_array = np.array(list(map(
@@ -193,6 +195,7 @@ def compose_data(trial):
         'solved_num_of_sessions': len(solved_sys_vars_array),
         'solved_ratio_of_sessions': float(len(
             solved_sys_vars_array)) / trial.times,
+        'errored': any(errored_array),
         'mean_rewards_stats': basic_stats(mean_rewards_array),
         'mean_rewards_per_epi_stats': basic_stats(
             mean_rewards_per_epi_array),
@@ -285,8 +288,10 @@ def analyze_data(experiment_data_or_experiment_id):
     for data in experiment_data:
         stats = flatten_dict(data['stats'])
         stats.update({'trial_id': data['trial_id']})
-        stats_array.append(stats)
         param_variables = data['param_variables']
+        if stats['errored']:  # remove errored trials
+            continue
+        stats_array.append(stats)
         param_variables_array.append(param_variables)
 
     raw_stats_df = pd.DataFrame.from_dict(stats_array)
