@@ -83,7 +83,7 @@ class HyperOptimizer(object):
             num_of_trials=self.num_of_trials,
             run_timestamp=self.run_timestamp,
             experiment_id_override=self.experiment_id_override)
-        trial_data = copy.deepcopy(trial.run())
+        trial_data = trial.run()
         del trial
         import gc
         gc.collect()
