@@ -32,52 +32,47 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
-        data_df = run('dqn')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dqn(cls):
+    def test_double_dqn(cls):
         data_df = run('double_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
+    def test_dqn_freeze(cls):
         data_df = run('dqn_freeze')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
+    def test_sarsa(cls):
         data_df = run('sarsa')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
+    def test_sarsa_exp(cls):
         data_df = run('sarsa_exp')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
+    def test_sarsa_offpol(cls):
         data_df = run('sarsa_offpol')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_double_dqn(cls):
+    def test_mountain_dqn(cls):
         data_df = run('mountain_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_double_dqn(cls):
+    def test_lunar_dqn(cls):
         data_df = run('lunar_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_double_dqn(cls):
+    def test_conv_test(cls):
         data_df = run('conv_test')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_double_dqn(cls):
+    def test_conv_test_2(cls):
         data_df = run('conv_test_2')
         assert isinstance(data_df, pd.DataFrame)
 
