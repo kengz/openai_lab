@@ -1,5 +1,5 @@
 {
-  "dummy": {
+  "test_dummy": {
     "problem": "CartPole-v0",
     "Agent": "Dummy",
     "HyperOptimizer": "GridSearch",
@@ -9,7 +9,7 @@
     "PreProcessor": "NoPreProcessor",
     "param": {}
   },
-  "q_table": {
+  "test_q_table": {
     "problem": "CartPole-v0",
     "Agent": "QTable",
     "HyperOptimizer": "GridSearch",
@@ -23,7 +23,7 @@
       "exploration_anneal_episodes": 200
     }
   },
-  "dqn": {
+  "test_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
@@ -51,7 +51,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-    "test_dqn": {
+    "test_test_dqn": {
     "problem": "TestCartPole-v0",
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
@@ -69,7 +69,7 @@
       "exploration_anneal_episodes": 20
     }
   },
-  "double_dqn": {
+  "test_double_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DoubleDQN",
     "HyperOptimizer": "GridSearch",
@@ -97,7 +97,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-  "dqn_freeze": {
+  "test_dqn_freeze": {
     "problem": "CartPole-v0",
     "Agent": "DQNFreeze",
     "HyperOptimizer": "GridSearch",
@@ -125,7 +125,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-  "sarsa": {
+  "test_sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepSarsa",
     "HyperOptimizer": "GridSearch",
@@ -153,7 +153,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-  "sarsa_exp": {
+  "test_sarsa_exp": {
     "problem": "CartPole-v0",
     "Agent": "DeepExpectedSarsa",
     "HyperOptimizer": "GridSearch",
@@ -181,7 +181,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-  "sarsa_offpol": {
+  "test_sarsa_offpol": {
     "problem": "CartPole-v0",
     "Agent": "OffPolicySarsa",
     "HyperOptimizer": "GridSearch",
@@ -209,7 +209,7 @@
       "exploration_anneal_episodes": [10, 20]
     }
   },
-  "mountain_dqn": {
+  "test_mountain_dqn": {
     "problem": "MountainCar-v0",
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
@@ -241,7 +241,7 @@
       "exploration_anneal_episodes": [100, 200, 300]
     }
   },
-  "lunar_dqn": {
+  "test_lunar_dqn": {
     "problem": "LunarLander-v2",
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
@@ -270,7 +270,7 @@
       ]
     }
   },
-  "conv_dqn": {
+  "test_conv_dqn": {
     "problem": "Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
@@ -301,7 +301,7 @@
       ]
     }
   },
-  "double_conv_dqn": {
+  "test_double_conv_dqn": {
     "problem": "Breakout-v0",
     "Agent": "DoubleConvDQN",
     "HyperOptimizer": "GridSearch",
