@@ -164,7 +164,6 @@ module.exports = function(grunt) {
     },
   })
 
-  // grunt.event.on('watch', function(action, filepath) {
   grunt.event.on('watch', function(action, filepath, target) {
     updateHistory(filepath)
   })
@@ -173,7 +172,7 @@ module.exports = function(grunt) {
   grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:default'])
   grunt.registerTask('default', ['lab_sync'])
 
-  grunt.registerTask('plot', function() {
+  grunt.registerTask('analyze', function() {
     grunt.option('analyze', true)
     grunt.option('resume', true)
     grunt.task.run('default')
