@@ -8,7 +8,7 @@ cd openai_lab
 ./bin/setup
 ```
 
-`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed.
+`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed. Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies)
 
 <aside class="notice">
 If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
@@ -77,3 +77,15 @@ _Notifications from the lab running on our remote server beast._
 ## Setup Experiments
 
 There are many existing experiments specified in `rl/asset/experiment_specs.json`, and you can add more. Pick the `experiment_name`s (the JSON key, e.g. `"dqn", "lunar_dqn"`), list under config key `experiment`. Then check [usage](#usage) to run the lab.
+
+
+## <a name="dependencies"></a>List of Dependencies
+
+There is more than a dozen of dependencies. For the full list, inspect `bin/setup`. Here are some major ones and their minimum required versions. If lab fails to run, check these first:
+
+- `python3 >= 3.4`
+- `node >= 7.0`
+- `tensorflow >= 1.0` or `tensorflow-gpu >= 1.0`
+- `theano == 0.8.2`
+- `keras >= 1.2`
+- `gym[all] >= 0.7`
