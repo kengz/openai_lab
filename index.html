@@ -413,7 +413,7 @@
 <span class="nb">cd </span>openai_lab
 ./bin/setup
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed.</p>
+<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed. Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a></p>
 
 <aside class="notice">
 If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
@@ -474,6 +474,19 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 <h2 id="setup-experiments">Setup Experiments</h2>
 
 <p>There are many existing experiments specified in <code class="prettyprint">rl/asset/experiment_specs.json</code>, and you can add more. Pick the <code class="prettyprint">experiment_name</code>s (the JSON key, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code>), list under config key <code class="prettyprint">experiment</code>. Then check <a href="#usage">usage</a> to run the lab.</p>
+
+<h2 id="list-of-dependencies"><a name="dependencies"></a>List of Dependencies</h2>
+
+<p>There is more than a dozen of dependencies. For the full list, inspect <code class="prettyprint">bin/setup</code>. Here are some major ones and their minimum required versions. If lab fails to run, check these first:</p>
+
+<ul>
+<li><code class="prettyprint">python3 &gt;= 3.4</code></li>
+<li><code class="prettyprint">node &gt;= 7.0</code></li>
+<li><code class="prettyprint">tensorflow &gt;= 1.0</code> or <code class="prettyprint">tensorflow-gpu &gt;= 1.0</code></li>
+<li><code class="prettyprint">theano == 0.8.2</code></li>
+<li><code class="prettyprint">keras &gt;= 1.2</code></li>
+<li><code class="prettyprint">gym[all] &gt;= 0.7</code></li>
+</ul>
 
           <h1 id="usage"><a name="usage"></a>Usage</h1>
 
