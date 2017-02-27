@@ -512,7 +512,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
 <h2 id="commands">Commands</h2>
 
-<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command, which is harder to use, but we will include the <a href="#python-cmd">details below for reference</a>.</p>
+<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command, logged to stdout as <code class="prettyprint">&gt;&gt; Composed command: python3 main.py ...</code>, which is harder to use.</p>
 
 <p>The useful grunt commands are:</p>
 <pre class="highlight shell"><code><span class="c"># when developing experiments specified in default.json</span>
@@ -531,6 +531,8 @@ grunt analyze -prod
 <span class="c"># clear data/ folder and cache files</span>
 grunt clear
 </code></pre>
+<p>See below for the full <a href="#grunt-cmd">Grunt Command Reference</a> or the <a href="#python-cmd">Python Command Reference</a>.</p>
+
 <p><strong>development</strong> mode:</p>
 
 <ul>
@@ -551,7 +553,7 @@ grunt clear
 <li>has auto-notification to Slack channel</li>
 </ul>
 
-<h3 id="run-remotely">Run Remotely</h3>
+<h2 id="run-remotely">Run Remotely</h2>
 
 <p>If you&rsquo;re using a remote server, run the commands inside a <code class="prettyprint">screen</code>. That is, log in via ssh, start a screen, run, then detach screen.</p>
 <pre class="highlight shell"><code>screen -S lab
@@ -571,7 +573,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 <p><img alt="Glances to monitor your system" src="./images/glances.png" />
 <em>Glances on remote server beast.</em></p>
 
-<h3 id="resume-lab">Resume Lab</h3>
+<h2 id="resume-lab">Resume Lab</h2>
 
 <p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code>. This will read the <code class="prettyprint">config/history.json</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
@@ -580,7 +582,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 </span></code></pre>
 <p>The <code class="prettyprint">config/history.json</code> is created in the last run that maps <code class="prettyprint">experiment_name</code>s to <code class="prettyprint">experiment_id</code>s, and resume any incomplete experiments based on that <code class="prettyprint">experiment_id</code>. You can manually tweak the file to set the resume target of course.</p>
 
-<h3 id="grunt-command-details">Grunt Command Details</h3>
+<h2 id="grunt-command-reference"><a name="grunt-cmd"></a>Grunt Command Reference</h2>
 
 <p>By default the <code class="prettyprint">grunt</code> command (no task or flag) runs the lab in <code class="prettyprint">development</code> mode using <code class="prettyprint">config/default.json</code>.</p>
 
@@ -605,7 +607,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 <li><code class="prettyprint">-quiet</code>: mute all python logging in grunt. This is for lab-level development only.</li>
 </ul>
 
-<h3 id="internal-python-command"><a name="python-cmd"></a>Internal Python command</h3>
+<h2 id="python-command-reference"><a name="python-cmd"></a>Python Command Reference</h2>
 
 <p>The Python command is invoked inside <code class="prettyprint">Gruntfile.js</code> under the <code class="prettyprint">composeCommand</code> function. Change it if you need to.</p>
 
