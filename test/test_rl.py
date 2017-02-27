@@ -5,14 +5,13 @@ environ['CI'] = environ.get('CI') or 'true'
 from rl.experiment import run
 import rl.util
 import os
-import sys
 import json
 
 PATH = os.path.dirname(__file__)
-util.PROBLEMS = json.loads(open(
-path.join(PATH, 'test_problems.json')).read())
-util.EXPERIMENT_SPECS = json.loads(open(
-path.join(PATH, 'test_experiment_specs.json')).read())
+rl.util.PROBLEMS = json.loads(open(
+os.path.join(PATH, 'test_problems.json')).read())
+rl.util.EXPERIMENT_SPECS = json.loads(open(
+os.path.join(PATH, 'test_experiment_specs.json')).read())
 
 class DQNTest(unittest.TestCase):
 
