@@ -45,16 +45,22 @@ module.exports = function(grunt) {
 
   let history = readHistory()
 
-  function updateHistory(filepath) {
-    let expId = ''
+  function getExpId(filepath) {
     if (!fs.lstatSync(filepath).isFile()) {
       // write history on folder being created
-      expId = filepath
+      return filepath
     } else if (_.endsWith(filepath, '.json')) {
       // write history on json written (fallback guard)
       let expIdPath = _.join(_.initial(filepath.split('_')), '_')
-      expId = expIdPath.split('/').pop()
+      return expIdPath.split('/').pop()
     } else {
+      return false
+    }
+  }
+
+  function updateHistory(filepath) {
+    let expId = getExpId(filepath)
+    if (!expId) {
       return
     }
     const matchedPath = expId.split('/').pop().match(expIdRegex)
