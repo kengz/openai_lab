@@ -67,13 +67,13 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_conv_test(cls):
-        data_df = run('conv_test')
+    def test_conv_dqn(cls):
+        data_df = run('conv_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_conv_test_2(cls):
-        data_df = run('conv_test_2')
+    def test_double_conv_dqn(cls):
+        data_df = run('double_conv_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod

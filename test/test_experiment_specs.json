@@ -270,7 +270,7 @@
       ]
     }
   },
-  "conv_test": {
+  "conv_dqn": {
     "problem": "Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
@@ -301,7 +301,7 @@
       ]
     }
   },
-  "conv_test_2": {
+  "double_conv_dqn": {
     "problem": "Breakout-v0",
     "Agent": "DoubleConvDQN",
     "HyperOptimizer": "GridSearch",
