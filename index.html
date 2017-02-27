@@ -232,31 +232,31 @@
 
 <p>The example below is fully specified in <code class="prettyprint">rl/asset/experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-      </span><span class="nt">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
-      </span><span class="nt">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
-      </span><span class="nt">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-      </span><span class="nt">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="nt">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="nt">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
-      </span><span class="nt">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
-      </span><span class="nt">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w">
       </span><span class="p">],</span><span class="w">
-      </span><span class="nt">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -415,10 +415,10 @@
 
 <p>2. Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"floatx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float32"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"backend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tensorflow"</span><span class="w">
+  </span><span class="s2">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"floatx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float32"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"backend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tensorflow"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <aside class="notice">
@@ -433,10 +433,10 @@ Use Theano once your lab produces a final model for a single retraining, since i
 <li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code></li>
 </ul>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"NOTI_SLACK_DEST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#rl-monitor"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"NOTI_SLACK_TOK"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"experiments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="s2">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"NOTI_SLACK_DEST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#rl-monitor"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"NOTI_SLACK_TOK"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"experiments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="s2">"dev_dqn"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"dqn"</span><span class="w">
   </span><span class="p">]</span><span class="w">
@@ -471,9 +471,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
           <h1 id="usage"><a name="usage"></a>Usage</h1>
 
-<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command which is harder to use, but we will include the details below for reference.</p>
-
-<p>The general gist for running a production lab is:</p>
+<p>The general flow for running a production lab is:</p>
 
 <ol>
 <li>Specify experiments in <code class="prettyprint">rl/asset/experiment_specs.json</code>, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code></li>
@@ -482,16 +480,25 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 </ol>
 
 <h2 id="commands">Commands</h2>
-<pre class="highlight shell"><code><span class="c"># when developing</span>
+
+<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command, which is harder to use, but we will include the <a href="#python-cmd">details below for reference</a>.</p>
+
+<p>The useful grunt commands are:</p>
+<pre class="highlight shell"><code><span class="c"># when developing experiments specified in default.json</span>
 grunt
-<span class="c"># locally run lab experiments in production.json</span>
+
+<span class="c"># run real lab experiments specified in production.json</span>
 grunt -prod
-<span class="c"># run lab on remote server</span>
+<span class="c"># run lab over ssh on remote server</span>
 grunt -prod -remote
 <span class="c"># resume lab (previously incomplete experiments)</span>
 grunt -prod -remote -resume
+
 <span class="c"># plot analysis graphs only</span>
-grunt plot -prod
+grunt analyze -prod
+
+<span class="c"># clear data/ folder and cache files</span>
+grunt clear
 </code></pre>
 <p><strong>development</strong> mode:</p>
 
@@ -513,16 +520,9 @@ grunt plot -prod
 <li>has auto-notification to Slack channel</li>
 </ul>
 
-<aside class="notice">
-To monitor your system (CPU, RAM, GPU), run <code>glances</code> (which is installed in <code>bin/setup</code>)
-</aside>
-
-<p><img alt="Glances to monitor your system" src="./images/glances.png" />
-<em>Glances on remote server beast.</em></p>
-
 <h3 id="run-remotely">Run Remotely</h3>
 
-<p>If you&rsquo;re using a remote server, run the commands inside a screen. That is, log in via ssh, start a screen, run, then detach screen.</p>
+<p>If you&rsquo;re using a remote server, run the commands inside a <code class="prettyprint">screen</code>. That is, log in via ssh, start a screen, run, then detach screen.</p>
 <pre class="highlight shell"><code>screen -S lab
 <span class="c"># enter the screen with the name "lab"</span>
 grunt -prod -remote -resume
@@ -531,28 +531,66 @@ grunt -prod -remote -resume
 screen -r lab
 <span class="c"># use Cmd+D to terminate screen when lab ends</span>
 </code></pre>
+<p>Since a remote server is away, you should check the system status occasionally to ensure no overrunning processes (memory leaks, stuck processes, overheating). Use <a href="https://github.com/nicolargo/glances"><code class="prettyprint">glances</code></a> (already installed in <code class="prettyprint">bin/setup</code>) to monitor your expensive machines.</p>
+
+<aside class="notice">
+To monitor your system (CPU, RAM, GPU), run <code>glances</code>
+</aside>
+
+<p><img alt="Glances to monitor your system" src="./images/glances.png" />
+<em>Glances on remote server beast.</em></p>
+
 <h3 id="resume-lab">Resume Lab</h3>
 
-<p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code></p>
-
-<p>This will read the <code class="prettyprint">config/history.json</code> created in the last run that maps <code class="prettyprint">experiment_name</code>s to <code class="prettyprint">experiment_id</code>s, and resume any incomplete experiments based on that <code class="prettyprint">experiment_id</code>. You can manually tweak the file to set the resume target of course.</p>
+<p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code>. This will read the <code class="prettyprint">config/history.json</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_02_21_182442"</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_02_21_182442"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<h3 id="internal-python-command">Internal Python command</h3>
+<p>The <code class="prettyprint">config/history.json</code> is created in the last run that maps <code class="prettyprint">experiment_name</code>s to <code class="prettyprint">experiment_id</code>s, and resume any incomplete experiments based on that <code class="prettyprint">experiment_id</code>. You can manually tweak the file to set the resume target of course.</p>
+
+<h3 id="grunt-command-details">Grunt Command Details</h3>
+
+<p>By default the <code class="prettyprint">grunt</code> command (no task or flag) runs the lab in <code class="prettyprint">development</code> mode using <code class="prettyprint">config/default.json</code>.</p>
+
+<p>The basic grunt command pattern is</p>
+<pre class="highlight shell"><code>grunt &lt;task&gt; -&lt;flag&gt;
+</code></pre>
+<p>The <code class="prettyprint">&lt;task&gt;</code>s are:</p>
+
+<ul>
+<li><em>(default empty)</em>: run the lab</li>
+<li><code class="prettyprint">analyze</code>: generate analysis data and graphs only, without running the lab. This can be used when you wish to see the analysis results midway during a long-running experiment. Run it on a separate terminal window as <code class="prettyprint">grunt analyze -prod</code></li>
+<li><code class="prettyprint">clear</code>: clear the <code class="prettyprint">data/</code> folder and cache files. <strong>Be careful</strong> and make sure your data is already copied to the sync location</li>
+</ul>
+
+<p>The <code class="prettyprint">&lt;flag&gt;</code>s are:</p>
+
+<ul>
+<li><code class="prettyprint">-prod</code>: production mode, use <code class="prettyprint">config/production.json</code></li>
+<li><code class="prettyprint">-resume</code>: resume incomplete experiments from <code class="prettyprint">config/history.json</code></li>
+<li><code class="prettyprint">-remote</code>: when running over SSH, supplies this to use a fake display</li>
+<li><code class="prettyprint">-best</code>: run the finalized experiments with gym rendering and live plotting; without param selection. This uses the default <code class="prettyprint">param</code> in <code class="prettyprint">experiment_specs.json</code> that shall be updated to the best found.</li>
+<li><code class="prettyprint">-quiet</code>: mute all python logging in grunt. This is for lab-level development only.</li>
+</ul>
+
+<h3 id="internal-python-command"><a name="python-cmd"></a>Internal Python command</h3>
 
 <p>The Python command is invoked inside <code class="prettyprint">Gruntfile.js</code> under the <code class="prettyprint">composeCommand</code> function. Change it if you need to.</p>
 
-<p>Here&rsquo;s the pattern:</p>
-<pre class="highlight shell"><code>python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
+<p>The basic python command pattern is:</p>
+<pre class="highlight shell"><code>python3 main.py -&lt;flag&gt;
+
+<span class="c"># most common example, with piping of terminal log</span>
+python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 </code></pre>
-<p>The python command flags are:</p>
+<p>The python command <flag>s are:</p>
 
 <ul>
 <li><code class="prettyprint">-a</code>: Run <code class="prettyprint">analyze_experiment()</code> only to plot <code class="prettyprint">experiment_data</code>. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-b</code>: blind mode, do not render graphics. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-d</code>: log debug info. Default: <code class="prettyprint">False</code></li>
+<li><code class="prettyprint">-q</code>: quiet mode, log warning only. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-e &lt;experiment&gt;</code>: specify which of <code class="prettyprint">rl/asset/experiment_spec.json</code> to run. Default: <code class="prettyprint">-e dev_dqn</code>. Can be a <code class="prettyprint">experiment_name, experiment_id</code>.</li>
 <li><code class="prettyprint">-g</code>: plot graphs live. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-m &lt;max_evals&gt;</code>: the max number of trials for hyperopt. Default: <code class="prettyprint">100</code></li>
