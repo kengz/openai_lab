@@ -49,3 +49,4 @@ model/
 *.json
 *.csv
 *.log
+*.h5

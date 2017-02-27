@@ -1,6 +1,4 @@
 from rl.agent.conv_dqn import ConvDQN
-from keras.layers.core import Dense, Flatten
-from keras.layers.convolutional import Convolution2D
 import numpy as np
 from rl.util import logger
 from keras.models import Sequential

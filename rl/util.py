@@ -24,12 +24,18 @@ for experiment_name in EXPERIMENT_SPECS:
     EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
 
 # parse_args to add flag
-parser = argparse.ArgumentParser(description='Set flag for functions')
+parser = argparse.ArgumentParser(description='Set flags for functions')
 parser.add_argument("-d", "--debug",
                     help="activate debug log",
                     action="store_const",
                     dest="loglevel",
                     const=logging.DEBUG,
+                    default=logging.INFO)
+parser.add_argument("-q", "--quiet",
+                    help="change log to warning level",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.WARNING,
                     default=logging.INFO)
 parser.add_argument("-b", "--blind",
                     help="dont render graphics",
@@ -90,6 +96,7 @@ handler.setFormatter(
 logger.setLevel(args.loglevel)
 logger.addHandler(handler)
 logger.propagate = False
+environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # mute tf warnings on optimized setup
 
 
 def log_self(subject):
@@ -106,20 +113,18 @@ def wrap_text(text):
     return '\n'.join(wrap(text, 60))
 
 
-def print_line(line='-'):
+def make_line(line='-'):
     if environ.get('CI'):
         return
     columns = 80
     line_str = line*int(columns)
-    print(line_str)
+    return line_str
 
 
 def log_delimiter(msg, line='-'):
-    print('{:\n>2}'.format(''))
-    print_line(line)
-    print(msg)
-    print_line(line)
-    print('{:\n>2}'.format(''))
+    delim_msg = '''\n{0}\n{1}\n{0}\n\n'''.format(
+        make_line(line), msg)
+    logger.info(delim_msg)
 
 
 def timestamp():
@@ -339,3 +344,13 @@ def configure_gpu():
     sess = tf.Session(config=config)
     K.set_session(sess)
     return sess
+
+
+def debug_mem_usage():
+    import psutil
+    from mem_top import mem_top
+    pid = os.getpid()
+    mem_info = psutil.Process().memory_info()
+    logger.debug(
+        'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
+            pid, mem_info, mem_top()))

@@ -1,6 +1,6 @@
 import copy
 import multiprocessing as mp
-from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM
+from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM, debug_mem_usage
 
 
 class HyperOptimizer(object):
@@ -76,7 +76,6 @@ class HyperOptimizer(object):
         '''
         algo step 2, construct and run Trial with the next param
         '''
-        import gc
         experiment_spec = self.compose_experiment_spec(param)
         trial = self.Trial(
             experiment_spec, trial_num=trial_num,
@@ -86,7 +85,9 @@ class HyperOptimizer(object):
             experiment_id_override=self.experiment_id_override)
         trial_data = copy.deepcopy(trial.run())
         del trial
+        import gc
         gc.collect()
+        debug_mem_usage()
         return trial_data
 
     def update_search(self):
