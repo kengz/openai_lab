@@ -1,6 +1,6 @@
 # <a name="installation"></a>Installation
 
-1\. Run the setup script:
+1\. Clone repo and run the setup script:
 
 ```shell
 git clone https://github.com/kengz/openai_lab.git
@@ -10,6 +10,9 @@ cd openai_lab
 
 `bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed.
 
+<aside class="notice">
+If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
+</aside>
 
 2\. Keras needs a backend in the home directory; setup your `~/.keras/keras.json` using example file in `config/keras.json`.
 
