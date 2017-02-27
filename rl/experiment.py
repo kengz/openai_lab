@@ -11,7 +11,7 @@ else:
 import copy
 import gym
 import traceback
-from os import environ
+from os import environ, getpid
 from rl.util import *
 from rl.agent import *
 from rl.analytics import *
@@ -250,9 +250,11 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
-        log_delimiter('Run Session #{}/{} of Trial #{}/{}:\n{}'.format(
-            self.session_num, self.num_of_sessions,
-            self.trial.trial_num, self.trial.num_of_trials, self.session_id))
+        log_delimiter(
+            'Run Session #{}/{} of Trial #{}/{} on PID {}:\n{}'.format(
+                self.session_num, self.num_of_sessions,
+                self.trial.trial_num, self.trial.num_of_trials,
+                getpid(), self.session_id))
         logger.info(
             'Experiment Trial Spec: {}'.format(to_json(self.experiment_spec)))
         sys_vars = self.sys_vars
@@ -379,8 +381,9 @@ class Trial(object):
             log_delimiter('Trial #{}/{} already completed:\n{}'.format(
                 self.trial_num, self.num_of_trials, self.trial_id), '=')
         else:
-            log_delimiter('Run Trial #{}/{}:\n{}'.format(
-                self.trial_num, self.num_of_trials, self.trial_id), '=')
+            log_delimiter('Run Trial #{}/{} on PID {}:\n{}'.format(
+                self.trial_num, self.num_of_trials,
+                getpid(), self.trial_id), '=')
             configure_gpu()
             time_start = timestamp()
             sys_vars_array = [] if (self.data is None) else self.data[
