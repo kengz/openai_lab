@@ -74,6 +74,10 @@ module.exports = function(grunt) {
     return grunt.option('analyze') ? ' -a' : ''
   }
 
+  function bestCmd() {
+    return grunt.option('best') ? '' : ' -bp'
+  }
+
   function quietCmd() {
     return grunt.option('quiet') ? ' -q' : ''
   }
@@ -101,7 +105,7 @@ module.exports = function(grunt) {
     }
 
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -bgp${quietCmd()} -e ${eStr} -t 5${analyzeCmd()}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py -g${analyzeCmd()}${bestCmd()}${quietCmd()} -t 5 -e ${eStr}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
@@ -160,7 +164,6 @@ module.exports = function(grunt) {
     },
   })
 
-  // grunt.event.on('watch', function(action, filepath) {
   grunt.event.on('watch', function(action, filepath, target) {
     updateHistory(filepath)
   })
@@ -169,7 +172,7 @@ module.exports = function(grunt) {
   grunt.registerTask('lab_sync', 'run lab with auto file syncing', ['concurrent:default'])
   grunt.registerTask('default', ['lab_sync'])
 
-  grunt.registerTask('plot', function() {
+  grunt.registerTask('analyze', function() {
     grunt.option('analyze', true)
     grunt.option('resume', true)
     grunt.task.run('default')
