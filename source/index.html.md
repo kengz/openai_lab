@@ -133,4 +133,4 @@ On completion, from the analytics (zoom on the graph), we conclude that the expe
 
 ### Run Your Own Lab
 
-Want to run the lab? Go to [Installation](#installation), [Usage](#Usage) and [Development](#development).
+Want to run the lab? Go to [Installation](#installation), [Usage](#usage) and [Development](#development).
