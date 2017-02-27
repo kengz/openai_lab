@@ -384,7 +384,7 @@ class Trial(object):
             log_delimiter('Run Trial #{}/{} on PID {}:\n{}'.format(
                 self.trial_num, self.num_of_trials,
                 getpid(), self.trial_id), '=')
-            configure_gpu()
+            self.keras_session = configure_gpu()
             time_start = timestamp()
             sys_vars_array = [] if (self.data is None) else self.data[
                 'sys_vars_array']
