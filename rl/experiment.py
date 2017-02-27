@@ -9,7 +9,6 @@ if K.backend() == 'tensorflow':
 else:
     K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
-import gc
 import gym
 import traceback
 from os import environ
@@ -183,9 +182,9 @@ class Session(object):
         if (sys_vars['solved'] or
                 (sys_vars['epi'] == sys_vars['MAX_EPISODES'] - 1)):
             logger.info(
-                'Problem solved? {}\nAt episode: {}\nparam: {}'.format(
+                'Problem solved? {}\nAt episode: {}\nsession_id: {}'.format(
                     sys_vars['solved'], sys_vars['epi'],
-                    to_json(self.param)))
+                    self.session_id))
             self.env.close()
 
     def update_history(self):
@@ -247,6 +246,9 @@ class Session(object):
         self.grapher.clear()
         if K.backend() == 'tensorflow':
             K.clear_session()  # manual gc to fix TF issue 3388
+        # TODO delete self properties
+        import gc
+        gc.collect()
 
     def run(self):
         '''run a session of agent'''
@@ -316,13 +318,7 @@ class Trial(object):
                  **kwargs):
 
         self.experiment_spec = experiment_spec
-        self.experiment_name = experiment_spec.get('experiment_name')
-        param_range = EXPERIMENT_SPECS.get(
-            self.experiment_name).get('param_range')
-        self.param_variables = list(
-            param_range.keys()) if param_range else []
-        self.experiment_spec.pop('param_range', None)  # single exp, del range
-        self.data = None
+        self.experiment_name = self.experiment_spec.get('experiment_name')
         self.times = times
         self.trial_num = trial_num
         self.num_of_trials = num_of_trials
@@ -330,13 +326,22 @@ class Trial(object):
         self.experiment_id = experiment_id_override or '{}-{}'.format(
             self.experiment_name, self.run_timestamp)
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
+        log_delimiter('Init Trial #{}/{}:\n{}'.format(
+            self.trial_num, self.num_of_trials, self.trial_id), '=')
+
+        param_range = EXPERIMENT_SPECS.get(
+            self.experiment_name).get('param_range')
+        self.param_variables = list(
+            param_range.keys()) if param_range else []
+        self.experiment_spec.pop('param_range', None)  # single exp, del range
+        self.data = None
+
+        # data file
         self.base_dir = './data/{}'.format(self.experiment_id)
         os.makedirs(self.base_dir, exist_ok=True)
         self.base_filename = './data/{}/{}'.format(
             self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
-        log_delimiter('Init Trial #{}/{}:\n{}'.format(
-            self.trial_num, self.num_of_trials, self.trial_id), '=')
 
     def save(self):
         '''save the entire trial data grid from inside run()'''
@@ -399,6 +404,7 @@ class Trial(object):
                 compose_data(self)
                 self.save()  # progressive update, write per session done
                 del sess
+                import gc
                 gc.collect()
 
                 if self.is_completed(s):

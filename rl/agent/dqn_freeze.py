@@ -35,7 +35,7 @@ class DQNFreeze(DoubleDQN):
         name = 'temp_Q_model_freeze_' + str(pid) + '.h5'
         self.model.save(name)
         self.model2 = load_model(name)
-        logger.info("Updated target model weights")
+        logger.debug("Updated target model weights")
 
     def update(self, sys_vars):
         '''
