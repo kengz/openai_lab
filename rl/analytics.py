@@ -8,7 +8,7 @@ else:
     matplotlib.rcParams['backend'] = 'TkAgg'
 
 import seaborn as sns
-sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
+sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
         rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
 palette = sns.color_palette("Blues_d")
 palette.reverse()
@@ -37,7 +37,8 @@ STATS_COLS = [
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
     'mean_rewards_stats_mean',
-    'max_total_rewards_stats_mean'
+    'max_total_rewards_stats_mean',
+    'epi_stats_mean'
 ]
 
 
@@ -255,7 +256,7 @@ def plot_experiment(data_df, trial_id):
 
     fig = sns.PairGrid(
         data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
-        hue='solved_ratio_of_sessions')
+        hue='solved_ratio_of_sessions', size=3)
     fig.map(partial(sns.swarmplot, size=3))
     fig.fig.suptitle(wrap_text(experiment_id))
     fig.add_legend()
