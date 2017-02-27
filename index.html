@@ -198,12 +198,14 @@
         <ul class="toc-footer">
             <li><a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a></li>
             <li><a href='https://github.com/openai/gym'>OpenAI Gym Github</a></li>
+            <li><a href='https://youtu.be/qBhLoeijgtA'>RL Tutorial video part 1/2</a></li>
+            <li><a href='https://youtu.be/wNSlZJGdodE'>RL Tutorial video part 2/2</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="openai-lab">OpenAI Lab <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0" alt="Codacy Badge" /></a></h1>
+        <h1 id="openai-lab">OpenAI Lab </br> <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0" alt="Codacy Badge" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&amp;label=Fork" alt="GitHub forks" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&amp;label=Star" alt="GitHub stars" /></a></h1>
 
 <p><strong>(DOC UNDER CONSTRUCTION)</strong></p>
 
@@ -402,16 +404,20 @@
 
 <h3 id="run-your-own-lab">Run Your Own Lab</h3>
 
-<p>Want to run the lab? Go to <a href="#installation">Installation</a>, <a href="#Usage">Usage</a> and <a href="#development">Development</a>.</p>
+<p>Want to run the lab? Go to <a href="#installation">Installation</a>, <a href="#usage">Usage</a> and <a href="#development">Development</a>.</p>
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
-<p>1. Run the setup script:</p>
+<p>1. Clone repo and run the setup script:</p>
 <pre class="highlight shell"><code>git clone https://github.com/kengz/openai_lab.git
 <span class="nb">cd </span>openai_lab
 ./bin/setup
 </code></pre>
 <p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed.</p>
+
+<aside class="notice">
+If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
+</aside>
 
 <p>2. Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
@@ -603,13 +609,84 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
+<p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
+
+<p>The design of the code is clean enough to simply infer how things work by example.</p>
+
+<ul>
+<li><code class="prettyprint">data/</code>: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials</li>
+<li><code class="prettyprint">rl/agent/</code>: custom agents. Refer to <code class="prettyprint">base_agent.py</code> and <code class="prettyprint">dqn.py</code> to build your own</li>
+<li><code class="prettyprint">rl/asset/</code>: specify new problems and experiment_specs to run experiments for.</li>
+<li><code class="prettyprint">rl/hyperoptimizer/</code>: Hyperparameter optimizers for the Experiments</li>
+<li><code class="prettyprint">rl/memory/</code>: RL agent memory classes</li>
+<li><code class="prettyprint">rl/policy/</code>: RL agent policy classes</li>
+<li><code class="prettyprint">rl/preprocessor/</code>: RL agent preprocessor (state and memory) classes</li>
+<li><code class="prettyprint">rl/analytics.py</code>: the data analytics module for output experiment data</li>
+<li><code class="prettyprint">rl/experiment.py</code>: the main high level experiment logic</li>
+<li><code class="prettyprint">rl/util.py</code>: Generic util</li>
+</ul>
+
+<p>Each run is an <code class="prettyprint">experiment</code> that runs multiple <code class="prettyprint">Trial</code>s (not restricted to the same <code class="prettyprint">experiment_id</code> for future cross-training). Each <code class="prettyprint">Trial</code> runs multiple (by flag <code class="prettyprint">-t</code>) <code class="prettyprint">Session</code>s, so an <code class="prettyprint">trial</code> is a <code class="prettyprint">sess_grid</code>.</p>
+
+<p>Each trial collects the data from its sessions into <code class="prettyprint">trial_data</code>, which is saved to a JSON and as many plots as there are sessions. On the higher level, <code class="prettyprint">experiment</code> analyses the aggregate <code class="prettyprint">trial_data</code> to produce a best-sorted CSV and graphs of the variables (what&rsquo;s changed across experiments) vs outputs.</p>
+
+<h2 id="hyperparameter-optimization-module">Hyperparameter Optimization Module</h2>
+
+<p>A hyperoptimizer is a function <code class="prettyprint">h</code> that takes:</p>
+
+<ul>
+<li>a trial (objective) function <code class="prettyprint">Trial</code></li>
+<li>a param space <code class="prettyprint">P</code> (implemented in <code class="prettyprint">experiment_spec</code>)</li>
+</ul>
+
+<p>and run the algorithm:
+1. search the next p in P using its internal search algo, add to its internal <code class="prettyprint">param_search_list</code>
+2. run a (slow) function Trial(p) = score (inside trial data)
+3. update search using feedback score
+4. repeat till max steps or fitness condition met</p>
+
+<p>Furthermore, the search space P is a tensor space product of <code class="prettyprint">m</code> bounded real spaces <code class="prettyprint">R</code> and <code class="prettyprint">n</code> bounded discrete spaces <code class="prettyprint">N</code>.</p>
+
+<h3 id="implementation-wise">Implementation-wise:</h3>
+
+<ol>
+<li>we want order-preserving and persistence for the ability to resume/reproduce an experiment</li>
+<li>the search algo may save its belief data to facilitate search</li>
+<li>the Trial function shall be kept as a blackbox for generality of implementation</li>
+</ol>
+
+<h3 id="specification-of-search-space">Specification of search space:</h3>
+
+<p>1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in <code class="prettyprint">experiment_grid.param</code> like so:</p>
+<pre class="highlight json"><code><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"uniform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in <code class="prettyprint">experiment_grid.param</code> like so:
+<code class="prettyprint">&#39;lr&#39;: [0.01, 0.02, 0.05, 0.1, 0.2]</code></p>
+
+<p>The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.</p>
+
+<p>Note that whether a variable is real or discrete can be up to the author; some variable such as <code class="prettyprint">lr</code> can be sampled from interval <code class="prettyprint">0.001 to 0.1</code> or human-specified options <code class="prettyprint">[0.01, 0.02, 0.05, 0.1, 0.2]</code>. One way may be more efficient than the other depending on the search algorithm.</p>
+
+<p>The experiment will run it as:</p>
+<pre class="highlight python"><code><span class="c"># specify which hyperoptimizer class to use in spec for bookkeeping</span>
+<span class="n">Hopt</span> <span class="o">=</span> <span class="n">get_module</span><span class="p">(</span><span class="n">GREF</span><span class="p">,</span> <span class="n">experiment_spec</span><span class="p">[</span><span class="s">'HyperOptimizer'</span><span class="p">])</span>
+<span class="n">hopt</span> <span class="o">=</span> <span class="n">Hopt</span><span class="p">(</span><span class="n">Trial</span><span class="p">,</span> <span class="o">**</span><span class="n">experiment_kwargs</span><span class="p">)</span>
+<span class="n">experiment_data</span> <span class="o">=</span> <span class="n">hopt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre>
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
+
+<p>Check the latest under the <a href="https://github.com/kengz/openai_lab/projects">Github Projects</a></p>
 
           <h1 id="contributing"><a name="contributing"></a>Contributing</h1>
 
 <h2 id="authors">Authors</h2>
 
-<p><em>Note: we are not affiliated with OpenAI</em></p>
+<p><em>Note: we are not affiliated with OpenAI; the OpenAI Lab is not tied to any organizations.</em></p>
 
 <ul>
 <li>Wah Loon Keng</li>
