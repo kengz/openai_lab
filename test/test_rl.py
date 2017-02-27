@@ -3,18 +3,18 @@ import pandas as pd
 from os import environ
 environ['CI'] = environ.get('CI') or 'true'
 from rl.experiment import run
-from rl.util import *
+import rl.util
 import os
 import sys
 import json
 
-class DQNTest(unittest.TestCase):
+PATH = os.path.dirname(__file__)
+util.PROBLEMS = json.loads(open(
+path.join(PATH, 'test_problems.json')).read())
+util.EXPERIMENT_SPECS = json.loads(open(
+path.join(PATH, 'test_experiment_specs.json')).read())
 
-    PATH = os.path.dirname(__file__)
-    PROBLEMS = json.loads(open(
-    path.join(PATH, 'test_problems.json')).read())
-    EXPERIMENT_SPECS = json.loads(open(
-    path.join(PATH, 'test_experiment_specs.json')).read())
+class DQNTest(unittest.TestCase):
 
     @classmethod
     def test_gym_tour(cls):
