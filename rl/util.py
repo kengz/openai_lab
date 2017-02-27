@@ -22,6 +22,13 @@ EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for experiment_name in EXPERIMENT_SPECS:
     EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
+    if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
+        continue
+    param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
+    for param_key, param_val in param_range.items():
+        param_range[param_key] = sorted(param_val)
+    EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
+
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flags for functions')
