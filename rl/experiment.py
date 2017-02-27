@@ -13,6 +13,7 @@ import gym
 import traceback
 from os import environ
 from rl.util import *
+import rl.util
 from rl.agent import *
 from rl.analytics import *
 from rl.hyperoptimizer import *
@@ -20,7 +21,6 @@ from rl.memory import *
 from rl.optimizer import *
 from rl.policy import *
 from rl.preprocessor import *
-
 
 GREF = globals()
 
@@ -104,7 +104,7 @@ class Session(object):
         asset/problems.json, then reset the other sys vars
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
-        sys_vars = PROBLEMS[self.problem]
+        sys_vars = rl.util.PROBLEMS[self.problem]
         if args.max_epis >= 0:
             sys_vars['MAX_EPISODES'] = args.max_epis
         if not args.render:
@@ -328,7 +328,7 @@ class Trial(object):
         log_delimiter('Init Trial #{}/{}:\n{}'.format(
             self.trial_num, self.num_of_trials, self.trial_id), '=')
 
-        param_range = EXPERIMENT_SPECS.get(
+        param_range = rl.util.EXPERIMENT_SPECS.get(
             self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
@@ -430,7 +430,7 @@ def analyze_experiment(trial_or_experiment_id):
 
 def run(name_id_spec, times=1,
         param_selection=False,
-        analyze_only=False, **kwargs):
+        analyze_only=False,  **kwargs):
     '''
     primary method:
     specify:
@@ -461,17 +461,16 @@ def run(name_id_spec, times=1,
                 'Rerun an incomplete experiment by id {}'.format(
                     experiment_id))
             experiment_kwargs['experiment_id_override'] = experiment_id
-            experiment_spec = EXPERIMENT_SPECS.get(
+            experiment_spec = rl.util.EXPERIMENT_SPECS.get(
                 parse_experiment_name(name_id_spec))
         else:  # run a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
                 'Run a new experiment by name {}'.format(experiment_name))
-            experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
+            experiment_spec = rl.util.EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
         logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec
-
     experiment_kwargs['experiment_spec'] = experiment_spec
 
     # compose grid and run param selection
