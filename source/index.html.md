@@ -7,6 +7,8 @@ language_tabs:
 toc_footers:
   - <a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a>
   - <a href='https://github.com/openai/gym'>OpenAI Gym Github</a>
+  - <a href='https://youtu.be/qBhLoeijgtA'>RL Tutorial video part 1/2</a>
+  - <a href='https://youtu.be/wNSlZJGdodE'>RL Tutorial video part 2/2</a>
 
 includes:
   - INSTALLATION
