@@ -488,6 +488,18 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 <li><code class="prettyprint">gym[all] &gt;= 0.7</code></li>
 </ul>
 
+<h2 id="hardware">Hardware</h2>
+
+<p>For setting up your own hardware, especially with a GPI, googling will help more than we could. Also, setup is usually non-trivial since there&rsquo;re so many moving parts. Here&rsquo;s what we referred:</p>
+
+<ul>
+<li><a href="http://christopher5106.github.io/nvidia/2016/12/30/commands-nvidia-install-ubuntu-16-04.html">Getting CUDA 8 to Work With openAI Gym on AWS and Compiling Tensorflow for CUDA 8 Compatibility</a></li>
+<li><a href="https://github.com/openai/gym/issues/366">Major OpenAI issue with SSH with xvfb failing with NVIDIA Driver due to opengl files</a></li>
+<li><a href="http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4ZrJBKeSk">NVIDIA installation guide</a></li>
+<li><a href="http://askubuntu.com/questions/149206/how-to-install-nvidia-run">NVIDIA cannot install due to X server running</a></li>
+<li><a href="http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login">when login fails on Ubuntu after Nvidia installation</a></li>
+</ul>
+
           <h1 id="usage"><a name="usage"></a>Usage</h1>
 
 <p>The general flow for running a production lab is:</p>
