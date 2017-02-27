@@ -22,6 +22,13 @@ EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for experiment_name in EXPERIMENT_SPECS:
     EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
+    if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
+        continue
+    param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
+    for param_key, param_val in param_range.items():
+        param_range[param_key] = sorted(param_val)
+    EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
+
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flags for functions')
@@ -354,3 +361,11 @@ def debug_mem_usage():
     logger.debug(
         'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
             pid, mem_info, mem_top()))
+
+
+def del_self_attr(subject):
+    self_attrs = list(subject.__dict__.keys())
+    for attr in self_attrs:
+        delattr(subject, attr)
+    import gc
+    gc.collect()
