@@ -9,7 +9,7 @@ The general flow for running a production lab is:
 
 ## Commands
 
-We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command, which is harder to use, but we will include the [details below for reference](#python-cmd).
+We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command, logged to stdout as `>> Composed command: python3 main.py ...`, which is harder to use.
 
 The useful grunt commands are:
 
@@ -31,6 +31,9 @@ grunt analyze -prod
 grunt clear
 ```
 
+See below for the full [Grunt Command Reference](#grunt-cmd) or the [Python Command Reference](#python-cmd).
+
+
 **development** mode:
 
 - All grunt commands defaults to this mode
@@ -49,7 +52,7 @@ grunt clear
 - has auto-notification to Slack channel
 
 
-### Run Remotely
+## Run Remotely
 
 If you're using a remote server, run the commands inside a `screen`. That is, log in via ssh, start a screen, run, then detach screen.
 
@@ -73,7 +76,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 _Glances on remote server beast._
 
 
-### Resume Lab
+## Resume Lab
 
 Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a `-resume` flag: `grunt -prod -remote -resume`. This will read the `config/history.json`:
 
@@ -87,7 +90,7 @@ The `config/history.json` is created in the last run that maps `experiment_name`
 
 
 
-### Grunt Command Details
+## <a name="grunt-cmd"></a>Grunt Command Reference
 
 By default the `grunt` command (no task or flag) runs the lab in `development` mode using `config/default.json`.
 
@@ -113,7 +116,7 @@ The `<flag>`s are:
 - `-quiet`: mute all python logging in grunt. This is for lab-level development only.
 
 
-### <a name="python-cmd"></a>Internal Python command
+## <a name="python-cmd"></a>Python Command Reference
 
 The Python command is invoked inside `Gruntfile.js` under the `composeCommand` function. Change it if you need to.
 
