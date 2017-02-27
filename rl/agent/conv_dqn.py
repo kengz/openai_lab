@@ -1,7 +1,9 @@
 from rl.agent.dqn import DQN
 from keras.layers.core import Dense, Flatten
 from keras.layers.convolutional import Convolution2D
-
+from keras import backend as K
+if K.backend() == 'theano':
+    K.set_image_dim_ordering('tf')
 
 class ConvDQN(DQN):
 
@@ -18,8 +20,9 @@ class ConvDQN(DQN):
                 self.hidden_layers[0][1],
                 self.hidden_layers[0][2],
                 subsample=self.hidden_layers[0][3],
-                input_shape=(self.env_spec['state_dim']),
+                input_shape=self.env_spec['state_dim'],
                 activation=self.hidden_layers_activation,
+                # border_mode='same',
                 init='lecun_uniform'))
 
         if (len(self.hidden_layers) > 1):
@@ -31,6 +34,7 @@ class ConvDQN(DQN):
                         self.hidden_layers[i][2],
                         subsample=self.hidden_layers[i][3],
                         activation=self.hidden_layers_activation,
+                        # border_mode='same',
                         init='lecun_uniform'))
 
         model.add(Flatten())
