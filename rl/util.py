@@ -357,10 +357,9 @@ def debug_mem_usage():
     import psutil
     from mem_top import mem_top
     pid = os.getpid()
-    mem_info = psutil.Process().memory_info()
     logger.debug(
         'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
-            pid, mem_info, mem_top()))
+            pid, psutil.Process().memory_info(), mem_top()))
 
 
 def del_self_attr(subject):
