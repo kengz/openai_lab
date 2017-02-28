@@ -31,6 +31,25 @@ EXPERIMENT_GRID_Y_COLS = [
 ]
 
 
+# import matplotlib scoped to the class for gc in multiprocessing
+def scoped_mpl_import():
+    import matplotlib
+    matplotlib.rcParams['backend'] = MPL_BACKEND
+
+    import matplotlib.pyplot as plt
+    plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
+
+    import seaborn as sns
+    sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
+            rc={'lines.linewidth': 1.0,
+                'backend': matplotlib.rcParams['backend']})
+    palette = sns.color_palette("Blues_d")
+    palette.reverse()
+    sns.set_palette(palette)
+
+    return (matplotlib, plt, sns)
+
+
 class Grapher(object):
 
     '''
@@ -41,12 +60,7 @@ class Grapher(object):
     def __init__(self, session):
         if not args.plot_graph or environ.get('CI'):
             return
-        import matplotlib
-        self.matplotlib = matplotlib
-        matplotlib.rcParams['backend'] = MPL_BACKEND
-        import matplotlib.pyplot as plt
-        plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
-        self.plt = plt
+        (_mpl, self.plt, _sns) = scoped_mpl_import()
         self.session = session
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
@@ -235,15 +249,7 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
-    import matplotlib
-    matplotlib.rcParams['backend'] = MPL_BACKEND
-    import seaborn as sns
-    sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
-            rc={'lines.linewidth': 1.0,
-                'backend': matplotlib.rcParams['backend']})
-    palette = sns.color_palette("Blues_d")
-    palette.reverse()
-    sns.set_palette(palette)
+    (_mpl, _plt, sns) = scoped_mpl_import()
 
     experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
