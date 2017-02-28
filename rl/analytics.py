@@ -106,22 +106,19 @@ class Grapher(object):
             return
         sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
-        p1.set_ydata(
-            sys_vars['total_rewards_history'])
+        p1.set_ydata(sys_vars['total_rewards_history'])
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax1e, p1e = self.subgraphs['e']
-        p1e.set_ydata(
-            sys_vars['explore_history'])
+        p1e.set_ydata(sys_vars['explore_history'])
         p1e.set_xdata(np.arange(len(p1e.get_ydata())))
         ax1e.relim()
         ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax2, p2 = self.subgraphs['mean rewards']
-        p2.set_ydata(
-            sys_vars['mean_rewards_history'])
+        p2.set_ydata(sys_vars['mean_rewards_history'])
         p2.set_xdata(np.arange(len(p2.get_ydata())))
         ax2.relim()
         ax2.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -135,6 +132,8 @@ class Grapher(object):
         self.plt.draw()
         self.plt.pause(0.01)
         self.save()
+        import gc
+        gc.collect()
 
     def save(self):
         '''save graph to filename'''
