@@ -50,3 +50,4 @@ model/
 *.csv
 *.log
 *.h5
+*.xml
