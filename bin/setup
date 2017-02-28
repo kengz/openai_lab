@@ -74,7 +74,9 @@ sudo python3 -m pip install atari_py
 sudo python3 -m pip install Pillow
 sudo python3 -m pip install PyOpenGL
 sudo python3 -m pip install glances
+sudo python3 -m pip install mem_top
 sudo python3 -m pip install pytest-cov
+sudo python3 -m pip install codacy-coverage
 
 # install tensorflow
 if [ $(uname) == "Darwin" ]; then

@@ -1,27 +1,15 @@
-import matplotlib
-import platform
-from os import environ
-# set only if it's not MacOS
-if environ.get('CI') or platform.system() == 'Darwin':
-    matplotlib.rcParams['backend'] = 'agg'
-else:
-    matplotlib.rcParams['backend'] = 'TkAgg'
-
-import seaborn as sns
-sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
-        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
-palette = sns.color_palette("Blues_d")
-palette.reverse()
-sns.set_palette(palette)
-
 import numpy as np
 import pandas as pd
+import platform
 import warnings
 from functools import partial
+from os import environ
 from rl.util import *
 
 warnings.filterwarnings("ignore", module="matplotlib")
 
+MPL_BACKEND = 'agg' if (
+    environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
     'performance_score',
@@ -34,12 +22,32 @@ STATS_COLS = [
     't_stats_mean',
     'trial_id'
 ]
+
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
     'mean_rewards_stats_mean',
     'max_total_rewards_stats_mean',
     'epi_stats_mean'
 ]
+
+
+# import matplotlib scoped to the class for gc in multiprocessing
+def scoped_mpl_import():
+    import matplotlib
+    matplotlib.rcParams['backend'] = MPL_BACKEND
+
+    import matplotlib.pyplot as plt
+    plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
+
+    import seaborn as sns
+    sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
+            rc={'lines.linewidth': 1.0,
+                'backend': matplotlib.rcParams['backend']})
+    palette = sns.color_palette("Blues_d")
+    palette.reverse()
+    sns.set_palette(palette)
+
+    return (matplotlib, plt, sns)
 
 
 class Grapher(object):
@@ -52,9 +60,7 @@ class Grapher(object):
     def __init__(self, session):
         if not args.plot_graph or environ.get('CI'):
             return
-        import matplotlib.pyplot as plt
-        plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
-        self.plt = plt
+        (_mpl, self.plt, _sns) = scoped_mpl_import()
         self.session = session
         self.graph_filename = self.session.graph_filename
         self.subgraphs = {}
@@ -106,22 +112,19 @@ class Grapher(object):
             return
         sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
-        p1.set_ydata(
-            sys_vars['total_rewards_history'])
+        p1.set_ydata(sys_vars['total_rewards_history'])
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax1e, p1e = self.subgraphs['e']
-        p1e.set_ydata(
-            sys_vars['explore_history'])
+        p1e.set_ydata(sys_vars['explore_history'])
         p1e.set_xdata(np.arange(len(p1e.get_ydata())))
         ax1e.relim()
         ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax2, p2 = self.subgraphs['mean rewards']
-        p2.set_ydata(
-            sys_vars['mean_rewards_history'])
+        p2.set_ydata(sys_vars['mean_rewards_history'])
         p2.set_xdata(np.arange(len(p2.get_ydata())))
         ax2.relim()
         ax2.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -135,6 +138,8 @@ class Grapher(object):
         self.plt.draw()
         self.plt.pause(0.01)
         self.save()
+        import gc
+        gc.collect()
 
     def save(self):
         '''save graph to filename'''
@@ -244,6 +249,8 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
+    (_mpl, _plt, sns) = scoped_mpl_import()
+
     experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
