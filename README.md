@@ -1,219 +1,117 @@
-# OpenAI Lab [![CircleCI](https://circleci.com/gh/kengz/openai_lab.svg?style=shield)](https://circleci.com/gh/kengz/openai_lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Grade)
+# OpenAI Lab [![CircleCI](https://circleci.com/gh/kengz/openai_lab.svg?style=shield)](https://circleci.com/gh/kengz/openai_lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/9e55f845b10b4b51b213620bfb98e4b3)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&utm_medium=referral&utm_content=kengz/openai_lab&utm_campaign=Badge_Coverage) [![GitHub forks](https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&label=Fork)](https://github.com/kengz/openai_lab) [![GitHub stars](https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&label=Star)](https://github.com/kengz/openai_lab)
 
-[OpenAI Gym Doc](https://gym.openai.com/docs) | [OpenAI Gym Github](https://github.com/openai/gym) | [RL intro](https://gym.openai.com/docs/rl) | [RL Tutorial video Part 1](https://youtu.be/qBhLoeijgtA) | [Part 2](https://youtu.be/wNSlZJGdodE)
+---
 
-An experimentation system for Reinforcement Learning using OpenAI and Keras. _(Hyperoptimizer is under work, the rest is ready to use)_
+<p align="center"><b><a href="http://kengz.me/openai_lab">OpenAI Lab Documentation</a></b></p>
 
+---
 
-## Installation
+_An experimentation system for Reinforcement Learning using OpenAI and Keras._
 
-### Basic
+This lab is created to let us do Reinforcement Learning (RL) like science - _theorize, experiment_. We can theorize as fast as we think, and experiment as fast as the computers can run.
 
-```shell
-git clone https://github.com/kengz/openai_lab.git
-cd openai_lab
-./bin/setup
-```
+With _OpenAI Lab_, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.
 
-Then, setup your `~/.keras/keras.json`. See example files in `config/keras.json`. We recommend Tensorflow for experimentation and multi-GPU, since it's much nicer to work with. Use Theano when you're training a single finalized model since it's faster.
+Before this, experiments used to be hard and slow, because we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components.
 
-The binary at `./bin/setup` installs all the needed dependencies, which includes the basic OpenAI gym, Tensorflow (defaulted to CPU Mac or GPU Linux), Theano(for faster production), Keras.
+_OpenAI Lab_ lowers the experimental complexity and enables an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
 
-
-### Data files auto-sync (optional)
-
-For auto-syncing `data/` files, we use Grunt. If you ran `./bin/setup` the dependencies for this are installed. This sets up a watcher for automatically copying data files via Dropbox. Set up a shared folder in your Dropbox and sync to desktop at the path `~/Dropbox/openai_lab/data`.
-
-Also there's an automatic notification system that posts on your Slack when the experiment is completed. You'll need to install noti, get SLACK_TOKEN, set up config/default.json and Gruntfile.js. (More info soon when writing the API page).
-
-```shell
-# install if you haven't ran ./bin/setup
-npm install --global grunt-cli
-npm install
-```
+<img alt="Timelapse of OpenAI Lab" src="http://kengz.me/openai_lab/images/lab_demo_dqn.gif" />
+_Timelapse of OpenAI Lab (open the gif in new tab for larger size)._
 
 
-### Full OpenAI Gym Environments
+## Lab Demo
 
-To run more than just the classic control gym env, we need to install the OpenAI gym fully. We refer to the [Install Everything](https://github.com/openai/gym#installing-everything) of the repo (which is still broken at the time of writing).
+Each experiment involves:
+- a problem - an [OpenAI Gym environment](https://gym.openai.com/envs)
+- a RL agent with modular components `agent, memory, optimizer, policy, preprocessor`, each of which is an experimental variable.
 
-```shell
-brew install cmake boost boost-python sdl2 swig wget
-git clone https://github.com/openai/gym.git
-cd gym
-pip3 install -e '.[all]'
-```
+We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.
 
-Try to run a Lunar Lander env, it will break (unless they fix it):
-```python
-import gym
-env = gym.make('LunarLander-v2')
-env.reset()
-env.render()
-```
+### Specify Experiment
 
-If it fails, debug as follow (and repeat once more if it fails again, glorious python):
+The example below is fully specified in `rl/asset/experiment_specs.json` under `dqn`:
 
-```shell
-pip3 uninstall Box2D box2d-py
-git clone https://github.com/pybox2d/pybox2d
-cd pybox2d/
-python3 setup.py clean
-python3 setup.py build
-python3 setup.py install
-```
-
-To run Atari envs three additional dependencies are required
-
-```shell
-pip3 install atari_py
-pip3 install Pillow
-pip3 install PyOpenGL
-```
-
-Then check that it works with
-```python
-import gym
-env = gym.make('SpaceInvaders-v0')
-env.reset()
-env.render()
-```
-
-## Usage
-
-### (Pending unified command section) Run experiments
-
-To set up the lab experiments, edit `config/default.json`.
-
-```shell
-# pure python command (you still need to know this to customize Grunt)
-python3 main.py -bgp -e dev_dqn -t 2 | tee -a ./data/terminal.log
-# run the lab in development mode (no watcher, no noti)
-grunt
-# run analysis and plot only, even when lab is still running
-grunt plot
-# clean out dev data files and trash after dev
-grunt clear
-# add flag to run the lab in production mode
-grunt -prod
-# add flag to run the lab remotely (over ssh)
-grunt -remote
-# resume the past lab run, uses config/history.json
-grunt -resume
-```
-
-### Running remotely
-
-If you're running things remotely on a server, log in via ssh, start a screen, run, then detach screen.
-
-```shell
-screen -S run
-# enter the screen with the name "run"
-grunt remote
-# use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
-# to resume screen next time
-screen -r run
-```
-
-### Customize experiment commands
-
-To customize your experiment commands, refer:
-
-```shell
-python3 main.py -bgp -e lunar_dqn -t 5 | tee -a ./data/terminal.log
-```
-
-The extra flags are:
-
-- `-d`: log debug info. Default: `False`
-- `-b`: blind mode, do not render graphics. Default: `False`
-- `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
-- `-t <times>`: the number of sessions to run per trial. Default: `1`
-- `-m <max_evals>`: the max number of trials: hyperopt max_evals to run. Default: `10`
-- `-p`: run param selection. Default: `False`
-- `-g`: plot graphs live. Default: `False`
-- `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
-- `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in problems.json
-
-
-
-## Development
-
-This is still under active development, and documentation is sparse. The main code lives inside `rl/`.
-
-The design of the code is clean enough to simply infer how things work by example.
-
-- `data/`: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials
-- `rl/agent/`: custom agents. Refer to `base_agent.py` and `dqn.py` to build your own
-- `rl/asset/`: specify new problems and experiment_specs to run experiments for.
-- `rl/memory/`: RL agent memory classes
-- `rl/policy/`: RL agent policy classes
-- `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
-- `rl/analytics.py`: the data analytics module for output experiment data
-- `rl/experiment.py`: the main high level experiment logic
-- `rl/hyperoptimizer.py`: Hyperparameter optimizer for the Experiments
-- `rl/util.py`: Generic util
-
-Each run is an `experiment` that runs multiple `Trial`s (not restricted to the same `experiment_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
-
-Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiemnts) vs outputs.
-
-
-## Hyperparameter Optimization Module
-
-A hyperoptimizer is a function h that takes:
-
-- a trial (objective) function `Trial`
-- a param space `P` (implemented in `experiment_spec`)
-
-and run the algorithm:
-1. search the next p in P using its internal search algo, add to its internal `param_search_list`
-2. run a (slow) function Trial(p) = score (inside trial data)
-3. update search using feedback score
-4. repeat till max steps or fitness condition met
-
-Furthermore, the search space P is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`.
-
-#### Implementation-wise:
-1. we want order-preserving and persistence for the ability to resume/reproduce an experiment
-2. the search algo may save its belief data to facilitate search
-3. the Trial function shall be kept as a blackbox for generality of implementation
-
-
-#### Specification of search space:
-1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
-
-    ```json
-    "lr": {
-        "uniform": {
-            "low": 0.0001,
-            "high": 1.0
-        }
+```json
+{
+  "dqn": {
+    "problem": "CartPole-v0",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "train_per_n_new_exp": 1,
+      "lr": 0.001,
+      "gamma": 0.96,
+      "hidden_layers_shape": [16],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 20
+    },
+    "param_range": {
+      "lr": [0.001, 0.01, 0.02, 0.05],
+      "gamma": [0.95, 0.96, 0.97, 0.99],
+      "hidden_layers_shape": [
+        [8],
+        [16],
+        [32]
+      ],
+      "exploration_anneal_episodes": [10, 20]
     }
-    ```
-
-2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in `experiment_grid.param` like so:
-`'lr': [0.01, 0.02, 0.05, 0.1, 0.2]`
-
-The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.
-
-Note that whether a variable is real or discrete can be up to the author; some variable such as `lr` can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
-
-The experiment will run it as:
-
-```python
-# specify which hyperoptimizer class to use in spec for bookkeeping
-Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
-hopt = Hopt(Trial, **experiment_kwargs)
-experiment_data = hopt.run()
+  }
+}
 ```
 
+- *experiment*: `dqn`
+- *problem*: [CartPole-v0](https://gym.openai.com/envs/CartPole-v0)
+- *variable agent component*: `Boltzmann` policy
+- *control agent variables*:
+    - `DQN` agent
+    - `LinearMemoryWithForgetting`
+    - `AdamOptimizer`
+    - `NoPreProcessor`
+- *parameter variables values*: the `"param_range"` JSON
 
-## Roadmap
+An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `96` param combinations (trials), and `5` repeated sessions per trial. Overall, this experiment will run `96 x 5 = 480` sessions.
 
-Check the latest under the [Github Projects](https://github.com/kengz/openai_lab/projects)
 
-## Authors
+### Lab Workflow
 
-- Wah Loon Keng
-- Laura Graesser
+The workflow to setup this experiment is as follow:
+
+1. Add the new theorized component `Boltzmann` in `rl/policy/boltzmann.py`
+2. Specify `dqn` experiment spec in `experiment_spec.json` to include this new variable,  reuse the other existing RL components, and specify the param range.
+3. Add this experiment to the lab queue in `config/production.json`
+4. Run `grunt -prod`
+5. Analyze the graphs and data (live-synced)
+
+
+### Lab Results
+
+<img alt="The dqn experiment analytics" src="http://kengz.me/openai_lab/images/dqn.png" />
+_The dqn experiment analytics generated by the lab (open in new tab for larger size). This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves._
+
+
+|performance_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_exploration_anneal_episodes|variable_gamma|variable_hidden_layers_shape|variable_lr|
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|1.39203|2.32005|171.7815|120.0|0.6|5|200.0|189.8|dqn-2017_02_21_182442_t46|10|0.99|[32]|0.02|
+|1.239977|1.239977|195.272|167.2|1.0|5|200.0|199.0|dqn-2017_02_21_182442_t45|10|0.99|[32]|0.01|
+|1.196581|1.196581|195.372|168.0|1.0|5|200.0|199.0|dqn-2017_02_21_182442_t80|20|0.97|[32]|0.001|
+|1.192967|1.192967|196.102|165.4|1.0|5|200.0|199.0|dqn-2017_02_21_182442_t68|20|0.96|[32]|0.001|
+|1.191591|1.191591|195.49|166.2|1.0|5|200.0|195.0|dqn-2017_02_21_182442_t28|10|0.97|[16]|0.001|
+
+_Analysis data table, top 5 trials._
+
+On completion, from the analytics (zoom on the graph), we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:
+
+- *lr*: 0.1
+- *gamma*: 0.99
+- *hidden_layers_shape*: [32]
+- *exploration_anneal_episodes*: 10
+
+
+### Run Your Own Lab
+
+Want to run the lab? Go to [Installation](http://kengz.me/openai_lab/installation), [Usage](http://kengz.me/openai_lab/usage) and [Development](http://kengz.me/openai_lab/development).

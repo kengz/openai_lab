@@ -10,7 +10,7 @@ import re
 import sys
 from datetime import datetime, timedelta
 from keras import backend as K
-from os import path, environ
+from os import path, environ, getpid
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
@@ -22,14 +22,27 @@ EXPERIMENT_SPECS = json.loads(open(
     path.join(ASSET_PATH, 'experiment_specs.json')).read())
 for experiment_name in EXPERIMENT_SPECS:
     EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
+    if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
+        continue
+    param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
+    for param_key, param_val in param_range.items():
+        param_range[param_key] = sorted(param_val)
+    EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
+
 
 # parse_args to add flag
-parser = argparse.ArgumentParser(description='Set flag for functions')
+parser = argparse.ArgumentParser(description='Set flags for functions')
 parser.add_argument("-d", "--debug",
                     help="activate debug log",
                     action="store_const",
                     dest="loglevel",
                     const=logging.DEBUG,
+                    default=logging.INFO)
+parser.add_argument("-q", "--quiet",
+                    help="change log to warning level",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.WARNING,
                     default=logging.INFO)
 parser.add_argument("-b", "--blind",
                     help="dont render graphics",
@@ -90,6 +103,7 @@ handler.setFormatter(
 logger.setLevel(args.loglevel)
 logger.addHandler(handler)
 logger.propagate = False
+environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # mute tf warnings on optimized setup
 
 
 def log_self(subject):
@@ -106,20 +120,32 @@ def wrap_text(text):
     return '\n'.join(wrap(text, 60))
 
 
-def print_line(line='-'):
+def make_line(line='-'):
     if environ.get('CI'):
         return
     columns = 80
     line_str = line*int(columns)
-    print(line_str)
+    return line_str
 
 
 def log_delimiter(msg, line='-'):
-    print('{:\n>2}'.format(''))
-    print_line(line)
-    print(msg)
-    print_line(line)
-    print('{:\n>2}'.format(''))
+    delim_msg = '''\n{0}\n{1}\n{0}\n\n'''.format(
+        make_line(line), msg)
+    logger.info(delim_msg)
+
+
+def log_trial_delimiter(trial, action):
+    log_delimiter('{} Trial #{}/{} on PID {}:\n{}'.format(
+        action, trial.trial_num, trial.num_of_trials,
+        getpid(), trial.trial_id), '=')
+
+
+def log_session_delimiter(sess, action):
+    log_delimiter(
+        '{} Session #{}/{} of Trial #{}/{} on PID {}:\n{}'.format(
+            action, sess.session_num, sess.num_of_sessions,
+            sess.trial.trial_num, sess.trial.num_of_trials,
+            getpid(), sess.session_id))
 
 
 def timestamp():
@@ -339,3 +365,20 @@ def configure_gpu():
     sess = tf.Session(config=config)
     K.set_session(sess)
     return sess
+
+
+def debug_mem_usage():
+    import psutil
+    from mem_top import mem_top
+    pid = os.getpid()
+    logger.debug(
+        'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
+            pid, psutil.Process().memory_info(), mem_top()))
+
+
+def del_self_attr(subject):
+    self_attrs = list(subject.__dict__.keys())
+    for attr in self_attrs:
+        delattr(subject, attr)
+    import gc
+    gc.collect()

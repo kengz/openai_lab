@@ -1,27 +1,15 @@
-import matplotlib
-import platform
-from os import environ
-# set only if it's not MacOS
-if environ.get('CI') or platform.system() == 'Darwin':
-    matplotlib.rcParams['backend'] = 'agg'
-else:
-    matplotlib.rcParams['backend'] = 'TkAgg'
-
-import seaborn as sns
-sns.set(style="whitegrid", color_codes=True, font_scale=0.8,
-        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
-palette = sns.color_palette("Blues_d")
-palette.reverse()
-sns.set_palette(palette)
-
 import numpy as np
 import pandas as pd
+import platform
 import warnings
 from functools import partial
+from os import environ
 from rl.util import *
 
 warnings.filterwarnings("ignore", module="matplotlib")
 
+MPL_BACKEND = 'agg' if (
+    environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
     'performance_score',
@@ -29,15 +17,17 @@ STATS_COLS = [
     'mean_rewards_stats_mean',
     'epi_stats_mean',
     'solved_ratio_of_sessions',
+    'num_of_sessions',
     'max_total_rewards_stats_mean',
     't_stats_mean',
-    'trial_id',
-    'num_of_sessions'
+    'trial_id'
 ]
+
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
     'mean_rewards_stats_mean',
-    'max_total_rewards_stats_mean'
+    'max_total_rewards_stats_mean',
+    'epi_stats_mean'
 ]
 
 
@@ -49,8 +39,11 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
-        if not args.plot_graph:
+        if not args.plot_graph or environ.get('CI'):
             return
+        import matplotlib
+        self.matplotlib = matplotlib
+        matplotlib.rcParams['backend'] = MPL_BACKEND
         import matplotlib.pyplot as plt
         plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
         self.plt = plt
@@ -62,8 +55,6 @@ class Grapher(object):
         self.init_figure()
 
     def init_figure(self):
-        if environ.get('CI'):
-            return
         # graph 1
         ax1 = self.figure.add_subplot(
             311,
@@ -107,22 +98,19 @@ class Grapher(object):
             return
         sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
-        p1.set_ydata(
-            sys_vars['total_rewards_history'])
+        p1.set_ydata(sys_vars['total_rewards_history'])
         p1.set_xdata(np.arange(len(p1.get_ydata())))
         ax1.relim()
         ax1.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax1e, p1e = self.subgraphs['e']
-        p1e.set_ydata(
-            sys_vars['explore_history'])
+        p1e.set_ydata(sys_vars['explore_history'])
         p1e.set_xdata(np.arange(len(p1e.get_ydata())))
         ax1e.relim()
         ax1e.autoscale_view(tight=True, scalex=True, scaley=True)
 
         ax2, p2 = self.subgraphs['mean rewards']
-        p2.set_ydata(
-            sys_vars['mean_rewards_history'])
+        p2.set_ydata(sys_vars['mean_rewards_history'])
         p2.set_xdata(np.arange(len(p2.get_ydata())))
         ax2.relim()
         ax2.autoscale_view(tight=True, scalex=True, scaley=True)
@@ -136,10 +124,18 @@ class Grapher(object):
         self.plt.draw()
         self.plt.pause(0.01)
         self.save()
+        import gc
+        gc.collect()
 
     def save(self):
         '''save graph to filename'''
         self.figure.savefig(self.graph_filename)
+
+    def clear(self):
+        if not args.plot_graph or environ.get('CI'):
+            return
+        self.plt.close()
+        del_self_attr(self)
 
 
 def basic_stats(array):
@@ -164,6 +160,8 @@ def compose_data(trial):
     # collect all data from sys_vars_array
     solved_sys_vars_array = list(filter(
         lambda sv: sv['solved'], sys_vars_array))
+    errored_array = list(map(
+        lambda sv: sv['errored'], sys_vars_array))
     mean_rewards_array = np.array(list(map(
         lambda sv: sv['mean_rewards'], sys_vars_array)))
     max_total_rewards_array = np.array(list(map(
@@ -188,6 +186,7 @@ def compose_data(trial):
         'solved_num_of_sessions': len(solved_sys_vars_array),
         'solved_ratio_of_sessions': float(len(
             solved_sys_vars_array)) / trial.times,
+        'errored': any(errored_array),
         'mean_rewards_stats': basic_stats(mean_rewards_array),
         'mean_rewards_per_epi_stats': basic_stats(
             mean_rewards_per_epi_array),
@@ -201,8 +200,8 @@ def compose_data(trial):
     }
     stats.update({
         'performance_score': stats[
-            'mean_rewards_per_epi_stats']['mean'] * stats[
-            'solved_ratio_of_sessions']
+            'mean_rewards_per_epi_stats']['mean'] * (stats[
+                'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics
@@ -236,6 +235,16 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
+    import matplotlib
+    matplotlib.rcParams['backend'] = MPL_BACKEND
+    import seaborn as sns
+    sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
+            rc={'lines.linewidth': 1.0,
+                'backend': matplotlib.rcParams['backend']})
+    palette = sns.color_palette("Blues_d")
+    palette.reverse()
+    sns.set_palette(palette)
+
     experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
@@ -251,13 +260,15 @@ def plot_experiment(data_df, trial_id):
 
     fig = sns.PairGrid(
         data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
-        hue='solved_ratio_of_sessions')
+        hue='solved_ratio_of_sessions', size=3)
     fig.map(partial(sns.swarmplot, size=3))
     fig.fig.suptitle(wrap_text(experiment_id))
     fig.add_legend()
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
     fig.savefig(filename)
+    fig.fig.clear()
+    sns.plt.close()
 
 
 def analyze_data(experiment_data_or_experiment_id):
@@ -278,8 +289,10 @@ def analyze_data(experiment_data_or_experiment_id):
     for data in experiment_data:
         stats = flatten_dict(data['stats'])
         stats.update({'trial_id': data['trial_id']})
-        stats_array.append(stats)
         param_variables = data['param_variables']
+        if stats['errored']:  # remove errored trials
+            continue
+        stats_array.append(stats)
         param_variables_array.append(param_variables)
 
     raw_stats_df = pd.DataFrame.from_dict(stats_array)

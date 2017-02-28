@@ -49,3 +49,5 @@ model/
 *.json
 *.csv
 *.log
+*.h5
+*.xml

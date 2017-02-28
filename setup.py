@@ -1,23 +1,7 @@
-import pip
 import os
 import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
-from setuptools.command.install import install
-reqs = open('./requirements.txt', 'r').read().split('\n')
-
-
-class OverrideInstall(install):
-
-    """
-    Emulate sequential install of pip install -r requirements.txt
-    To fix numpy bug in scipy, scikit in py2
-    """
-
-    def run(self):
-        for req in reqs:
-            if req:
-                pip.main(["install", "-U", req])
 
 
 # explicitly config
@@ -56,7 +40,7 @@ setup(
     long_description=read('README.md'),
     keywords='openai gym',
     url='https://github.com/kengz/openai_lab',
-    author='keng',
+    author='kengz,lgraesser',
     author_email='kengzwl@gmail.com',
     license='MIT',
     packages=[],
@@ -72,5 +56,5 @@ setup(
     classifiers=[],
     tests_require=['pytest', 'pytest-cov'],
     test_suite='test',
-    cmdclass={'test': PyTest, 'install': OverrideInstall}
+    cmdclass={'test': PyTest}
 )
