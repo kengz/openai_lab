@@ -69,10 +69,10 @@ class DQNTest(unittest.TestCase):
         data_df = run('test_mountain_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
-    # @classmethod
-    # def test_lunar_dqn(cls):
-    #     data_df = run('test_lunar_dqn')
-    #     assert isinstance(data_df, pd.DataFrame)
+    @classmethod
+    def test_lunar_dqn(cls):
+        data_df = run('test_lunar_dqn')
+        assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
     def test_conv_dqn(cls):
