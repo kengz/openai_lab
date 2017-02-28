@@ -10,7 +10,7 @@ import re
 import sys
 from datetime import datetime, timedelta
 from keras import backend as K
-from os import path, environ
+from os import path, environ, getpid
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
@@ -132,6 +132,20 @@ def log_delimiter(msg, line='-'):
     delim_msg = '''\n{0}\n{1}\n{0}\n\n'''.format(
         make_line(line), msg)
     logger.info(delim_msg)
+
+
+def log_trial_delimiter(trial, action):
+    log_delimiter('{} Trial #{}/{} on PID {}:\n{}'.format(
+        action, trial.trial_num, trial.num_of_trials,
+        getpid(), trial.trial_id), '=')
+
+
+def log_session_delimiter(sess, action):
+    log_delimiter(
+        '{} Session #{}/{} of Trial #{}/{} on PID {}:\n{}'.format(
+            action, sess.session_num, sess.num_of_sessions,
+            sess.trial.trial_num, sess.trial.num_of_trials,
+            getpid(), sess.session_id))
 
 
 def timestamp():

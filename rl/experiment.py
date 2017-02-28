@@ -11,7 +11,7 @@ else:
 import copy
 import gym
 import traceback
-from os import environ, getpid
+from os import environ
 from rl.util import *
 from rl.agent import *
 from rl.analytics import *
@@ -64,9 +64,7 @@ class Session(object):
         self.num_of_sessions = num_of_sessions
         self.session_id = self.trial.trial_id + \
             '_s' + str(self.session_num)
-        log_delimiter('Init Session #{}/{} of Trial #{}/{}:\n{}'.format(
-            self.session_num, self.num_of_sessions,
-            self.trial.trial_num, self.trial.num_of_trials, self.session_id))
+        log_session_delimiter(self, 'Init')
 
         self.experiment_spec = self.trial.experiment_spec
         self.problem = self.experiment_spec['problem']
@@ -249,11 +247,7 @@ class Session(object):
 
     def run(self):
         '''run a session of agent'''
-        log_delimiter(
-            'Run Session #{}/{} of Trial #{}/{} on PID {}:\n{}'.format(
-                self.session_num, self.num_of_sessions,
-                self.trial.trial_num, self.trial.num_of_trials,
-                getpid(), self.session_id))
+        log_session_delimiter(self, 'Run')
         logger.info(
             'Experiment Trial Spec: {}'.format(to_json(self.experiment_spec)))
         sys_vars = self.sys_vars
@@ -276,10 +270,7 @@ class Session(object):
         sys_vars['time_taken'] = timestamp_elapse(
             sys_vars['time_start'], sys_vars['time_end'])
 
-        progress = 'Progress: Session #{}/{} of Trial #{}/{} done'.format(
-            self.session_num, self.num_of_sessions,
-            self.trial.trial_num, self.trial.num_of_trials)
-        log_delimiter('End Session:\n{}\n{}'.format(self.session_id, progress))
+        log_session_delimiter(self, 'End')
         self.clear()
         return sys_vars
 
@@ -326,8 +317,7 @@ class Trial(object):
         self.experiment_id = experiment_id_override or '{}-{}'.format(
             self.experiment_name, self.run_timestamp)
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
-        log_delimiter('Init Trial #{}/{}:\n{}'.format(
-            self.trial_num, self.num_of_trials, self.trial_id), '=')
+        log_trial_delimiter(self, 'Init')
 
         param_range = EXPERIMENT_SPECS.get(
             self.experiment_name).get('param_range')
@@ -377,12 +367,9 @@ class Trial(object):
         a number of times times given a experiment_spec from gym_specs
         '''
         if self.is_completed():
-            log_delimiter('Trial #{}/{} already completed:\n{}'.format(
-                self.trial_num, self.num_of_trials, self.trial_id), '=')
+            log_trial_delimiter(self, 'Already completed')
         else:
-            log_delimiter('Run Trial #{}/{} on PID {}:\n{}'.format(
-                self.trial_num, self.num_of_trials,
-                getpid(), self.trial_id), '=')
+            log_trial_delimiter(self, 'Run')
             self.keras_session = configure_gpu()
             time_start = timestamp()
             sys_vars_array = [] if (self.data is None) else self.data[
@@ -414,10 +401,7 @@ class Trial(object):
                 if self.is_completed(s):
                     break
 
-        progress = 'Progress: Trial #{}/{} done'.format(
-            self.trial_num, self.num_of_trials)
-        log_delimiter(
-            'End Trial:\n{}\n{}'.format(self.trial_id, progress), '=')
+        log_trial_delimiter(self, 'End')
         trial_data = copy.deepcopy(self.data)
         self.clear()
         return trial_data
