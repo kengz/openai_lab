@@ -191,7 +191,6 @@ class Session(object):
         '''
         update the data per episode end
         '''
-
         sys_vars = self.sys_vars
         sys_vars['total_rewards_history'].append(sys_vars['total_rewards'])
         sys_vars['explore_history'].append(
@@ -211,7 +210,7 @@ class Session(object):
         return sys_vars
 
     def run_episode(self):
-        '''run ane episode, return sys_vars'''
+        '''run an episode, return sys_vars'''
         sys_vars, env, agent = self.sys_vars, self.env, self.agent
         sys_vars['total_rewards'] = 0
         state = env.reset()
@@ -268,7 +267,7 @@ class Session(object):
                     'Error in trial, terminating '
                     'further session from {}'.format(self.session_id))
                 traceback.print_exc(file=sys.stdout)
-                sys_vars['errored'] = True,
+                sys_vars['errored'] = True
                 break
             if sys_vars['solved']:
                 break
