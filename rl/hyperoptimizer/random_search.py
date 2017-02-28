@@ -31,6 +31,11 @@ class RandomSearch(HyperOptimizer):
         dist_kwargs = real_param[dist]
         return partial(getattr(np.random, dist), **dist_kwargs)
 
+    def sample_hypersphere(dim, r=1):
+        '''Marsaglias algo for sampling uniformly on hypersphere'''
+        v = np.random.randn(dim)
+        v = v * r / np.linalg.norm(v)
+        return v
 
     def init_search(self):
         '''
@@ -46,7 +51,7 @@ class RandomSearch(HyperOptimizer):
         # self.param_range
         # iterate, if is dict do init_sampler
         # self.sampler = {
-        #     'lr': 
+        #     'lr':
         # }
         return
 
