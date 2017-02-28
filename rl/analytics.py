@@ -1,27 +1,15 @@
-import matplotlib
-import platform
-from os import environ
-# set only if it's not MacOS
-if environ.get('CI') or platform.system() == 'Darwin':
-    matplotlib.rcParams['backend'] = 'agg'
-else:
-    matplotlib.rcParams['backend'] = 'TkAgg'
-
-import seaborn as sns
-sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
-        rc={'lines.linewidth': 1.0, 'backend': matplotlib.rcParams['backend']})
-palette = sns.color_palette("Blues_d")
-palette.reverse()
-sns.set_palette(palette)
-
 import numpy as np
 import pandas as pd
+import platform
 import warnings
 from functools import partial
+from os import environ
 from rl.util import *
 
 warnings.filterwarnings("ignore", module="matplotlib")
 
+MPL_BACKEND = 'agg' if (
+    environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
     'performance_score',
@@ -34,6 +22,7 @@ STATS_COLS = [
     't_stats_mean',
     'trial_id'
 ]
+
 EXPERIMENT_GRID_Y_COLS = [
     'performance_score',
     'mean_rewards_stats_mean',
@@ -52,6 +41,9 @@ class Grapher(object):
     def __init__(self, session):
         if not args.plot_graph or environ.get('CI'):
             return
+        import matplotlib
+        self.matplotlib = matplotlib
+        matplotlib.rcParams['backend'] = MPL_BACKEND
         import matplotlib.pyplot as plt
         plt.rcParams['toolbar'] = 'None'  # mute matplotlib toolbar
         self.plt = plt
@@ -243,6 +235,16 @@ def compose_data(trial):
 def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
+    import matplotlib
+    matplotlib.rcParams['backend'] = MPL_BACKEND
+    import seaborn as sns
+    sns.set(style="whitegrid", color_codes=True, font_scale=1.0,
+            rc={'lines.linewidth': 1.0,
+                'backend': matplotlib.rcParams['backend']})
+    palette = sns.color_palette("Blues_d")
+    palette.reverse()
+    sns.set_palette(palette)
+
     experiment_id = parse_experiment_id(trial_id)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
