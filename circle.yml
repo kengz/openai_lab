@@ -16,7 +16,7 @@ dependencies:
 test:
   override:
     - xvfb-run -a -s "-screen 0 1400x900x24" -- py.test test:
-      parallel: true
+        parallel: true
     - coverage xml && python-codacy-coverage -r coverage.xml
 
 general:
