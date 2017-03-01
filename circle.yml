@@ -7,7 +7,7 @@ dependencies:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
     - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git python3-dev python3-setuptools
     - pip install -U pip
-    - pip install six h5py numpy scipy matplotlib seaborn pandas atari_py Pillow PyOpenGL glances mem_top pytest-cov codacy-coverage pytest-circleci
+    - pip install six h5py numpy scipy matplotlib seaborn pandas atari_py Pillow PyOpenGL glances mem_top pytest-cov codacy-coverage
   override:
     - pip install tensorflow
     - pip install theano
@@ -15,8 +15,7 @@ dependencies:
     - git clone https://github.com/openai/gym.git && cd gym && pip install -e .[all] && cd ..
 test:
   override:
-    - py.test test:
-        parallel: true
+    - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
     - coverage xml && python-codacy-coverage -r coverage.xml
 
 general:
