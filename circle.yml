@@ -5,15 +5,14 @@ machine:
 dependencies:
   pre:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
-    - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git python3-dev
-    - sudo apt-get install python3-setuptools
+    - sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git python3-dev python3-setuptools
     - pip install -U pip
     - pip install six h5py numpy scipy matplotlib seaborn pandas atari_py Pillow PyOpenGL glances mem_top pytest-cov codacy-coverage
   override:
     - pip install tensorflow
     - pip install theano
     - pip install keras
-    - pip install 'gym[all]'
+    - pip install -U 'gym[all]'
     - git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install && cd ..
 test:
   override:
