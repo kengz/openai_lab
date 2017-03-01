@@ -7,6 +7,7 @@ language_tabs:
 toc_footers:
   - <a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a>
   - <a href='https://github.com/openai/gym'>OpenAI Gym Github</a>
+  - <a href='https://github.com/fchollet/keras'>Keras Github</a>
   - <a href='https://youtu.be/qBhLoeijgtA'>RL Tutorial video part 1/2</a>
   - <a href='https://youtu.be/wNSlZJGdodE'>RL Tutorial video part 2/2</a>
 
@@ -27,13 +28,11 @@ search: true
 
 _An experimentation system for Reinforcement Learning using OpenAI and Keras._
 
-This lab is created to let us do Reinforcement Learning (RL) like science - _theorize, experiment_. We can theorize as fast as we think, and experiment as fast as the computers can run.
+The _OpenAI Lab_ is created to let us do Reinforcement Learning (RL) like science - _theorize, experiment_. We can theorize as fast as we think, and experiment as fast as the computers can run.
 
-With _OpenAI Lab_, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.
+The lab provides an easy-to-use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experimental and analytics framework. We had tested several deep reinforcement learning algorithms with _OpenAI Lab_ and solved a few OpenAI environments - by running hundreds of experiments with minimal setup and few lines of code - we will show by example below.
 
-Before this, experiments used to be hard and slow, because we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components.
-
-_OpenAI Lab_ lowers the experimental complexity and enables an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
+Before this, experiments used to be hard and slow, as we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components. This lowers the experimental complexity and enables an explosion of experiments. We can quickly add new RL component, make new combinations, run hyperparameter selection and solve environments. This unlocks a new perspective to treat RL as a full-on experimental science.
 
 <img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" />
 _Timelapse of OpenAI Lab (open the gif in new tab for larger size)._
