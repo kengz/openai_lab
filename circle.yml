@@ -15,7 +15,7 @@ dependencies:
     - git clone https://github.com/openai/gym.git && cd gym && pip install -e .[all] && cd ..
 test:
   override:
-    - xvfb-run -a -s "-screen 0 1400x900x24" -- py.test test:
+    - py.test test:
         parallel: true
     - coverage xml && python-codacy-coverage -r coverage.xml
 
