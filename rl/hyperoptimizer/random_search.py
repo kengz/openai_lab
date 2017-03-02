@@ -1,5 +1,4 @@
 import numpy as np
-from functools import partial
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 
 
