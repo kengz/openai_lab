@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import platform
 import warnings
-from functools import partial
 from os import environ
 from rl.util import *
 
@@ -263,7 +262,7 @@ def plot_experiment(data_df, trial_id):
     for ix, x in enumerate(X_cols):
         for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
             big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
-            g = sns.swarmplot(
+            sns.swarmplot(
                 data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
             big_ax.legend_.remove()  # set common legend below
             # label only left and bottom axes
