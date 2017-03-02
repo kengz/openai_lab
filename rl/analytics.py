@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import platform
 import warnings
-from functools import partial
 from os import environ
 from rl.util import *
 
@@ -250,30 +249,42 @@ def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
     (_mpl, _plt, sns) = scoped_mpl_import()
-
     experiment_id = parse_experiment_id(trial_id)
+    hue = 'solved_ratio_of_sessions'
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
-    for x in X_cols:
-        for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
-                                    hue='solved_ratio_of_sessions')
-            fig = df_plot.get_figure()
-            fig.suptitle(wrap_text(experiment_id))
-            filename = './data/{}/{}_analysis_{}_vs_{}.png'.format(
-                experiment_id, experiment_id, x, y)
-            fig.savefig(filename)
-            fig.clear()
+    col_size = len(X_cols)
+    row_size = len(EXPERIMENT_GRID_Y_COLS)
 
-    fig = sns.PairGrid(
-        data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
-        hue='solved_ratio_of_sessions', size=3)
-    fig.map(partial(sns.swarmplot, size=3))
-    fig.fig.suptitle(wrap_text(experiment_id))
-    fig.add_legend()
+    # for main grid plot
+    big_fig, axes = sns.plt.subplots(
+        row_size, col_size, figsize=(col_size*4, row_size*3),
+        sharex='col', sharey='row')
+    for ix, x in enumerate(X_cols):
+        for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
+            big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
+            sns.swarmplot(
+                data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
+            big_ax.legend_.remove()  # set common legend below
+            # label only left and bottom axes
+            if iy != row_size - 1:
+                big_ax.set_xlabel('')
+            if ix != 0:
+                big_ax.set_ylabel('')
+
+    big_fig.tight_layout()
+    big_fig.suptitle(wrap_text(experiment_id))
+    legend = sns.plt.legend(title='solved_ratio_of_sessions',
+                            fontsize=10, markerscale=0.5,
+                            loc='center right',
+                            bbox_to_anchor=(1.1+col_size*0.1, row_size+0.1))
+    legend.get_title().set_fontsize('10')
+    big_fig.subplots_adjust(top=0.96, right=0.9)
+
+    sns.plt.show()
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
-    fig.savefig(filename)
-    fig.fig.clear()
+    big_fig.savefig(filename)
+    big_fig.clear()
     sns.plt.close()
 
 
