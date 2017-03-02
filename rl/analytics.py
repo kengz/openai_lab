@@ -285,6 +285,20 @@ def plot_experiment(data_df, trial_id):
         experiment_id)
     big_fig.savefig(filename)
     big_fig.clear()
+
+    # TODO generalize removal of non-categorical
+    X_cols.remove('variable_hidden_layers_shape')
+    with sns.axes_style('white', {'axes.linewidth': 0.2}):
+        g = sns.pairplot(
+            data_df, vars=X_cols, hue=hue,
+            size=3, aspect=1, plot_kws={'s': 50})
+        g.fig.suptitle(wrap_text(experiment_id))
+        g = g.add_legend()
+        filename = './data/{0}/{0}_analysis_correlation.png'.format(
+            experiment_id)
+        g.savefig(filename)
+        g.fig.clear()
+
     sns.plt.close()
 
 
