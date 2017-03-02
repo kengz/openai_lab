@@ -255,25 +255,25 @@ def plot_experiment(data_df, trial_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     for x in X_cols:
         for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
-                                    hue='solved_ratio_of_sessions')
-            fig = df_plot.get_figure()
+            ax = sns.swarmplot(data=data_df, x=x, y=y,
+                               hue='solved_ratio_of_sessions')
+            fig = ax.get_figure()
             fig.suptitle(wrap_text(experiment_id))
             filename = './data/{}/{}_analysis_{}_vs_{}.png'.format(
                 experiment_id, experiment_id, x, y)
             fig.savefig(filename)
             fig.clear()
 
-    fig = sns.PairGrid(
+    g = sns.PairGrid(
         data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
         hue='solved_ratio_of_sessions', size=3)
-    fig.map(partial(sns.swarmplot, size=3))
-    fig.fig.suptitle(wrap_text(experiment_id))
-    fig.add_legend()
+    g = g.map(partial(sns.swarmplot, size=3))
+    g.fig.suptitle(wrap_text(experiment_id))
+    g = g.add_legend()
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
-    fig.savefig(filename)
-    fig.fig.clear()
+    g.savefig(filename)
+    g.fig.clear()
     sns.plt.close()
 
 
