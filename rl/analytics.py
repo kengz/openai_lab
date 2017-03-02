@@ -291,7 +291,7 @@ def plot_experiment(data_df, trial_id):
     with sns.axes_style('white', {'axes.linewidth': 0.2}):
         g = sns.pairplot(
             data_df, vars=X_cols, hue=hue,
-            size=3, aspect=1, plot_kws={'s': 50})
+            size=3, aspect=1, plot_kws={'s': 50, 'alpha': 0.5})
         g.fig.suptitle(wrap_text(experiment_id))
         g = g.add_legend()
         filename = './data/{0}/{0}_analysis_correlation.png'.format(
