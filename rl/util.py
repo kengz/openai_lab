@@ -9,7 +9,6 @@ import os
 import re
 import sys
 from datetime import datetime, timedelta
-from keras import backend as K
 from os import path, environ, getpid
 from textwrap import wrap
 
@@ -351,6 +350,7 @@ def save_experiment_data(data_df, trial_id):
 
 def configure_gpu():
     '''detect GPU options and configure'''
+    from keras import backend as K
     if K.backend() != 'tensorflow':
         # skip directly if is not tensorflow
         return
