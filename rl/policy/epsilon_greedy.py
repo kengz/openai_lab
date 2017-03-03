@@ -25,7 +25,7 @@ class EpsilonGreedyPolicy(Policy):
         if self.e > np.random.rand():
             action = np.random.choice(agent.env_spec['actions'])
         else:
-            state = np.reshape(state, (1, state.shape[0]))
+            state = np.expand_dims(state, axis=0)
             # extract from batch predict
             Q_state = agent.model.predict(state)[0]
             assert Q_state.ndim == 1
@@ -62,7 +62,7 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
         if self.e > np.random.rand():
             action = np.random.choice(agent.env_spec['actions'])
         else:
-            state = np.reshape(state, (1, state.shape[0]))
+            state = np.expand_dims(state, axis=0)
             # extract from batch predict
             Q_state1 = agent.model.predict(state)[0]
             Q_state2 = agent.model2.predict(state)[0]

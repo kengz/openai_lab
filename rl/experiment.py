@@ -21,7 +21,6 @@ from rl.optimizer import *
 from rl.policy import *
 from rl.preprocessor import *
 
-
 GREF = globals()
 
 # the keys and their defaults need to be implemented by a sys_var
@@ -109,8 +108,6 @@ class Session(object):
             sys_vars['RENDER'] = False
         if environ.get('CI'):
             sys_vars['RENDER'] = False
-            if self.problem != 'TestCartPole-v0':
-                sys_vars['MAX_EPISODES'] = 4
         self.sys_vars = sys_vars
         self.reset_sys_vars()
         return self.sys_vars
@@ -415,8 +412,8 @@ def analyze_experiment(trial_or_experiment_id):
 
 
 def run(name_id_spec, times=1,
-        param_selection=False,
-        analyze_only=False, **kwargs):
+        param_selection=False, analyze_only=False,
+        **kwargs):
     '''
     primary method:
     specify:
@@ -457,7 +454,6 @@ def run(name_id_spec, times=1,
     else:  # run a new experiment by spec
         logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec
-
     experiment_kwargs['experiment_spec'] = experiment_spec
 
     # compose grid and run param selection
