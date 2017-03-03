@@ -29,11 +29,6 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn_freeze(cls):
-        data_df = run('dqn_freeze')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
     def test_sarsa(cls):
         data_df = run('sarsa')
         assert isinstance(data_df, pd.DataFrame)
