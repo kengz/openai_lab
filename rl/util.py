@@ -25,7 +25,8 @@ for experiment_name in EXPERIMENT_SPECS:
         continue
     param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
     for param_key, param_val in param_range.items():
-        param_range[param_key] = sorted(param_val)
+        if isinstance(param_val, list):
+            param_range[param_key] = sorted(param_val)
     EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
 
 
