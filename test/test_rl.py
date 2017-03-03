@@ -62,6 +62,11 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
+    def test_breakout_double_dqn(cls):
+        data_df = run('breakout_double_dqn')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
     def test_dev_dqn_pass(cls):
         data_df = run('dqn')
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
