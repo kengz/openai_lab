@@ -35,6 +35,24 @@ class RandomSearch(HyperOptimizer):
         v = v * r / np.linalg.norm(v)
         return v
 
+    def unit_cube_bijection():
+        return
+
+    def biject_axis():
+        return
+
+    # biject [0, 1] to [x_min, x_max]
+    def biject_continuous(norm_val, x_min, x_max):
+        return norm_val*(x_max - x_min) + x_min
+
+    # biject [0, 1] to x_list = [a, b, c, ...] by binning
+    def biject_discrete(norm_val, x_list):
+        x_len = len(x_list)
+        inds = np.arange(x_len)
+        cont_val = biject_continuous(norm_val, 0, x_len)
+        ind = np.digitize(cont_val, inds) - 1
+        return x_list[ind]
+
     def init_search(self):
         '''
         all random space is numpy.random
