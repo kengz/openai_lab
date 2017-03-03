@@ -69,7 +69,7 @@ class DQNTest(unittest.TestCase):
 
     @classmethod
     def test_dev_dqn_pass(cls):
-        data_df = run('test_test_dqn')
+        data_df = run('test_dqn')
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
         print(max_total_rewards)
         assert max_total_rewards > 50
