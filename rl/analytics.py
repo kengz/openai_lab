@@ -286,11 +286,13 @@ def plot_experiment(data_df, trial_id):
     big_fig.savefig(filename)
     big_fig.clear()
 
-    # TODO generalize removal of non-categorical
-    X_cols.remove('variable_hidden_layers_shape')
+    # use numerical, since contour only makes sense for ordered azes
+    numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+    numeric_X_cols = list(
+        filter(lambda x: data_df[x].dtype in numerics, X_cols))
     with sns.axes_style('white', {'axes.linewidth': 0.2}):
         g = sns.pairplot(
-            data_df, vars=X_cols, hue=hue,
+            data_df, vars=numeric_X_cols, hue=hue,
             size=3, aspect=1, plot_kws={'s': 50, 'alpha': 0.5})
         g.fig.suptitle(wrap_text(experiment_id))
         g = g.add_legend()
