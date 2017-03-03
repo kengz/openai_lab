@@ -481,8 +481,8 @@
       ]
     }
   },
-  "air_raid_dqn": {
-    "problem": "AirRaid-v0",
+  "breakout_dqn": {
+    "problem": "Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LongLinearMemoryWithForgetting",
@@ -499,19 +499,20 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 1000000,
-      "epi_change_lr": 1000000
+      "exploration_anneal_episodes": 5000,
+      "epi_change_lr": 5000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
       "hidden_layers_shape": [
-        [200, 100],
-        [300, 200],
-        [200, 100, 50]
+        [
+          [16, 8, 8, [4, 4]],
+          [32, 4, 4, [2, 2]]
+        ]
       ]
     }
   },
-  "conv_test": {
+  "breakout_double_dqn": {
     "problem": "Breakout-v0",
     "Agent": "DoubleConvDQN",
     "HyperOptimizer": "GridSearch",
@@ -542,8 +543,8 @@
       ]
     }
   },
-  "breakout_dqn": {
-    "problem": "Breakout-v0",
+  "air_raid_dqn": {
+    "problem": "AirRaid-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LongLinearMemoryWithForgetting",
@@ -560,16 +561,15 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000
+      "exploration_anneal_episodes": 1000000,
+      "epi_change_lr": 1000000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
       "hidden_layers_shape": [
-        [
-          [16, 8, 8, [4, 4]],
-          [32, 4, 4, [2, 2]]
-        ]
+        [200, 100],
+        [300, 200],
+        [200, 100, 50]
       ]
     }
   }
