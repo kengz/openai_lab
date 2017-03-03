@@ -1,5 +1,6 @@
 import unittest
 import pytest
+from os import environ
 from rl.experiment import run
 from . import conftest
 import pandas as pd
@@ -48,6 +49,8 @@ class DQNTest(unittest.TestCase):
         data_df = run('mountain_dqn')
         assert isinstance(data_df, pd.DataFrame)
 
+    @unittest.skipIf(environ.get('CI'),
+                     "OpenAI Gym Box2D swigconstant error, issue #100")
     @classmethod
     def test_lunar_dqn(cls):
         data_df = run('lunar_dqn')
