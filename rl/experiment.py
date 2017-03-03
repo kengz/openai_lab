@@ -13,7 +13,6 @@ import gym
 import traceback
 from os import environ
 from rl.util import *
-import rl.util
 from rl.agent import *
 from rl.analytics import *
 from rl.hyperoptimizer import *
@@ -102,7 +101,7 @@ class Session(object):
         asset/problems.json, then reset the other sys vars
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
-        sys_vars = rl.util.PROBLEMS[self.problem]
+        sys_vars = PROBLEMS[self.problem]
         if args.max_epis >= 0:
             sys_vars['MAX_EPISODES'] = args.max_epis
         if not args.render:
@@ -319,7 +318,7 @@ class Trial(object):
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
         log_trial_delimiter(self, 'Init')
 
-        param_range = rl.util.EXPERIMENT_SPECS.get(
+        param_range = EXPERIMENT_SPECS.get(
             self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
@@ -447,13 +446,13 @@ def run(name_id_spec, times=1,
                 'Rerun an incomplete experiment by id {}'.format(
                     experiment_id))
             experiment_kwargs['experiment_id_override'] = experiment_id
-            experiment_spec = rl.util.EXPERIMENT_SPECS.get(
+            experiment_spec = EXPERIMENT_SPECS.get(
                 parse_experiment_name(name_id_spec))
         else:  # run a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
                 'Run a new experiment by name {}'.format(experiment_name))
-            experiment_spec = rl.util.EXPERIMENT_SPECS.get(experiment_name)
+            experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
         logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec

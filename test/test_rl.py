@@ -3,24 +3,7 @@ import pandas as pd
 from os import environ
 environ['CI'] = environ.get('CI') or 'true'
 from rl.experiment import run
-from rl.util import *
-import rl.util
-import os
-import json
 
-PATH = os.path.dirname(__file__)
-rl.util.PROBLEMS = json.loads(open(
-os.path.join(PATH, 'test_problems.json')).read())
-rl.util.EXPERIMENT_SPECS = json.loads(open(
-os.path.join(PATH, 'test_experiment_specs.json')).read())
-for experiment_name in rl.util.EXPERIMENT_SPECS:
-    rl.util.EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
-    if 'param_range' not in rl.util.EXPERIMENT_SPECS[experiment_name]:
-        continue
-    param_range = rl.util.EXPERIMENT_SPECS[experiment_name]['param_range']
-    for param_key, param_val in param_range.items():
-        param_range[param_key] = sorted(param_val)
-    rl.util.EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
 
 class DQNTest(unittest.TestCase):
 
@@ -90,4 +73,3 @@ class DQNTest(unittest.TestCase):
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
         print(max_total_rewards)
         assert max_total_rewards > 50
-

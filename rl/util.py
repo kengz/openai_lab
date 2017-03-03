@@ -14,7 +14,10 @@ from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}_\d{2}_\d{2}_\d{6})'
-ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+if environ.get('CI'):
+    ASSET_PATH = path.join(path.dirname(__file__), '..', 'test', 'asset')
+else:
+    ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 PROBLEMS = json.loads(open(
     path.join(ASSET_PATH, 'problems.json')).read())
 EXPERIMENT_SPECS = json.loads(open(
