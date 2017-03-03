@@ -412,8 +412,8 @@ def analyze_experiment(trial_or_experiment_id):
 
 
 def run(name_id_spec, times=1,
-        param_selection=False,
-        analyze_only=False,  **kwargs):
+        param_selection=False, analyze_only=False,
+        **kwargs):
     '''
     primary method:
     specify:
