@@ -31,8 +31,11 @@ class DQNFreeze(DoubleDQN):
         return DQN.train_an_epoch(self)
 
     def update_target_model(self):
+        # TODO fix to not use frequent filesave, will cause memleak
         pid = os.getpid()
         name = 'temp_Q_model_freeze_' + str(pid) + '.h5'
+        model_dir = 'rl/asset/model'
+        filename = '{}/{}'.format(model_dir, name)
         self.model.save(name)
         self.model2 = load_model(name)
         logger.debug("Updated target model weights")
