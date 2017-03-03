@@ -13,6 +13,7 @@ dependencies:
     - pip install theano
     - pip install keras
     - git clone https://github.com/openai/gym.git && cd gym && pip install -e .[all] && cd ..
+    - git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install && cd ..
 test:
   override:
     - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
