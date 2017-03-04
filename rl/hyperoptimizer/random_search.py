@@ -1,5 +1,5 @@
 import numpy as np
-from collections import OrderedDict
+# from collections import OrderedDict
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 
 
