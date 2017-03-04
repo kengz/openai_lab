@@ -15,19 +15,38 @@ from textwrap import wrap
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}_\d{2}_\d{2}_\d{6})'
 ASSET_PATH = path.join(path.dirname(__file__), 'asset')
-PROBLEMS = json.loads(open(
-    path.join(ASSET_PATH, 'problems.json')).read())
-EXPERIMENT_SPECS = json.loads(open(
-    path.join(ASSET_PATH, 'experiment_specs.json')).read())
-for experiment_name in EXPERIMENT_SPECS:
-    EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
-    if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
-        continue
-    param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
-    for param_key, param_val in param_range.items():
-        if isinstance(param_val, list):
-            param_range[param_key] = sorted(param_val)
-    EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
+
+
+# import and safeguard the PROBLEMS, EXPERIMENT_SPECS with checks
+def import_guard_asset():
+    PROBLEMS = json.loads(open(path.join(ASSET_PATH, 'problems.json')).read())
+    EXPERIMENT_SPECS = json.loads(
+        open(path.join(ASSET_PATH, 'experiment_specs.json')).read())
+    REQUIRED_PROBLEM_KEYS = [
+        'GYM_ENV_NAME', 'SOLVED_MEAN_REWARD',
+        'MAX_EPISODES', 'REWARD_MEAN_LEN']
+    REQUIRED_SPEC_KEYS = [
+        'problem', 'Agent', 'HyperOptimizer',
+        'Memory', 'Optimizer', 'Policy', 'PreProcessor', 'param']
+
+    for k, problem in PROBLEMS.items():
+        assert all(k in problem for k in REQUIRED_PROBLEM_KEYS)
+
+    for experiment_name, spec in EXPERIMENT_SPECS.items():
+        print(experiment_name)
+        assert all(k in spec for k in REQUIRED_SPEC_KEYS)
+
+        EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
+        if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
+            continue
+        param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
+        for param_key, param_val in param_range.items():
+            if isinstance(param_val, list):
+                param_range[param_key] = sorted(param_val)
+        EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
+    return PROBLEMS, EXPERIMENT_SPECS
+
+PROBLEMS, EXPERIMENT_SPECS = import_guard_asset()
 
 
 # parse_args to add flag
