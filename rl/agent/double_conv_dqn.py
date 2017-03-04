@@ -1,10 +1,7 @@
 from rl.agent.conv_dqn import ConvDQN
 import numpy as np
 from rl.util import logger
-from keras.models import Sequential
-from keras import backend as K
-if K.backend() == 'theano':
-    K.set_image_dim_ordering('tf')
+
 
 class DoubleConvDQN(ConvDQN):
 
@@ -15,7 +12,7 @@ class DoubleConvDQN(ConvDQN):
     def build_model(self):
         super(DoubleConvDQN, self).build_model()
 
-        model2 = Sequential.from_config(self.model.get_config())
+        model2 = self.Sequential.from_config(self.model.get_config())
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2

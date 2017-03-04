@@ -1,7 +1,6 @@
 import numpy as np
 from rl.agent.dqn import DQN
 from rl.util import logger
-from keras.models import Sequential
 
 
 class DoubleDQN(DQN):
@@ -13,7 +12,7 @@ class DoubleDQN(DQN):
     def build_model(self):
         super(DoubleDQN, self).build_model()
 
-        model2 = Sequential.from_config(self.model.get_config())
+        model2 = self.Sequential.from_config(self.model.get_config())
         logger.info("Model 2 summary")
         model2.summary()
         self.model2 = model2

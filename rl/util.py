@@ -371,12 +371,18 @@ def save_experiment_data(data_df, trial_id):
         'experiment data saved to {}'.format(filename))
 
 
-def configure_gpu():
-    '''detect GPU options and configure'''
+def configure_hardware(RAND_SEED):
+    '''configure rand seed, GPU'''
     from keras import backend as K
+    if K.backend() == 'tensorflow':
+        K.tf.set_random_seed(RAND_SEED)
+    else:
+        K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
+
     if K.backend() != 'tensorflow':
-        # skip directly if is not tensorflow
+        # GPU config for tf only
         return
+
     process_num = PARALLEL_PROCESS_NUM if args.param_selection else 1
     tf = K.tf
     gpu_options = tf.GPUOptions(
