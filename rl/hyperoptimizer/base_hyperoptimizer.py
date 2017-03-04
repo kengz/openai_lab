@@ -38,7 +38,8 @@ class HyperOptimizer(object):
         # the index of next param to try in param_search_list
         self.next_param_idx = 0
         self.experiment_data = []
-        assert all(k in kwargs for k in self.REQUIRED_ARGS)
+        assert all(k in kwargs for k in self.REQUIRED_ARGS), \
+            'kwargs do not have all REQUIRED_ARGS'
         for k in kwargs:
             setattr(self, k, kwargs[k])
         # careful with the key ordering at init_search
@@ -66,7 +67,8 @@ class HyperOptimizer(object):
 
     def next_param(self):
         '''retrieve trial_num and param, advance the class next_param_idx'''
-        assert self.next_param_idx < len(self.param_search_list)
+        assert self.next_param_idx < len(self.param_search_list), \
+            'param_search_list expansion cannot keep up with next_param_idx'
         trial_num = self.next_param_idx
         param = self.param_search_list[self.next_param_idx]
         self.next_param_idx = self.next_param_idx + 1

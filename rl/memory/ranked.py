@@ -156,7 +156,7 @@ class HighLowMemory(LinearMemory):
                 [epi_exp[k] for epi_exp in minibatch_as_list]
             )[-size:]
             minibatch[k] = k_exp
-        assert len(minibatch['rewards']) == size
+        assert len(minibatch['rewards']) == size, 'minibatch has the wrong size'
 
         return minibatch
 

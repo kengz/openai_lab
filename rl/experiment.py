@@ -3,11 +3,6 @@ RAND_SEED = 42
 import numpy as np
 np.random.seed(RAND_SEED)
 np.seterr(all='raise')
-from keras import backend as K
-if K.backend() == 'tensorflow':
-    K.tf.set_random_seed(RAND_SEED)
-else:
-    K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
 import gym
 import traceback
@@ -58,6 +53,9 @@ class Session(object):
     '''
 
     def __init__(self, trial, session_num=0, num_of_sessions=1, **kwargs):
+        from keras import backend as K
+        self.K = K
+
         self.trial = trial
         self.session_num = session_num
         self.num_of_sessions = num_of_sessions
@@ -124,7 +122,8 @@ class Session(object):
     def check_sys_vars(self):
         '''ensure the requried RL system vars are specified'''
         sys_keys = self.sys_vars.keys()
-        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
+        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS), \
+            'sys_vars do not have all REQUIRED_SYS_KEYS'.format()
 
     def set_env_spec(self):
         '''Helper: return the env specs: dims, actions, reward range'''
@@ -238,8 +237,8 @@ class Session(object):
 
     def clear(self):
         self.grapher.clear()
-        if K.backend() == 'tensorflow':
-            K.clear_session()  # manual gc to fix TF issue 3388
+        if self.K.backend() == 'tensorflow':
+            self.K.clear_session()  # manual gc to fix TF issue 3388
         del_self_attr(self)
 
     def run(self):
@@ -304,7 +303,6 @@ class Trial(object):
                  run_timestamp=timestamp(),
                  experiment_id_override=None,
                  **kwargs):
-
         self.experiment_spec = experiment_spec
         self.experiment_name = self.experiment_spec.get('experiment_name')
         self.times = times
@@ -367,7 +365,7 @@ class Trial(object):
             log_trial_delimiter(self, 'Already completed')
         else:
             log_trial_delimiter(self, 'Run')
-            self.keras_session = configure_gpu()
+            self.keras_session = configure_hardware(RAND_SEED)
             time_start = timestamp()
             sys_vars_array = [] if (self.data is None) else self.data[
                 'sys_vars_array']

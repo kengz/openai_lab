@@ -65,10 +65,8 @@
     "param_range": {
       "exploration_anneal_episodes": [10, 20],
       "lr": {
-        "uniform": {
-          "low": 0.001,
-          "high": 0.5
-        }
+        "min": 0.001,
+        "max": 0.5
       }
     }
   },

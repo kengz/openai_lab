@@ -48,7 +48,7 @@ class LinearMemory(Memory):
 
     def pop(self):
         '''convenient method to get exp at [last_ind]'''
-        assert self.size() > 0
+        assert self.size() > 0, 'memory is empty, cannot pop'
         return self.get_exp([self.size() - 1])
 
     def size(self):

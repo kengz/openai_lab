@@ -1,5 +1,4 @@
 from rl.optimizer.base_optimizer import Optimizer
-from keras.optimizers import Adam
 
 
 class AdamOptimizer(Optimizer):
@@ -16,8 +15,11 @@ class AdamOptimizer(Optimizer):
     '''
 
     def __init__(self, **kwargs):
+        from keras.optimizers import Adam
+        self.Adam = Adam
+
         self.optim_param_keys = ['lr', 'beta_1', 'beta_2', 'epsilon', 'decay']
         super(AdamOptimizer, self).__init__(**kwargs)
 
     def init_optimizer(self):
-        self.keras_optimizer = Adam(**self.optim_param)
+        self.keras_optimizer = self.Adam(**self.optim_param)

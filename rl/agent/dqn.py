@@ -1,8 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
 from rl.util import logger, log_self
-from keras.models import Sequential
-from keras.layers.core import Dense
 
 
 class DQN(Agent):
@@ -22,6 +20,13 @@ class DQN(Agent):
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
                  **kwargs):  # absorb generic param without breaking
+        # import only when needed to contain side-effects
+        from keras.layers.core import Dense
+        from keras.models import Sequential, load_model
+        self.Dense = Dense
+        self.Sequential = Sequential
+        self.load_model = load_model
+
         super(DQN, self).__init__(env_spec)
 
         self.train_per_n_new_exp = train_per_n_new_exp
@@ -42,26 +47,26 @@ class DQN(Agent):
         '''
         build the hidden layers into model using parameter self.hidden_layers
         '''
-        model.add(Dense(self.hidden_layers[0],
-                        input_shape=(self.env_spec['state_dim'],),
-                        activation=self.hidden_layers_activation,
-                        init='lecun_uniform'))
+        model.add(self.Dense(self.hidden_layers[0],
+                             input_shape=(self.env_spec['state_dim'],),
+                             activation=self.hidden_layers_activation,
+                             init='lecun_uniform'))
 
         # inner hidden layer: no specification of input shape
         if (len(self.hidden_layers) > 1):
             for i in range(1, len(self.hidden_layers)):
-                model.add(Dense(self.hidden_layers[i],
-                                init='lecun_uniform',
-                                activation=self.hidden_layers_activation))
+                model.add(self.Dense(self.hidden_layers[i],
+                                     init='lecun_uniform',
+                                     activation=self.hidden_layers_activation))
 
         return model
 
     def build_model(self):
-        model = Sequential()
+        model = self.Sequential()
         self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'],
-                        init='lecun_uniform',
-                        activation=self.output_layer_activation))
+        model.add(self.Dense(self.env_spec['action_dim'],
+                             init='lecun_uniform',
+                             activation=self.output_layer_activation))
         logger.info("Model summary")
         model.summary()
         self.model = model
