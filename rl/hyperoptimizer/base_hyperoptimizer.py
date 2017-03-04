@@ -1,5 +1,6 @@
 import copy
 import multiprocessing as mp
+from collections import OrderedDict
 from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM, debug_mem_usage
 
 
@@ -42,9 +43,11 @@ class HyperOptimizer(object):
             'kwargs do not have all REQUIRED_ARGS'
         for k in kwargs:
             setattr(self, k, kwargs[k])
-        # careful with the key ordering at init_search
         self.default_param = self.experiment_spec['param']
-        self.param_range = self.experiment_spec['param_range']
+        unordered_param_range = self.experiment_spec['param_range']
+        # import ordering for param_range for search serialization
+        self.param_range = OrderedDict(sorted(unordered_param_range.items()))
+        self.param_range_keys = sorted(self.param_range.keys())
 
     def compose_experiment_spec(self, param):
         new_experiment_spec = copy.deepcopy(self.experiment_spec)

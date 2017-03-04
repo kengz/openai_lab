@@ -1,5 +1,4 @@
 import numpy as np
-# from collections import OrderedDict
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 
 
@@ -80,11 +79,7 @@ class RandomSearch(HyperOptimizer):
             "high": 1
         }
         '''
-        # TODO unify across hyperopt modules
         # TODO check dict, has min max
-        # self.ordered_param_range = OrderedDict(
-        #     sorted(self.param_range.items()))
-        self.param_range_keys = sorted(self.param_range.keys())
         self.param_space_dims = len(self.param_range_keys)
         # self.default_param
         # self.param_range
