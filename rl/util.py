@@ -37,14 +37,21 @@ def import_guard_asset():
     for experiment_name, spec in EXPERIMENT_SPECS.items():
         assert all(k in spec for k in REQUIRED_SPEC_KEYS), \
             '{} needs all REQUIRED_SPEC_KEYS'.format(experiment_name)
-
         EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
         if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
             continue
+
         param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
         for param_key, param_val in param_range.items():
             if isinstance(param_val, list):
                 param_range[param_key] = sorted(param_val)
+            elif isinstance(param_val, dict):
+                pass
+            else:
+                assert False, \
+                    'param_range value must be list or dict: {}.{}:{}'.format(
+                        experiment_name, param_key, param_val)
+
         EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
     return PROBLEMS, EXPERIMENT_SPECS
 
