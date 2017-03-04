@@ -49,6 +49,13 @@ class RandomSearch(HyperOptimizer):
             param_space_v[param_key] = self.biject_dim(v[i], dim_spec)
         return param_space_v
 
+    # calculate the constant radius needed to traverse unit cube
+    def unit_cube_traversal_radius(self):
+        traversal_diameter = 1/np.power(self.max_evals,
+                                        1/self.param_space_n_dim)
+        traversal_radius = traversal_diameter/2
+        return traversal_radius
+
     def init_search(self):
         '''
         all random space is numpy.random
@@ -60,7 +67,7 @@ class RandomSearch(HyperOptimizer):
         }
         '''
         # TODO check dict, has min max
-        self.param_space_dims = len(self.param_range_keys)
+        self.param_space_n_dim = len(self.param_range_keys)
         # self.default_param
         # self.param_range
         # iterate, if is dict do init_sampler
@@ -70,6 +77,15 @@ class RandomSearch(HyperOptimizer):
         return
 
     def search(self):
+        '''
+        algo:
+        1. init x a random position in space
+        2. until termination (max_eval or fitness, e.g. solved all), do:
+            2.1 sample new pos some radius away: y = x + r
+            2.2 if f(y) < f(x) then set x = y
+
+        * Careful, we always do maximization,
+        '''
         return
 
     def update_search(self):
