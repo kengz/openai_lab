@@ -11,7 +11,7 @@ MPL_BACKEND = 'agg' if (
     environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
-    'performance_score',
+    'fitness_score',
     'mean_rewards_per_epi_stats_mean',
     'mean_rewards_stats_mean',
     'epi_stats_mean',
@@ -23,7 +23,7 @@ STATS_COLS = [
 ]
 
 EXPERIMENT_GRID_Y_COLS = [
-    'performance_score',
+    'fitness_score',
     'mean_rewards_stats_mean',
     'max_total_rewards_stats_mean',
     'epi_stats_mean'
@@ -212,14 +212,14 @@ def compose_data(trial):
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
     stats.update({
-        'performance_score': stats[
+        'fitness_score': stats[
             'mean_rewards_per_epi_stats']['mean'] * (stats[
                 'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics
     metrics = {
-        'performance_score': stats['performance_score'],
+        'fitness_score': stats['fitness_score'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
         'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
@@ -341,7 +341,7 @@ def analyze_data(experiment_data_or_experiment_id):
             data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
-        ['performance_score'],
+        ['fitness_score'],
         inplace=True, ascending=False)
 
     trial_id = experiment_data[0]['trial_id']
