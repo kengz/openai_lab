@@ -124,7 +124,8 @@ class Session(object):
     def check_sys_vars(self):
         '''ensure the requried RL system vars are specified'''
         sys_keys = self.sys_vars.keys()
-        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
+        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS), \
+            'sys_vars do not have all REQUIRED_SYS_KEYS'.format()
 
     def set_env_spec(self):
         '''Helper: return the env specs: dims, actions, reward range'''

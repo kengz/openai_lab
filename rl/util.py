@@ -333,7 +333,8 @@ def parse_experiment_name(id_str):
         experiment_name = c_id_str
     else:
         experiment_name = re.sub(TIMESTAMP_REGEX, '', experiment_id).strip('-')
-    assert experiment_name in EXPERIMENT_SPECS
+    assert experiment_name in EXPERIMENT_SPECS, \
+        '{} not in EXPERIMENT_SPECS'.format(experiment_name)
     return experiment_name
 
 
