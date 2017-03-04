@@ -29,12 +29,14 @@ def import_guard_asset():
         'problem', 'Agent', 'HyperOptimizer',
         'Memory', 'Optimizer', 'Policy', 'PreProcessor', 'param']
 
-    for k, problem in PROBLEMS.items():
-        assert all(k in problem for k in REQUIRED_PROBLEM_KEYS)
+    for problem_name, problem in PROBLEMS.items():
+        assert all(k in problem for k in REQUIRED_PROBLEM_KEYS), \
+            '{} needs all REQUIRED_PROBLEM_KEYS'.format(
+            problem_name)
 
     for experiment_name, spec in EXPERIMENT_SPECS.items():
-        print(experiment_name)
-        assert all(k in spec for k in REQUIRED_SPEC_KEYS)
+        assert all(k in spec for k in REQUIRED_SPEC_KEYS), \
+            '{} needs all REQUIRED_SPEC_KEYS'.format(experiment_name)
 
         EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
         if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
