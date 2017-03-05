@@ -140,13 +140,39 @@ class HyperOptimizer(object):
             #     self.run_trial, (trial_num, param),
             #     callback=self.append_experiment_data)
             # self.update_search()
+            # 
+            # self.search()  # add to self.param_search_list
+            # trial_num, param = self.next_param()
+            # trial_data = pool.apply(
+            #     self.run_trial, (trial_num, param))
+            # print(trial_data)
+            # self.append_experiment_data(trial_data)
+            # self.update_search()
+            # 
             self.search()  # add to self.param_search_list
             trial_num, param = self.next_param()
-            trial_data = pool.apply(
+            res0 = pool.apply_async(
                 self.run_trial, (trial_num, param))
-            print(trial_data)
-            self.append_experiment_data(trial_data)
-            self.update_search()
+            
+            self.search()  # add to self.param_search_list
+            trial_num, param = self.next_param()
+            res1 = pool.apply_async(
+                self.run_trial, (trial_num, param))
+            
+            self.search()  # add to self.param_search_list
+            trial_num, param = self.next_param()
+            res2 = pool.apply_async(
+                self.run_trial, (trial_num, param))
+            
+            self.search()  # add to self.param_search_list
+            trial_num, param = self.next_param()
+            res3 = pool.apply_async(
+                self.run_trial, (trial_num, param))
+
+            for r in [res0, res1, res2, res3]:
+                trial_data = r.get()
+                self.append_experiment_data(trial_data)
+                self.update_search()
             # pool.apply(
             #     self.search_and_run, (),
             #     callback=self.append_experiment_data)
