@@ -133,6 +133,7 @@ class HyperOptimizer(object):
         will gather and compose experiment_data, then return it
         '''
         logger.info('Run {}'.format(self.__class__.__name__))
+        # crucial maxtasksperchild to free up memory by respawning worker
         pool = mp.Pool(self.PARALLEL_PROCESS_NUM, maxtasksperchild=1)
         while (not self.to_terminate()):
             if self.free_cpu > 0:
