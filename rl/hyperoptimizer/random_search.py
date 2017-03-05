@@ -68,6 +68,7 @@ class RandomSearch(HyperOptimizer):
         '''
         # TODO check dict, has min max
         self.param_space_n_dim = len(self.param_range_keys)
+        # careful with resuming, reread shits from search history
         # self.default_param
         # self.param_range
         # iterate, if is dict do init_sampler
@@ -82,13 +83,37 @@ class RandomSearch(HyperOptimizer):
         1. init x a random position in space
         2. until termination (max_eval or fitness, e.g. solved all), do:
             2.1 sample new pos some radius away: y = x + r
-            2.2 if f(y) < f(x) then set x = y
+            2.2 if f(y) > f(x) then set x = y
 
         * Careful, we always do maximization,
         '''
         return
 
+    def decay_radius(self):
+        '''future implementation, start of half cube for diameter (so 1/4 for radius), then decay'''
+        return
+
     def update_search(self):
+        '''
+        to save an restore experiment:
+        - all searched points
+        - all updated points and their fitness score, just use performance_score, current pointer of x as last
+        careful with param_search_list and next_param_idx
+        need to get stuff from self.experiment_data
+        path:
+        # assert self.experiment_data non empty
+        last_trial_num = len(self.experiment_data) - 1
+        last_trial_data = self.experiment_data[-1]
+        param = last_trial_data['experiment_spec']['param']
+        metrics = last_trial_data['metrics']
+        fitness_score = metrics['fitness_score']
+
+        '''
+        return
+
+    def satisfy_fitness(self):
+        '''use performance score, solved ratio, solved mean reward'''
+        # ideal_fitness_score = util.PROBLEMS: SOLVED_MEAN_REWARD/MAX_EPISODES/2
         return
 
     def to_terminate(self):

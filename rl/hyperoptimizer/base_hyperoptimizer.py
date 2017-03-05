@@ -80,6 +80,8 @@ class HyperOptimizer(object):
     def run_trial(self, trial_num, param):
         '''
         algo step 2, construct and run Trial with the next param
+        args trial_num, param must be provided externally,
+        otherwise they will not progress within mp.process
         '''
         experiment_spec = self.compose_experiment_spec(param)
         trial = self.Trial(
