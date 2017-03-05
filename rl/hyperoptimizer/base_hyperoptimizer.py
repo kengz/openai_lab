@@ -64,7 +64,10 @@ class HyperOptimizer(object):
     def search(self):
         '''
         algo step 1, search and return the next p for Trial(p),
-        add to (or modify) its internal self.param_search_list
+        Its only job is to append to (or modify)
+        its internal self.param_search_list using its search logic
+        It may refer to self.experiment_data as search memory
+        and whatever new pointer or special memory implemented by a HyperOptimizer class
         '''
         raise NotImplementedError()
 

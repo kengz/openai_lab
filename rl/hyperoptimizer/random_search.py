@@ -14,9 +14,17 @@ class RandomSearch(HyperOptimizer):
         super(RandomSearch, self).set_keys(**kwargs)
         self.best_trial = {
             'trial_num': None,
+            'x': None,
             'param': None,
             'fitness_score': None,
         }
+
+    # calculate the constant radius needed to traverse unit cube
+    def unit_cube_traversal_radius(self):
+        traversal_diameter = 1/np.power(self.max_evals,
+                                        1/self.param_space_n_dim)
+        traversal_radius = traversal_diameter/2
+        return traversal_radius
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
@@ -46,53 +54,38 @@ class RandomSearch(HyperOptimizer):
                 norm_val, dim_spec['min'], dim_spec['max'])
         return
 
-    # biject a vector on unit cube into param_space
-    def biject_unit_cube(self, v):
-        param_space_v = {}
+    # biject a vector on unit cube into a param in param_space
+    def biject_param(self, v):
+        param = {}
         for i, param_key in enumerate(self.param_range_keys):
             dim_spec = self.param_range[param_key]
-            param_space_v[param_key] = self.biject_dim(v[i], dim_spec)
-        return param_space_v
-
-    # calculate the constant radius needed to traverse unit cube
-    def unit_cube_traversal_radius(self):
-        traversal_diameter = 1/np.power(self.max_evals,
-                                        1/self.param_space_n_dim)
-        traversal_radius = traversal_diameter/2
-        return traversal_radius
+            param[param_key] = self.biject_dim(v[i], dim_spec)
+        return param
 
     def init_search(self):
         '''
-        all random space is numpy.random
-        specify json by method then args
-        e.g. to call numpy.random.uniform(low=0, high=1)
-        "uniform": {
-            "low": 0,
-            "high": 1
-        }
+        meh
         '''
         # TODO check dict, has min max
         self.param_space_n_dim = len(self.param_range_keys)
-        # careful with resuming, reread shits from search history
-        # self.default_param
-        # self.param_range
-        # iterate, if is dict do init_sampler
-        # self.sampler = {
-        #     'lr':
-        # }
         return
+
+    def sample_r(self):
+        return self.sample_hypersphere(self.param_space_n_dim, 0.5)
 
     def search(self):
         '''
         algo:
         1. init x a random position in space
         2. until termination (max_eval or fitness, e.g. solved all), do:
-            2.1 sample new pos some radius away: y = x + r
-            2.2 if f(y) > f(x) then set x = y
+            2.1 sample new pos some radius away: next_x = x + r
+            2.2 if f(next_x) > f(x) then set x = next_x
 
         * Careful, we always do maximization,
         '''
-        return
+        next_x = self.best_trial['x'] + self.sample_r()
+        next_param = self.biject_param(next_x)
+        self.param_search_list.append(next_param)
 
     def decay_radius(self):
         '''
