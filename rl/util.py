@@ -98,7 +98,7 @@ parser.add_argument("-m", "--max_evals",
                     nargs='?',
                     type=int,
                     dest="max_evals",
-                    default=100)
+                    default=6)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
