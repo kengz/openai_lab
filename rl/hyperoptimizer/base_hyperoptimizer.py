@@ -118,6 +118,11 @@ class HyperOptimizer(object):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
+    def search_and_run(self):
+        self.search()
+        trial_num, param = self.next_param()
+        return self.run_trial()
+
     def append_experiment_data(self, trial_data):
         self.experiment_data.append(trial_data)
 
@@ -129,12 +134,22 @@ class HyperOptimizer(object):
         logger.info('Run {}'.format(self.__class__.__name__))
         pool = mp.Pool(PARALLEL_PROCESS_NUM)
         while (not self.to_terminate()):
+            # self.search()  # add to self.param_search_list
+            # trial_num, param = self.next_param()
+            # pool.apply_async(
+            #     self.run_trial, (trial_num, param),
+            #     callback=self.append_experiment_data)
+            # self.update_search()
             self.search()  # add to self.param_search_list
             trial_num, param = self.next_param()
-            pool.apply_async(
-                self.run_trial, (trial_num, param),
-                callback=self.append_experiment_data)
+            trial_data = pool.apply(
+                self.run_trial, (trial_num, param))
+            print(trial_data)
+            self.append_experiment_data(trial_data)
             self.update_search()
+            # pool.apply(
+            #     self.search_and_run, (),
+            #     callback=self.append_experiment_data)
         pool.close()
         pool.join()
         return self.experiment_data

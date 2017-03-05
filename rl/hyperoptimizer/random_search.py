@@ -57,6 +57,10 @@ class RandomSearch(HyperOptimizer):
     def sample_cube(self):
         return np.random.rand(self.search_dim)
 
+    def sample_r(self):
+        return self.sample_hypersphere(
+            self.search_dim, self.search_radius)
+
     # biject [0, 1] to [x_min, x_max]
     @classmethod
     def biject_continuous(cls, norm_val, x_min, x_max):
@@ -88,24 +92,18 @@ class RandomSearch(HyperOptimizer):
 
     def init_search(self):
         '''
-        meh
+        Initialize the random search internal variables
         '''
-        # TODO check dict, has min max
+        self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
         self.search_radius = self.cube_traversal_radius()
         self.search_path = []
-        init_x = self.sample_cube()
         self.best_point = {
             'trial_num': None,
-            'x': init_x,
             'param': None,
-            'fitness_score': None,
+            'x': self.sample_cube(),
+            'fitness_score': float('-inf'),
         }
-        return
-
-    def sample_r(self):
-        return self.sample_hypersphere(
-            self.search_dim, self.search_radius)
 
     def search(self):
         '''
@@ -137,8 +135,8 @@ class RandomSearch(HyperOptimizer):
         if fitness_score > self.best_point['fitness_score']:
             self.best_point = {
                 'trial_num': trial_num,
-                'x': x,
                 'param': param,
+                'x': x,
                 'fitness_score': fitness_score,
             }
 
@@ -149,5 +147,5 @@ class RandomSearch(HyperOptimizer):
         return False
 
     def to_terminate(self):
-        return (self.satisfy_fitness() and
-                not (self.next_trial_num < len(self.param_search_list)))
+        return (self.next_trial_num >= self.max_evals or
+                self.satisfy_fitness())
