@@ -37,7 +37,7 @@ class HyperOptimizer(object):
         self.run_timestamp = timestamp()
         self.param_search_list = []
         # the index of next param to try in param_search_list
-        self.next_param_idx = 0
+        self.next_param_idx = len(self.param_search_list)
         self.experiment_data = []
         assert all(k in kwargs for k in self.REQUIRED_ARGS), \
             'kwargs do not have all REQUIRED_ARGS'
@@ -96,6 +96,16 @@ class HyperOptimizer(object):
         gc.collect()
         debug_mem_usage()
         return trial_data
+
+    # retrieve the trial_num, param, fitness_score from trial_data
+    @classmethod
+    def get_fitness(cls, trial_data):
+        trial_id = trial_data['trial_id']
+        trial_num = trial_id.split('_').pop()
+        param = trial_data['experiment_spec']['param']
+        metrics = trial_data['metrics']
+        fitness_score = metrics['fitness_score']
+        return trial_num, param, fitness_score
 
     def update_search(self):
         '''algo step 3, update search algo using self.experiment_data'''

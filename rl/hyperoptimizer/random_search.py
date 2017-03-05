@@ -12,6 +12,11 @@ class RandomSearch(HyperOptimizer):
             'max_evals'
         ]
         super(RandomSearch, self).set_keys(**kwargs)
+        self.best_trial = {
+            'trial_num': None,
+            'param': None,
+            'fitness_score': None,
+        }
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
@@ -90,7 +95,10 @@ class RandomSearch(HyperOptimizer):
         return
 
     def decay_radius(self):
-        '''future implementation, start of half cube for diameter (so 1/4 for radius), then decay'''
+        '''
+        future implementation, start of half cube for diameter
+        (so 1/4 for radius), then decay
+        '''
         return
 
     def update_search(self):
@@ -113,7 +121,8 @@ class RandomSearch(HyperOptimizer):
 
     def satisfy_fitness(self):
         '''use performance score, solved ratio, solved mean reward'''
-        # ideal_fitness_score = util.PROBLEMS: SOLVED_MEAN_REWARD/MAX_EPISODES/2
+        # ideal_fitness_score = util.PROBLEMS:
+        # SOLVED_MEAN_REWARD/MAX_EPISODES/2
         return
 
     def to_terminate(self):
