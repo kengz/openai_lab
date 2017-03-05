@@ -1,4 +1,5 @@
 import copy
+import time
 import multiprocessing as mp
 from collections import OrderedDict
 from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM, debug_mem_usage
@@ -29,6 +30,8 @@ class HyperOptimizer(object):
             'experiment_id_override',
             'times'
         ]
+        self.PARALLEL_PROCESS_NUM = PARALLEL_PROCESS_NUM
+        self.free_cpu = self.PARALLEL_PROCESS_NUM  # for parallel run
         logger.info('Initialize {}'.format(self.__class__.__name__))
         self.set_keys(**kwargs)
         self.init_search()
@@ -118,13 +121,11 @@ class HyperOptimizer(object):
         '''algo step 4, terminate when at max steps or fitness condition met'''
         raise NotImplementedError()
 
-    def search_and_run(self):
-        self.search()
-        trial_num, param = self.next_param()
-        return self.run_trial()
-
-    def append_experiment_data(self, trial_data):
+    # handler task after a search is complete from multiprocessing pool
+    def post_search(self, trial_data):
         self.experiment_data.append(trial_data)
+        self.update_search()
+        self.free_cpu += 1
 
     def run(self):
         '''
@@ -134,48 +135,16 @@ class HyperOptimizer(object):
         logger.info('Run {}'.format(self.__class__.__name__))
         pool = mp.Pool(PARALLEL_PROCESS_NUM)
         while (not self.to_terminate()):
-            # self.search()  # add to self.param_search_list
-            # trial_num, param = self.next_param()
-            # pool.apply_async(
-            #     self.run_trial, (trial_num, param),
-            #     callback=self.append_experiment_data)
-            # self.update_search()
-            # 
-            # self.search()  # add to self.param_search_list
-            # trial_num, param = self.next_param()
-            # trial_data = pool.apply(
-            #     self.run_trial, (trial_num, param))
-            # print(trial_data)
-            # self.append_experiment_data(trial_data)
-            # self.update_search()
-            # 
-            self.search()  # add to self.param_search_list
-            trial_num, param = self.next_param()
-            res0 = pool.apply_async(
-                self.run_trial, (trial_num, param))
-            
-            self.search()  # add to self.param_search_list
-            trial_num, param = self.next_param()
-            res1 = pool.apply_async(
-                self.run_trial, (trial_num, param))
-            
-            self.search()  # add to self.param_search_list
-            trial_num, param = self.next_param()
-            res2 = pool.apply_async(
-                self.run_trial, (trial_num, param))
-            
-            self.search()  # add to self.param_search_list
-            trial_num, param = self.next_param()
-            res3 = pool.apply_async(
-                self.run_trial, (trial_num, param))
-
-            for r in [res0, res1, res2, res3]:
-                trial_data = r.get()
-                self.append_experiment_data(trial_data)
-                self.update_search()
-            # pool.apply(
-            #     self.search_and_run, (),
-            #     callback=self.append_experiment_data)
+            if self.free_cpu > 0:
+                self.free_cpu -= 1  # update
+                self.search()  # add to self.param_search_list
+                trial_num, param = self.next_param()
+                pool.apply_async(
+                    self.run_trial, (trial_num, param),
+                    callback=self.post_search)
+            else:
+                pass  # keep looping till free_cpu available
+            time.sleep(0.02)  # prevent cpu overwork from while loop
         pool.close()
         pool.join()
         return self.experiment_data

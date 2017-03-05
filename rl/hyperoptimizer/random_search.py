@@ -126,6 +126,8 @@ class RandomSearch(HyperOptimizer):
         invoked right after the latest run_trial()
         update self.best_point
         '''
+        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:  # first runs yet
+            return
         assert len(self.experiment_data) > 0, \
             'self.experiment_data must not be empty for update_search'
         x = self.search_path[-1]
