@@ -37,7 +37,7 @@ class HyperOptimizer(object):
         self.run_timestamp = timestamp()
         self.param_search_list = []
         # the index of next param to try in param_search_list
-        self.next_param_idx = len(self.param_search_list)
+        self.next_trial_num = len(self.param_search_list)
         self.experiment_data = []
         assert all(k in kwargs for k in self.REQUIRED_ARGS), \
             'kwargs do not have all REQUIRED_ARGS'
@@ -69,12 +69,12 @@ class HyperOptimizer(object):
         raise NotImplementedError()
 
     def next_param(self):
-        '''retrieve trial_num and param, advance the class next_param_idx'''
-        assert self.next_param_idx < len(self.param_search_list), \
-            'param_search_list expansion cannot keep up with next_param_idx'
-        trial_num = self.next_param_idx
-        param = self.param_search_list[self.next_param_idx]
-        self.next_param_idx = self.next_param_idx + 1
+        '''retrieve trial_num and param, advance the class next_trial_num'''
+        assert self.next_trial_num < len(self.param_search_list), \
+            'param_search_list expansion cannot keep up with next_trial_num'
+        trial_num = self.next_trial_num
+        param = self.param_search_list[self.next_trial_num]
+        self.next_trial_num = self.next_trial_num + 1
         return (trial_num, param)
 
     def run_trial(self, trial_num, param):
