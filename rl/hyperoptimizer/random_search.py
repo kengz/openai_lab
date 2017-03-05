@@ -1,6 +1,7 @@
+import json
 import numpy as np
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
-from rl.util import PROBLEMS
+from rl.util import PROBLEMS, to_json, logger
 
 
 class RandomSearch(HyperOptimizer):
@@ -94,6 +95,8 @@ class RandomSearch(HyperOptimizer):
         '''
         Initialize the random search internal variables
         '''
+        # TODO perhaps in the data serialized folder
+        self.filename = './config/search_history.json'
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
         self.search_radius = self.cube_traversal_radius()
@@ -104,6 +107,7 @@ class RandomSearch(HyperOptimizer):
             'x': self.sample_cube(),
             'fitness_score': float('-inf'),
         }
+        self.load()
         problem = PROBLEMS.get(self.experiment_spec['problem'])
         self.ideal_fitness_score = 0.5 * \
             problem['SOLVED_MEAN_REWARD']/problem['MAX_EPISODES']
@@ -139,6 +143,30 @@ class RandomSearch(HyperOptimizer):
                 'x': x,
                 'fitness_score': fitness_score,
             }
+        self.save()
+
+    def save(self):
+        search_history = {
+            'search_path': self.search_path,
+            'best_point': self.best_point,
+            'param_search_list': self.param_search_list,
+        }
+        with open(self.filename, 'w') as f:
+            f.write(to_json(search_history))
+        logger.info(
+            'Save search history to {}'.format(self.filename))
+        return
+
+    def load(self):
+        # TODO only on resume?
+        try:
+            search_history = json.loads(open(self.filename).read())
+            self.search_path = search_history['search_path']
+            self.best_point = search_history['best_point']
+            self.param_search_list = search_history['param_search_list']
+            logger.info('Load search history from {}'.format(self.filename))
+        except (FileNotFoundError, json.JSONDecodeError):
+            return None
 
     def satisfy_fitness(self):
         '''
