@@ -1,5 +1,6 @@
 import numpy as np
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
+from rl.util import PROBLEMS
 
 
 class RandomSearch(HyperOptimizer):
@@ -16,12 +17,10 @@ class RandomSearch(HyperOptimizer):
     - search_path
     - best_point
 
-    to save an restore experiment:
-    - all searched points
-    - all updated points and their fitness score, just use performance_score, current pointer of x as last
-    careful with param_search_list and next_trial_num
-    need to get stuff from self.experiment_data
-    path:
+    save for experiment resume:
+    - search_path
+    - best_point
+    - param_search_list
     '''
 
     def set_keys(self, **kwargs):
@@ -74,6 +73,7 @@ class RandomSearch(HyperOptimizer):
         ind = np.digitize(cont_val, inds) - 1
         return x_list[ind]
 
+    # biject one dimension: [0, 1] to a param_range val
     def biject_dim(self, norm_val, dim_spec):
         if isinstance(dim_spec, list):  # discrete
             return self.biject_discrete(norm_val, dim_spec)
@@ -104,6 +104,9 @@ class RandomSearch(HyperOptimizer):
             'x': self.sample_cube(),
             'fitness_score': float('-inf'),
         }
+        problem = PROBLEMS.get(self.experiment_spec['problem'])
+        self.ideal_fitness_score = 0.5 * \
+            problem['SOLVED_MEAN_REWARD']/problem['MAX_EPISODES']
 
     def search(self):
         '''
@@ -114,11 +117,6 @@ class RandomSearch(HyperOptimizer):
         next_param = self.biject_param(next_x)
         self.search_path.append(next_x)
         self.param_search_list.append(next_param)
-        print('next param')
-        print('next param')
-        print('next param')
-        print(next_x)
-        print(next_param)
 
     def update_search(self):
         '''
@@ -143,10 +141,13 @@ class RandomSearch(HyperOptimizer):
             }
 
     def satisfy_fitness(self):
-        '''use performance score, solved ratio, solved mean reward'''
-        # ideal_fitness_score = util.PROBLEMS:
-        # SOLVED_MEAN_REWARD/MAX_EPISODES/2
-        return False
+        '''
+        break on the first strong solution
+        '''
+        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:
+            return False
+        else:
+            return self.best_point['fitness_score'] > self.ideal_fitness_score
 
     def to_terminate(self):
         return (self.next_trial_num >= self.max_evals or
