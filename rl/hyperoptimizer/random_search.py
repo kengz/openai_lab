@@ -39,12 +39,12 @@ class RandomSearch(HyperOptimizer):
         traversal_radius = traversal_diameter/2
         return traversal_radius
 
-    def decay_radius(self):
-        '''
-        future implementation, start of half cube for diameter
-        (so 1/4 for radius), then decay
-        '''
-        return
+    # def decay_radius(self):
+    #     '''
+    #     future implementation, start of half cube for diameter
+    #     (so 1/4 for radius), then decay
+    #     '''
+    #     return
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
