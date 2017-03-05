@@ -31,4 +31,4 @@ class LineSearch(HyperOptimizer):
         return
 
     def to_terminate(self):
-        return not (self.next_param_idx < len(self.param_search_list))
+        return not (self.next_trial_num < len(self.param_search_list))

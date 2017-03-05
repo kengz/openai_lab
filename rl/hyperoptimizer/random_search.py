@@ -4,6 +4,26 @@ from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 
 class RandomSearch(HyperOptimizer):
 
+    '''
+    Random Search by sampling on hysphere around a search path
+    algo:
+    1. init x a random position in space
+    2. until termination (max_eval or fitness, e.g. solved all), do:
+        2.1 sample new pos some radius away: next_x = x + r
+        2.2 if f(next_x) > f(x) then set x = next_x
+
+    Extra search memory units:
+    - search_path
+    - best_point
+
+    to save an restore experiment:
+    - all searched points
+    - all updated points and their fitness score, just use performance_score, current pointer of x as last
+    careful with param_search_list and next_trial_num
+    need to get stuff from self.experiment_data
+    path:
+    '''
+
     def set_keys(self, **kwargs):
         self.REQUIRED_GLOBAL_VARS = [
             'experiment_spec',
@@ -12,19 +32,20 @@ class RandomSearch(HyperOptimizer):
             'max_evals'
         ]
         super(RandomSearch, self).set_keys(**kwargs)
-        self.best_trial = {
-            'trial_num': None,
-            'x': None,
-            'param': None,
-            'fitness_score': None,
-        }
 
     # calculate the constant radius needed to traverse unit cube
-    def unit_cube_traversal_radius(self):
+    def cube_traversal_radius(self):
         traversal_diameter = 1/np.power(self.max_evals,
-                                        1/self.param_space_n_dim)
+                                        1/self.search_dim)
         traversal_radius = traversal_diameter/2
         return traversal_radius
+
+    def decay_radius(self):
+        '''
+        future implementation, start of half cube for diameter
+        (so 1/4 for radius), then decay
+        '''
+        return
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
@@ -32,6 +53,9 @@ class RandomSearch(HyperOptimizer):
         v = np.random.randn(dim)
         v = v * r / np.linalg.norm(v)
         return v
+
+    def sample_cube(self):
+        return np.random.rand(self.search_dim)
 
     # biject [0, 1] to [x_min, x_max]
     @classmethod
@@ -67,56 +91,63 @@ class RandomSearch(HyperOptimizer):
         meh
         '''
         # TODO check dict, has min max
-        self.param_space_n_dim = len(self.param_range_keys)
+        self.search_dim = len(self.param_range_keys)
+        self.search_radius = self.cube_traversal_radius()
+        self.search_path = []
+        init_x = self.sample_cube()
+        self.best_point = {
+            'trial_num': None,
+            'x': init_x,
+            'param': None,
+            'fitness_score': None,
+        }
         return
 
     def sample_r(self):
-        return self.sample_hypersphere(self.param_space_n_dim, 0.5)
+        return self.sample_hypersphere(
+            self.search_dim, self.search_radius)
 
     def search(self):
         '''
-        algo:
-        1. init x a random position in space
-        2. until termination (max_eval or fitness, e.g. solved all), do:
-            2.1 sample new pos some radius away: next_x = x + r
-            2.2 if f(next_x) > f(x) then set x = next_x
-
-        * Careful, we always do maximization,
+        algo step 2.1 sample new pos some radius away: next_x = x + r
+        update search_path and param_search_list
         '''
-        next_x = self.best_trial['x'] + self.sample_r()
+        next_x = self.best_point['x'] + self.sample_r()
         next_param = self.biject_param(next_x)
+        self.search_path.append(next_x)
         self.param_search_list.append(next_param)
-
-    def decay_radius(self):
-        '''
-        future implementation, start of half cube for diameter
-        (so 1/4 for radius), then decay
-        '''
-        return
+        print('next param')
+        print('next param')
+        print('next param')
+        print(next_x)
+        print(next_param)
 
     def update_search(self):
         '''
-        to save an restore experiment:
-        - all searched points
-        - all updated points and their fitness score, just use performance_score, current pointer of x as last
-        careful with param_search_list and next_param_idx
-        need to get stuff from self.experiment_data
-        path:
-        # assert self.experiment_data non empty
-        last_trial_num = len(self.experiment_data) - 1
-        last_trial_data = self.experiment_data[-1]
-        param = last_trial_data['experiment_spec']['param']
-        metrics = last_trial_data['metrics']
-        fitness_score = metrics['fitness_score']
-
+        algo step 2.2 if f(next_x) > f(x) then set x = next_x
+        invoked right after the latest run_trial()
+        update self.best_point
         '''
-        return
+        assert len(self.experiment_data) > 0, \
+            'self.experiment_data must not be empty for update_search'
+        x = self.search_path[-1]
+        trial_data = self.experiment_data[-1]
+        trial_num, param, fitness_score = self.get_fitness(trial_data)
+
+        if fitness_score > self.best_point['fitness_score']:
+            self.best_point = {
+                'trial_num': trial_num,
+                'x': x,
+                'param': param,
+                'fitness_score': fitness_score,
+            }
 
     def satisfy_fitness(self):
         '''use performance score, solved ratio, solved mean reward'''
         # ideal_fitness_score = util.PROBLEMS:
         # SOLVED_MEAN_REWARD/MAX_EPISODES/2
-        return
+        return False
 
     def to_terminate(self):
-        return
+        return (self.satisfy_fitness() and
+                not (self.next_trial_num < len(self.param_search_list)))
