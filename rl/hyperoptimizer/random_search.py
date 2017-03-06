@@ -24,15 +24,6 @@ class RandomSearch(HyperOptimizer):
     - param_search_list
     '''
 
-    def set_keys(self, **kwargs):
-        self.REQUIRED_ARGS = [
-            'experiment_spec',
-            'experiment_id_override',
-            'times',
-            'max_evals'
-        ]
-        super(RandomSearch, self).set_keys(**kwargs)
-
     # # calculate the constant radius needed to traverse unit cube
     # def cube_traversal_radius(self):
     #     traversal_diameter = 1/np.power(self.max_evals,
@@ -99,6 +90,7 @@ class RandomSearch(HyperOptimizer):
         '''
         Initialize the random search internal variables
         '''
+        self.max_evals = self.experiment_spec['param']['max_evals']
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
         self.precision = 4  # decimal roundoff biject_continuous

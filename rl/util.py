@@ -92,13 +92,6 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
-parser.add_argument("-m", "--max_evals",
-                    help="max number of trials for hyperopt (non-exhaustive)",
-                    action="store",
-                    nargs='?',
-                    type=int,
-                    dest="max_evals",
-                    default=10)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
