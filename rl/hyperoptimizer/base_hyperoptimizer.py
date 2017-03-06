@@ -37,15 +37,20 @@ class HyperOptimizer(object):
         self.init_search()
 
     def set_keys(self, **kwargs):
-        self.run_timestamp = timestamp()
-        self.param_search_list = []
-        # the index of next param to try in param_search_list
-        self.next_trial_num = len(self.param_search_list)
-        self.experiment_data = []
         assert all(k in kwargs for k in self.REQUIRED_ARGS), \
             'kwargs do not have all REQUIRED_ARGS'
         for k in kwargs:
             setattr(self, k, kwargs[k])
+
+        self.experiment_name = self.experiment_spec.get('experiment_name')
+        self.run_timestamp = timestamp()
+        self.experiment_id = self.experiment_id_override or '{}-{}'.format(
+            self.experiment_name, self.run_timestamp)
+        self.experiment_data = []
+        self.param_search_list = []
+        # the index of next param to try in param_search_list
+        self.next_trial_num = len(self.param_search_list)
+
         self.default_param = self.experiment_spec['param']
         unordered_param_range = self.experiment_spec['param_range']
         # import ordering for param_range for search serialization

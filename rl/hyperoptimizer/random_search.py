@@ -25,7 +25,7 @@ class RandomSearch(HyperOptimizer):
     '''
 
     def set_keys(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
+        self.REQUIRED_ARGS = [
             'experiment_spec',
             'experiment_id_override',
             'times',
@@ -96,7 +96,6 @@ class RandomSearch(HyperOptimizer):
         Initialize the random search internal variables
         '''
         # TODO perhaps in the data serialized folder
-        self.filename = './config/search_history.json'
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
         self.search_radius = self.cube_traversal_radius()
@@ -107,20 +106,28 @@ class RandomSearch(HyperOptimizer):
             'x': self.sample_cube(),
             'fitness_score': float('-inf'),
         }
-        self.load()
         problem = PROBLEMS.get(self.experiment_spec['problem'])
         self.ideal_fitness_score = 0.5 * \
             problem['SOLVED_MEAN_REWARD']/problem['MAX_EPISODES']
+
+        self.filename = './data/{}/random_search_history.json'.format(
+            self.experiment_id)
+        if self.experiment_id_override is not None:
+            self.load()  # resume
 
     def search(self):
         '''
         algo step 2.1 sample new pos some radius away: next_x = x + r
         update search_path and param_search_list
         '''
-        next_x = self.best_point['x'] + self.sample_r()
-        next_param = self.biject_param(next_x)
-        self.search_path.append(next_x)
-        self.param_search_list.append(next_param)
+        if self.next_trial_num < len(self.search_path):
+            next_x = self.search_path[self.next_trial_num]
+            next_param = self.param_search_list[self.next_trial_num]
+        else:
+            next_x = self.best_point['x'] + self.sample_r()
+            next_param = self.biject_param(next_x)
+            self.search_path.append(next_x)
+            self.param_search_list.append(next_param)
 
     def update_search(self):
         '''
@@ -128,8 +135,11 @@ class RandomSearch(HyperOptimizer):
         invoked right after the latest run_trial()
         update self.best_point
         '''
-        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:  # first runs yet
-            return
+        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:
+            return  # first runs yet
+        if self.next_trial_num < len(self.search_path):
+            return  # still resuming
+
         assert len(self.experiment_data) > 0, \
             'self.experiment_data must not be empty for update_search'
         x = self.search_path[-1]
@@ -158,7 +168,6 @@ class RandomSearch(HyperOptimizer):
         return
 
     def load(self):
-        # TODO only on resume?
         try:
             search_history = json.loads(open(self.filename).read())
             self.search_path = search_history['search_path']
@@ -166,6 +175,8 @@ class RandomSearch(HyperOptimizer):
             self.param_search_list = search_history['param_search_list']
             logger.info('Load search history from {}'.format(self.filename))
         except (FileNotFoundError, json.JSONDecodeError):
+            logger.info(
+                'Fail to load search history from {}'.format(self.filename))
             return None
 
     def satisfy_fitness(self):
