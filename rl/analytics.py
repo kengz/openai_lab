@@ -254,17 +254,31 @@ def plot_experiment(data_df, trial_id):
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     col_size = len(X_cols)
     row_size = len(EXPERIMENT_GRID_Y_COLS)
+    groups = data_df.groupby(hue)
 
     # for main grid plot
+    sns_only = True
     big_fig, axes = sns.plt.subplots(
         row_size, col_size, figsize=(col_size*4, row_size*3),
         sharex='col', sharey='row')
     for ix, x in enumerate(X_cols):
         for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
             big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
-            sns.swarmplot(
-                data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
-            big_ax.legend_.remove()  # set common legend below
+            if (data_df[x].dtype.name == 'category' or
+                    len(data_df[x].unique()) <= 5):
+                sns.swarmplot(
+                    data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
+            else:
+                sns_only = False
+                big_ax.margins(0.05)
+                big_ax.xaxis.grid(False)
+                for _, group in groups:
+                    big_ax.plot(group[x], group[y], label=hue,
+                                marker='o', ms=3, linestyle='')
+                    big_ax.set_xlabel(x)
+                    big_ax.set_ylabel(y)
+
+            big_ax.legend_ = None  # set common legend below
             # label only left and bottom axes
             if iy != row_size - 1:
                 big_ax.set_xlabel('')
@@ -273,9 +287,11 @@ def plot_experiment(data_df, trial_id):
 
     big_fig.tight_layout()
     big_fig.suptitle(wrap_text(experiment_id))
+    legend_labels = None if sns_only else sorted(data_df[hue].unique())
+    legend_ms = 0.5 if sns_only else 1
     legend = sns.plt.legend(title='solved_ratio_of_sessions',
-                            fontsize=10, markerscale=0.5,
-                            loc='center right',
+                            labels=legend_labels, markerscale=legend_ms,
+                            fontsize=10, loc='center right',
                             bbox_to_anchor=(1.1+col_size*0.1, row_size+0.1))
     legend.get_title().set_fontsize('10')
     big_fig.subplots_adjust(top=0.96, right=0.9)
