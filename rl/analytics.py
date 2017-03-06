@@ -57,7 +57,7 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         (_mpl, self.plt, _sns) = scoped_mpl_import()
         self.session = session
@@ -107,7 +107,7 @@ class Grapher(object):
 
     def plot(self):
         '''do live plotting'''
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
@@ -145,7 +145,7 @@ class Grapher(object):
         self.figure.savefig(self.graph_filename)
 
     def clear(self):
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         self.plt.close()
         del_self_attr(self)
