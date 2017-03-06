@@ -18,7 +18,7 @@ class RandomSearch(HyperOptimizer):
     - search_path
     - best_point
 
-    save for experiment resume:
+    save for experiment resume, search_history:
     - search_path
     - best_point
     - param_search_list
@@ -95,7 +95,6 @@ class RandomSearch(HyperOptimizer):
         '''
         Initialize the random search internal variables
         '''
-        # TODO perhaps in the data serialized folder
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
         self.search_radius = self.cube_traversal_radius()
@@ -108,7 +107,7 @@ class RandomSearch(HyperOptimizer):
         }
         problem = PROBLEMS.get(self.experiment_spec['problem'])
         self.ideal_fitness_score = 0.5 * \
-            problem['SOLVED_MEAN_REWARD']/problem['MAX_EPISODES']
+            problem['SOLVED_MEAN_REWARD'] / problem['MAX_EPISODES']
 
         self.filename = './data/{}/random_search_history.json'.format(
             self.experiment_id)
@@ -120,7 +119,7 @@ class RandomSearch(HyperOptimizer):
         algo step 2.1 sample new pos some radius away: next_x = x + r
         update search_path and param_search_list
         '''
-        if self.next_trial_num < len(self.search_path):
+        if self.next_trial_num < len(self.search_path):  # resuming
             next_x = self.search_path[self.next_trial_num]
             next_param = self.param_search_list[self.next_trial_num]
         else:
@@ -135,10 +134,10 @@ class RandomSearch(HyperOptimizer):
         invoked right after the latest run_trial()
         update self.best_point
         '''
-        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:
-            return  # first runs yet
-        if self.next_trial_num < len(self.search_path):
-            return  # still resuming
+        if (self.next_trial_num < self.PARALLEL_PROCESS_NUM or
+                self.next_trial_num < len(self.search_path)):
+            # yet to have history or still resuming from history
+            return
 
         assert len(self.experiment_data) > 0, \
             'self.experiment_data must not be empty for update_search'

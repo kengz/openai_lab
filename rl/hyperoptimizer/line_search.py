@@ -13,7 +13,6 @@ class LineSearch(HyperOptimizer):
         All other parameters set to default vals
         note that this is order-preserving, as required by design
         '''
-        self.param_search_list = []
         for key in self.param_range_keys:
             vals = self.param_range[key]
             for val in vals:

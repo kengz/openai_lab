@@ -14,7 +14,6 @@ class GridSearch(LineSearch):
         note that this is order-preserving, as required by design
         '''
         range_vals = self.param_range.values()
-        self.param_search_list = []
         for vals in itertools.product(*range_vals):
             param = copy.deepcopy(self.default_param)
             param.update(dict(zip(self.param_range_keys, vals)))
