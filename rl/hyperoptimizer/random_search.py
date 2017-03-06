@@ -33,19 +33,24 @@ class RandomSearch(HyperOptimizer):
         ]
         super(RandomSearch, self).set_keys(**kwargs)
 
-    # calculate the constant radius needed to traverse unit cube
-    def cube_traversal_radius(self):
-        traversal_diameter = 1/np.power(self.max_evals,
-                                        1/self.search_dim)
-        traversal_radius = traversal_diameter/2
-        return traversal_radius
+    # # calculate the constant radius needed to traverse unit cube
+    # def cube_traversal_radius(self):
+    #     traversal_diameter = 1/np.power(self.max_evals,
+    #                                     1/self.search_dim)
+    #     traversal_radius = traversal_diameter/2
+    #     return traversal_radius
 
-    # def decay_radius(self):
-    #     '''
-    #     future implementation, start of half cube for diameter
-    #     (so 1/4 for radius), then decay
-    #     '''
-    #     return
+    def decay_search_radius(self):
+        '''
+        start of half cube for diameter (0.25 radius) then decay
+        at 100 searches, will shrink to 1/10 of initial radius 0.025
+        clip to prevent going too small (0.01)
+        '''
+        min_radius = 0.01
+        linear_decay_rate = self.next_trial_num/10./self.PARALLEL_PROCESS_NUM
+        self.search_radius = np.clip(
+            self.init_search_radius / linear_decay_rate,
+            min_radius, self.init_search_radius)
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
@@ -97,7 +102,7 @@ class RandomSearch(HyperOptimizer):
         '''
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
-        self.search_radius = self.cube_traversal_radius()
+        self.search_radius = self.init_search_radius = 0.5
         self.search_path = []
         self.best_point = {
             'trial_num': None,
@@ -123,8 +128,7 @@ class RandomSearch(HyperOptimizer):
             next_x = self.search_path[self.next_trial_num]
             next_param = self.param_search_list[self.next_trial_num]
         else:
-            next_x = np.clip(
-                0., 1., self.best_point['x'] + self.sample_r())
+            next_x = np.clip(self.best_point['x'] + self.sample_r(), 0., 1.)
             next_param = self.biject_param(next_x)
             self.search_path.append(next_x)
             self.param_search_list.append(next_param)
@@ -139,13 +143,14 @@ class RandomSearch(HyperOptimizer):
                 self.next_trial_num < len(self.search_path)):
             # yet to have history or still resuming from history
             return
-
         assert len(self.experiment_data) > 0, \
             'self.experiment_data must not be empty for update_search'
+
+        self.decay_search_radius()
+
         x = self.search_path[-1]
         trial_data = self.experiment_data[-1]
         trial_num, param, fitness_score = self.get_fitness(trial_data)
-
         if fitness_score > self.best_point['fitness_score']:
             self.best_point = {
                 'trial_num': trial_num,
