@@ -37,14 +37,21 @@ def import_guard_asset():
     for experiment_name, spec in EXPERIMENT_SPECS.items():
         assert all(k in spec for k in REQUIRED_SPEC_KEYS), \
             '{} needs all REQUIRED_SPEC_KEYS'.format(experiment_name)
-
         EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
         if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
             continue
+
         param_range = EXPERIMENT_SPECS[experiment_name]['param_range']
         for param_key, param_val in param_range.items():
             if isinstance(param_val, list):
                 param_range[param_key] = sorted(param_val)
+            elif isinstance(param_val, dict):
+                pass
+            else:
+                assert False, \
+                    'param_range value must be list or dict: {}.{}:{}'.format(
+                        experiment_name, param_key, param_val)
+
         EXPERIMENT_SPECS[experiment_name]['param_range'] = param_range
     return PROBLEMS, EXPERIMENT_SPECS
 
@@ -85,22 +92,10 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
-parser.add_argument("-m", "--max_evals",
-                    help="max number of trials for hyperopt (non-exhaustive)",
-                    action="store",
-                    nargs='?',
-                    type=int,
-                    dest="max_evals",
-                    default=100)
 parser.add_argument("-p", "--param_selection",
                     help="run parameter selection if present",
                     action="store_true",
                     dest="param_selection",
-                    default=False)
-parser.add_argument("-g", "--graph",
-                    help="plot metrics graphs live",
-                    action="store_true",
-                    dest="plot_graph",
                     default=False)
 parser.add_argument("-a", "--analyze",
                     help="only run analyze_data",

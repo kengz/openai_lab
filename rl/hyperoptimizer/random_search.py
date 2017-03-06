@@ -1,104 +1,190 @@
+import json
 import numpy as np
-# from collections import OrderedDict
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
+from rl.util import PROBLEMS, to_json, logger
 
 
 class RandomSearch(HyperOptimizer):
 
-    def set_keys(self, **kwargs):
-        self.REQUIRED_GLOBAL_VARS = [
-            'experiment_spec',
-            'experiment_id_override',
-            'times',
-            'max_evals'
-        ]
-        super(RandomSearch, self).set_keys(**kwargs)
+    '''
+    Random Search by sampling on hysphere around a search path
+    algo:
+    1. init x a random position in space
+    2. until termination (max_eval or fitness, e.g. solved all), do:
+        2.1 sample new pos some radius away: next_x = x + r
+        2.2 if f(next_x) > f(x) then set x = next_x
 
-    # def init_sampler(self, real_param):
-    #     '''
-    #     e.g. for 'lr': {real_param}
-    #     where {real_param} = {
-    #         "uniform": {
-    #             "low": 0,
-    #             "high": 1
-    #         }
-    #     }
-    #     '''
-    #     keys = list(real_param.keys())
-    #     assert len(keys) == 1
-    #     dist = keys[0]
-    #     dist_kwargs = real_param[dist]
-    #     return partial(getattr(np.random, dist), **dist_kwargs)
+    Extra search memory units:
+    - search_path
+    - best_point
+
+    save for experiment resume, search_history:
+    - search_path
+    - best_point
+    - param_search_list
+    '''
+
+    # # calculate the constant radius needed to traverse unit cube
+    # def cube_traversal_radius(self):
+    #     traversal_diameter = 1/np.power(self.max_evals,
+    #                                     1/self.search_dim)
+    #     traversal_radius = traversal_diameter/2
+    #     return traversal_radius
+
+    def decay_search_radius(self):
+        '''
+        start of half cube for diameter (0.25 radius) then decay
+        at 100 searches, will shrink to 1/10 of initial radius 0.025
+        clip to prevent going too small (0.01)
+        '''
+        min_radius = 0.01
+        linear_decay_rate = self.next_trial_num/10./self.PARALLEL_PROCESS_NUM
+        self.search_radius = np.clip(
+            self.init_search_radius / linear_decay_rate,
+            min_radius, self.init_search_radius)
 
     @classmethod
     def sample_hypersphere(cls, dim, r=1):
-        '''Marsaglias algo for sampling uniformly on hypersphere'''
+        '''Marsaglia algo for sampling uniformly on a hypersphere'''
         v = np.random.randn(dim)
         v = v * r / np.linalg.norm(v)
         return v
 
-    def unit_cube_bijection(self):
-        x_vec = self.sample_hypersphere(self.param_space_dims)
-        return {
-            self.param_range_keys[i]: self.biject_axis(
-                x_vec[i],
-                self.param_range[self.param_range_keys[i]])
-            for i in range(self.param_space_dims)
-        }
+    def sample_cube(self):
+        return np.random.rand(self.search_dim)
 
-    def biject_axis(self, norm_val, axis_spec):
-        print('axis spec')
-        print('axis spec')
-        print(axis_spec)
-        if isinstance(axis_spec, list):  # discrete
-            return self.biject_discrete(norm_val, axis_spec)
-        else:  # cont
-            return self.biject_continuous(
-                norm_val, axis_spec['min'], axis_spec['max'])
-        return
+    def sample_r(self):
+        return self.sample_hypersphere(
+            self.search_dim, self.search_radius)
 
     # biject [0, 1] to [x_min, x_max]
-    @classmethod
-    def biject_continuous(cls, norm_val, x_min, x_max):
-        return norm_val*(x_max - x_min) + x_min
+    def biject_continuous(self, norm_val, x_min, x_max):
+        return np.around(norm_val*(x_max - x_min) + x_min, self.precision)
 
     # biject [0, 1] to x_list = [a, b, c, ...] by binning
     def biject_discrete(self, norm_val, x_list):
-        x_len = len(x_list)
-        inds = np.arange(x_len)
-        cont_val = self.biject_continuous(norm_val, 0, x_len)
+        list_len = len(x_list)
+        inds = np.arange(list_len)
+        cont_val = self.biject_continuous(norm_val, 0, list_len)
         ind = np.digitize(cont_val, inds) - 1
         return x_list[ind]
 
+    # biject one dimension: [0, 1] to a param_range val
+    def biject_dim(self, norm_val, dim_spec):
+        if isinstance(dim_spec, list):  # discrete
+            return self.biject_discrete(norm_val, dim_spec)
+        else:  # cont
+            return self.biject_continuous(
+                norm_val, dim_spec['min'], dim_spec['max'])
+        return
+
+    # biject a vector on unit cube into a param in param_space
+    def biject_param(self, v):
+        param = {}
+        for i, param_key in enumerate(self.param_range_keys):
+            dim_spec = self.param_range[param_key]
+            param[param_key] = self.biject_dim(v[i], dim_spec)
+        return param
+
     def init_search(self):
         '''
-        all random space is numpy.random
-        specify json by method then args
-        e.g. to call numpy.random.uniform(low=0, high=1)
-        "uniform": {
-            "low": 0,
-            "high": 1
-        }
+        Initialize the random search internal variables
         '''
-        # TODO unify across hyperopt modules
-        # TODO check dict, has min max
-        # self.ordered_param_range = OrderedDict(
-        #     sorted(self.param_range.items()))
-        self.param_range_keys = sorted(self.param_range.keys())
-        self.param_space_dims = len(self.param_range_keys)
-        # self.default_param
-        # self.param_range
-        # iterate, if is dict do init_sampler
-        # self.sampler = {
-        #     'lr':
-        # }
-        return
+        self.max_evals = self.experiment_spec['param']['max_evals']
+        self.num_of_trials = self.max_evals
+        self.search_dim = len(self.param_range_keys)
+        self.precision = 4  # decimal roundoff biject_continuous
+        self.search_radius = self.init_search_radius = 0.5
+        self.search_path = []
+        self.best_point = {
+            'trial_num': None,
+            'param': None,
+            'x': self.sample_cube(),
+            'fitness_score': float('-inf'),
+        }
+        problem = PROBLEMS.get(self.experiment_spec['problem'])
+        self.ideal_fitness_score = 0.5 * \
+            problem['SOLVED_MEAN_REWARD'] / problem['MAX_EPISODES']
+
+        self.filename = './data/{}/random_search_history.json'.format(
+            self.experiment_id)
+        if self.experiment_id_override is not None:
+            self.load()  # resume
 
     def search(self):
-        return
+        '''
+        algo step 2.1 sample new pos some radius away: next_x = x + r
+        update search_path and param_search_list
+        '''
+        if self.next_trial_num < len(self.search_path):  # resuming
+            next_x = self.search_path[self.next_trial_num]
+            next_param = self.param_search_list[self.next_trial_num]
+        else:
+            next_x = np.clip(self.best_point['x'] + self.sample_r(), 0., 1.)
+            next_param = self.biject_param(next_x)
+            self.search_path.append(next_x)
+            self.param_search_list.append(next_param)
 
     def update_search(self):
+        '''
+        algo step 2.2 if f(next_x) > f(x) then set x = next_x
+        invoked right after the latest run_trial()
+        update self.best_point
+        '''
+        if (self.next_trial_num < self.PARALLEL_PROCESS_NUM or
+                self.next_trial_num < len(self.search_path)):
+            # yet to have history or still resuming from history
+            return
+        assert len(self.experiment_data) > 0, \
+            'self.experiment_data must not be empty for update_search'
+
+        self.decay_search_radius()
+
+        x = self.search_path[-1]
+        trial_data = self.experiment_data[-1]
+        trial_num, param, fitness_score = self.get_fitness(trial_data)
+        if fitness_score > self.best_point['fitness_score']:
+            self.best_point = {
+                'trial_num': trial_num,
+                'param': param,
+                'x': x,
+                'fitness_score': fitness_score,
+            }
+        self.save()
+
+    def save(self):
+        search_history = {
+            'search_path': self.search_path,
+            'best_point': self.best_point,
+            'param_search_list': self.param_search_list,
+        }
+        with open(self.filename, 'w') as f:
+            f.write(to_json(search_history))
+        logger.info(
+            'Save search history to {}'.format(self.filename))
         return
 
+    def load(self):
+        try:
+            search_history = json.loads(open(self.filename).read())
+            self.search_path = search_history['search_path']
+            self.best_point = search_history['best_point']
+            self.param_search_list = search_history['param_search_list']
+            logger.info('Load search history from {}'.format(self.filename))
+        except (FileNotFoundError, json.JSONDecodeError):
+            logger.info(
+                'Fail to load search history from {}'.format(self.filename))
+            return None
+
+    def satisfy_fitness(self):
+        '''
+        break on the first strong solution
+        '''
+        if self.next_trial_num < self.PARALLEL_PROCESS_NUM:
+            return False
+        else:
+            return self.best_point['fitness_score'] > self.ideal_fitness_score
+
     def to_terminate(self):
-        return
+        return (self.next_trial_num >= self.max_evals or
+                self.satisfy_fitness())
