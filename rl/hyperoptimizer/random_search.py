@@ -123,7 +123,8 @@ class RandomSearch(HyperOptimizer):
             next_x = self.search_path[self.next_trial_num]
             next_param = self.param_search_list[self.next_trial_num]
         else:
-            next_x = self.best_point['x'] + self.sample_r()
+            next_x = np.clip(
+                0., 1., self.best_point['x'] + self.sample_r())
             next_param = self.biject_param(next_x)
             self.search_path.append(next_x)
             self.param_search_list.append(next_param)
