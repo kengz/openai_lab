@@ -103,8 +103,10 @@ class RandomSearch(HyperOptimizer):
             'fitness_score': float('-inf'),
         }
         problem = PROBLEMS.get(self.experiment_spec['problem'])
-        self.ideal_fitness_score = 0.5 * \
-            problem['SOLVED_MEAN_REWARD'] / problem['MAX_EPISODES']
+        self.ideal_fitness_score = problem[
+            'SOLVED_MEAN_REWARD'] / (problem['MAX_EPISODES']/3)
+        logger.info(
+            'ideal_fitness_scrore: {}'.format(self.ideal_fitness_score))
 
         self.filename = './data/{}/random_search_history.json'.format(
             self.experiment_id)
@@ -180,10 +182,16 @@ class RandomSearch(HyperOptimizer):
         '''
         break on the first strong solution
         '''
+        best_fitness_score = self.best_point['fitness_score']
         if self.next_trial_num < self.PARALLEL_PROCESS_NUM:
             return False
+        elif best_fitness_score > self.ideal_fitness_score:
+            logger.info(
+                'fitness_score {} > ideal_fitness_score {}, terminate'.format(
+                    best_fitness_score, self.ideal_fitness_score))
+            return True
         else:
-            return self.best_point['fitness_score'] > self.ideal_fitness_score
+            return False
 
     def to_terminate(self):
         return (self.next_trial_num >= self.max_evals or
