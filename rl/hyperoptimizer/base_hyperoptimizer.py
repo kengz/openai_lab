@@ -132,6 +132,10 @@ class HyperOptimizer(object):
         self.update_search()
         self.free_cpu += 1
 
+    def raise_error(self, e):
+        logger.error('Pool worker throws Exception')
+        raise e
+
     def run(self):
         '''
         top level method to run the entire hyperoptimizer
@@ -147,7 +151,7 @@ class HyperOptimizer(object):
                 trial_num, param = self.next_param()
                 pool.apply_async(
                     self.run_trial, (trial_num, param),
-                    callback=self.post_search)
+                    callback=self.post_search, error_callback=self.raise_error)
             else:
                 pass  # keep looping till free_cpu available
             time.sleep(0.02)  # prevent cpu overwork from while loop
