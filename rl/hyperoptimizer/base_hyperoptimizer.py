@@ -135,6 +135,8 @@ class HyperOptimizer(object):
 
     def raise_error(self, e):
         logger.error('Pool worker throws Exception')
+        print(e.__cause__)
+        time.sleep(1)
         os._exit(1)
 
     def run(self):
