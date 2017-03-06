@@ -1,6 +1,7 @@
 import copy
-import time
 import multiprocessing as mp
+import os
+import time
 from collections import OrderedDict
 from rl.util import logger, timestamp, PARALLEL_PROCESS_NUM, debug_mem_usage
 
@@ -134,7 +135,7 @@ class HyperOptimizer(object):
 
     def raise_error(self, e):
         logger.error('Pool worker throws Exception')
-        raise e
+        os._exit(1)
 
     def run(self):
         '''
