@@ -67,9 +67,8 @@ class RandomSearch(HyperOptimizer):
             self.search_dim, self.search_radius)
 
     # biject [0, 1] to [x_min, x_max]
-    @classmethod
-    def biject_continuous(cls, norm_val, x_min, x_max):
-        return norm_val*(x_max - x_min) + x_min
+    def biject_continuous(self, norm_val, x_min, x_max):
+        return np.around(norm_val*(x_max - x_min) + x_min, self.precision)
 
     # biject [0, 1] to x_list = [a, b, c, ...] by binning
     def biject_discrete(self, norm_val, x_list):
@@ -102,6 +101,7 @@ class RandomSearch(HyperOptimizer):
         '''
         self.num_of_trials = self.max_evals
         self.search_dim = len(self.param_range_keys)
+        self.precision = 4  # decimal roundoff biject_continuous
         self.search_radius = self.init_search_radius = 0.5
         self.search_path = []
         self.best_point = {
