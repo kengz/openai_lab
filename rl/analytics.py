@@ -296,7 +296,6 @@ def plot_experiment(data_df, trial_id):
     legend.get_title().set_fontsize('10')
     big_fig.subplots_adjust(top=0.96, right=0.9)
 
-    sns.plt.show()
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
     big_fig.savefig(filename)
