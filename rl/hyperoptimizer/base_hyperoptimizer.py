@@ -133,7 +133,8 @@ class HyperOptimizer(object):
         self.update_search()
         self.free_cpu += 1
 
-    def raise_error(self, e):
+    @classmethod
+    def raise_error(cls, e):
         logger.error('Pool worker throws Exception')
         print(e.__cause__)
         time.sleep(1)
