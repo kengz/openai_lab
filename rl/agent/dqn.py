@@ -60,29 +60,30 @@ class DQN(Agent):
         # Enables hyperparameter optimization over network architecture
         if self.auto_architecture:
             curr_layer_size = self.size_first_hidden_layer
-            model.add(Dense(curr_layer_size,
-                            input_shape=(self.env_spec['state_dim'],),
-                            activation=self.hidden_layers_activation,
-                            init='lecun_uniform'))
+            model.add(self.Dense(curr_layer_size,
+                                 input_shape=(self.env_spec['state_dim'],),
+                                 activation=self.hidden_layers_activation,
+                                 init='lecun_uniform'))
 
             curr_layer_size = int(curr_layer_size / 2)
             for i in range(1, self.num_hidden_layers):
-                model.add(Dense(curr_layer_size,
-                                init='lecun_uniform',
-                                activation=self.hidden_layers_activation))
+                model.add(self.Dense(curr_layer_size,
+                                     init='lecun_uniform',
+                                     activation=self.hidden_layers_activation))
                 curr_layer_size = int(curr_layer_size / 2)
 
         else:
-            model.add(Dense(self.hidden_layers[0],
-                            input_shape=(self.env_spec['state_dim'],),
-                            activation=self.hidden_layers_activation,
-                            init='lecun_uniform'))
+            model.add(self.Dense(self.hidden_layers[0],
+                                 input_shape=(self.env_spec['state_dim'],),
+                                 activation=self.hidden_layers_activation,
+                                 init='lecun_uniform'))
             # inner hidden layer: no specification of input shape
             if (len(self.hidden_layers) > 1):
                 for i in range(1, len(self.hidden_layers)):
-                    model.add(Dense(self.hidden_layers[i],
-                                    init='lecun_uniform',
-                                    activation=self.hidden_layers_activation))
+                    model.add(self.Dense(
+                        self.hidden_layers[i],
+                        init='lecun_uniform',
+                        activation=self.hidden_layers_activation))
 
         return model
 
