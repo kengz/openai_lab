@@ -31,6 +31,7 @@ class DQNFreeze(DoubleDQN):
 
     def update_target_model(self):
         # TODO fix to not use frequent filesave, will cause memleak
+        # Also, loading logic seems off
         pid = os.getpid()
         filename = 'temp_Q_model_freeze_' + str(pid) + '.h5'
         model_dir = 'rl/asset/model'
