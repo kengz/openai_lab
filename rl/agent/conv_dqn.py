@@ -15,7 +15,6 @@ class ConvDQN(DQN):
         self.kernel = 4
         self.stride = (2, 2)
         super(ConvDQN, self).__init__(*args, **kwargs)
-        exit(0)
 
     def build_hidden_layers(self, model):
         '''
