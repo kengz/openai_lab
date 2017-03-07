@@ -267,19 +267,59 @@
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 1000
+      "epi_change_lr": 500
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
-      "gamma": [0.95, 0.97, 0.99],
+      "gamma": [0.97, 0.99, 0.999],
       "hidden_layers_shape": [
-        [128],
         [256],
         [128, 64],
         [256, 128],
-        [256, 128, 64]
+        [256, 128, 64],
+        [512, 256, 128, 64]
       ],
-      "exploration_anneal_episodes": [100, 200, 300]
+      "exploration_anneal_episodes": [200, 300]
+    }
+  },
+  "rand_mountain_dqn": {
+    "problem": "MountainCar-v0",
+    "Agent": "DQN",
+    "HyperOptimizer": "RandomSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "max_evals": 200,
+      "train_per_n_new_exp": 1,
+      "lr": 0.001,
+      "batch_size": 16,
+      "gamma": 0.99,
+      "n_epoch": 2,
+      "hidden_layers_shape": [128, 64],
+      "hidden_layers_activation": "relu",
+      "exploration_anneal_episodes": 200,
+      "epi_change_lr": 500
+    },
+    "param_range": {
+      "lr": {
+        "min": 0.0005,
+        "max": 0.05
+      },
+      "gamma": {
+        "min": 0.95,
+        "max": 0.999
+      },
+      "hidden_layers_shape": [
+        [256],
+        [128, 64],
+        [256, 128],
+        [256, 128, 64],
+        [512, 256, 128, 64]
+      ],
+      "epi_change_lr": [200, 300, 400, 600, 800],
+      "exploration_anneal_episodes": [200, 300, 400]
     }
   },
   "mountain_sarsa": {
