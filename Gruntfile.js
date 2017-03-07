@@ -112,7 +112,7 @@ module.exports = function(grunt) {
 
     // override with custom command if has 'python'
     var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py ${analyzeCmd()}${bestCmd()}${quietCmd()} -t 5 -e ${eStr}`
-    const cmd = `${remoteCmd()} ${pyCmd} | tee -a ./data/terminal.log; ${notiCmd(eStr)}`
+    const cmd = `${remoteCmd()} ${pyCmd} | tee ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
   }
