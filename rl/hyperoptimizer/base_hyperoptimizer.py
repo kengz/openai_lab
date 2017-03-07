@@ -134,6 +134,12 @@ class HyperOptimizer(object):
         self.free_cpu += 1
 
     @classmethod
+    def pool_init(self):
+        # you can never be too safe in multiprocessing gc
+        import gc
+        gc.collect()
+
+    @classmethod
     def raise_error(cls, e):
         logger.error('Pool worker throws Exception')
         print(e.__cause__)
@@ -147,7 +153,8 @@ class HyperOptimizer(object):
         '''
         logger.info('Run {}'.format(self.__class__.__name__))
         # crucial maxtasksperchild to free up memory by respawning worker
-        pool = mp.Pool(self.PARALLEL_PROCESS_NUM, maxtasksperchild=1)
+        pool = mp.Pool(self.PARALLEL_PROCESS_NUM,
+                       initializer=self.pool_init, maxtasksperchild=1)
         while (not self.to_terminate()):
             if self.free_cpu > 0:
                 self.free_cpu -= 1  # update
