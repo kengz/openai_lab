@@ -1,8 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
 from rl.util import logger, log_self
-from keras.models import Sequential
-from keras.layers.core import Dense
 
 
 class DQN(Agent):
@@ -25,6 +23,13 @@ class DQN(Agent):
                  num_hidden_layers=3,
                  size_first_hidden_layer=256,
                  **kwargs):  # absorb generic param without breaking
+        # import only when needed to contain side-effects
+        from keras.layers.core import Dense
+        from keras.models import Sequential, load_model
+        self.Dense = Dense
+        self.Sequential = Sequential
+        self.load_model = load_model
+
         super(DQN, self).__init__(env_spec)
 
         self.train_per_n_new_exp = train_per_n_new_exp
@@ -48,30 +53,30 @@ class DQN(Agent):
         '''
         build the hidden layers into model using parameter self.hidden_layers
         '''
-        
-        # Auto architecture infers the size of the hidden layers  from the size
+
+        # Auto architecture infers the size of the hidden layers from the size
         # of the first layer. Each successive hidden layer is half the size of the
         # previous layer
         # Enables hyperparameter optimization over network architecture
         if self.auto_architecture:
             curr_layer_size = self.size_first_hidden_layer
             model.add(Dense(curr_layer_size,
-                        input_shape=(self.env_spec['state_dim'],),
-                        activation=self.hidden_layers_activation,
-                        init='lecun_uniform'))
+                            input_shape=(self.env_spec['state_dim'],),
+                            activation=self.hidden_layers_activation,
+                            init='lecun_uniform'))
 
             curr_layer_size = int(curr_layer_size / 2)
             for i in range(1, self.num_hidden_layers):
                 model.add(Dense(curr_layer_size,
-                                    init='lecun_uniform',
-                                    activation=self.hidden_layers_activation))
+                                init='lecun_uniform',
+                                activation=self.hidden_layers_activation))
                 curr_layer_size = int(curr_layer_size / 2)
-        
+
         else:
             model.add(Dense(self.hidden_layers[0],
-                        input_shape=(self.env_spec['state_dim'],),
-                        activation=self.hidden_layers_activation,
-                        init='lecun_uniform'))
+                            input_shape=(self.env_spec['state_dim'],),
+                            activation=self.hidden_layers_activation,
+                            init='lecun_uniform'))
             # inner hidden layer: no specification of input shape
             if (len(self.hidden_layers) > 1):
                 for i in range(1, len(self.hidden_layers)):
@@ -82,11 +87,11 @@ class DQN(Agent):
         return model
 
     def build_model(self):
-        model = Sequential()
+        model = self.Sequential()
         self.build_hidden_layers(model)
-        model.add(Dense(self.env_spec['action_dim'],
-                        init='lecun_uniform',
-                        activation=self.output_layer_activation))
+        model.add(self.Dense(self.env_spec['action_dim'],
+                             init='lecun_uniform',
+                             activation=self.output_layer_activation))
         logger.info("Model summary")
         model.summary()
         self.model = model

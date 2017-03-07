@@ -1,5 +1,4 @@
 from rl.optimizer.base_optimizer import Optimizer
-from keras.optimizers import RMSprop
 
 
 class RMSpropOptimizer(Optimizer):
@@ -14,8 +13,11 @@ class RMSpropOptimizer(Optimizer):
     '''
 
     def __init__(self, **kwargs):
+        from keras.optimizers import RMSprop
+        self.RMSprop = RMSprop
+
         self.optim_param_keys = ['lr', 'rho', 'decay', 'epsilon']
         super(RMSpropOptimizer, self).__init__(**kwargs)
 
     def init_optimizer(self):
-        self.keras_optimizer = RMSprop(**self.optim_param)
+        self.keras_optimizer = self.RMSprop(**self.optim_param)

@@ -107,7 +107,7 @@ if [ $(uname) == "Darwin" ]; then
 else
   sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 fi
-sudo python3 -m pip install 'gym[all]'
+git clone https://github.com/openai/gym.git && cd gym && sudo python3 -m pip install -e .[all] && cd ..
 git clone https://github.com/pybox2d/pybox2d && cd pybox2d/ && sudo python3 setup.py clean && sudo python3 setup.py build && sudo python3 setup.py install && cd ..
 python3 -c "import gym; gym.make('LunarLander-v2')"
 python3 -c "import gym; gym.make('SpaceInvaders-v0')"

@@ -3,17 +3,11 @@ RAND_SEED = 42
 import numpy as np
 np.random.seed(RAND_SEED)
 np.seterr(all='raise')
-from keras import backend as K
-if K.backend() == 'tensorflow':
-    K.tf.set_random_seed(RAND_SEED)
-else:
-    K.theano.tensor.shared_randomstreams.RandomStreams(seed=RAND_SEED)
 import copy
 import gym
 import traceback
 from os import environ
 from rl.util import *
-import rl.util
 from rl.agent import *
 from rl.analytics import *
 from rl.hyperoptimizer import *
@@ -59,6 +53,9 @@ class Session(object):
     '''
 
     def __init__(self, trial, session_num=0, num_of_sessions=1, **kwargs):
+        from keras import backend as K
+        self.K = K
+
         self.trial = trial
         self.session_num = session_num
         self.num_of_sessions = num_of_sessions
@@ -102,15 +99,13 @@ class Session(object):
         asset/problems.json, then reset the other sys vars
         on reset will add vars (lower cases, see REQUIRED_SYS_KEYS)
         '''
-        sys_vars = rl.util.PROBLEMS[self.problem]
+        sys_vars = PROBLEMS[self.problem]
         if args.max_epis >= 0:
             sys_vars['MAX_EPISODES'] = args.max_epis
         if not args.render:
             sys_vars['RENDER'] = False
         if environ.get('CI'):
             sys_vars['RENDER'] = False
-            if self.problem != 'TestCartPole-v0':
-                sys_vars['MAX_EPISODES'] = 4
         self.sys_vars = sys_vars
         self.reset_sys_vars()
         return self.sys_vars
@@ -127,7 +122,8 @@ class Session(object):
     def check_sys_vars(self):
         '''ensure the requried RL system vars are specified'''
         sys_keys = self.sys_vars.keys()
-        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS)
+        assert all(k in sys_keys for k in REQUIRED_SYS_KEYS), \
+            'sys_vars do not have all REQUIRED_SYS_KEYS'.format()
 
     def set_env_spec(self):
         '''Helper: return the env specs: dims, actions, reward range'''
@@ -241,8 +237,8 @@ class Session(object):
 
     def clear(self):
         self.grapher.clear()
-        if K.backend() == 'tensorflow':
-            K.clear_session()  # manual gc to fix TF issue 3388
+        if self.K.backend() == 'tensorflow':
+            self.K.clear_session()  # manual gc to fix TF issue 3388
         del_self_attr(self)
 
     def run(self):
@@ -307,7 +303,6 @@ class Trial(object):
                  run_timestamp=timestamp(),
                  experiment_id_override=None,
                  **kwargs):
-
         self.experiment_spec = experiment_spec
         self.experiment_name = self.experiment_spec.get('experiment_name')
         self.times = times
@@ -319,7 +314,7 @@ class Trial(object):
         self.trial_id = self.experiment_id + '_t' + str(self.trial_num)
         log_trial_delimiter(self, 'Init')
 
-        param_range = rl.util.EXPERIMENT_SPECS.get(
+        param_range = EXPERIMENT_SPECS.get(
             self.experiment_name).get('param_range')
         self.param_variables = list(
             param_range.keys()) if param_range else []
@@ -370,7 +365,7 @@ class Trial(object):
             log_trial_delimiter(self, 'Already completed')
         else:
             log_trial_delimiter(self, 'Run')
-            self.keras_session = configure_gpu()
+            self.keras_session = configure_hardware(RAND_SEED)
             time_start = timestamp()
             sys_vars_array = [] if (self.data is None) else self.data[
                 'sys_vars_array']
@@ -415,8 +410,8 @@ def analyze_experiment(trial_or_experiment_id):
 
 
 def run(name_id_spec, times=1,
-        param_selection=False,
-        analyze_only=False,  **kwargs):
+        param_selection=False, analyze_only=False,
+        **kwargs):
     '''
     primary method:
     specify:
@@ -447,13 +442,13 @@ def run(name_id_spec, times=1,
                 'Rerun an incomplete experiment by id {}'.format(
                     experiment_id))
             experiment_kwargs['experiment_id_override'] = experiment_id
-            experiment_spec = rl.util.EXPERIMENT_SPECS.get(
+            experiment_spec = EXPERIMENT_SPECS.get(
                 parse_experiment_name(name_id_spec))
         else:  # run a new experiment by name
             experiment_name = parse_experiment_name(name_id_spec)
             logger.info(
                 'Run a new experiment by name {}'.format(experiment_name))
-            experiment_spec = rl.util.EXPERIMENT_SPECS.get(experiment_name)
+            experiment_spec = EXPERIMENT_SPECS.get(experiment_name)
     else:  # run a new experiment by spec
         logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec

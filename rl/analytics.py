@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import platform
 import warnings
-from functools import partial
 from os import environ
 from rl.util import *
 
@@ -12,7 +11,7 @@ MPL_BACKEND = 'agg' if (
     environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
-    'performance_score',
+    'fitness_score',
     'mean_rewards_per_epi_stats_mean',
     'mean_rewards_stats_mean',
     'epi_stats_mean',
@@ -24,7 +23,7 @@ STATS_COLS = [
 ]
 
 EXPERIMENT_GRID_Y_COLS = [
-    'performance_score',
+    'fitness_score',
     'mean_rewards_stats_mean',
     'max_total_rewards_stats_mean',
     'epi_stats_mean'
@@ -58,7 +57,7 @@ class Grapher(object):
     '''
 
     def __init__(self, session):
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         (_mpl, self.plt, _sns) = scoped_mpl_import()
         self.session = session
@@ -108,7 +107,7 @@ class Grapher(object):
 
     def plot(self):
         '''do live plotting'''
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         sys_vars = self.session.sys_vars
         ax1, p1 = self.subgraphs['total rewards']
@@ -146,7 +145,7 @@ class Grapher(object):
         self.figure.savefig(self.graph_filename)
 
     def clear(self):
-        if not args.plot_graph or environ.get('CI'):
+        if environ.get('CI'):
             return
         self.plt.close()
         del_self_attr(self)
@@ -213,14 +212,14 @@ def compose_data(trial):
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
     stats.update({
-        'performance_score': stats[
+        'fitness_score': stats[
             'mean_rewards_per_epi_stats']['mean'] * (stats[
                 'solved_ratio_of_sessions'] ** 2)
     })
 
     # summary metrics
     metrics = {
-        'performance_score': stats['performance_score'],
+        'fitness_score': stats['fitness_score'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
         'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
@@ -250,30 +249,73 @@ def plot_experiment(data_df, trial_id):
     if len(data_df) < 2:  # no multi selection
         return
     (_mpl, _plt, sns) = scoped_mpl_import()
-
     experiment_id = parse_experiment_id(trial_id)
+    hue = 'solved_ratio_of_sessions'
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
-    for x in X_cols:
-        for y in EXPERIMENT_GRID_Y_COLS:
-            df_plot = sns.swarmplot(data=data_df, x=x, y=y,
-                                    hue='solved_ratio_of_sessions')
-            fig = df_plot.get_figure()
-            fig.suptitle(wrap_text(experiment_id))
-            filename = './data/{}/{}_analysis_{}_vs_{}.png'.format(
-                experiment_id, experiment_id, x, y)
-            fig.savefig(filename)
-            fig.clear()
+    col_size = len(X_cols)
+    row_size = len(EXPERIMENT_GRID_Y_COLS)
+    groups = data_df.groupby(hue)
 
-    fig = sns.PairGrid(
-        data_df, x_vars=X_cols, y_vars=EXPERIMENT_GRID_Y_COLS,
-        hue='solved_ratio_of_sessions', size=3)
-    fig.map(partial(sns.swarmplot, size=3))
-    fig.fig.suptitle(wrap_text(experiment_id))
-    fig.add_legend()
+    # for main grid plot
+    sns_only = True
+    big_fig, axes = sns.plt.subplots(
+        row_size, col_size, figsize=(col_size*4, row_size*3),
+        sharex='col', sharey='row')
+    for ix, x in enumerate(X_cols):
+        for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
+            big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
+            if (data_df[x].dtype.name == 'category' or
+                    len(data_df[x].unique()) <= 5):
+                sns.swarmplot(
+                    data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
+            else:
+                sns_only = False
+                big_ax.margins(0.05)
+                big_ax.xaxis.grid(False)
+                for _, group in groups:
+                    big_ax.plot(group[x], group[y], label=hue,
+                                marker='o', ms=3, linestyle='')
+                    big_ax.set_xlabel(x)
+                    big_ax.set_ylabel(y)
+
+            big_ax.legend_ = None  # set common legend below
+            # label only left and bottom axes
+            if iy != row_size - 1:
+                big_ax.set_xlabel('')
+            if ix != 0:
+                big_ax.set_ylabel('')
+
+    big_fig.tight_layout()
+    big_fig.suptitle(wrap_text(experiment_id))
+    legend_labels = None if sns_only else sorted(data_df[hue].unique())
+    legend_ms = 0.5 if sns_only else 1
+    legend = sns.plt.legend(title='solved_ratio_of_sessions',
+                            labels=legend_labels, markerscale=legend_ms,
+                            fontsize=10, loc='center right',
+                            bbox_to_anchor=(1.1+col_size*0.1, row_size+0.1))
+    legend.get_title().set_fontsize('10')
+    big_fig.subplots_adjust(top=0.96, right=0.9)
+
     filename = './data/{0}/{0}_analysis.png'.format(
         experiment_id)
-    fig.savefig(filename)
-    fig.fig.clear()
+    big_fig.savefig(filename)
+    big_fig.clear()
+
+    # use numerical, since contour only makes sense for ordered azes
+    numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+    numeric_X_cols = list(
+        filter(lambda x: data_df[x].dtype in numerics, X_cols))
+    with sns.axes_style('white', {'axes.linewidth': 0.2}):
+        g = sns.pairplot(
+            data_df, vars=numeric_X_cols, hue=hue,
+            size=3, aspect=1, plot_kws={'s': 50, 'alpha': 0.5})
+        g.fig.suptitle(wrap_text(experiment_id))
+        g = g.add_legend()
+        filename = './data/{0}/{0}_analysis_correlation.png'.format(
+            experiment_id)
+        g.savefig(filename)
+        g.fig.clear()
+
     sns.plt.close()
 
 
@@ -314,7 +356,7 @@ def analyze_data(experiment_data_or_experiment_id):
             data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
-        ['performance_score'],
+        ['fitness_score'],
         inplace=True, ascending=False)
 
     trial_id = experiment_data[0]['trial_id']

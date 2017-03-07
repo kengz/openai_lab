@@ -13,9 +13,7 @@ class LineSearch(HyperOptimizer):
         All other parameters set to default vals
         note that this is order-preserving, as required by design
         '''
-        keys = sorted(self.param_range.keys())
-        self.param_search_list = []
-        for key in keys:
+        for key in self.param_range_keys:
             vals = self.param_range[key]
             for val in vals:
                 param = copy.deepcopy(self.default_param)
@@ -32,4 +30,4 @@ class LineSearch(HyperOptimizer):
         return
 
     def to_terminate(self):
-        return not (self.next_param_idx < len(self.param_search_list))
+        return not (self.next_trial_num < len(self.param_search_list))
