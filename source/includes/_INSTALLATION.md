@@ -79,7 +79,7 @@ _Notifications from the lab running on our remote server beast._
 There are many existing experiments specified in `rl/asset/experiment_specs.json`, and you can add more. Pick the `experiment_name`s (the JSON key, e.g. `"dqn", "lunar_dqn"`), list under config key `experiment`. Then check [usage](#usage) to run the lab.
 
 
-## <a name="dependencies"></a>List of Dependencies
+## <a name="dependencies"></a>Dependencies
 
 There is more than a dozen of dependencies. For the full list, inspect `bin/setup`. Here are some major ones and their minimum required versions. If lab fails to run, check these first:
 
@@ -93,11 +93,11 @@ There is more than a dozen of dependencies. For the full list, inspect `bin/setu
 
 ## Hardware
 
-For setting up your own hardware, especially with a GPI, googling will help more than we could. Also, setup is usually non-trivial since there're so many moving parts. Here's what we referred:
+For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there're so many moving parts. Here's what we referred:
 
+- [A ~$1000 PC build](https://pcpartpicker.com/list/xdbWBP) (more expensive now ~$1200; buy your parts during Black Friday/sales.)
 - [The official TensorFlow installation guide, with GPU setup info](https://www.tensorflow.org/install/install_linux)
 - [Getting CUDA 8 to Work With openAI Gym on AWS and Compiling Tensorflow for CUDA 8 Compatibility](http://christopher5106.github.io/nvidia/2016/12/30/commands-nvidia-install-ubuntu-16-04.html)
 - [Major OpenAI issue with SSH with xvfb failing with NVIDIA Driver due to opengl files](https://github.com/openai/gym/issues/366)
-- [NVIDIA installation guide](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4ZrJBKeSk)
 - [NVIDIA cannot install due to X server running](http://askubuntu.com/questions/149206/how-to-install-nvidia-run)
-- [when login fails on Ubuntu after Nvidia installation](http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login)
+- [When login fails on Ubuntu after Nvidia installation](http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login)
