@@ -556,7 +556,10 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000
+      "epi_change_lr": 5000,
+      "auto_architecture":  false,
+      "num_hidden_layers" : 3,
+      "num_initial_channels" : 8
     },
     "param_range": {
       "lr": [0.001, 0.0001],

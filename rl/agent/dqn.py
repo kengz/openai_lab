@@ -22,6 +22,7 @@ class DQN(Agent):
                  auto_architecture=False,
                  num_hidden_layers=3,
                  size_first_hidden_layer=256,
+                 num_initial_channels=16,
                  **kwargs):  # absorb generic param without breaking
         # import only when needed to contain side-effects
         from keras.layers.core import Dense
@@ -46,6 +47,7 @@ class DQN(Agent):
         self.auto_architecture = auto_architecture
         self.num_hidden_layers = num_hidden_layers
         self.size_first_hidden_layer = size_first_hidden_layer
+        self.num_initial_channels = num_initial_channels
         log_self(self)
         self.build_model()
 
