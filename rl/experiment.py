@@ -345,7 +345,7 @@ class Trial(object):
         else:  # has data, check if the latest session is the last
             if s is None:  # used for when reading from data
                 s = len(self.data['sys_vars_array']) - 1
-            failed = (1 < s and s < self.times) and (
+            failed = (0 < s and s < self.times) and (
                 self.data['stats']['solved_ratio_of_sessions'] == 0.)
             if failed:
                 logger.info(
