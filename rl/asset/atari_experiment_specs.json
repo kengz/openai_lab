@@ -9,8 +9,8 @@
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
-      "lr": 0.001,
       "batch_size": 32,
+      "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers_shape": [
         [16, 8, 8, [4, 4]],
@@ -22,12 +22,7 @@
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hidden_layers_shape": [
-        [
-          [16, 8, 8, [4, 4]],
-          [32, 4, 4, [2, 2]]
-        ]
-      ]
+      "gamma": [0.97, 0.99]
     }
   },
   "breakout_double_dqn": {
@@ -40,8 +35,8 @@
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
-      "lr": 0.001,
       "batch_size": 32,
+      "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers_shape": [
         [16, 8, 8, [4, 4]],
@@ -53,12 +48,7 @@
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hidden_layers_shape": [
-        [
-          [16, 8, 8, [4, 4]],
-          [32, 4, 4, [2, 2]]
-        ]
-      ]
+      "gamma": [0.97, 0.99]
     }
   },
   "air_raid_dqn": {
@@ -71,24 +61,20 @@
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
-      "lr": 0.001,
       "batch_size": 32,
+      "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers_shape": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 1000000,
-      "epi_change_lr": 1000000
+      "exploration_anneal_episodes": 10000,
+      "epi_change_lr": 10000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hidden_layers_shape": [
-        [200, 100],
-        [300, 200],
-        [200, 100, 50]
-      ]
+      "gamma": [0.97, 0.99]
     }
   }
 }
