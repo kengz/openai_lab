@@ -5,7 +5,7 @@ from rl.agent.dqn import DQN
 from rl.util import logger
 
 
-class DQNFreeze(DoubleDQN):
+class FreezeDQN(DoubleDQN):
 
     '''
     Extends DQN agent to freeze target Q network
@@ -48,4 +48,4 @@ class DQNFreeze(DoubleDQN):
         timestep_check = sys_vars['t'] == (self.env_spec['timestep_limit'] - 1)
         if done or timestep_check:
             self.update_target_model()
-        super(DQNFreeze, self).update(sys_vars)
+        super(FreezeDQN, self).update(sys_vars)
