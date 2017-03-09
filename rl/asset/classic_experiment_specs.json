@@ -20,7 +20,7 @@
     "param": {
       "lr": 0.01,
       "gamma": 0.99,
-      "exploration_anneal_episodes": 200
+      "exploration_anneal_episodes": 100
     }
   },
   "dev_dqn": {
@@ -32,8 +32,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
-      "lr": 0.001,
+      "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
       "hidden_layers_shape": [32],
@@ -41,8 +40,8 @@
       "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "exploration_anneal_episodes": [10, 20],
-      "lr": [0.02, 0.2]
+      "gamma": [0.97, 0.99],
+      "lr": [0.01, 0.1]
     }
   },
   "dqn": {
@@ -54,7 +53,6 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
@@ -85,7 +83,6 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "max_evals": 100,
-      "train_per_n_new_exp": 1,
       "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
@@ -119,7 +116,6 @@
     "Policy": "DoubleDQNBoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
@@ -134,26 +130,24 @@
         [8],
         [16],
         [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+      ]
     }
   },
-  "dqn_freeze": {
+  "freeze_dqn": {
     "problem": "CartPole-v0",
-    "Agent": "DQNFreeze",
+    "Agent": "FreezeDQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
       "hidden_layers_shape": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 20
+      "exploration_anneal_episodes": 10
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -162,8 +156,7 @@
         [8],
         [16],
         [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+      ]
     }
   },
   "sarsa": {
@@ -175,7 +168,6 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
@@ -190,8 +182,7 @@
         [8],
         [16],
         [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+      ]
     }
   },
   "sarsa_exp": {
@@ -203,7 +194,6 @@
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
@@ -218,11 +208,10 @@
         [8],
         [16],
         [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+      ]
     }
   },
-  "sarsa_offpol": {
+  "offpol_sarsa": {
     "problem": "CartPole-v0",
     "Agent": "OffPolicySarsa",
     "HyperOptimizer": "GridSearch",
@@ -231,7 +220,6 @@
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
@@ -246,8 +234,7 @@
         [8],
         [16],
         [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+      ]
     }
   },
   "mountain_dqn": {
@@ -257,29 +244,27 @@
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
-    "PreProcessor": "StackStates",
+    "PreProcessor": "NoPreProcessor",
     "param": {
       "train_per_n_new_exp": 1,
       "lr": 0.001,
-      "batch_size": 16,
       "gamma": 0.99,
-      "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
-      "hidden_layers_activation": "relu",
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 500
+      "epi_change_lr": 300
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
       "gamma": [0.97, 0.99, 0.999],
       "hidden_layers_shape": [
+        [128],
         [256],
         [128, 64],
         [256, 128],
         [256, 128, 64],
         [512, 256, 128, 64]
-      ],
-      "exploration_anneal_episodes": [200, 300]
+      ]
     }
   },
   "rand_mountain_dqn": {
@@ -294,13 +279,11 @@
       "max_evals": 100,
       "train_per_n_new_exp": 1,
       "lr": 0.001,
-      "batch_size": 16,
       "gamma": 0.99,
-      "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
-      "hidden_layers_activation": "relu",
+      "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 500
+      "epi_change_lr": 300
     },
     "param_range": {
       "lr": {
@@ -312,6 +295,7 @@
         "max": 0.999
       },
       "hidden_layers_shape": [
+        [128],
         [256],
         [128, 64],
         [256, 128],
@@ -333,13 +317,11 @@
     "param": {
       "train_per_n_new_exp": 1,
       "lr": 0.001,
-      "batch_size": 1,
       "gamma": 0.99,
-      "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 1000
+      "epi_change_lr": 300
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
@@ -349,9 +331,9 @@
         [256],
         [128, 64],
         [256, 128],
-        [256, 128, 64]
-      ],
-      "exploration_anneal_episodes": [200, 300, 400]
+        [256, 128, 64],
+        [512, 256, 128, 64]
+      ]
     }
   },
   "mountain_double_dqn": {
@@ -365,13 +347,11 @@
     "param": {
       "train_per_n_new_exp": 1,
       "lr": 0.001,
-      "batch_size": 16,
       "gamma": 0.99,
-      "n_epoch": 2,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 1000
+      "epi_change_lr": 300
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
@@ -381,9 +361,9 @@
         [256],
         [128, 64],
         [256, 128],
-        [256, 128, 64]
-      ],
-      "exploration_anneal_episodes": [100, 200, 300]
+        [256, 128, 64],
+        [512, 256, 128, 64]
+      ]
     }
   }
 }
