@@ -250,7 +250,8 @@
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers_shape": [128, 64],
-      "hidden_layers_activation": "sigmoid",
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
       "epi_change_lr": 300
     },
@@ -281,7 +282,8 @@
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers_shape": [128, 64],
-      "hidden_layers_activation": "sigmoid",
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
       "epi_change_lr": 300
     },
@@ -320,6 +322,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
       "epi_change_lr": 300
     },
@@ -350,6 +353,7 @@
       "gamma": 0.99,
       "hidden_layers_shape": [128, 64],
       "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
       "epi_change_lr": 300
     },
