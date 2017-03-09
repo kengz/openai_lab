@@ -41,6 +41,27 @@
     "MAX_EPISODES": 400,
     "REWARD_MEAN_LEN": 100
   },
+  "BipedalWalker-v2": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "BipedalWalker-v2",
+    "SOLVED_MEAN_REWARD": 300,
+    "MAX_EPISODES": 8000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "BipedalWalkerHardcore-v2": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "BipedalWalkerHardcore-v2",
+    "SOLVED_MEAN_REWARD": 300,
+    "MAX_EPISODES": 8000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "CarRacing-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "CarRacing-v0",
+    "SOLVED_MEAN_REWARD": 900,
+    "MAX_EPISODES": 8000,
+    "REWARD_MEAN_LEN": 100
+  },
   "AirRaid-v0": {
     "RENDER": true,
     "GYM_ENV_NAME": "AirRaid-v0",

@@ -189,5 +189,77 @@
         [400, 200, 100]
       ]
     }
+  },
+  "bipedal": {
+    "problem": "BipedalWalker-v2",
+    "Agent": "DQN",
+    "HyperOptimizer": "RandomSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "EpsilonGreedyPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "max_evals": 100,
+      "train_per_n_new_exp": 5,
+      "batch_size": 32,
+      "lr": 0.001,
+      "gamma": 0.99,
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
+      "exploration_anneal_episodes": 4000,
+      "epi_change_lr": 5000
+    },
+    "param_range": {
+      "lr": {
+        "min": 0.0001,
+        "max": 0.005
+      },
+      "gamma": {
+        "min": 0.97,
+        "max": 0.999
+      },
+      "hidden_layers_shape": [
+        [800, 400],
+        [400, 200, 100],
+        [400, 200, 100, 50]
+      ]
+    }
+  },
+  "bipedal_hardcore": {
+    "problem": "BipedalWalkerHardcore-v2",
+    "Agent": "DQN",
+    "HyperOptimizer": "RandomSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "EpsilonGreedyPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "max_evals": 100,
+      "train_per_n_new_exp": 5,
+      "batch_size": 32,
+      "lr": 0.001,
+      "gamma": 0.99,
+      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "linear",
+      "exploration_anneal_episodes": 4000,
+      "epi_change_lr": 5000
+    },
+    "param_range": {
+      "lr": {
+        "min": 0.0001,
+        "max": 0.005
+      },
+      "gamma": {
+        "min": 0.97,
+        "max": 0.999
+      },
+      "hidden_layers_shape": [
+        [800, 400],
+        [400, 200, 100],
+        [400, 200, 100, 50]
+      ]
+    }
   }
 }
