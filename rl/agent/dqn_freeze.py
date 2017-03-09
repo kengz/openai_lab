@@ -1,5 +1,5 @@
-import os
 import numpy as np
+from os import getpid
 from rl.agent.double_dqn import DoubleDQN
 from rl.agent.dqn import DQN
 from rl.util import logger

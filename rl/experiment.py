@@ -6,7 +6,7 @@ np.seterr(all='raise')
 import copy
 import gym
 import traceback
-from os import environ
+from os import environ, makedirs
 from rl.util import *
 from rl.agent import *
 from rl.analytics import *
@@ -323,7 +323,7 @@ class Trial(object):
 
         # data file
         self.base_dir = './data/{}'.format(self.experiment_id)
-        os.makedirs(self.base_dir, exist_ok=True)
+        makedirs(self.base_dir, exist_ok=True)
         self.base_filename = './data/{}/{}'.format(
             self.experiment_id, self.trial_id)
         self.data_filename = self.base_filename + '.json'
