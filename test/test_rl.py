@@ -25,6 +25,11 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
+    def test_rand_dqn(cls):
+        data_df = run('rand_dqn')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
     def test_double_dqn(cls):
         data_df = run('double_dqn')
         assert isinstance(data_df, pd.DataFrame)
@@ -35,13 +40,18 @@ class DQNTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_sarsa_exp(cls):
-        data_df = run('sarsa_exp')
+    def test_exp_sarsa(cls):
+        data_df = run('exp_sarsa')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_sarsa_offpol(cls):
-        data_df = run('sarsa_offpol')
+    def test_offpol_sarsa(cls):
+        data_df = run('offpol_sarsa')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
+    def test_acrobot(cls):
+        data_df = run('acrobot')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod

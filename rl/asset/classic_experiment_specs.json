@@ -219,7 +219,7 @@
       ]
     }
   },
-  "sarsa_exp": {
+  "exp_sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepExpectedSarsa",
     "HyperOptimizer": "GridSearch",
