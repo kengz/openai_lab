@@ -20,7 +20,9 @@ Each run is an `experiment` that runs multiple `Trial`s (not restricted to the s
 Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiments) vs outputs.
 
 
-## Hyperparameter Optimization Module
+## problem
+## Agent
+## HyperOptimizer
 
 A hyperoptimizer is a function `h` that takes:
 
@@ -70,3 +72,10 @@ Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
 hopt = Hopt(Trial, **experiment_kwargs)
 experiment_data = hopt.run()
 ```
+
+
+## Memory
+## Optimizer
+## Policy
+## PreProcessor
+
