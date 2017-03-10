@@ -151,6 +151,27 @@ class Grapher(object):
         del_self_attr(self)
 
 
+def fitness_score(mean_rewards_per_epi, solved_ratio_of_sessions):
+    '''
+    calculate the fitness score for hyperparameter optimization
+    +1 to ratio to account for partial solution where ratio = 0
+    use square to isolate early-fail high mean_rewards/epi value
+    '''
+    return mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
+
+
+def ideal_fitness_score(mean_rewards, epi, solved_epi_speedup):
+    '''
+    calculate the ideal fitness_score with perfect solved ratio
+    for hyperparameter optimization to select
+    '''
+    ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
+    ideal_solved_ratio = 1
+    ideal_fitness_score = fitness_score(
+        ideal_mean_rewards_per_epi, ideal_solved_ratio)
+    return ideal_fitness_score
+
+
 def basic_stats(array):
     '''generate the basic stats for a numerical array'''
     if not len(array):
@@ -212,9 +233,9 @@ def compose_data(trial):
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
     stats.update({
-        'fitness_score': stats[
-            'mean_rewards_per_epi_stats']['mean'] * (stats[
-                'solved_ratio_of_sessions'] ** 2)
+        'fitness_score': fitness_score(
+            stats['mean_rewards_per_epi_stats']['mean'],
+            stats['solved_ratio_of_sessions'])
     })
 
     # summary metrics
