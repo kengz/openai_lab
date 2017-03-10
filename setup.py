@@ -6,6 +6,7 @@ from setuptools.command.test import test as TestCommand
 
 # explicitly config
 test_args = [
+    '-n 2',
     '--cov-report=term',
     '--cov-report=html',
     '--cov=rl',
