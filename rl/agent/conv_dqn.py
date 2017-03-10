@@ -20,9 +20,11 @@ class ConvDQN(DQN):
         '''
         build the hidden layers into model using parameter self.hidden_layers
         '''
-        # Auto architecture infers the size of the hidden layers from the size
-        # of the first layer. Each successive hidden layer is half the size of the
-        # previous layer
+        # Auto architecture infers the size of the hidden layers from the number
+        # of channels in the first hidden layer and number of layers
+        # With each successive layer the number of channels is doubled
+        # Kernel size is fixed at 4, and stride at (2, 2)
+        # No new layers are added if the cols or rows have dim <= 5
         # Enables hyperparameter optimization over network architecture
         if self.auto_architecture:
             num_channels = self.num_initial_channels
