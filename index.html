@@ -212,202 +212,29 @@
 
 <p><em>An experimentation system for Reinforcement Learning using OpenAI and Keras.</em></p>
 
-<p>The <em>OpenAI Lab</em> is created to let us do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. We can theorize as fast as we think, and experiment as fast as the computers can run.</p>
+<p>The <em>OpenAI Lab</em> is created to do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. It provides an easy to use interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, combined with an automated experimental and analytics framework.</p>
 
-<p>The lab provides an easy-to-use interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, combined with an automated experimental and analytics framework. We had tested several deep reinforcement learning algorithms with <em>OpenAI Lab</em> and solved a few OpenAI environments - by running hundreds of experiments with minimal setup and few lines of code - we will show by example below.</p>
+<p>While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.</p>
 
-<p>Before this, experiments used to be hard and slow, as we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components. This lowers the experimental complexity and enables an explosion of experiments. We can quickly add new RL component, make new combinations, run hyperparameter selection and solve environments. This unlocks a new perspective to treat RL as a full-on experimental science.</p>
+<p>To address this, the Lab does three things.</p>
+
+<ol>
+<li>Handles the basic RL environment and algorithm setups.</li>
+<li>Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.</li>
+<li>Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are logged in a standardized format so that solutions can be reproduced by anyone using the Lab.</li>
+</ol>
+
+<p>With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.</p>
+
+<p>See Lab&rsquo;s <a href="#solutions">Best Solutions</a> to some OpenAI environments.</p>
+
+<h3 id="run-the-lab">Run the Lab</h3>
+
+<p>Next, see <a href="#installation">Installation</a>, <a href="#usage">Usage</a>, <a href="#development">Development</a>.</p>
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
-<p><em>Timelapse of OpenAI Lab (open the gif in new tab for larger size).</em></p>
-
-<h2 id="lab-demo">Lab Demo</h2>
-
-<p>Each experiment involves:
-- a problem - an <a href="https://gym.openai.com/envs">OpenAI Gym environment</a>
-- a RL agent with modular components <code class="prettyprint">agent, memory, optimizer, policy, preprocessor</code>, each of which is an experimental variable.</p>
-
-<p>We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.</p>
-
-<h3 id="specify-experiment">Specify Experiment</h3>
-
-<p>The example below is fully specified in <code class="prettyprint">rl/asset/experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w">
-      </span><span class="p">],</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<ul>
-<li><em>experiment</em>: <code class="prettyprint">dqn</code></li>
-<li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
-<li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
-<li><em>control agent variables</em>:
-
-<ul>
-<li><code class="prettyprint">DQN</code> agent</li>
-<li><code class="prettyprint">LinearMemoryWithForgetting</code></li>
-<li><code class="prettyprint">AdamOptimizer</code></li>
-<li><code class="prettyprint">NoPreProcessor</code></li>
-</ul></li>
-<li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
-</ul>
-
-<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">96</code> param combinations (trials), and <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run <code class="prettyprint">96 x 5 = 480</code> sessions.</p>
-
-<h3 id="lab-workflow">Lab Workflow</h3>
-
-<p>The workflow to setup this experiment is as follow:</p>
-
-<ol>
-<li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
-<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">experiment_spec.json</code> to include this new variable,  reuse the other existing RL components, and specify the param range.</li>
-<li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
-<li>Run <code class="prettyprint">grunt -prod</code></li>
-<li>Analyze the graphs and data (live-synced)</li>
-</ol>
-
-<h3 id="lab-results">Lab Results</h3>
-
-<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="./images/dqn.png" />
-<br><br>
-<img alt="The dqn experiment analytics correlation" src="./images/dqn_correlation.png" /></div>
-
-<p><em>The dqn experiment analytics generated by the lab (open in new tab for larger size). This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves.</em></p>
-
-<table><thead>
-<tr>
-<th style="text-align: left">fitness_score</th>
-<th style="text-align: left">mean_rewards_per_epi_stats_mean</th>
-<th style="text-align: left">mean_rewards_stats_mean</th>
-<th style="text-align: left">epi_stats_mean</th>
-<th style="text-align: left">solved_ratio_of_sessions</th>
-<th style="text-align: left">num_of_sessions</th>
-<th style="text-align: left">max_total_rewards_stats_mean</th>
-<th style="text-align: left">t_stats_mean</th>
-<th style="text-align: left">trial_id</th>
-<th style="text-align: left">variable_exploration_anneal_episodes</th>
-<th style="text-align: left">variable_gamma</th>
-<th style="text-align: left">variable_hidden_layers_shape</th>
-<th style="text-align: left">variable_lr</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">1.178061</td>
-<td style="text-align: left">1.178061</td>
-<td style="text-align: left">195.726</td>
-<td style="text-align: left">169.2</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">196.4</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t44</td>
-<td style="text-align: left">10</td>
-<td style="text-align: left">0.99</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.173569</td>
-<td style="text-align: left">1.173569</td>
-<td style="text-align: left">195.47</td>
-<td style="text-align: left">168.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t32</td>
-<td style="text-align: left">10</td>
-<td style="text-align: left">0.97</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.152447</td>
-<td style="text-align: left">1.152447</td>
-<td style="text-align: left">195.248</td>
-<td style="text-align: left">170.6</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">198.2</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t64</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.96</td>
-<td style="text-align: left">[16]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.128509</td>
-<td style="text-align: left">1.128509</td>
-<td style="text-align: left">195.392</td>
-<td style="text-align: left">177.8</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t92</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.99</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.127216</td>
-<td style="text-align: left">1.127216</td>
-<td style="text-align: left">195.584</td>
-<td style="text-align: left">175.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t76</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.97</td>
-<td style="text-align: left">[16]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-</tbody></table>
-
-<p><em>Analysis data table, top 5 trials.</em></p>
-
-<p>On completion, from the analytics (zoom on the graph), we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:</p>
-
-<ul>
-<li><em>lr</em>: 0.001</li>
-<li><em>gamma</em>: 0.99</li>
-<li><em>hidden_layers_shape</em>: [32]</li>
-<li><em>exploration_anneal_episodes</em>: 10</li>
-</ul>
-
-<h3 id="run-your-own-lab">Run Your Own Lab</h3>
-
-<p>Want to run the lab? Go to <a href="#installation">Installation</a>, <a href="#usage">Usage</a> and <a href="#development">Development</a>.</p>
+<p><em>Timelapse of OpenAI Lab, solving Cartpole.</em></p>
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
@@ -636,7 +463,188 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/asset/problems.json</code></li>
 </ul>
 
-          <h1 id="features"><a name="features"></a>Features</h1>
+<h2 id="lab-demo">Lab Demo</h2>
+
+<p>Each experiment involves:
+- a problem - an <a href="https://gym.openai.com/envs">OpenAI Gym environment</a>
+- a RL agent with modular components <code class="prettyprint">agent, memory, optimizer, policy, preprocessor</code>, each of which is an experimental variable.</p>
+
+<p>We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.</p>
+
+<h3 id="specify-experiment">Specify Experiment</h3>
+
+<p>The example below is fully specified in <code class="prettyprint">rl/asset/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<ul>
+<li><em>experiment</em>: <code class="prettyprint">dqn</code></li>
+<li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
+<li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
+<li><em>control agent variables</em>:
+
+<ul>
+<li><code class="prettyprint">DQN</code> agent</li>
+<li><code class="prettyprint">LinearMemoryWithForgetting</code></li>
+<li><code class="prettyprint">AdamOptimizer</code></li>
+<li><code class="prettyprint">NoPreProcessor</code></li>
+</ul></li>
+<li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
+</ul>
+
+<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">96</code> param combinations (trials), and <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run <code class="prettyprint">96 x 5 = 480</code> sessions.</p>
+
+<h3 id="lab-workflow">Lab Workflow</h3>
+
+<p>The workflow to setup this experiment is as follow:</p>
+
+<ol>
+<li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
+<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">experiment_spec.json</code> to include this new variable,  reuse the other existing RL components, and specify the param range.</li>
+<li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
+<li>Run <code class="prettyprint">grunt -prod</code></li>
+<li>Analyze the graphs and data (live-synced)</li>
+</ol>
+
+<h3 id="lab-results">Lab Results</h3>
+
+<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="./images/dqn.png" />
+<br><br>
+<img alt="The dqn experiment analytics correlation" src="./images/dqn_correlation.png" /></div>
+
+<p><em>The dqn experiment analytics generated by the Lab. This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves.</em></p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">fitness_score</th>
+<th style="text-align: left">mean_rewards_per_epi_stats_mean</th>
+<th style="text-align: left">mean_rewards_stats_mean</th>
+<th style="text-align: left">epi_stats_mean</th>
+<th style="text-align: left">solved_ratio_of_sessions</th>
+<th style="text-align: left">num_of_sessions</th>
+<th style="text-align: left">max_total_rewards_stats_mean</th>
+<th style="text-align: left">t_stats_mean</th>
+<th style="text-align: left">trial_id</th>
+<th style="text-align: left">variable_exploration_anneal_episodes</th>
+<th style="text-align: left">variable_gamma</th>
+<th style="text-align: left">variable_hidden_layers_shape</th>
+<th style="text-align: left">variable_lr</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">1.178061</td>
+<td style="text-align: left">1.178061</td>
+<td style="text-align: left">195.726</td>
+<td style="text-align: left">169.2</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">196.4</td>
+<td style="text-align: left">dqn-2017_02_27_002407_t44</td>
+<td style="text-align: left">10</td>
+<td style="text-align: left">0.99</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">1.173569</td>
+<td style="text-align: left">1.173569</td>
+<td style="text-align: left">195.47</td>
+<td style="text-align: left">168.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_02_27_002407_t32</td>
+<td style="text-align: left">10</td>
+<td style="text-align: left">0.97</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">1.152447</td>
+<td style="text-align: left">1.152447</td>
+<td style="text-align: left">195.248</td>
+<td style="text-align: left">170.6</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">198.2</td>
+<td style="text-align: left">dqn-2017_02_27_002407_t64</td>
+<td style="text-align: left">20</td>
+<td style="text-align: left">0.96</td>
+<td style="text-align: left">[16]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">1.128509</td>
+<td style="text-align: left">1.128509</td>
+<td style="text-align: left">195.392</td>
+<td style="text-align: left">177.8</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_02_27_002407_t92</td>
+<td style="text-align: left">20</td>
+<td style="text-align: left">0.99</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">1.127216</td>
+<td style="text-align: left">1.127216</td>
+<td style="text-align: left">195.584</td>
+<td style="text-align: left">175.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_02_27_002407_t76</td>
+<td style="text-align: left">20</td>
+<td style="text-align: left">0.97</td>
+<td style="text-align: left">[16]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+</tbody></table>
+
+<p><em>Analysis data table, top 5 trials.</em></p>
+
+<p>On completion, from the analytics, we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:</p>
+
+<ul>
+<li><em>lr</em>: 0.001</li>
+<li><em>gamma</em>: 0.99</li>
+<li><em>hidden_layers_shape</em>: [32]</li>
+<li><em>exploration_anneal_episodes</em>: 10</li>
+</ul>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
@@ -661,7 +669,11 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 
 <p>Each trial collects the data from its sessions into <code class="prettyprint">trial_data</code>, which is saved to a JSON and as many plots as there are sessions. On the higher level, <code class="prettyprint">experiment</code> analyses the aggregate <code class="prettyprint">trial_data</code> to produce a best-sorted CSV and graphs of the variables (what&rsquo;s changed across experiments) vs outputs.</p>
 
-<h2 id="hyperparameter-optimization-module">Hyperparameter Optimization Module</h2>
+<h2 id="problem">problem</h2>
+
+<h2 id="agent">Agent</h2>
+
+<h2 id="hyperoptimizer">HyperOptimizer</h2>
 
 <p>A hyperoptimizer is a function <code class="prettyprint">h</code> that takes:</p>
 
@@ -709,6 +721,46 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <span class="n">hopt</span> <span class="o">=</span> <span class="n">Hopt</span><span class="p">(</span><span class="n">Trial</span><span class="p">,</span> <span class="o">**</span><span class="n">experiment_kwargs</span><span class="p">)</span>
 <span class="n">experiment_data</span> <span class="o">=</span> <span class="n">hopt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre>
+<h2 id="memory">Memory</h2>
+
+<h2 id="optimizer">Optimizer</h2>
+
+<h2 id="policy">Policy</h2>
+
+<h2 id="preprocessor">PreProcessor</h2>
+
+          <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
+
+<p>How to analyze your lab results, and contribute to <a href="#solutions">Best Solutions</a></p>
+
+          <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
+
+<p>Best solutions by OpenAI Lab users. <a href="http://kengz.me/openai_lab">Submission guideline, link to PR</a>.</p>
+
+<h2 id="classic-problems">Classic Problems</h2>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+<th style="text-align: left">analytics</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">CartPole-v0</td>
+<td style="text-align: left">1.4</td>
+<td style="text-align: left">15</td>
+<td style="text-align: left">kengz</td>
+<td style="text-align: left"><a href="http://kengz.me/openai_lab">rand_dqn</a></td>
+<td style="text-align: left"><a href="http://kengz.me/openai_lab">folder with graphs and top5 csv</a></td>
+</tr>
+</tbody></table>
+
+<h2 id="box2d-problems">Box2D Problems</h2>
+
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
 <p>Check the latest under the <a href="https://github.com/kengz/openai_lab/projects">Github Projects</a></p>
