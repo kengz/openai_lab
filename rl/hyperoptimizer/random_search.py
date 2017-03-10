@@ -1,5 +1,6 @@
 import json
 import numpy as np
+from rl.analytics import ideal_fitness_score
 from rl.hyperoptimizer.base_hyperoptimizer import HyperOptimizer
 from rl.util import PROBLEMS, to_json, logger
 
@@ -103,8 +104,11 @@ class RandomSearch(HyperOptimizer):
             'fitness_score': float('-inf'),
         }
         problem = PROBLEMS.get(self.experiment_spec['problem'])
-        self.ideal_fitness_score = problem[
-            'SOLVED_MEAN_REWARD'] / (problem['MAX_EPISODES']/3)
+        solved_mean_reward = problem['SOLVED_MEAN_REWARD']
+        max_episodes = problem['MAX_EPISODES']
+        solved_epi_speedup = 3 if solved_mean_reward > 0 else 1./3
+        self.ideal_fitness_score = ideal_fitness_score(
+            solved_mean_reward, max_episodes, solved_epi_speedup)
         logger.info(
             'ideal_fitness_scrore: {}'.format(self.ideal_fitness_score))
 

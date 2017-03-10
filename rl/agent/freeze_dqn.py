@@ -1,11 +1,11 @@
-import os
 import numpy as np
+from os import getpid
 from rl.agent.double_dqn import DoubleDQN
 from rl.agent.dqn import DQN
 from rl.util import logger
 
 
-class DQNFreeze(DoubleDQN):
+class FreezeDQN(DoubleDQN):
 
     '''
     Extends DQN agent to freeze target Q network
@@ -32,7 +32,7 @@ class DQNFreeze(DoubleDQN):
     def update_target_model(self):
         # TODO fix to not use frequent filesave, will cause memleak
         # Also, loading logic seems off
-        pid = os.getpid()
+        pid = getpid()
         filename = 'temp_Q_model_freeze_' + str(pid) + '.h5'
         model_dir = 'rl/asset/model'
         modelpath = '{}/{}'.format(model_dir, filename)
@@ -48,4 +48,4 @@ class DQNFreeze(DoubleDQN):
         timestep_check = sys_vars['t'] == (self.env_spec['timestep_limit'] - 1)
         if done or timestep_check:
             self.update_target_model()
-        super(DQNFreeze, self).update(sys_vars)
+        super(FreezeDQN, self).update(sys_vars)
