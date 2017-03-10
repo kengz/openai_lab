@@ -83,12 +83,12 @@ class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
         super(DecayingEpsilonGreedyPolicy, self).__init__()
-        self.decay = 0.9997
+        self.e_decay = 0.9997
 
     def update(self, sys_vars):
         _epi = sys_vars['epi']
         if self.e > self.final_e:
-            self.e = self.e * self.decay
+            self.e = self.e * self.e_decay
         return self.e
 
 

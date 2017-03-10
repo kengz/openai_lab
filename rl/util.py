@@ -5,11 +5,10 @@ import json
 import logging
 import multiprocessing as mp
 import numpy as np
-import os
 import re
 import sys
 from datetime import datetime, timedelta
-from os import path, environ, getpid
+from os import path, listdir, environ, getpid
 from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
@@ -20,8 +19,13 @@ ASSET_PATH = path.join(path.dirname(__file__), 'asset')
 # import and safeguard the PROBLEMS, EXPERIMENT_SPECS with checks
 def import_guard_asset():
     PROBLEMS = json.loads(open(path.join(ASSET_PATH, 'problems.json')).read())
-    EXPERIMENT_SPECS = json.loads(
-        open(path.join(ASSET_PATH, 'experiment_specs.json')).read())
+    EXPERIMENT_SPECS = {}
+    spec_files = [spec_json for spec_json in listdir(
+        ASSET_PATH) if spec_json.endswith('experiment_specs.json')]
+    for filename in spec_files:
+        specs = json.loads(open(path.join(ASSET_PATH, filename)).read())
+        EXPERIMENT_SPECS.update(specs)
+
     REQUIRED_PROBLEM_KEYS = [
         'GYM_ENV_NAME', 'SOLVED_MEAN_REWARD',
         'MAX_EPISODES', 'REWARD_MEAN_LEN']
@@ -275,11 +279,11 @@ def import_package_files(globals_, locals_, __file__):
     '''
     exports = []
     # globals_, locals_ = globals(), locals()
-    package_path = os.path.dirname(__file__)
-    package_name = os.path.basename(package_path)
+    package_path = path.dirname(__file__)
+    package_name = path.basename(package_path)
 
-    for filename in os.listdir(package_path):
-        modulename, ext = os.path.splitext(filename)
+    for filename in listdir(package_path):
+        modulename, ext = path.splitext(filename)
         if modulename[0] != '_' and ext in ('.py', '.pyw'):
             subpackage = '{}.{}'.format(
                 package_name, modulename)  # pkg relative
@@ -349,7 +353,7 @@ def load_data_array_from_experiment_id(id_str):
     experiment_id = parse_experiment_id(id_str)
     data_path = './data/{}'.format(experiment_id)
     trial_id_array = [
-        f for f in os.listdir(data_path)
+        f for f in listdir(data_path)
         if (path.isfile(path.join(data_path, f)) and
             f.startswith(experiment_id) and
             f.endswith('.json'))
@@ -394,7 +398,7 @@ def configure_hardware(RAND_SEED):
 def debug_mem_usage():
     import psutil
     from mem_top import mem_top
-    pid = os.getpid()
+    pid = getpid()
     logger.debug(
         'MEM USAGE for PID {}, MEM_INFO: {}\n{}'.format(
             pid, psutil.Process().memory_info(), mem_top()))
