@@ -28,15 +28,22 @@ search: true
 
 _An experimentation system for Reinforcement Learning using OpenAI and Keras._
 
-The _OpenAI Lab_ is created to let us do Reinforcement Learning (RL) like science - _theorize, experiment_. We can theorize as fast as we think, and experiment as fast as the computers can run.
+The OpenAI Lab is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy to use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experimental and analytics framework.
 
-The lab provides an easy-to-use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experimental and analytics framework. We had tested several deep reinforcement learning algorithms with _OpenAI Lab_ and solved a few OpenAI environments - by running hundreds of experiments with minimal setup and few lines of code - we will show by example below.
+While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.
 
-Before this, experiments used to be hard and slow, as we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components. This lowers the experimental complexity and enables an explosion of experiments. We can quickly add new RL component, make new combinations, run hyperparameter selection and solve environments. This unlocks a new perspective to treat RL as a full-on experimental science.
+To address this, _OpenAI Lab_ does three things.
+
+1. Handles the basic RL environment and algorithm setups.
+2. Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.
+3. Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are logged in a standardized format so that solutions can be reproduced by anyone using the Lab.
+
+With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.
+
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
-_Timelapse of OpenAI Lab (open the gif in new tab for larger size)._
+_Timelapse of OpenAI Lab, solving Cartpole._
 
 
 ## Lab Demo
@@ -49,7 +56,7 @@ We specify input parameters for the experimental variable, run the experiment, r
 
 ### Specify Experiment
 
-The example below is fully specified in `rl/asset/experiment_specs.json` under `dqn`:
+The example below is fully specified in `rl/asset/classic_experiment_specs.json` under `dqn`:
 
 ```json
 {
