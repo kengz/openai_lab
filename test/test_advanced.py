@@ -6,33 +6,7 @@ from . import conftest
 import pandas as pd
 
 
-class DQNTest(unittest.TestCase):
-
-    @classmethod
-    def test_gym_tour(cls):
-        print()
-        data_df = run('dummy')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_q_table(cls):
-        data_df = run('q_table')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dqn(cls):
-        data_df = run('dqn')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_rand_dqn(cls):
-        data_df = run('rand_dqn')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_double_dqn(cls):
-        data_df = run('double_dqn')
-        assert isinstance(data_df, pd.DataFrame)
+class AdvancedTest(unittest.TestCase):
 
     @classmethod
     def test_sarsa(cls):
@@ -75,10 +49,3 @@ class DQNTest(unittest.TestCase):
     def test_breakout_double_dqn(cls):
         data_df = run('breakout_double_dqn')
         assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dev_dqn_pass(cls):
-        data_df = run('dqn')
-        max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
-        print(max_total_rewards)
-        assert max_total_rewards > 50
