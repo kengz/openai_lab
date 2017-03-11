@@ -27,25 +27,25 @@ class BasicTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
-        data_df = run('dqn')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dqn_param_selection(cls):
-        data_df = run('dqn', param_selection=True)
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dev_dqn_pass(cls):
-        data_df = run('dqn')
+    def test_dqn_pass(cls):
+        data_df = run('test_dqn_pass')
         max_total_rewards = data_df['max_total_rewards_stats_mean'][0]
         print(max_total_rewards)
         assert max_total_rewards > 50, 'dqn failed to hit max_total_rewards'
 
     @classmethod
-    def test_rand_dqn(cls):
-        data_df = run('rand_dqn')
+    def test_dqn_grid_search(cls):
+        data_df = run('test_dqn_grid_search', param_selection=True)
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
+    def test_dqn_random_search(cls):
+        data_df = run('test_dqn_random_search', param_selection=True)
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
+    def test_dqn(cls):
+        data_df = run('dqn')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
