@@ -13,17 +13,17 @@ from textwrap import wrap
 
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}_\d{2}_\d{2}_\d{6})'
-ASSET_PATH = path.join(path.dirname(__file__), 'asset')
+SPEC_PATH = path.join(path.dirname(__file__), 'spec')
 
 
 # import and safeguard the PROBLEMS, EXPERIMENT_SPECS with checks
 def import_guard_asset():
-    PROBLEMS = json.loads(open(path.join(ASSET_PATH, 'problems.json')).read())
+    PROBLEMS = json.loads(open(path.join(SPEC_PATH, 'problems.json')).read())
     EXPERIMENT_SPECS = {}
     spec_files = [spec_json for spec_json in listdir(
-        ASSET_PATH) if spec_json.endswith('experiment_specs.json')]
+        SPEC_PATH) if spec_json.endswith('experiment_specs.json')]
     for filename in spec_files:
-        specs = json.loads(open(path.join(ASSET_PATH, filename)).read())
+        specs = json.loads(open(path.join(SPEC_PATH, filename)).read())
         EXPERIMENT_SPECS.update(specs)
 
     REQUIRED_PROBLEM_KEYS = [
