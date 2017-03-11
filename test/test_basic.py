@@ -38,17 +38,17 @@ class BasicTest(unittest.TestCase):
         data_df = run('test_dqn_grid_search', param_selection=True)
         assert isinstance(data_df, pd.DataFrame)
 
-    @classmethod
-    def test_dqn_random_search(cls):
-        data_df = run('test_dqn_random_search', param_selection=True)
-        assert isinstance(data_df, pd.DataFrame)
+    # @classmethod
+    # def test_dqn_random_search(cls):
+    #     data_df = run('test_dqn_random_search', param_selection=True)
+    #     assert isinstance(data_df, pd.DataFrame)
 
-    @classmethod
-    def test_dqn(cls):
-        data_df = run('dqn')
-        assert isinstance(data_df, pd.DataFrame)
+    # @classmethod
+    # def test_dqn(cls):
+    #     data_df = run('dqn')
+    #     assert isinstance(data_df, pd.DataFrame)
 
-    @classmethod
-    def test_double_dqn(cls):
-        data_df = run('double_dqn')
-        assert isinstance(data_df, pd.DataFrame)
+    # @classmethod
+    # def test_double_dqn(cls):
+    #     data_df = run('double_dqn')
+    #     assert isinstance(data_df, pd.DataFrame)
