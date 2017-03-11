@@ -68,7 +68,7 @@
   "test_dqn_random_search": {
     "problem": "DevCartPole-v0",
     "Agent": "DQN",
-    "HyperOptimizer": "GridSearch",
+    "HyperOptimizer": "RandomSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
