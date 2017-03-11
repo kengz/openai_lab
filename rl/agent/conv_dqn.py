@@ -61,8 +61,8 @@ class ConvDQN(DQN):
                             # border_mode='same',
                             init='lecun_uniform'))
                 else:
-                    # keep growing until it cols/rows bigger? This is disagreeing
-                    # with self.num_hidden_layers
+                    # stop addition of too many layers
+                    # and from breakage by cols, rows growing to 0
                     break
 
         else:
