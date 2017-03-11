@@ -24,7 +24,7 @@
     }
   },
   "test_dqn_pass": {
-    "problem": "CartPole-v0",
+    "problem": "TestPassCartPole-v0",
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",

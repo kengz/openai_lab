@@ -6,6 +6,13 @@
     "MAX_EPISODES": 4,
     "REWARD_MEAN_LEN": 100
   },
+  "TestPassCartPole-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "CartPole-v0",
+    "SOLVED_MEAN_REWARD": 50.0,
+    "MAX_EPISODES": 20,
+    "REWARD_MEAN_LEN": 100
+  },
   "CartPole-v0": {
     "RENDER": true,
     "GYM_ENV_NAME": "CartPole-v0",
