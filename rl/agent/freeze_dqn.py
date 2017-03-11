@@ -34,7 +34,7 @@ class FreezeDQN(DoubleDQN):
         # Also, loading logic seems off
         pid = getpid()
         filename = 'temp_Q_model_freeze_' + str(pid) + '.h5'
-        model_dir = 'rl/asset/model'
+        model_dir = 'rl/model'
         modelpath = '{}/{}'.format(model_dir, filename)
         self.model.save(modelpath)
         self.model2 = self.load_model(modelpath)

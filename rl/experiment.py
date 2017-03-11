@@ -452,7 +452,7 @@ def run(name_id_spec, times=1,
     else:  # run a new experiment by spec
         logger.info('Run a new experiment by spec')
         experiment_spec = name_id_spec
-    experiment_kwargs['experiment_spec'] = experiment_spec
+    experiment_kwargs['experiment_spec'] = copy.deepcopy(experiment_spec)
 
     # compose grid and run param selection
     if param_selection:
