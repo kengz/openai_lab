@@ -33,22 +33,24 @@ class BasicTest(unittest.TestCase):
         print(max_total_rewards)
         assert max_total_rewards > 50, 'dqn failed to hit max_total_rewards'
 
-    @classmethod
-    def test_dqn_grid_search(cls):
-        data_df = run('test_dqn_grid_search', param_selection=True)
-        assert isinstance(data_df, pd.DataFrame)
+    # TODO cant run searches with these shits together, will hang everything wtf
+    # @classmethod
+    # def test_dqn_grid_search(cls):
+    #     data_df = run('test_dqn_grid_search', param_selection=True)
+    #     assert isinstance(data_df, pd.DataFrame)
 
+    # TODO cant run searches with these shits together, will hang everything wtf
     # @classmethod
     # def test_dqn_random_search(cls):
     #     data_df = run('test_dqn_random_search', param_selection=True)
     #     assert isinstance(data_df, pd.DataFrame)
 
-    # @classmethod
-    # def test_dqn(cls):
-    #     data_df = run('dqn')
-    #     assert isinstance(data_df, pd.DataFrame)
+    @classmethod
+    def test_dqn(cls):
+        data_df = run('dqn')
+        assert isinstance(data_df, pd.DataFrame)
 
-    # @classmethod
-    # def test_double_dqn(cls):
-    #     data_df = run('double_dqn')
-    #     assert isinstance(data_df, pd.DataFrame)
+    @classmethod
+    def test_double_dqn(cls):
+        data_df = run('double_dqn')
+        assert isinstance(data_df, pd.DataFrame)
