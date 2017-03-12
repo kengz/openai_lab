@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.base_agent import Agent
-from rl.util import logger, log_self, clone_model
+from rl.util import logger, log_self, clone_model, clone_optimizer
 
 
 class RandomProcess(object):
@@ -44,7 +44,8 @@ class ActorNetwork(object):
     def __init__(self, env_spec, batch_size=16, n_epoch=5,
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear'):
+                 output_layer_activation='linear',
+                 optimizer):
         # import only when needed to contain side-effects
         from keras.layers import Dense
         from keras.models import Sequential
@@ -60,6 +61,7 @@ class ActorNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
+        self.optimizer = optimizer
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
 
@@ -86,8 +88,11 @@ class ActorNetwork(object):
     def compile_model(self):
         self.actor.compile(
             loss='mse',
-            optimizer=self.optimizer.keras_optimizer)
-        logger.info("Model compiled")
+            optimizer=self.optimizer.actor_keras_optimizer)
+        self.target_actor.compile(
+            loss='mse',
+            optimizer=self.optimizer.target_actor_keras_optimizer)
+        logger.info("Actor Models compiled")
 
     def select_action(self, state):
         action = self.actor.predict(state) + self.random_process.sample()
@@ -158,7 +163,8 @@ class CriticNetwork(object):
     def __init__(self, env_spec, batch_size=16, n_epoch=5,
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear'):
+                 output_layer_activation='linear',
+                 optimizer):
         # import only when needed to contain side-effects
         from keras.layers import Dense, Merge
         from keras.models import Sequential
@@ -175,6 +181,7 @@ class CriticNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
+        self.optimizer = optimizer
 
     def build_model(self):
         action_branch = self.Sequential()
@@ -215,8 +222,11 @@ class CriticNetwork(object):
     def compile_model(self):
         self.critic.compile(
             loss=self.custom_critic_loss,
-            optimizer=self.optimizer.keras_optimizer)
-        logger.info("Model compiled")
+            optimizer=self.optimizer.critic_keras_optimizer)
+        self.target_critic.compile(
+            loss='mse',
+            optimizer=self.optimizer.target_critic_keras_optimizer)
+        logger.info("Critic Models compiled")
 
 
 class DDPG(Agent):
@@ -233,6 +243,17 @@ class DDPG(Agent):
         # set 2 way references
         self.memory = memory
         self.optimizer = optimizer
+        # clone for actor, critic networks
+        self.optimizer.actor_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.target_actor_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.critic_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.target_critic_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        del self.optimizer.keras_optimizer
+
         self.policy = policy
         self.preprocessor = preprocessor
         # back references
