@@ -268,5 +268,10 @@ class DDPG(Agent):
         return loss
 
     def train(self, sys_vars):
-        self.actor_network.train(sys_vars)
-        self.critic_network.train(sys_vars)
+        loss_total = 0
+        for _epoch in range(self.n_epoch):
+            loss = self.train_an_epoch()
+            loss_total += loss
+        avg_loss = loss_total / self.n_epoch
+        sys_vars['loss'].append(avg_loss)
+        return avg_loss
