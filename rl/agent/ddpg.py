@@ -114,7 +114,12 @@ class ActorNetwork(object):
         logger.info("Actor Models compiled")
 
     def select_action(self, state):
-        action = self.actor.predict(state) + self.random_process.sample()
+        state = np.expand_dims(state, axis=0)
+        action = self.actor.predict(state)[0] + self.random_process.sample()
+        print('action')
+        print('action')
+        print('action')
+        print(action)
         return action
 
     # def compute_Q_states(self, minibatch):
