@@ -4,9 +4,29 @@ from rl.util import logger, log_self, clone_model, clone_optimizer
 
 
 class RandomProcess(object):
-
     def reset_states(self):
         pass
+
+
+class AnnealedGaussianProcess(RandomProcess):
+    def __init__(self, mu, sigma, sigma_min, n_steps_annealing):
+        self.mu = mu
+        self.sigma = sigma
+        self.n_steps = 0
+
+        if sigma_min is not None:
+            self.m = -float(sigma - sigma_min) / float(n_steps_annealing)
+            self.c = sigma
+            self.sigma_min = sigma_min
+        else:
+            self.m = 0.
+            self.c = sigma
+            self.sigma_min = sigma
+
+    @property
+    def current_sigma(self):
+        sigma = max(self.sigma_min, self.m * float(self.n_steps) + self.c)
+        return sigma
 
 
 # Based on
@@ -41,11 +61,10 @@ class ActorNetwork(object):
     actor: mu(s|theta_mu), like our typical model(state)=action_val (cont)
     '''
 
-    def __init__(self, env_spec, batch_size=16, n_epoch=5,
+    def __init__(self, parent, env_spec, batch_size=16, n_epoch=5,
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear',
-                 parent):
+                 output_layer_activation='linear'):
         # import only when needed to contain side-effects
         from keras.layers import Dense
         from keras.models import Sequential
@@ -54,6 +73,7 @@ class ActorNetwork(object):
         self.Sequential = Sequential
         self.K = K
 
+        self.parent = parent
         self.env_spec = env_spec
         self.batch_size = batch_size
         self.n_epoch = n_epoch
@@ -61,7 +81,6 @@ class ActorNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        self.parent = parent
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
 
@@ -141,11 +160,10 @@ class CriticNetwork(object):
 
     '''critic: Q(s,a|theta_Q), model(state, action)=single_Q_value'''
 
-    def __init__(self, env_spec, batch_size=16, n_epoch=5,
+    def __init__(self, parent, env_spec, batch_size=16, n_epoch=5,
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear',
-                 parent):
+                 output_layer_activation='linear'):
         # import only when needed to contain side-effects
         from keras.layers import Dense, Merge
         from keras.models import Sequential
@@ -155,6 +173,7 @@ class CriticNetwork(object):
         self.Sequential = Sequential
         self.K = K
 
+        self.parent = parent
         self.env_spec = env_spec
         self.batch_size = batch_size
         self.n_epoch = n_epoch
@@ -162,7 +181,6 @@ class CriticNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        self.parent = parent
 
     def build_model(self):
         action_branch = self.Sequential()
@@ -281,19 +299,15 @@ class DDPG(Agent):
         self.num_initial_channels = num_initial_channels
 
         self.actor_network = ActorNetwork(
-            env_spec, batch_size, n_epoch,
+            self, env_spec, batch_size, n_epoch,
             hidden_layers_shape,
             hidden_layers_activation,
-            output_layer_activation,
-            self
-        )
+            output_layer_activation)
         self.critic_network = CriticNetwork(
-            env_spec, batch_size, n_epoch,
+            self, env_spec, batch_size, n_epoch,
             hidden_layers_shape,
             hidden_layers_activation,
-            output_layer_activation,
-            self
-        )
+            output_layer_activation)
         log_self(self)
         self.build_model()
 
