@@ -410,3 +410,29 @@ def del_self_attr(subject):
         delattr(subject, attr)
     import gc
     gc.collect()
+
+
+# clone a keras model without file I/O
+def clone_model(model, custom_objects={}):
+    from keras.models import model_from_config
+    config = {
+        'class_name': model.__class__.__name__,
+        'config': model.get_config(),
+    }
+    clone = model_from_config(config, custom_objects=custom_objects)
+    clone.set_weights(model.get_weights())
+    return clone
+
+
+# clone a keras optimizer without file I/O
+def clone_optimizer(optimizer):
+    from keras.optimizers import optimizer_from_config
+    if type(optimizer) is str:
+        return get(optimizer)
+    params = dict([(k, v) for k, v in optimizer.get_config().items()])
+    config = {
+        'class_name': optimizer.__class__.__name__,
+        'config': params,
+    }
+    clone = optimizer_from_config(config)
+    return clone
