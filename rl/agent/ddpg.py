@@ -245,8 +245,8 @@ class DDPG(Agent):
         minibatch = self.memory.rand_minibatch(self.batch_size)
         # temp
         mu_prime = self.target_actor.predict(minibatch['next_states'])
-        Q_prime = self.target_critic.predict(
-            minibatch['next_states'] + mu_prime)
+        Q_prime = self.target_critic.predict([
+            minibatch['next_states'], mu_prime])
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * Q_prime
         # TODO missing grad
