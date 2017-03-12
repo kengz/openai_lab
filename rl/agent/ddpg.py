@@ -45,7 +45,7 @@ class ActorNetwork(object):
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
-                 optimizer):
+                 parent):
         # import only when needed to contain side-effects
         from keras.layers import Dense
         from keras.models import Sequential
@@ -61,7 +61,7 @@ class ActorNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        self.optimizer = optimizer
+        self.parent = parent
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
 
@@ -88,10 +88,10 @@ class ActorNetwork(object):
     def compile_model(self):
         self.actor.compile(
             loss='mse',
-            optimizer=self.optimizer.actor_keras_optimizer)
+            optimizer=self.parent.optimizer.actor_keras_optimizer)
         self.target_actor.compile(
             loss='mse',
-            optimizer=self.optimizer.target_actor_keras_optimizer)
+            optimizer=self.parent.optimizer.target_actor_keras_optimizer)
         logger.info("Actor Models compiled")
 
     def select_action(self, state):
@@ -118,28 +118,9 @@ class ActorNetwork(object):
     #     return Q_targets
 
     def train_an_epoch(self):
-        minibatch = self.memory.rand_minibatch(self.batch_size)
-        # temp
-        mu_prime = self.target_actor.predict(minibatch['next_states'])
-        Q_prime = self.target_critic.predict(
-            minibatch['next_states'] + mu_prime)
-        y = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * Q_prime
-        # TODO missing grad
-        # (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
-        # minibatch)
-        # Q_targets = self.compute_Q_targets(
-        #     minibatch, Q_states, Q_next_states_max)
-
-        # if K.backend() == 'tensorflow':
-        #     grads = K.gradients(combined_output, self.actor.trainable_weights)
-        #     grads = [g / float(self.batch_size) for g in grads]  # since TF sums over the batch
-        # else:
-        #     import theano.tensor as T
-        #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
-        #     grads = [K.mean(g, axis=0) for g in grads]
-        loss = self.actor.train_on_batch(minibatch['states'], y)
-        return loss
+        # TODO train actor properly
+        # TODO train target_actor
+        return 0
 
     def train(self, sys_vars):
         '''
@@ -164,7 +145,7 @@ class CriticNetwork(object):
                  hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
-                 optimizer):
+                 parent):
         # import only when needed to contain side-effects
         from keras.layers import Dense, Merge
         from keras.models import Sequential
@@ -181,7 +162,7 @@ class CriticNetwork(object):
         self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
-        self.optimizer = optimizer
+        self.parent = parent
 
     def build_model(self):
         action_branch = self.Sequential()
@@ -222,11 +203,45 @@ class CriticNetwork(object):
     def compile_model(self):
         self.critic.compile(
             loss=self.custom_critic_loss,
-            optimizer=self.optimizer.critic_keras_optimizer)
+            optimizer=self.parent.optimizer.critic_keras_optimizer)
         self.target_critic.compile(
             loss='mse',
-            optimizer=self.optimizer.target_critic_keras_optimizer)
+            optimizer=self.parent.optimizer.target_critic_keras_optimizer)
         logger.info("Critic Models compiled")
+
+    def train_an_epoch(self):
+        minibatch = self.parent.memory.rand_minibatch(self.batch_size)
+        # temp
+        mu_prime = self.target_actor.predict(minibatch['next_states'])
+        Q_prime = self.target_critic.predict(
+            minibatch['next_states'] + mu_prime)
+        y = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * Q_prime
+        # TODO missing grad
+        # (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
+        # minibatch)
+        # Q_targets = self.compute_Q_targets(
+        #     minibatch, Q_states, Q_next_states_max)
+
+        # if K.backend() == 'tensorflow':
+        #     grads = K.gradients(combined_output, self.actor.trainable_weights)
+        #     grads = [g / float(self.batch_size) for g in grads]  # since TF sums over the batch
+        # else:
+        #     import theano.tensor as T
+        #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
+        #     grads = [K.mean(g, axis=0) for g in grads]
+        loss = self.actor.train_on_batch(minibatch['states'], y)
+        # TODO train target_critic properly
+        return loss
+
+    def train(self):
+        loss_total = 0
+        for _epoch in range(self.n_epoch):
+            loss = self.train_an_epoch()
+            loss_total += loss
+        avg_loss = loss_total / self.n_epoch
+        sys_vars['loss'].append(avg_loss)
+        return avg_loss
 
 
 class DDPG(Agent):
@@ -236,10 +251,54 @@ class DDPG(Agent):
     '''
 
     def __init__(self, env_spec,
+                 train_per_n_new_exp=1,
+                 gamma=0.95, lr=0.1,
+                 epi_change_lr=None,
+                 batch_size=16, n_epoch=5, hidden_layers_shape=None,
+                 hidden_layers_activation='sigmoid',
+                 output_layer_activation='linear',
+                 auto_architecture=False,
+                 num_hidden_layers=3,
+                 size_first_hidden_layer=256,
+                 num_initial_channels=16,
                  **kwargs):  # absorb generic param without breaking
-        self.env_spec = env_spec
+        super(DDPG, self).__init__(env_spec)
+
+        self.train_per_n_new_exp = train_per_n_new_exp
+        self.gamma = gamma
+        self.lr = lr
+        self.epi_change_lr = epi_change_lr
+        self.batch_size = batch_size
+        self.n_epoch = 1
+        self.final_n_epoch = n_epoch
+        self.hidden_layers = hidden_layers_shape or [4]
+        self.hidden_layers_activation = hidden_layers_activation
+        self.output_layer_activation = output_layer_activation
+        self.clip_val = 10000
+        self.auto_architecture = auto_architecture
+        self.num_hidden_layers = num_hidden_layers
+        self.size_first_hidden_layer = size_first_hidden_layer
+        self.num_initial_channels = num_initial_channels
+
+        self.actor_network = ActorNetwork(
+            env_spec, batch_size, n_epoch,
+            hidden_layers_shape,
+            hidden_layers_activation,
+            output_layer_activation,
+            self
+        )
+        self.critic_network = CriticNetwork(
+            env_spec, batch_size, n_epoch,
+            hidden_layers_shape,
+            hidden_layers_activation,
+            output_layer_activation,
+            self
+        )
+        log_self(self)
+        self.build_model()
 
     def compile(self, memory, optimizer, policy, preprocessor):
+        # override
         # set 2 way references
         self.memory = memory
         self.optimizer = optimizer
@@ -269,20 +328,34 @@ class DDPG(Agent):
                            [self, memory, optimizer, policy, preprocessor]])
             ))
 
+    def build_model(self):
+        self.actor_network.build_model()
+        self.critic_network.build_model()
+
     def compile_model(self):
-        raise NotImplementedError()
+        self.actor_network.compile_model()
+        self.critic_network.compile_model()
 
     def select_action(self, state):
-        self.policy.select_action(state)
-        raise NotImplementedError()
+        self.actor_network.select_action(state)
 
     def update(self, sys_vars):
         '''Agent update apart from training the Q function'''
-        self.policy.update(sys_vars)
-        raise NotImplementedError()
+        return
 
     def to_train(self, sys_vars):
-        raise NotImplementedError()
+        '''
+        return boolean condition if agent should train
+        get n NEW experiences before training model
+        '''
+        t = sys_vars['t']
+        done = sys_vars['done']
+        timestep_limit = self.env_spec['timestep_limit']
+        return (t > 0) and bool(
+            t % self.train_per_n_new_exp == 0 or
+            t == (timestep_limit-1) or
+            done)
 
     def train(self, sys_vars):
-        raise NotImplementedError()
+        self.actor_network.train(sys_vars)
+        self.critic_network.train(sys_vars)
