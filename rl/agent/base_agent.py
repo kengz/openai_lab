@@ -30,6 +30,9 @@ class Agent(object):
                            [self, memory, optimizer, policy, preprocessor]])
             ))
 
+    def build_model(self):
+        raise NotImplementedError()
+
     def compile_model(self):
         raise NotImplementedError()
 
