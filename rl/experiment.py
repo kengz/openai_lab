@@ -133,7 +133,7 @@ class Session(object):
             state_dim = env.observation_space.shape
         if env.action_space.__class__.__name__ == 'Box':  # continuous
             action_dim = env.action_space.shape[0]
-            actions = None
+            actions = 'continuous'
         else:
             action_dim = env.action_space.n
             actions = list(range(env.action_space.n))

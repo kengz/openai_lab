@@ -17,10 +17,13 @@ class LinearMemory(Memory):
         self.exp = {k: [] for k in self.exp_keys}
         log_self(self)
 
-    def one_hot_action(self, action):
-        action_arr = np.zeros(self.agent.env_spec['action_dim'])
-        action_arr[action] = 1
-        return action_arr
+    def encode_action(self, action):
+        if self.agent.env_spec['actions'] == 'continuous':
+            return action
+        else:  # do one-hot encoding
+            action_arr = np.zeros(self.agent.env_spec['action_dim'])
+            action_arr[action] = 1
+            return action_arr
 
     def trim_exp(self, max_len=50000):
         if (self.size() > max_len):
@@ -34,7 +37,7 @@ class LinearMemory(Memory):
         form an experience tuple <s, a, r, s'>
         '''
         self.exp['states'].append(self.state)
-        self.exp['actions'].append(self.one_hot_action(action))
+        self.exp['actions'].append(self.encode_action(action))
         self.exp['rewards'].append(reward)
         self.exp['next_states'].append(next_state)
         self.exp['terminals'].append(int(terminal))
