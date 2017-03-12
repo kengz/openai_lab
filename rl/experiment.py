@@ -131,12 +131,19 @@ class Session(object):
         state_dim = env.observation_space.shape[0]
         if (len(env.observation_space.shape) > 1):
             state_dim = env.observation_space.shape
+        if env.action_space.__class__.__name__ == 'Box':  # continuous
+            action_dim = env.action_space.shape[0]
+            actions = None
+        else:
+            action_dim = env.action_space.n
+            actions = list(range(env.action_space.n))
+
         env_spec = {
             'state_dim': state_dim,
             'state_bounds': np.transpose(
                 [env.observation_space.low, env.observation_space.high]),
-            'action_dim': env.action_space.n,
-            'actions': list(range(env.action_space.n)),
+            'action_dim': action_dim,
+            'actions': actions,
             'reward_range': env.reward_range,
             'timestep_limit': env.spec.tags.get(
                 'wrapper_config.TimeLimit.max_episode_steps')
