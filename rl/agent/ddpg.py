@@ -4,11 +4,13 @@ from rl.util import logger, log_self, clone_model, clone_optimizer
 
 
 class RandomProcess(object):
+
     def reset_states(self):
         pass
 
 
 class AnnealedGaussianProcess(RandomProcess):
+
     def __init__(self, mu, sigma, sigma_min, n_steps_annealing):
         self.mu = mu
         self.sigma = sigma
@@ -55,36 +57,88 @@ class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
         self.x_prev = self.x0 if self.x0 is not None else np.zeros(self.size)
 
 
-class ActorNetwork(object):
+class DDPG(Agent):
 
     '''
-    actor: mu(s|theta_mu), like our typical model(state)=action_val (cont)
+    The base class of Agent, with the core methods
     '''
 
-    def __init__(self, parent, env_spec, batch_size=16, n_epoch=5,
-                 hidden_layers_shape=None,
+    def __init__(self, env_spec,
+                 train_per_n_new_exp=1,
+                 gamma=0.95, lr=0.1,
+                 epi_change_lr=None,
+                 batch_size=16, n_epoch=5, hidden_layers_shape=None,
                  hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear'):
+                 output_layer_activation='linear',
+                 auto_architecture=False,
+                 num_hidden_layers=3,
+                 size_first_hidden_layer=256,
+                 num_initial_channels=16,
+                 **kwargs):  # absorb generic param without breaking
         # import only when needed to contain side-effects
-        from keras.layers import Dense
+        from keras.layers import Dense, Merge
         from keras.models import Sequential
         from keras import backend as K
         self.Dense = Dense
+        self.Merge = Merge
         self.Sequential = Sequential
         self.K = K
 
-        self.parent = parent
-        self.env_spec = env_spec
+        super(DDPG, self).__init__(env_spec)
+
+        self.train_per_n_new_exp = train_per_n_new_exp
+        self.gamma = gamma
+        self.lr = lr
+        self.epi_change_lr = epi_change_lr
         self.batch_size = batch_size
-        self.n_epoch = n_epoch
+        self.n_epoch = 1
+        self.final_n_epoch = n_epoch
         self.hidden_layers = hidden_layers_shape or [4]
-        self.hidden_layers_shape = hidden_layers_shape
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
+        self.clip_val = 10000
+        self.auto_architecture = auto_architecture
+        self.num_hidden_layers = num_hidden_layers
+        self.size_first_hidden_layer = size_first_hidden_layer
+        self.num_initial_channels = num_initial_channels
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
+        log_self(self)
+        self.build_model()
 
-    def build_model(self):
+    def compile(self, memory, optimizer, policy, preprocessor):
+        # override
+        # set 2 way references
+        self.memory = memory
+        self.optimizer = optimizer
+        # clone for actor, critic networks
+        self.optimizer.actor_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.target_actor_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.critic_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        self.optimizer.target_critic_keras_optimizer = clone_optimizer(
+            self.optimizer.keras_optimizer)
+        del self.optimizer.keras_optimizer
+
+        # TODO policy shall be externalized from AC network
+        self.policy = policy
+        self.preprocessor = preprocessor
+        # back references
+        setattr(memory, 'agent', self)
+        setattr(optimizer, 'agent', self)
+        setattr(policy, 'agent', self)
+        setattr(preprocessor, 'agent', self)
+        self.compile_model()
+        logger.info(
+            'Compiled:\nAgent, Memory, Optimizer, Policy, '
+            'Preprocessor:\n{}'.format(
+                ', '.join([comp.__class__.__name__ for comp in
+                           [self, memory, optimizer, policy, preprocessor]])
+            ))
+
+    def build_actor_models(self):
         model = self.Sequential()
         model.add(self.Dense(self.hidden_layers[0],
                              input_shape=(self.env_spec['state_dim'],),
@@ -104,90 +158,7 @@ class ActorNetwork(object):
         self.actor = model
         self.target_actor = clone_model(self.actor)
 
-    def compile_model(self):
-        self.actor.compile(
-            loss='mse',
-            optimizer=self.parent.optimizer.actor_keras_optimizer)
-        self.target_actor.compile(
-            loss='mse',
-            optimizer=self.parent.optimizer.target_actor_keras_optimizer)
-        logger.info("Actor Models compiled")
-
-    def select_action(self, state):
-        state = np.expand_dims(state, axis=0)
-        action = self.actor.predict(state)[0] + self.random_process.sample()
-        print('action')
-        print('action')
-        print('action')
-        print(action)
-        return action
-
-    # def compute_Q_states(self, minibatch):
-    #     # note the computed values below are batched in array
-    #     Q_states = np.clip(self.actor.predict(minibatch['states']),
-    #                        -self.clip_val, self.clip_val)
-    #     Q_next_states = np.clip(self.actor.predict(minibatch['next_states']),
-    #                             -self.clip_val, self.clip_val)
-    #     Q_next_states_max = np.amax(Q_next_states, axis=1)
-    #     return (Q_states, Q_next_states, Q_next_states_max)
-
-    # def compute_Q_targets(self, minibatch, Q_states, Q_next_states_max):
-    #     # make future reward 0 if exp is terminal
-    #     Q_targets_a = minibatch['rewards'] + self.gamma * \
-    #         (1 - minibatch['terminals']) * Q_next_states_max
-    #     # set batch Q_targets of a as above, the rest as is
-    #     # minibatch['actions'] is one-hot encoded
-    #     Q_targets = minibatch['actions'] * Q_targets_a[:, np.newaxis] + \
-    #         (1 - minibatch['actions']) * Q_states
-    #     return Q_targets
-
-    def train_an_epoch(self):
-        # TODO train actor properly
-        # TODO train target_actor
-        return 0
-
-    def train(self, sys_vars):
-        '''
-        Training is for the Q function (NN) only
-        otherwise (e.g. policy) see self.update()
-        step 1,2,3,4 of algo.
-        '''
-        loss_total = 0
-        for _epoch in range(self.n_epoch):
-            loss = self.train_an_epoch()
-            loss_total += loss
-        avg_loss = loss_total / self.n_epoch
-        sys_vars['loss'].append(avg_loss)
-        return avg_loss
-
-
-class CriticNetwork(object):
-
-    '''critic: Q(s,a|theta_Q), model(state, action)=single_Q_value'''
-
-    def __init__(self, parent, env_spec, batch_size=16, n_epoch=5,
-                 hidden_layers_shape=None,
-                 hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear'):
-        # import only when needed to contain side-effects
-        from keras.layers import Dense, Merge
-        from keras.models import Sequential
-        from keras import backend as K
-        self.Dense = Dense
-        self.Merge = Merge
-        self.Sequential = Sequential
-        self.K = K
-
-        self.parent = parent
-        self.env_spec = env_spec
-        self.batch_size = batch_size
-        self.n_epoch = n_epoch
-        self.hidden_layers = hidden_layers_shape or [4]
-        self.hidden_layers_shape = hidden_layers_shape
-        self.hidden_layers_activation = hidden_layers_activation
-        self.output_layer_activation = output_layer_activation
-
-    def build_model(self):
+    def build_critic_models(self):
         action_branch = self.Sequential()
         action_branch.add(self.Dense(self.hidden_layers[0],
                                      input_shape=(
@@ -220,20 +191,58 @@ class CriticNetwork(object):
         self.critic = model
         self.target_critic = clone_model(self.critic)
 
+    def build_model(self):
+        self.build_actor_models()
+        self.build_critic_models()
+
     def custom_critic_loss(self, y_true, y_pred):
         return self.K.mean(self.K.square(y_true - y_pred))
 
     def compile_model(self):
+        self.actor.compile(
+            loss='mse',
+            optimizer=self.optimizer.actor_keras_optimizer)
+        self.target_actor.compile(
+            loss='mse',
+            optimizer=self.optimizer.target_actor_keras_optimizer)
+        logger.info("Actor Models compiled")
+
         self.critic.compile(
             loss=self.custom_critic_loss,
-            optimizer=self.parent.optimizer.critic_keras_optimizer)
+            optimizer=self.optimizer.critic_keras_optimizer)
         self.target_critic.compile(
             loss='mse',
-            optimizer=self.parent.optimizer.target_critic_keras_optimizer)
+            optimizer=self.optimizer.target_critic_keras_optimizer)
         logger.info("Critic Models compiled")
 
+    def select_action(self, state):
+        state = np.expand_dims(state, axis=0)
+        action = self.actor.predict(state)[0] + self.random_process.sample()
+        print('action')
+        print('action')
+        print('action')
+        print(action)
+        return action
+
+    def update(self, sys_vars):
+        '''Agent update apart from training the Q function'''
+        return
+
+    def to_train(self, sys_vars):
+        '''
+        return boolean condition if agent should train
+        get n NEW experiences before training model
+        '''
+        t = sys_vars['t']
+        done = sys_vars['done']
+        timestep_limit = self.env_spec['timestep_limit']
+        return (t > 0) and bool(
+            t % self.train_per_n_new_exp == 0 or
+            t == (timestep_limit-1) or
+            done)
+
     def train_an_epoch(self):
-        minibatch = self.parent.memory.rand_minibatch(self.batch_size)
+        minibatch = self.memory.rand_minibatch(self.batch_size)
         # temp
         mu_prime = self.target_actor.predict(minibatch['next_states'])
         Q_prime = self.target_critic.predict(
@@ -255,125 +264,8 @@ class CriticNetwork(object):
         #     grads = [K.mean(g, axis=0) for g in grads]
         loss = self.actor.train_on_batch(minibatch['states'], y)
         # TODO train target_critic properly
+        # loss shd be of 4 models
         return loss
-
-    def train(self):
-        loss_total = 0
-        for _epoch in range(self.n_epoch):
-            loss = self.train_an_epoch()
-            loss_total += loss
-        avg_loss = loss_total / self.n_epoch
-        sys_vars['loss'].append(avg_loss)
-        return avg_loss
-
-
-class DDPG(Agent):
-
-    '''
-    The base class of Agent, with the core methods
-    '''
-
-    def __init__(self, env_spec,
-                 train_per_n_new_exp=1,
-                 gamma=0.95, lr=0.1,
-                 epi_change_lr=None,
-                 batch_size=16, n_epoch=5, hidden_layers_shape=None,
-                 hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear',
-                 auto_architecture=False,
-                 num_hidden_layers=3,
-                 size_first_hidden_layer=256,
-                 num_initial_channels=16,
-                 **kwargs):  # absorb generic param without breaking
-        super(DDPG, self).__init__(env_spec)
-
-        self.train_per_n_new_exp = train_per_n_new_exp
-        self.gamma = gamma
-        self.lr = lr
-        self.epi_change_lr = epi_change_lr
-        self.batch_size = batch_size
-        self.n_epoch = 1
-        self.final_n_epoch = n_epoch
-        self.hidden_layers = hidden_layers_shape or [4]
-        self.hidden_layers_activation = hidden_layers_activation
-        self.output_layer_activation = output_layer_activation
-        self.clip_val = 10000
-        self.auto_architecture = auto_architecture
-        self.num_hidden_layers = num_hidden_layers
-        self.size_first_hidden_layer = size_first_hidden_layer
-        self.num_initial_channels = num_initial_channels
-
-        self.actor_network = ActorNetwork(
-            self, env_spec, batch_size, n_epoch,
-            hidden_layers_shape,
-            hidden_layers_activation,
-            output_layer_activation)
-        self.critic_network = CriticNetwork(
-            self, env_spec, batch_size, n_epoch,
-            hidden_layers_shape,
-            hidden_layers_activation,
-            output_layer_activation)
-        log_self(self)
-        self.build_model()
-
-    def compile(self, memory, optimizer, policy, preprocessor):
-        # override
-        # set 2 way references
-        self.memory = memory
-        self.optimizer = optimizer
-        # clone for actor, critic networks
-        self.optimizer.actor_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.target_actor_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.critic_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.target_critic_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        del self.optimizer.keras_optimizer
-
-        self.policy = policy
-        self.preprocessor = preprocessor
-        # back references
-        setattr(memory, 'agent', self)
-        setattr(optimizer, 'agent', self)
-        setattr(policy, 'agent', self)
-        setattr(preprocessor, 'agent', self)
-        self.compile_model()
-        logger.info(
-            'Compiled:\nAgent, Memory, Optimizer, Policy, '
-            'Preprocessor:\n{}'.format(
-                ', '.join([comp.__class__.__name__ for comp in
-                           [self, memory, optimizer, policy, preprocessor]])
-            ))
-
-    def build_model(self):
-        self.actor_network.build_model()
-        self.critic_network.build_model()
-
-    def compile_model(self):
-        self.actor_network.compile_model()
-        self.critic_network.compile_model()
-
-    def select_action(self, state):
-        self.actor_network.select_action(state)
-
-    def update(self, sys_vars):
-        '''Agent update apart from training the Q function'''
-        return
-
-    def to_train(self, sys_vars):
-        '''
-        return boolean condition if agent should train
-        get n NEW experiences before training model
-        '''
-        t = sys_vars['t']
-        done = sys_vars['done']
-        timestep_limit = self.env_spec['timestep_limit']
-        return (t > 0) and bool(
-            t % self.train_per_n_new_exp == 0 or
-            t == (timestep_limit-1) or
-            done)
 
     def train(self, sys_vars):
         self.actor_network.train(sys_vars)
