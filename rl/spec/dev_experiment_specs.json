@@ -118,7 +118,7 @@
     }
   },
   "dev": {
-    "problem": "DevCartPole-v0",
+    "problem": "Pendulum-v0",
     "Agent": "DDPG",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
