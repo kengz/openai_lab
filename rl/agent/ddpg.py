@@ -249,6 +249,10 @@ class DDPG(Agent):
             [minibatch['next_states'], mu_prime])
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * Q_prime
+        critic_loss = self.critic.train_on_batch(
+            [minibatch['states'], minibatch['actions']], y)
+        actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
+        loss = critic_loss + actor_loss
         # TODO missing grad
         # (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
         # minibatch)
@@ -262,7 +266,6 @@ class DDPG(Agent):
         #     import theano.tensor as T
         #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
         #     grads = [K.mean(g, axis=0) for g in grads]
-        loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
         # TODO train target_critic properly
         # loss shd be of 4 models
         return loss
