@@ -235,7 +235,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 100,
+      "max_evals": 50,
       "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
@@ -300,7 +300,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 100,
+      "max_evals": 50,
       "train_per_n_new_exp": 5,
       "batch_size": 32,
       "lr": 0.001,
