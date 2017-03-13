@@ -154,6 +154,8 @@ class DDPG(Agent):
         model.add(self.Dense(self.env_spec['action_dim'],
                              init='lecun_uniform',
                              activation=self.output_layer_activation))
+        logger.info('Actor model summary:')
+        model.summary()
 
         self.actor = model
         self.target_actor = clone_model(self.actor)
@@ -187,6 +189,8 @@ class DDPG(Agent):
         model.add(self.Dense(1,
                              init='lecun_uniform',
                              activation=self.output_layer_activation))
+        logger.info('Critic model summary:')
+        model.summary()
 
         self.critic = model
         self.target_critic = clone_model(self.critic)
@@ -245,8 +249,11 @@ class DDPG(Agent):
         minibatch = self.memory.rand_minibatch(self.batch_size)
         # temp
         mu_prime = self.target_actor.predict(minibatch['next_states'])
-        Q_prime = self.target_critic.predict([
-            minibatch['next_states'], mu_prime])
+        # reshape into batch
+        print(mu_prime.shape)
+        print(minibatch['next_states'].shape)
+        Q_prime = self.target_critic.predict(
+            [mu_prime, minibatch['next_states']])
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * Q_prime
         # TODO missing grad
@@ -262,7 +269,7 @@ class DDPG(Agent):
         #     import theano.tensor as T
         #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
         #     grads = [K.mean(g, axis=0) for g in grads]
-        loss = self.actor.train_on_batch(minibatch['states'], y)
+        loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
         # TODO train target_critic properly
         # loss shd be of 4 models
         return loss
