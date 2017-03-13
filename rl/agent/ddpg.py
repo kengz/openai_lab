@@ -161,6 +161,12 @@ class DDPG(Agent):
         self.target_actor = clone_model(self.actor)
 
     def build_critic_models(self):
+        state_branch = self.Sequential()
+        state_branch.add(self.Dense(self.hidden_layers[0],
+                                    input_shape=(self.env_spec['state_dim'],),
+                                    activation=self.hidden_layers_activation,
+                                    init='lecun_uniform'))
+
         action_branch = self.Sequential()
         action_branch.add(self.Dense(self.hidden_layers[0],
                                      input_shape=(
@@ -168,13 +174,7 @@ class DDPG(Agent):
                                      activation=self.hidden_layers_activation,
                                      init='lecun_uniform'))
 
-        state_branch = self.Sequential()
-        state_branch.add(self.Dense(self.hidden_layers[0],
-                                    input_shape=(self.env_spec['state_dim'],),
-                                    activation=self.hidden_layers_activation,
-                                    init='lecun_uniform'))
-
-        input_layer = self.Merge([action_branch, state_branch], mode='concat')
+        input_layer = self.Merge([state_branch, action_branch], mode='concat')
 
         model = self.Sequential()
         model.add(input_layer)
@@ -222,10 +222,6 @@ class DDPG(Agent):
     def select_action(self, state):
         state = np.expand_dims(state, axis=0)
         action = self.actor.predict(state)[0] + self.random_process.sample()
-        print('action')
-        print('action')
-        print('action')
-        print(action)
         return action
 
     def update(self, sys_vars):
@@ -249,11 +245,8 @@ class DDPG(Agent):
         minibatch = self.memory.rand_minibatch(self.batch_size)
         # temp
         mu_prime = self.target_actor.predict(minibatch['next_states'])
-        # reshape into batch
-        print(mu_prime.shape)
-        print(minibatch['next_states'].shape)
         Q_prime = self.target_critic.predict(
-            [mu_prime, minibatch['next_states']])
+            [minibatch['next_states'], mu_prime])
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * Q_prime
         # TODO missing grad
