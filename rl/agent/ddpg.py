@@ -225,9 +225,14 @@ class DDPG(Agent):
             t == (timestep_limit-1) or
             done)
 
-    def train_an_epoch(self):
-        minibatch = self.memory.rand_minibatch(self.batch_size)
-        # temp
+    def get_trainable_params(self, model):
+        import keras
+        params = []
+        for layer in model.layers:
+            params += keras.engine.training.collect_trainable_weights(layer)
+        return params
+
+    def update_critic(self, minibatch):
         mu_prime = self.target_actor.predict(minibatch['next_states'])
         Q_prime = self.target_critic.predict(
             [minibatch['next_states'], mu_prime])
@@ -235,14 +240,29 @@ class DDPG(Agent):
             (1 - minibatch['terminals']) * Q_prime
         critic_loss = self.critic.train_on_batch(
             [minibatch['states'], minibatch['actions']], y)
-        actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
-        loss = critic_loss + actor_loss
-        # TODO missing grad
-        # (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
-        # minibatch)
-        # Q_targets = self.compute_Q_targets(
-        #     minibatch, Q_states, Q_next_states_max)
+        return critic_loss
 
+    def update_actor(self, minibatch):
+        # https://github.com/fchollet/keras/issues/3062
+        # network_params = self.get_trainable_params(self.actor)
+        # param_grad = tf.gradients(cost, network_params)
+        # action = model(state)
+        # param_grad = tf.gradients(action, network_params, grad_ys=dQ_da)
+        # 
+        # need custom gradient for action_gradients
+        a_outs = self.actor.predict(minibatch['states'])
+        grads = self.critic.action_gradients(minibatch['states'], a_outs)
+        actor_loss = self.actor.train_on_batch(minibatch['states'], grads[0])
+        # borrow from keras-rl
+        # combined_inputs = []
+        # critic_inputs = []
+        # for i in self.critic.input:
+        #     if i == self.critic_action_input:
+        #         combined_inputs.append(self.actor.output)
+        #     else:
+        #         combined_inputs.append(i)
+        #         critic_inputs.append(i)
+        # combined_output = self.critic(combined_inputs)
         # if K.backend() == 'tensorflow':
         #     grads = K.gradients(combined_output, self.actor.trainable_weights)
         #     grads = [g / float(self.batch_size) for g in grads]  # since TF sums over the batch
@@ -250,8 +270,21 @@ class DDPG(Agent):
         #     import theano.tensor as T
         #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
         #     grads = [K.mean(g, axis=0) for g in grads]
-        # TODO train target_critic properly
-        # loss shd be of 4 models
+
+        # actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
+        return actor_loss
+
+    def update_target_networks(self):
+        return
+
+    def train_an_epoch(self):
+        minibatch = self.memory.rand_minibatch(self.batch_size)
+        # temp
+        critic_loss = self.update_critic(minibatch)
+        actor_loss = self.update_critic(minibatch)
+        self.update_target_networks()
+
+        loss = critic_loss + actor_loss
         return loss
 
     def train(self, sys_vars):
