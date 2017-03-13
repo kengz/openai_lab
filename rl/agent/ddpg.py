@@ -107,9 +107,7 @@ class DDPG(Agent):
         self.build_model()
 
     def compile(self, memory, optimizer, policy, preprocessor):
-        # override
-        # set 2 way references
-        self.memory = memory
+        # override to make 4 optimizers
         self.optimizer = optimizer
         # clone for actor, critic networks
         self.optimizer.actor_keras_optimizer = clone_optimizer(
@@ -122,21 +120,7 @@ class DDPG(Agent):
             self.optimizer.keras_optimizer)
         del self.optimizer.keras_optimizer
 
-        # TODO policy shall be externalized from AC network
-        self.policy = policy
-        self.preprocessor = preprocessor
-        # back references
-        setattr(memory, 'agent', self)
-        setattr(optimizer, 'agent', self)
-        setattr(policy, 'agent', self)
-        setattr(preprocessor, 'agent', self)
-        self.compile_model()
-        logger.info(
-            'Compiled:\nAgent, Memory, Optimizer, Policy, '
-            'Preprocessor:\n{}'.format(
-                ', '.join([comp.__class__.__name__ for comp in
-                           [self, memory, optimizer, policy, preprocessor]])
-            ))
+        super(DDPG, self).compile(memory, self.optimizer, policy, preprocessor)
 
     def build_actor_models(self):
         model = self.Sequential()
