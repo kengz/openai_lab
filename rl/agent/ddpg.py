@@ -187,9 +187,17 @@ class DDPG(Agent):
         return self.K.mean(self.K.square(y_true - y_pred))
 
     def compile_model(self):
-        self.actor.compile(
-            loss='mse',
-            optimizer=self.optimizer.actor_keras_optimizer)
+        self.actor_state = self.actor.inputs[0]
+        self.action_gradient = self.K.placeholder(
+            shape=(None, self.env_spec['action_dim']))
+        self.params_grad = self.K.tf.gradients(
+            self.actor.output, self.actor.trainable_weights, -self.action_gradient)
+        grads = zip(self.params_grad, self.actor.trainable_weights)
+        self.actor_optimize = self.K.tf.train.AdamOptimizer(self.lr).apply_gradients(grads)
+        # self.K.get_session().run(self.K.tf.initialize_all_variables())
+        # self.actor.compile(
+        #     loss='mse',
+        #     optimizer=self.optimizer.actor_keras_optimizer)
         self.target_actor.compile(
             loss='mse',
             optimizer=self.optimizer.target_actor_keras_optimizer)
@@ -232,6 +240,24 @@ class DDPG(Agent):
             params += keras.engine.training.collect_trainable_weights(layer)
         return params
 
+    def update_actor(self, minibatch):
+        # https://github.com/fchollet/keras/issues/3062
+        # network_params = self.get_trainable_params(self.actor)
+        # param_grad = tf.gradients(cost, network_params)
+        # action = model(state)
+        # param_grad = tf.gradients(action, network_params, grad_ys=dQ_da)
+        # TODO ok just see the keras-rl compile method and submethods
+        # need custom gradient for action_gradients
+        a_for_grad = self.actor.predict(minibatch['states'])
+        grads = self.critic.gradients(minibatch['states'], a_for_grad)
+        self.actor.train(minibatch['states'], grads)
+        self.K.get_session().run(self.actor_optimize, feed_dict={
+            self.actor_state: minibatch['states'],
+            self.action_gradient: grads
+        })
+        # actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
+        return actor_loss
+
     def update_critic(self, minibatch):
         mu_prime = self.target_actor.predict(minibatch['next_states'])
         Q_prime = self.target_critic.predict(
@@ -242,40 +268,22 @@ class DDPG(Agent):
             [minibatch['states'], minibatch['actions']], y)
         return critic_loss
 
-    def update_actor(self, minibatch):
-        # https://github.com/fchollet/keras/issues/3062
-        # network_params = self.get_trainable_params(self.actor)
-        # param_grad = tf.gradients(cost, network_params)
-        # action = model(state)
-        # param_grad = tf.gradients(action, network_params, grad_ys=dQ_da)
-        # 
-        # need custom gradient for action_gradients
-        a_outs = self.actor.predict(minibatch['states'])
-        grads = self.critic.action_gradients(minibatch['states'], a_outs)
-        actor_loss = self.actor.train_on_batch(minibatch['states'], grads[0])
-        # borrow from keras-rl
-        # combined_inputs = []
-        # critic_inputs = []
-        # for i in self.critic.input:
-        #     if i == self.critic_action_input:
-        #         combined_inputs.append(self.actor.output)
-        #     else:
-        #         combined_inputs.append(i)
-        #         critic_inputs.append(i)
-        # combined_output = self.critic(combined_inputs)
-        # if K.backend() == 'tensorflow':
-        #     grads = K.gradients(combined_output, self.actor.trainable_weights)
-        #     grads = [g / float(self.batch_size) for g in grads]  # since TF sums over the batch
-        # else:
-        #     import theano.tensor as T
-        #     grads = T.jacobian(combined_output.flatten(), self.actor.trainable_weights)
-        #     grads = [K.mean(g, axis=0) for g in grads]
-
-        # actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
-        return actor_loss
-
     def update_target_networks(self):
-        return
+        self.TAU = 0.01
+
+        actor_weights = self.actor.get_weights()
+        actor_target_weights = self.target_actor.get_weights()
+        for i in range(len(actor_weights)):
+            actor_target_weights[
+                i] = self.TAU * actor_weights[i] + (1 - self.TAU) * actor_target_weights[i]
+        self.target_actor.set_weights(actor_target_weights)
+
+        critic_weights = self.critic.get_weights()
+        critic_target_weights = self.target_critic.get_weights()
+        for i in range(len(critic_weights)):
+            critic_target_weights[
+                i] = self.TAU * critic_weights[i] + (1 - self.TAU) * critic_target_weights[i]
+        self.target_critic.set_weights(critic_target_weights)
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
