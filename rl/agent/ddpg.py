@@ -221,14 +221,14 @@ class DDPG(DQN):
 
     def update_actor(self, minibatch):
         actions = self.actor.predict(minibatch['states'])
-        # critic_grads = self.critic.gradients(minibatch['states'], actions)
+        # critic_grads = critic.gradients(minibatch['states'], actions)
         critic_grads = self.K.get_session().run(self.critic_action_grads, feed_dict={
             self.critic_state: minibatch['states'],
             self.critic_action: actions
         })[0]
 
-        # self.actor.train(minibatch['states'], critic_grads)
-        _, actor_loss, _ = self.K.get_session().run(self.actor_optimize, feed_dict={
+        # actor.train(minibatch['states'], critic_grads)
+        self.K.get_session().run(self.actor_optimize, feed_dict={
             self.actor_state: minibatch['states'],
             self.action_gradient: critic_grads
         })
@@ -254,7 +254,7 @@ class DDPG(DQN):
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
         critic_loss = self.update_critic(minibatch)
-        # actor_loss = self.update_actor(minibatch)
+        self.update_actor(minibatch)
         actor_loss = 0
         self.update_target_networks()
 
