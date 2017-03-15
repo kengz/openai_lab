@@ -188,29 +188,10 @@ class DDPG(DQN):
 
     def update(self, sys_vars):
         '''Agent update apart from training the Q function'''
-        return
+        self.update_n_epoch(sys_vars)
 
-    def to_train(self, sys_vars):
-        '''
-        return boolean condition if agent should train
-        get n NEW experiences before training model
-        '''
-        t = sys_vars['t']
-        done = sys_vars['done']
-        timestep_limit = self.env_spec['timestep_limit']
-        return (t > 0) and bool(
-            t % self.train_per_n_new_exp == 0 or
-            t == (timestep_limit-1) or
-            done)
-
-    def get_trainable_params(self, model):
-        import keras
-        params = []
-        for layer in model.layers:
-            params += keras.engine.training.collect_trainable_weights(layer)
-        return params
-
-    def update_critic(self, minibatch):
+    def train_critic(self, minibatch):
+        '''update critic network using K-mean loss'''
         mu_prime = self.target_actor.predict(minibatch['next_states'])
         Q_prime = self.target_critic.predict(
             [minibatch['next_states'], mu_prime])
@@ -220,7 +201,8 @@ class DDPG(DQN):
             [minibatch['states'], minibatch['actions']], y)
         return critic_loss
 
-    def update_actor(self, minibatch):
+    def train_actor(self, minibatch):
+        '''update actor network using sampled gradient'''
         actions = self.actor.predict(minibatch['states'])
         # critic_grads = critic.gradients(minibatch['states'], actions)
         critic_grads = self.K.get_session().run(
@@ -237,7 +219,8 @@ class DDPG(DQN):
         actor_loss = 0
         return actor_loss
 
-    def update_target_networks(self):
+    def train_target_networks(self):
+        '''update both target networks'''
         actor_weights = self.actor.get_weights()
         actor_target_weights = self.target_actor.get_weights()
         for i in range(len(actor_weights)):
@@ -254,18 +237,9 @@ class DDPG(DQN):
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        critic_loss = self.update_critic(minibatch)
-        actor_loss = self.update_actor(minibatch)
-        self.update_target_networks()
+        critic_loss = self.train_critic(minibatch)
+        actor_loss = self.train_actor(minibatch)
+        self.train_target_networks()
 
         loss = critic_loss + actor_loss
         return loss
-
-    def train(self, sys_vars):
-        loss_total = 0
-        for _epoch in range(self.n_epoch):
-            loss = self.train_an_epoch()
-            loss_total += loss
-        avg_loss = loss_total / self.n_epoch
-        sys_vars['loss'].append(avg_loss)
-        return avg_loss

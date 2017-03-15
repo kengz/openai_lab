@@ -262,24 +262,25 @@
   },
   "pendulum": {
     "problem": "Pendulum-v0",
-    "Agent": "DQN",
+    "Agent": "DDPG",
     "HyperOptimizer": "RandomSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 50,
+      "max_evals": 40,
+      "n_epoch": 1,
       "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
       "hidden_layers_shape": [400, 300],
-      "hidden_layers_activation": "sigmoid",
+      "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 500
     },
     "param_range": {
       "lr": {
-        "min": 0.0001,
+        "min": 0.0005,
         "max": 0.005
       },
       "gamma": {
@@ -290,7 +291,8 @@
         [400],
         [200, 100],
         [400, 300]
-      ]
+      ],
+      "exploration_anneal_episodes": [200, 400, 600]
     }
   },
   "mountain_dqn": {
