@@ -1,5 +1,5 @@
 import numpy as np
-from rl.agent.base_agent import Agent
+from rl.agent.dqn import DQN
 from rl.util import logger, log_self, clone_model, clone_optimizer
 
 
@@ -35,9 +35,11 @@ class AnnealedGaussianProcess(RandomProcess):
 # http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
 class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
 
-    def __init__(self, theta, mu=0., sigma=1., dt=1e-2, x0=None, size=1, sigma_min=None, n_steps_annealing=1000):
+    def __init__(self, theta, mu=0., sigma=1., dt=1e-2, x0=None,
+                 size=1, sigma_min=None, n_steps_annealing=1000):
         super(OrnsteinUhlenbeckProcess, self).__init__(
-            mu=mu, sigma=sigma, sigma_min=sigma_min, n_steps_annealing=n_steps_annealing)
+            mu=mu, sigma=sigma, sigma_min=sigma_min,
+            n_steps_annealing=n_steps_annealing)
         self.theta = theta
         self.mu = mu
         self.dt = dt
@@ -57,24 +59,13 @@ class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
         self.x_prev = self.x0 if self.x0 is not None else np.zeros(self.size)
 
 
-class DDPG(Agent):
+class DDPG(DQN):
 
     '''
     The base class of Agent, with the core methods
     '''
 
-    def __init__(self, env_spec,
-                 train_per_n_new_exp=1,
-                 gamma=0.95, lr=0.1,
-                 epi_change_lr=None,
-                 batch_size=16, n_epoch=5, hidden_layers_shape=None,
-                 hidden_layers_activation='sigmoid',
-                 output_layer_activation='linear',
-                 auto_architecture=False,
-                 num_hidden_layers=3,
-                 size_first_hidden_layer=256,
-                 num_initial_channels=16,
-                 **kwargs):  # absorb generic param without breaking
+    def __init__(self, *args, **kwargs):
         # import only when needed to contain side-effects
         from keras.layers import Dense, Merge
         from keras.models import Sequential
@@ -84,27 +75,9 @@ class DDPG(Agent):
         self.Sequential = Sequential
         self.K = K
 
-        super(DDPG, self).__init__(env_spec)
-
-        self.train_per_n_new_exp = train_per_n_new_exp
-        self.gamma = gamma
-        self.lr = lr
-        self.epi_change_lr = epi_change_lr
-        self.batch_size = batch_size
-        self.n_epoch = 1
-        self.final_n_epoch = n_epoch
-        self.hidden_layers = hidden_layers_shape or [4]
-        self.hidden_layers_activation = hidden_layers_activation
-        self.output_layer_activation = output_layer_activation
-        self.clip_val = 10000
-        self.auto_architecture = auto_architecture
-        self.num_hidden_layers = num_hidden_layers
-        self.size_first_hidden_layer = size_first_hidden_layer
-        self.num_initial_channels = num_initial_channels
+        super(DDPG, self).__init__(*args, **kwargs)
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
-        log_self(self)
-        self.build_model()
 
     def compile(self, memory, optimizer, policy, preprocessor):
         # override to make 4 optimizers
@@ -124,39 +97,29 @@ class DDPG(Agent):
 
     def build_actor_models(self):
         model = self.Sequential()
-        model.add(self.Dense(self.hidden_layers[0],
-                             input_shape=(self.env_spec['state_dim'],),
-                             activation=self.hidden_layers_activation,
-                             init='lecun_uniform'))
-        # inner hidden layer: no specification of input shape
-        if (len(self.hidden_layers) > 1):
-            for i in range(1, len(self.hidden_layers)):
-                model.add(self.Dense(
-                    self.hidden_layers[i],
-                    init='lecun_uniform',
-                    activation=self.hidden_layers_activation))
+        self.build_hidden_layers(model)
         model.add(self.Dense(self.env_spec['action_dim'],
                              init='lecun_uniform',
                              activation=self.output_layer_activation))
-        logger.info('Actor model summary:')
+        logger.info('Actor model summary')
         model.summary()
-
         self.actor = model
         self.target_actor = clone_model(self.actor)
 
     def build_critic_models(self):
         state_branch = self.Sequential()
-        state_branch.add(self.Dense(self.hidden_layers[0],
-                                    input_shape=(self.env_spec['state_dim'],),
-                                    activation=self.hidden_layers_activation,
-                                    init='lecun_uniform'))
+        state_branch.add(self.Dense(
+            self.hidden_layers[0],
+            input_shape=(self.env_spec['state_dim'],),
+            activation=self.hidden_layers_activation,
+            init='lecun_uniform'))
 
         action_branch = self.Sequential()
-        action_branch.add(self.Dense(self.hidden_layers[0],
-                                     input_shape=(
-                                         self.env_spec['action_dim'],),
-                                     activation=self.hidden_layers_activation,
-                                     init='lecun_uniform'))
+        action_branch.add(self.Dense(
+            self.hidden_layers[0],
+            input_shape=(self.env_spec['action_dim'],),
+            activation=self.hidden_layers_activation,
+            init='lecun_uniform'))
 
         input_layer = self.Merge([state_branch, action_branch], mode='concat')
 
@@ -173,9 +136,8 @@ class DDPG(Agent):
         model.add(self.Dense(1,
                              init='lecun_uniform',
                              activation=self.output_layer_activation))
-        logger.info('Critic model summary:')
+        logger.info('Critic model summary')
         model.summary()
-
         self.critic = model
         self.target_critic = clone_model(self.critic)
 
@@ -190,11 +152,18 @@ class DDPG(Agent):
         self.actor_state = self.actor.inputs[0]
         self.action_gradient = self.K.placeholder(
             shape=(None, self.env_spec['action_dim']))
-        self.params_grad = self.K.tf.gradients(
-            self.actor.output, self.actor.trainable_weights, -self.action_gradient)
-        grads = zip(self.params_grad, self.actor.trainable_weights)
-        self.actor_optimize = self.K.tf.train.AdamOptimizer(self.lr).apply_gradients(grads)
-        # self.K.get_session().run(self.K.tf.initialize_all_variables())
+        self.actor_grads = self.K.tf.gradients(
+            self.actor.output, self.actor.trainable_weights,
+            -self.action_gradient)
+        self.actor_optimize = self.K.tf.train.AdamOptimizer(
+            self.lr).apply_gradients(
+            zip(self.actor_grads, self.actor.trainable_weights))
+
+        self.critic_state = self.critic.inputs[0]
+        self.critic_action = self.critic.inputs[1]
+        self.critic_action_grads = self.K.tf.gradients(
+            self.critic.output, self.critic_action)
+
         # self.actor.compile(
         #     loss='mse',
         #     optimizer=self.optimizer.actor_keras_optimizer)
@@ -240,24 +209,6 @@ class DDPG(Agent):
             params += keras.engine.training.collect_trainable_weights(layer)
         return params
 
-    def update_actor(self, minibatch):
-        # https://github.com/fchollet/keras/issues/3062
-        # network_params = self.get_trainable_params(self.actor)
-        # param_grad = tf.gradients(cost, network_params)
-        # action = model(state)
-        # param_grad = tf.gradients(action, network_params, grad_ys=dQ_da)
-        # TODO ok just see the keras-rl compile method and submethods
-        # need custom gradient for action_gradients
-        a_for_grad = self.actor.predict(minibatch['states'])
-        grads = self.critic.gradients(minibatch['states'], a_for_grad)
-        self.actor.train(minibatch['states'], grads)
-        self.K.get_session().run(self.actor_optimize, feed_dict={
-            self.actor_state: minibatch['states'],
-            self.action_gradient: grads
-        })
-        # actor_loss = self.actor.train_on_batch(minibatch['states'], Q_prime)
-        return actor_loss
-
     def update_critic(self, minibatch):
         mu_prime = self.target_actor.predict(minibatch['next_states'])
         Q_prime = self.target_critic.predict(
@@ -268,28 +219,43 @@ class DDPG(Agent):
             [minibatch['states'], minibatch['actions']], y)
         return critic_loss
 
+    def update_actor(self, minibatch):
+        actions = self.actor.predict(minibatch['states'])
+        # critic_grads = self.critic.gradients(minibatch['states'], actions)
+        critic_grads = self.K.get_session().run(self.critic_action_grads, feed_dict={
+            self.critic_state: minibatch['states'],
+            self.critic_action: actions
+        })[0]
+
+        # self.actor.train(minibatch['states'], critic_grads)
+        _, actor_loss, _ = self.K.get_session().run(self.actor_optimize, feed_dict={
+            self.actor_state: minibatch['states'],
+            self.action_gradient: critic_grads
+        })
+        return 0
+
     def update_target_networks(self):
         self.TAU = 0.01
 
         actor_weights = self.actor.get_weights()
         actor_target_weights = self.target_actor.get_weights()
         for i in range(len(actor_weights)):
-            actor_target_weights[
-                i] = self.TAU * actor_weights[i] + (1 - self.TAU) * actor_target_weights[i]
+            actor_target_weights[i] = self.TAU * actor_weights[i] + (
+                1 - self.TAU) * actor_target_weights[i]
         self.target_actor.set_weights(actor_target_weights)
 
         critic_weights = self.critic.get_weights()
         critic_target_weights = self.target_critic.get_weights()
         for i in range(len(critic_weights)):
-            critic_target_weights[
-                i] = self.TAU * critic_weights[i] + (1 - self.TAU) * critic_target_weights[i]
+            critic_target_weights[i] = self.TAU * critic_weights[i] + (
+                1 - self.TAU) * critic_target_weights[i]
         self.target_critic.set_weights(critic_target_weights)
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        # temp
         critic_loss = self.update_critic(minibatch)
-        actor_loss = self.update_critic(minibatch)
+        # actor_loss = self.update_actor(minibatch)
+        actor_loss = 0
         self.update_target_networks()
 
         loss = critic_loss + actor_loss
