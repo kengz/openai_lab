@@ -21,7 +21,7 @@ class DQN(Agent):
                  output_layer_activation='linear',
                  auto_architecture=False,
                  num_hidden_layers=3,
-                 size_first_hidden_layer=256,
+                 first_hidden_layer_size=256,
                  num_initial_channels=16,
                  **kwargs):  # absorb generic param without breaking
         # import only when needed to contain side-effects
@@ -46,7 +46,7 @@ class DQN(Agent):
         self.clip_val = 10000
         self.auto_architecture = auto_architecture
         self.num_hidden_layers = num_hidden_layers
-        self.size_first_hidden_layer = size_first_hidden_layer
+        self.first_hidden_layer_size = first_hidden_layer_size
         self.num_initial_channels = num_initial_channels
         log_self(self)
         self.build_model()
@@ -61,7 +61,7 @@ class DQN(Agent):
         # previous layer
         # Enables hyperparameter optimization over network architecture
         if self.auto_architecture:
-            curr_layer_size = self.size_first_hidden_layer
+            curr_layer_size = self.first_hidden_layer_size
             model.add(self.Dense(curr_layer_size,
                                  input_shape=(self.env_spec['state_dim'],),
                                  activation=self.hidden_layers_activation,

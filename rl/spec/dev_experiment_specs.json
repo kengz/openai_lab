@@ -110,7 +110,7 @@
       "exploration_anneal_episodes": 10,
       "auto_architecture": false,
       "num_hidden_layers": 3,
-      "size_first_hidden_layer": 512
+      "first_hidden_layer_size": 512
     },
     "param_range": {
       "gamma": [0.97, 0.99],
@@ -134,7 +134,7 @@
       "exploration_anneal_episodes": 10,
       "auto_architecture": false,
       "num_hidden_layers": 3,
-      "size_first_hidden_layer": 512
+      "first_hidden_layer_size": 512
     },
     "param_range": {
       "gamma": [0.97, 0.99],
