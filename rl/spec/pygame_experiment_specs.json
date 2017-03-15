@@ -12,7 +12,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
@@ -38,7 +38,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],

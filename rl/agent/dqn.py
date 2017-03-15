@@ -16,7 +16,7 @@ class DQN(Agent):
                  train_per_n_new_exp=1,
                  gamma=0.95, lr=0.1,
                  epi_change_lr=None,
-                 batch_size=16, n_epoch=5, hidden_layers_shape=None,
+                 batch_size=16, n_epoch=5, hidden_layers=None,
                  hidden_layers_activation='sigmoid',
                  output_layer_activation='linear',
                  auto_architecture=False,
@@ -40,7 +40,7 @@ class DQN(Agent):
         self.batch_size = batch_size
         self.n_epoch = 1
         self.final_n_epoch = n_epoch
-        self.hidden_layers = hidden_layers_shape or [4]
+        self.hidden_layers = hidden_layers or [4]
         self.hidden_layers_activation = hidden_layers_activation
         self.output_layer_activation = output_layer_activation
         self.clip_val = 10000

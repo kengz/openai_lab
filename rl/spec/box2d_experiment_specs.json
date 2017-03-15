@@ -12,7 +12,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -21,7 +21,7 @@
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001, 0.005],
       "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [800, 400],
@@ -45,7 +45,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -60,7 +60,7 @@
         "min": 0.97,
         "max": 0.999
       },
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [800, 400],
@@ -84,7 +84,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -93,7 +93,7 @@
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001, 0.005],
       "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [300, 150, 75],
@@ -114,7 +114,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -123,7 +123,7 @@
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001, 0.005],
       "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [300, 150, 75],
@@ -143,7 +143,7 @@
       "train_per_n_new_exp": 1,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -152,7 +152,7 @@
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001, 0.005],
       "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [300, 150, 75],
@@ -173,7 +173,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 150,
@@ -182,7 +182,7 @@
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001, 0.005],
       "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [200, 100],
         [400, 200],
         [300, 150, 75],
@@ -204,7 +204,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 4000,
@@ -219,7 +219,7 @@
         "min": 0.97,
         "max": 0.999
       },
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [800, 400],
         [400, 200, 100],
         [400, 200, 100, 50]
@@ -240,7 +240,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [300, 150, 75],
+      "hidden_layers": [300, 150, 75],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 4000,
@@ -255,7 +255,7 @@
         "min": 0.97,
         "max": 0.999
       },
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [800, 400],
         [400, 200, 100],
         [400, 200, 100, 50]
