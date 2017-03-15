@@ -6,7 +6,7 @@ from rl.util import logger, log_self, clone_model, clone_optimizer
 class DDPG(DQN):
 
     '''
-    The base class of Agent, with the core methods
+    The DDPG agent (algo), from https://arxiv.org/abs/1509.02971
     '''
 
     def __init__(self, *args, **kwargs):
