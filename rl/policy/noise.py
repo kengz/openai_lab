@@ -58,9 +58,12 @@ class GaussianWhiteNoise(AnnealedGaussian):
         return sample
 
 
-# Based on
-# http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
 class OUNoise(AnnealedGaussian):
+
+    '''
+    Based on
+    http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
+    '''
 
     def __init__(self, env_spec,
                  theta=.15, mu=0., sigma=.3, dt=1e-2, x0=None, sigma_min=None,
