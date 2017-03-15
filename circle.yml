@@ -13,6 +13,7 @@ dependencies:
     - pip install theano
     - pip install keras
     - git clone https://github.com/openai/gym.git && cd gym && pip install -e .[all] && cd ..
+    - cp ./config/keras.json ~/.keras/
 test:
   override:
     - xvfb-run -a -s "-screen 0 1400x900x24" -- python setup.py test
