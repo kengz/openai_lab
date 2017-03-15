@@ -38,7 +38,7 @@
     "RENDER": true,
     "GYM_ENV_NAME": "Pendulum-v0",
     "SOLVED_MEAN_REWARD": -100.0,
-    "MAX_EPISODES": 5000,
+    "MAX_EPISODES": 1000,
     "REWARD_MEAN_LEN": 100
   },
   "MountainCar-v0": {

@@ -269,13 +269,13 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 100,
-      "lr": 0.01,
+      "max_evals": 50,
+      "lr": 0.001,
       "decay": 0.0,
       "gamma": 0.99,
-      "hidden_layers_shape": [32],
+      "hidden_layers_shape": [400, 300],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 1000
+      "exploration_anneal_episodes": 500
     },
     "param_range": {
       "lr": {
@@ -287,10 +287,9 @@
         "max": 0.999
       },
       "hidden_layers_shape": [
-        [8],
-        [16],
-        [32],
-        [64]
+        [400],
+        [200, 100],
+        [400, 300]
       ]
     }
   },

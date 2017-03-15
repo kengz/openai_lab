@@ -76,6 +76,7 @@ class DDPG(DQN):
         self.K = K
 
         super(DDPG, self).__init__(*args, **kwargs)
+        self.TAU = 0.001
         self.random_process = OrnsteinUhlenbeckProcess(
             size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
 
@@ -237,8 +238,6 @@ class DDPG(DQN):
         return actor_loss
 
     def update_target_networks(self):
-        self.TAU = 0.01
-
         actor_weights = self.actor.get_weights()
         actor_target_weights = self.target_actor.get_weights()
         for i in range(len(actor_weights)):
