@@ -81,7 +81,7 @@ class Session(object):
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.optimizer = self.Optimizer(**self.param)
-        self.policy = self.Policy(**self.param)
+        self.policy = self.Policy(self.env_spec, **self.param)
         self.agent.compile(
             self.memory, self.optimizer, self.policy, self.preprocessor)
 
