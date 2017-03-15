@@ -3,62 +3,6 @@ from rl.agent.dqn import DQN
 from rl.util import logger, log_self, clone_model, clone_optimizer
 
 
-class RandomProcess(object):
-
-    def reset_states(self):
-        pass
-
-
-class AnnealedGaussianProcess(RandomProcess):
-
-    def __init__(self, mu, sigma, sigma_min, n_steps_annealing):
-        self.mu = mu
-        self.sigma = sigma
-        self.n_steps = 0
-
-        if sigma_min is not None:
-            self.m = -float(sigma - sigma_min) / float(n_steps_annealing)
-            self.c = sigma
-            self.sigma_min = sigma_min
-        else:
-            self.m = 0.
-            self.c = sigma
-            self.sigma_min = sigma
-
-    @property
-    def current_sigma(self):
-        sigma = max(self.sigma_min, self.m * float(self.n_steps) + self.c)
-        return sigma
-
-
-# Based on
-# http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
-class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
-
-    def __init__(self, theta, mu=0., sigma=1., dt=1e-2, x0=None,
-                 size=1, sigma_min=None, n_steps_annealing=1000):
-        super(OrnsteinUhlenbeckProcess, self).__init__(
-            mu=mu, sigma=sigma, sigma_min=sigma_min,
-            n_steps_annealing=n_steps_annealing)
-        self.theta = theta
-        self.mu = mu
-        self.dt = dt
-        self.x0 = x0
-        self.size = size
-        self.reset_states()
-
-    def sample(self):
-        x = self.x_prev + self.theta * \
-            (self.mu - self.x_prev) * self.dt + self.current_sigma * \
-            np.sqrt(self.dt) * np.random.normal(size=self.size)
-        self.x_prev = x
-        self.n_steps += 1
-        return x
-
-    def reset_states(self):
-        self.x_prev = self.x0 if self.x0 is not None else np.zeros(self.size)
-
-
 class DDPG(DQN):
 
     '''
@@ -75,10 +19,8 @@ class DDPG(DQN):
         self.Sequential = Sequential
         self.K = K
 
+        self.TAU = 0.001  # for target network updates
         super(DDPG, self).__init__(*args, **kwargs)
-        self.TAU = 0.001
-        self.random_process = OrnsteinUhlenbeckProcess(
-            size=self.env_spec['action_dim'], theta=.15, mu=0., sigma=.3)
 
     def compile(self, memory, optimizer, policy, preprocessor):
         # override to make 4 optimizers
@@ -181,13 +123,9 @@ class DDPG(DQN):
             optimizer=self.optimizer.target_critic_keras_optimizer)
         logger.info("Critic Models compiled")
 
-    def select_action(self, state):
-        state = np.expand_dims(state, axis=0)
-        action = self.actor.predict(state)[0] + self.random_process.sample()
-        return action
-
     def update(self, sys_vars):
         '''Agent update apart from training the Q function'''
+        self.policy.update(sys_vars)
         self.update_n_epoch(sys_vars)
 
     def train_critic(self, minibatch):

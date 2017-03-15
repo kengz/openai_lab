@@ -266,7 +266,7 @@
     "HyperOptimizer": "RandomSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
+    "Policy": "OUNoise",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "max_evals": 40,
