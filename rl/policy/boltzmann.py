@@ -10,7 +10,7 @@ class BoltzmannPolicy(Policy):
     p = exp(Q/tau) / sum(Q[a]/tau)
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
         super(BoltzmannPolicy, self).__init__(env_spec)
@@ -51,7 +51,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
     Same as the Boltzmann policy but for a Double DQN agent
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
         super(DoubleDQNBoltzmannPolicy, self).__init__(env_spec)

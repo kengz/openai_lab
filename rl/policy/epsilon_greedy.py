@@ -9,7 +9,7 @@ class EpsilonGreedyPolicy(Policy):
     The Epsilon-greedy policy
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
         super(EpsilonGreedyPolicy, self).__init__(env_spec)
@@ -51,7 +51,7 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
     before taking the max of the result
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
         super(DoubleDQNPolicy, self).__init__(env_spec)
@@ -79,7 +79,7 @@ class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     https://gym.openai.com/evaluations/eval_t3GN2Xb0R5KpyjkJUGsLw
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
         super(DecayingEpsilonGreedyPolicy, self).__init__(env_spec)
