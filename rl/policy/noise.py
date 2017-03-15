@@ -6,6 +6,8 @@ class AnnealedGaussian(Policy):
 
     '''
     Noise policy, mainly for DDPG.
+    Original inspiration from
+    https://github.com/matthiasplappert/keras-rl/blob/master/rl/random.py
     '''
 
     def __init__(self, env_spec,
