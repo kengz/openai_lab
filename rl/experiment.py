@@ -382,7 +382,9 @@ class Trial(object):
                 sess = Session(
                     trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
-                sys_vars_array.append(copy.copy(sys_vars))
+                lean_sys_vars = copy.deepcopy(sys_vars)
+                lean_sys_vars.pop('loss', None)
+                sys_vars_array.append(lean_sys_vars)
                 time_taken = timestamp_elapse(time_start, timestamp())
 
                 self.data = {  # trial data
