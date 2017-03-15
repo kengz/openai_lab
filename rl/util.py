@@ -413,8 +413,9 @@ def del_self_attr(subject):
 
 
 # clone a keras model without file I/O
-def clone_model(model, custom_objects={}):
+def clone_model(model, custom_objects=None):
     from keras.models import model_from_config
+    custom_objects = custom_objects or {}
     config = {
         'class_name': model.__class__.__name__,
         'config': model.get_config(),
@@ -427,7 +428,7 @@ def clone_model(model, custom_objects={}):
 # clone a keras optimizer without file I/O
 def clone_optimizer(optimizer):
     from keras.optimizers import optimizer_from_config
-    if type(optimizer) is str:
+    if isinstance(optimizer, str):
         return get(optimizer)
     params = dict([(k, v) for k, v in optimizer.get_config().items()])
     config = {

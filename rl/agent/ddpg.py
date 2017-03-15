@@ -1,6 +1,5 @@
-import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, log_self, clone_model, clone_optimizer
+from rl.util import logger, clone_model, clone_optimizer
 
 
 class DDPG(DQN):
@@ -161,14 +160,14 @@ class DDPG(DQN):
         '''update both target networks'''
         actor_weights = self.actor.get_weights()
         actor_target_weights = self.target_actor.get_weights()
-        for i in range(len(actor_weights)):
+        for i, _w in enumerate(actor_weights):
             actor_target_weights[i] = self.TAU * actor_weights[i] + (
                 1 - self.TAU) * actor_target_weights[i]
         self.target_actor.set_weights(actor_target_weights)
 
         critic_weights = self.critic.get_weights()
         critic_target_weights = self.target_critic.get_weights()
-        for i in range(len(critic_weights)):
+        for i, _w in enumerate(critic_weights):
             critic_target_weights[i] = self.TAU * critic_weights[i] + (
                 1 - self.TAU) * critic_target_weights[i]
         self.target_critic.set_weights(critic_target_weights)
