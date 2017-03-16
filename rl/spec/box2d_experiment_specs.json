@@ -40,7 +40,7 @@
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 50,
+      "max_evals": 100,
       "train_per_n_new_exp": 5,
       "batch_size": 32,
       "lr": 0.001,
