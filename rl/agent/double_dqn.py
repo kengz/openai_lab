@@ -24,10 +24,10 @@ class DoubleDQN(DQN):
         self.optimizer.keras_optimizer_2 = clone_optimizer(
             self.optimizer.keras_optimizer)
         self.model.compile(
-            loss='mean_squared_error',
+            loss='mse',
             optimizer=self.optimizer.keras_optimizer)
         self.model_2.compile(
-            loss='mean_squared_error',
+            loss='mse',
             optimizer=self.optimizer.keras_optimizer_2)
         logger.info("Models 1 and 2 compiled")
 
