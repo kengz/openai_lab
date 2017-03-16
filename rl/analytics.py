@@ -202,7 +202,7 @@ def compose_data(trial):
     max_total_rewards_array = np.array(list(map(
         lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
     epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
-    mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array)
+    mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array + 1)
     t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
     time_taken_array = np.array(list(map(
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
