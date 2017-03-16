@@ -1,3 +1,4 @@
+import json
 import numpy as np
 import pandas as pd
 import platform
@@ -263,6 +264,17 @@ def compose_data(trial):
     return trial.data
 
 
+# order a unique df categorical data for plotting
+def order_category(uniq_df):
+    uniq_list = list(uniq_df)
+    try:
+        uniq_dict = {k: json.loads(k) for k in uniq_list}
+        sorted_pair = sorted(uniq_dict.items(), key=lambda x: x[1])
+        return [pair[0] for pair in sorted_pair]
+    except:
+        return list(sorted(uniq_list))
+
+
 # plot the experiment data from data_df
 # X are columns with name starting with 'variable_'
 # Y cols are defined below
@@ -285,10 +297,13 @@ def plot_experiment(data_df, trial_id):
     for ix, x in enumerate(X_cols):
         for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
             big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
+            uniq_df = data_df[x].unique()
             if (data_df[x].dtype.name == 'category' or
-                    len(data_df[x].unique()) <= 5):
+                    len(uniq_df) <= 5):
+                order = order_category(uniq_df)
                 sns.swarmplot(
-                    data=data_df, x=x, y=y, hue=hue, size=3, ax=big_ax)
+                    data=data_df, x=x, y=y, hue=hue, size=3,
+                    order=order, ax=big_ax)
             else:
                 sns_only = False
                 big_ax.margins(0.05)
