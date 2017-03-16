@@ -271,7 +271,7 @@ def order_category(uniq_df):
         uniq_dict = {k: json.loads(k) for k in uniq_list}
         sorted_pair = sorted(uniq_dict.items(), key=lambda x: x[1])
         return [pair[0] for pair in sorted_pair]
-    except:
+    except json.JSONDecodeError:
         return list(sorted(uniq_list))
 
 
