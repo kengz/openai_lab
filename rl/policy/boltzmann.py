@@ -10,10 +10,10 @@ class BoltzmannPolicy(Policy):
     p = exp(Q/tau) / sum(Q[a]/tau)
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
-        super(BoltzmannPolicy, self).__init__()
+        super(BoltzmannPolicy, self).__init__(env_spec)
         self.init_tau = init_tau
         self.final_tau = final_tau
         self.tau = self.init_tau
@@ -51,16 +51,16 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
     Same as the Boltzmann policy but for a Double DQN agent
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                  **kwargs):  # absorb generic param without breaking
-        super(DoubleDQNBoltzmannPolicy, self).__init__()
+        super(DoubleDQNBoltzmannPolicy, self).__init__(env_spec)
 
     def select_action(self, state):
         agent = self.agent
         state = np.reshape(state, (1, state.shape[0]))
         Q_state1 = agent.model.predict(state)[0]  # extract from batch predict
-        Q_state2 = agent.model2.predict(state)[0]  # extract from batch predict
+        Q_state2 = agent.model_2.predict(state)[0]  # extract from batch predict
         Q_state = Q_state1 + Q_state2
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue

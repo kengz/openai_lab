@@ -9,10 +9,10 @@ class EpsilonGreedyPolicy(Policy):
     The Epsilon-greedy policy
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(EpsilonGreedyPolicy, self).__init__()
+        super(EpsilonGreedyPolicy, self).__init__(env_spec)
         self.init_e = init_e
         self.final_e = final_e
         self.e = self.init_e
@@ -51,10 +51,10 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
     before taking the max of the result
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(DoubleDQNPolicy, self).__init__()
+        super(DoubleDQNPolicy, self).__init__(env_spec)
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -65,7 +65,7 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
             state = np.expand_dims(state, axis=0)
             # extract from batch predict
             Q_state1 = agent.model.predict(state)[0]
-            Q_state2 = agent.model2.predict(state)[0]
+            Q_state2 = agent.model_2.predict(state)[0]
             Q_state = Q_state1 + Q_state2
             assert Q_state.ndim == 1
             action = np.argmax(Q_state)
@@ -79,10 +79,10 @@ class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     https://gym.openai.com/evaluations/eval_t3GN2Xb0R5KpyjkJUGsLw
     '''
 
-    def __init__(self,
+    def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(DecayingEpsilonGreedyPolicy, self).__init__()
+        super(DecayingEpsilonGreedyPolicy, self).__init__(env_spec)
         self.e_decay = 0.9997
 
     def update(self, sys_vars):

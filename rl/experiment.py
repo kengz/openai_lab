@@ -81,7 +81,7 @@ class Session(object):
         self.agent = self.Agent(self.env_spec, **self.param)
         self.memory = self.Memory(**self.param)
         self.optimizer = self.Optimizer(**self.param)
-        self.policy = self.Policy(**self.param)
+        self.policy = self.Policy(self.env_spec, **self.param)
         self.agent.compile(
             self.memory, self.optimizer, self.policy, self.preprocessor)
 
@@ -131,12 +131,19 @@ class Session(object):
         state_dim = env.observation_space.shape[0]
         if (len(env.observation_space.shape) > 1):
             state_dim = env.observation_space.shape
+        if env.action_space.__class__.__name__ == 'Box':  # continuous
+            action_dim = env.action_space.shape[0]
+            actions = 'continuous'
+        else:
+            action_dim = env.action_space.n
+            actions = list(range(env.action_space.n))
+
         env_spec = {
             'state_dim': state_dim,
             'state_bounds': np.transpose(
                 [env.observation_space.low, env.observation_space.high]),
-            'action_dim': env.action_space.n,
-            'actions': list(range(env.action_space.n)),
+            'action_dim': action_dim,
+            'actions': actions,
             'reward_range': env.reward_range,
             'timestep_limit': env.spec.tags.get(
                 'wrapper_config.TimeLimit.max_episode_steps')
@@ -375,7 +382,9 @@ class Trial(object):
                 sess = Session(
                     trial=self, session_num=s, num_of_sessions=self.times)
                 sys_vars = sess.run()
-                sys_vars_array.append(copy.copy(sys_vars))
+                lean_sys_vars = copy.deepcopy(sys_vars)
+                lean_sys_vars.pop('loss', None)
+                sys_vars_array.append(lean_sys_vars)
                 time_taken = timestamp_elapse(time_start, timestamp())
 
                 self.data = {  # trial data

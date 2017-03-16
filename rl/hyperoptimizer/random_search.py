@@ -191,9 +191,11 @@ class RandomSearch(HyperOptimizer):
             return False
         elif best_fitness_score > self.ideal_fitness_score:
             logger.info(
-                'fitness_score {} > ideal_fitness_score {}, terminate'.format(
+                'fitness_score {} > ideal_fitness_score {}, could terminate early'.format(
                     best_fitness_score, self.ideal_fitness_score))
-            return True
+            # return True
+            # TODO fix ideal_fitness_score
+            return False
         else:
             return False
 

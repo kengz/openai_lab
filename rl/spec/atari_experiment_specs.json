@@ -12,7 +12,7 @@
       "lr": 0.001,
       "batch_size": 32,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
@@ -25,7 +25,7 @@
     },
     "param_range": {
       "lr": [0.001, 0.0001],
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [
           [16, 8, 8, [4, 4]],
           [32, 4, 4, [2, 2]]
@@ -46,7 +46,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
@@ -72,7 +72,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],
@@ -98,7 +98,7 @@
       "batch_size": 32,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers_shape": [
+      "hidden_layers": [
         [16, 8, 8, [4, 4]],
         [32, 4, 4, [2, 2]]
       ],

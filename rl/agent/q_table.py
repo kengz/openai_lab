@@ -22,6 +22,9 @@ class Dummy(Agent):
     def train(self, sys_vars):
         return
 
+    def build_model(self):
+        return
+
     def compile_model(self):
         return
 
@@ -47,9 +50,9 @@ class QTable(Agent):
         self.final_e = final_e
         self.e = self.init_e
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        self.build_table()
+        self.build_model()
 
-    def build_table(self):
+    def build_model(self):
         '''
         init the 2D qtable by
         bijecting the state space into pixelated, flattened vector
