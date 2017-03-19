@@ -34,17 +34,24 @@
     "MAX_EPISODES": 500,
     "REWARD_MEAN_LEN": 100
   },
-  "Pendulum-v0": {
-    "RENDER": true,
-    "GYM_ENV_NAME": "Pendulum-v0",
-    "SOLVED_MEAN_REWARD": -100.0,
-    "MAX_EPISODES": 1000,
-    "REWARD_MEAN_LEN": 100
-  },
   "MountainCar-v0": {
     "RENDER": true,
     "GYM_ENV_NAME": "MountainCar-v0",
     "SOLVED_MEAN_REWARD": -110.0,
+    "MAX_EPISODES": 1000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "MountainCarContinuous-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "MountainCarContinuous-v0",
+    "SOLVED_MEAN_REWARD": 90.0,
+    "MAX_EPISODES": 5000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "Pendulum-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "Pendulum-v0",
+    "SOLVED_MEAN_REWARD": -100.0,
     "MAX_EPISODES": 1000,
     "REWARD_MEAN_LEN": 100
   },
@@ -53,6 +60,13 @@
     "GYM_ENV_NAME": "LunarLander-v2",
     "SOLVED_MEAN_REWARD": 200.0,
     "MAX_EPISODES": 400,
+    "REWARD_MEAN_LEN": 100
+  },
+  "LunarLanderContinuous-v2": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "LunarLanderContinuous-v2",
+    "SOLVED_MEAN_REWARD": 200.0,
+    "MAX_EPISODES": 800,
     "REWARD_MEAN_LEN": 100
   },
   "BipedalWalker-v2": {
@@ -80,6 +94,20 @@
     "RENDER": true,
     "GYM_ENV_NAME": "AirRaid-v0",
     "SOLVED_MEAN_REWARD": 500.0,
+    "MAX_EPISODES": 5000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "Alien-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "Alien-v0",
+    "SOLVED_MEAN_REWARD": 2000.0,
+    "MAX_EPISODES": 5000,
+    "REWARD_MEAN_LEN": 100
+  },
+  "Assault-v0": {
+    "RENDER": true,
+    "GYM_ENV_NAME": "Assault-v0",
+    "SOLVED_MEAN_REWARD": 2000.0,
     "MAX_EPISODES": 5000,
     "REWARD_MEAN_LEN": 100
   },
@@ -114,13 +142,6 @@
   "Qbert-v0": {
     "RENDER": true,
     "GYM_ENV_NAME": "Qbert-v0",
-    "SOLVED_MEAN_REWARD": 1000.0,
-    "MAX_EPISODES": 5000,
-    "REWARD_MEAN_LEN": 100
-  },
-  "SpaceInvader-v0": {
-    "RENDER": true,
-    "GYM_ENV_NAME": "SpaceInvader-v0",
     "SOLVED_MEAN_REWARD": 1000.0,
     "MAX_EPISODES": 5000,
     "REWARD_MEAN_LEN": 100
