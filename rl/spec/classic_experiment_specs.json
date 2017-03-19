@@ -16,7 +16,7 @@
       "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "lr": [0.0005, 0.001, 0.005, 0.01],
+      "lr": [0.001, 0.005, 0.01, 0.02],
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
         [16],
