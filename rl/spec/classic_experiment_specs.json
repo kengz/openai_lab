@@ -46,8 +46,8 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.005,
-        "max": 0.03
+        "min": 0.0005,
+        "max": 0.05
       },
       "gamma": {
         "min": 0.93,
@@ -82,7 +82,7 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.005,
+        "min": 0.0005,
         "max": 0.05
       },
       "gamma": {
@@ -172,7 +172,7 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.005,
+        "min": 0.0005,
         "max": 0.05
       },
       "gamma": {
@@ -209,7 +209,7 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.005,
+        "min": 0.0005,
         "max": 0.05
       },
       "gamma": {
@@ -311,11 +311,11 @@
     "param_range": {
       "lr": {
         "min": 0.0005,
-        "max": 0.005
+        "max": 0.05
       },
       "gamma": {
         "min": 0.90,
-        "max": 0.999
+        "max": 0.9999
       },
       "hidden_layers": [
         [400],
@@ -374,7 +374,7 @@
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
-      "epi_change_lr": 300
+      "epi_change_lr": 500
     },
     "param_range": {
       "lr": {
@@ -392,7 +392,6 @@
         [400, 200, 100]
       ],
       "hidden_layers_activation": ["sigmoid", "relu"],
-      "epi_change_lr": [400, 500, 600],
       "exploration_anneal_episodes": [300, 400, 500]
     }
   },
