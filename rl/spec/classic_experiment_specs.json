@@ -46,11 +46,11 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.0005,
-        "max": 0.05
+        "min": 0.005,
+        "max": 0.03
       },
       "gamma": {
-        "min": 0.90,
+        "min": 0.93,
         "max": 0.999
       },
       "hidden_layers": [
@@ -87,16 +87,16 @@
       },
       "gamma": {
         "min": 0.90,
-        "max": 0.999
+        "max": 0.9999
       },
       "hidden_layers": [
         [16],
         [32],
         [64],
+        [128],
         [16, 8],
-        [32, 16]
-      ],
-      "hidden_layers_activation": ["sigmoid", "relu"]
+        [64, 32]
+      ]
     }
   },
   "double_dqn": {
@@ -117,11 +117,13 @@
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.95, 0.96, 0.97, 0.99],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
-        [8],
         [16],
-        [32]
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
       ]
     }
   },
@@ -181,11 +183,11 @@
         [16],
         [32],
         [64],
+        [128],
         [16, 8],
         [32, 16]
       ],
-      "exploration_anneal_episodes": [10, 20, 40],
-      "hidden_layers_activation": ["sigmoid", "relu"]
+      "exploration_anneal_episodes": [10, 20, 40]
     }
   },
   "exp_sarsa": {
@@ -197,21 +199,32 @@
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.001,
+      "max_evals": 100,
+      "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
       "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 20
+      "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.95, 0.96, 0.97, 0.99],
+      "lr": {
+        "min": 0.005,
+        "max": 0.05
+      },
+      "gamma": {
+        "min": 0.90,
+        "max": 0.999
+      },
       "hidden_layers": [
-        [8],
         [16],
-        [32]
-      ]
+        [32],
+        [64],
+        [128],
+        [16, 8],
+        [32, 16]
+      ],
+      "exploration_anneal_episodes": [10, 20, 40]
     }
   },
   "offpol_sarsa": {
@@ -249,7 +262,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 50,
+      "max_evals": 100,
       "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
@@ -259,19 +272,22 @@
     },
     "param_range": {
       "lr": {
-        "min": 0.0001,
-        "max": 0.005
+        "min": 0.0005,
+        "max": 0.05
       },
       "gamma": {
         "min": 0.90,
-        "max": 0.999
+        "max": 0.9999
       },
       "hidden_layers": [
-        [8],
         [16],
         [32],
-        [64]
-      ]
+        [64],
+        [128],
+        [16, 8],
+        [64, 32]
+      ],
+      "exploration_anneal_episodes": [200, 400, 600]
     }
   },
   "pendulum": {
