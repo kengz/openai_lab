@@ -96,6 +96,8 @@ class RandomSearch(HyperOptimizer):
         self.search_dim = len(self.param_range_keys)
         self.precision = 4  # decimal roundoff biject_continuous
         self.search_radius = self.init_search_radius = 0.5
+        self.search_count = 0  # number of times search() has ran
+        self.search_exhausted = False
         self.search_path = []
         self.best_point = {
             'trial_num': None,
@@ -122,14 +124,28 @@ class RandomSearch(HyperOptimizer):
         algo step 2.1 sample new pos some radius away: next_x = x + r
         update search_path and param_search_list
         '''
+        self.search_count += 1
         if self.next_trial_num < len(self.search_path):  # resuming
             next_x = self.search_path[self.next_trial_num]
             next_param = self.param_search_list[self.next_trial_num]
         else:
             next_x = np.clip(self.best_point['x'] + self.sample_r(), 0., 1.)
-            next_param = self.biject_param(next_x)
-            self.search_path.append(next_x)
-            self.param_search_list.append(next_param)
+            # check if too close to previously searched x
+            distances = [np.linalg.norm(next_x - old_x)
+                         for old_x in self.search_path]
+            distances = np.around(distances, self.precision)
+
+            if self.search_count > (10 * self.max_evals):
+                self.search_exhausted = True  # exhausted search space
+                next_param = self.biject_param(next_x)
+                self.search_path.append(next_x)
+                self.param_search_list.append(next_param)
+            elif len(distances) > 0 and np.amin(distances) == 0:
+                self.search()
+            else:
+                next_param = self.biject_param(next_x)
+                self.search_path.append(next_x)
+                self.param_search_list.append(next_param)
 
     def update_search(self):
         '''
@@ -161,6 +177,7 @@ class RandomSearch(HyperOptimizer):
     def save(self):
         search_history = {
             'search_path': self.search_path,
+            'search_count': self.search_count,
             'best_point': self.best_point,
             'param_search_list': self.param_search_list,
         }
@@ -191,7 +208,8 @@ class RandomSearch(HyperOptimizer):
             return False
         elif best_fitness_score > self.ideal_fitness_score:
             logger.info(
-                'fitness_score {} > ideal_fitness_score {}, could terminate early'.format(
+                'fitness_score {} > ideal_fitness_score {}, '
+                'could terminate early'.format(
                     best_fitness_score, self.ideal_fitness_score))
             # return True
             # TODO fix ideal_fitness_score
@@ -200,5 +218,6 @@ class RandomSearch(HyperOptimizer):
             return False
 
     def to_terminate(self):
-        return (self.next_trial_num >= self.max_evals or
+        return (self.search_exhausted or
+                self.next_trial_num >= self.max_evals or
                 self.satisfy_fitness())
