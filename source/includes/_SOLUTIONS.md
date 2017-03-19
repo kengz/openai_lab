@@ -2,14 +2,14 @@
 
 Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.
 
-If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. Include the following:
+## Submission instructions
+
+If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. **Commit** only the source code, and **attach** the following files (to limit the repo size). to the PR:
 
 - `<experiment_id>_analysis.png`
 - `<experiment_id>_analysis_correlation.png`
 - `<experiment_id>_analysis_data.csv`
 - `<best_trial_id>.json`
-
-See an [example PR here](https://github.com/kengz/openai_lab/pulls).
 
 
 ## Algorithms
