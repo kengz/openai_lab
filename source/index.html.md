@@ -50,5 +50,5 @@ Next, see [Installation](#installation), [Usage](#usage), [Development](#develop
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
-_Timelapse of OpenAI Lab, solving Cartpole._
+_Timelapse of OpenAI Lab, solving CartPole-v0._
 
