@@ -1,4 +1,5 @@
 import numpy as np
+from rl.util import logger
 from rl.policy.base_policy import Policy
 
 
@@ -43,6 +44,7 @@ class AnnealedGaussian(Policy):
             Q_state = agent.actor.predict(state)[0]
             assert Q_state.ndim == 1
             action = np.argmax(Q_state)
+            logger.info(str(Q_state)+' '+str(action))
         return action
 
     def update(self, sys_vars):
