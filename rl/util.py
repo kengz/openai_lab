@@ -64,24 +64,23 @@ PROBLEMS, EXPERIMENT_SPECS = import_guard_asset()
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flags for functions')
-parser.add_argument("-d", "--debug",
-                    help="activate debug log",
-                    action="store_const",
-                    dest="loglevel",
-                    const=logging.DEBUG,
-                    default=logging.INFO)
-parser.add_argument("-q", "--quiet",
-                    help="change log to warning level",
-                    action="store_const",
-                    dest="loglevel",
-                    const=logging.WARNING,
-                    default=logging.INFO)
+parser.add_argument("-a", "--analyze",
+                    help="only run analyze_data",
+                    action="store_true",
+                    dest="analyze_only",
+                    default=False)
 parser.add_argument("-b", "--blind",
                     help="dont render graphics",
                     action="store_const",
                     dest="render",
                     const=False,
                     default=True)
+parser.add_argument("-d", "--debug",
+                    help="activate debug log",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.DEBUG,
+                    default=logging.INFO)
 parser.add_argument("-e", "--experiment",
                     help="specify experiment to run",
                     action="store",
@@ -89,6 +88,17 @@ parser.add_argument("-e", "--experiment",
                     nargs='?',
                     dest="experiment",
                     default="dev_dqn")
+parser.add_argument("-p", "--param_selection",
+                    help="run parameter selection if present",
+                    action="store_true",
+                    dest="param_selection",
+                    default=False)
+parser.add_argument("-q", "--quiet",
+                    help="change log to warning level",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.WARNING,
+                    default=logging.INFO)
 parser.add_argument("-t", "--times",
                     help="number of times session is run",
                     action="store",
@@ -96,16 +106,6 @@ parser.add_argument("-t", "--times",
                     type=int,
                     dest="times",
                     default=1)
-parser.add_argument("-p", "--param_selection",
-                    help="run parameter selection if present",
-                    action="store_true",
-                    dest="param_selection",
-                    default=False)
-parser.add_argument("-a", "--analyze",
-                    help="only run analyze_data",
-                    action="store_true",
-                    dest="analyze_only",
-                    default=False)
 parser.add_argument("-x", "--max_episodes",
                     help="manually set environment max episodes",
                     action="store",
