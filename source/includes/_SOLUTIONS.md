@@ -1,6 +1,15 @@
 # <a name="solutions"></a>Best Solutions
 
-Algorithms and best solutions by OpenAI Lab users. [Submission guideline, link to PR](http://kengz.me/openai_lab).
+Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.
+
+If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. Include the following:
+
+- `<experiment_id>_analysis.png`
+- `<experiment_id>_analysis_correlation.png`
+- `<experiment_id>_analysis_data.csv`
+- `<best_trial_id>.json`
+
+See an [example PR here](https://github.com/kengz/openai_lab/pulls).
 
 
 ## Algorithms
@@ -26,16 +35,6 @@ _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC pap
 
 
 ## Problems
-
-If your algorithm beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. Include the following:
-
-- `<experiment_id>_analysis.png`
-- `<experiment_id>_analysis_correlation.png`
-- `<experiment_id>_analysis_data.csv`
-- `<best_trial_id>.json`
-
-See an [example PR here](https://github.com/kengz/openai_lab/pulls).
-
 
 ### Classic Problems
 
