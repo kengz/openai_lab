@@ -82,7 +82,7 @@ Experiments take a long time to complete, and if your process gets terminated, r
 
 ```json
 {
-  "dqn": "dqn-2017_02_21_182442"
+  "dqn": "dqn-2017_03_19_004714"
 }
 ```
 
@@ -126,7 +126,7 @@ The basic python command pattern is:
 python3 main.py -<flag>
 
 # most common example, with piping of terminal log
-python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
+python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 ```
 
 The python command <flag>s are:
@@ -134,11 +134,9 @@ The python command <flag>s are:
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-d`: log debug info. Default: `False`
-- `-q`: quiet mode, log warning only. Default: `False`
 - `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
-- `-g`: plot graphs live. Default: `False`
-- `-m <max_evals>`: the max number of trials for hyperopt. Default: `100`
 - `-p`: run param selection. Default: `False`
+- `-q`: quiet mode, log warning only. Default: `False`
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
 - `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in `rl/asset/problems.json`
 
@@ -166,22 +164,23 @@ The example below is fully specified in `rl/asset/classic_experiment_specs.json`
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
-      "lr": 0.001,
-      "gamma": 0.96,
-      "hidden_layers_shape": [16],
+      "lr": 0.01,
+      "decay": 0.0,
+      "gamma": 0.99,
+      "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 20
+      "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "lr": [0.001, 0.01, 0.02, 0.05],
-      "gamma": [0.95, 0.96, 0.97, 0.99],
-      "hidden_layers_shape": [
-        [8],
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
         [16],
-        [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
     }
   }
 }
@@ -197,7 +196,7 @@ The example below is fully specified in `rl/asset/classic_experiment_specs.json`
     - `NoPreProcessor`
 - *parameter variables values*: the `"param_range"` JSON
 
-An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `96` param combinations (trials), and `5` repeated sessions per trial. Overall, this experiment will run `96 x 5 = 480` sessions.
+An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `4x4x5=80` param combinations (trials), and up to `5` repeated sessions per trial. Overall, this experiment will run at most `80 x 5 = 400` sessions.
 
 
 ### Lab Workflow
