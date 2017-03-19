@@ -9,20 +9,20 @@ The status of the algorithms in OpenAI Lab. Feel free to invent new ones!
 
 _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
 
-|algorithm|implemented?|paper|eval score|
-|:---|:---|:---|:---|
-|DQN|✓|[url](https://arxiv.org/abs/1312.5602)|-|
-|double-DQN|✓|[url](https://arxiv.org/abs/1509.06461)|-|
-|dueling-DQN|-|[url](https://arxiv.org/abs/1511.06581)|-|
-|SARSA|✓|-|-|
-|prioritized replay|in-progress|[url](https://arxiv.org/abs/1511.05952)|-|
-|Q*(lambda)|-|-|-|
-|Retrace(lambda)|-|-|-|
-|DPG (Deterministic Policy Gradient aka actor-critic)|in-progress|[url](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|-|
-|DDPG (Deep-DPG, aka actor-critic with target networks)|in-progress|[url](https://arxiv.org/abs/1509.02971)|-|
-|A3C (asynchronous advantage actor-critic)|-|[url](https://arxiv.org/pdf/1602.01783.pdf)|-|
-|Neural Episodic Control (NEC)|next|[url](https://arxiv.org/abs/1703.01988)|-|
-|EWC (Elastic Weight Consolidation)|-|[url](https://arxiv.org/abs/1612.00796)|-|
+|algorithm|implemented?|eval score|
+|:---|:---|:---|
+|[DQN](https://arxiv.org/abs/1312.5602)|✓|-|
+|[double-DQN](https://arxiv.org/abs/1509.06461)|✓|-|
+|[dueling-DQN](https://arxiv.org/abs/1511.06581)|-|-|
+|SARSA|✓|-|
+|[prioritized replay](https://arxiv.org/abs/1511.05952)|in-progress|-|
+|Q*(lambda)|-|-|
+|Retrace(lambda)|-|-|
+|[DPG (Deterministic Policy Gradient aka actor-critic)](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|in-progress|-|
+|[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|in-progress|-|
+|[A3C (asynchronous advantage actor-critic)](https://arxiv.org/pdf/1602.01783.pdf)|-|-|
+|[Neural Episodic Control (NEC)](https://arxiv.org/abs/1703.01988)|next|-|
+|[EWC (Elastic Weight Consolidation)](https://arxiv.org/abs/1612.00796)|-|-|
 
 
 ## Problems
