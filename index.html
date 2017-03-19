@@ -234,7 +234,7 @@
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
-<p><em>Timelapse of OpenAI Lab, solving Cartpole.</em></p>
+<p><em>Timelapse of OpenAI Lab, solving CartPole-v0.</em></p>
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
@@ -408,7 +408,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 
 <p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code>. This will read the <code class="prettyprint">config/history.json</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_02_21_182442"</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_03_19_004714"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>The <code class="prettyprint">config/history.json</code> is created in the last run that maps <code class="prettyprint">experiment_name</code>s to <code class="prettyprint">experiment_id</code>s, and resume any incomplete experiments based on that <code class="prettyprint">experiment_id</code>. You can manually tweak the file to set the resume target of course.</p>
@@ -446,7 +446,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 <pre class="highlight shell"><code>python3 main.py -&lt;flag&gt;
 
 <span class="c"># most common example, with piping of terminal log</span>
-python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
+python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 </code></pre>
 <p>The python command <flag>s are:</p>
 
@@ -454,11 +454,9 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-a</code>: Run <code class="prettyprint">analyze_experiment()</code> only to plot <code class="prettyprint">experiment_data</code>. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-b</code>: blind mode, do not render graphics. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-d</code>: log debug info. Default: <code class="prettyprint">False</code></li>
-<li><code class="prettyprint">-q</code>: quiet mode, log warning only. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-e &lt;experiment&gt;</code>: specify which of <code class="prettyprint">rl/asset/experiment_spec.json</code> to run. Default: <code class="prettyprint">-e dev_dqn</code>. Can be a <code class="prettyprint">experiment_name, experiment_id</code>.</li>
-<li><code class="prettyprint">-g</code>: plot graphs live. Default: <code class="prettyprint">False</code></li>
-<li><code class="prettyprint">-m &lt;max_evals&gt;</code>: the max number of trials for hyperopt. Default: <code class="prettyprint">100</code></li>
 <li><code class="prettyprint">-p</code>: run param selection. Default: <code class="prettyprint">False</code></li>
+<li><code class="prettyprint">-q</code>: quiet mode, log warning only. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-t &lt;times&gt;</code>: the number of sessions to run per trial. Default: <code class="prettyprint">1</code></li>
 <li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/asset/problems.json</code></li>
 </ul>
@@ -484,22 +482,23 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
     </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"train_per_n_new_exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
       </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.96</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_shape"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w">
-      </span><span class="p">],</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -519,7 +518,7 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
 </ul>
 
-<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">96</code> param combinations (trials), and <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run <code class="prettyprint">96 x 5 = 480</code> sessions.</p>
+<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">4x4x5=80</code> param combinations (trials), and up to <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run at most <code class="prettyprint">80 x 5 = 400</code> sessions.</p>
 
 <h3 id="lab-workflow">Lab Workflow</h3>
 
@@ -552,85 +551,79 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <th style="text-align: left">max_total_rewards_stats_mean</th>
 <th style="text-align: left">t_stats_mean</th>
 <th style="text-align: left">trial_id</th>
-<th style="text-align: left">variable_exploration_anneal_episodes</th>
 <th style="text-align: left">variable_gamma</th>
-<th style="text-align: left">variable_hidden_layers_shape</th>
+<th style="text-align: left">variable_hidden_layers</th>
 <th style="text-align: left">variable_lr</th>
 </tr>
 </thead><tbody>
 <tr>
-<td style="text-align: left">1.178061</td>
-<td style="text-align: left">1.178061</td>
-<td style="text-align: left">195.726</td>
-<td style="text-align: left">169.2</td>
+<td style="text-align: left">5.305994917071314</td>
+<td style="text-align: left">1.3264987292678285</td>
+<td style="text-align: left">195.404</td>
+<td style="text-align: left">154.2</td>
 <td style="text-align: left">1.0</td>
 <td style="text-align: left">5</td>
 <td style="text-align: left">200.0</td>
-<td style="text-align: left">196.4</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t44</td>
-<td style="text-align: left">10</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t79</td>
+<td style="text-align: left">0.999</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.02</td>
+</tr>
+<tr>
+<td style="text-align: left">5.105207228739003</td>
+<td style="text-align: left">1.2763018071847507</td>
+<td style="text-align: left">195.13600000000002</td>
+<td style="text-align: left">160.6</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t50</td>
 <td style="text-align: left">0.99</td>
 <td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
+<td style="text-align: left">0.01</td>
 </tr>
 <tr>
-<td style="text-align: left">1.173569</td>
-<td style="text-align: left">1.173569</td>
-<td style="text-align: left">195.47</td>
-<td style="text-align: left">168.0</td>
+<td style="text-align: left">4.9561426920909355</td>
+<td style="text-align: left">1.2390356730227339</td>
+<td style="text-align: left">195.26000000000002</td>
+<td style="text-align: left">168.6</td>
 <td style="text-align: left">1.0</td>
 <td style="text-align: left">5</td>
 <td style="text-align: left">200.0</td>
 <td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t32</td>
-<td style="text-align: left">10</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t78</td>
+<td style="text-align: left">0.999</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.01</td>
+</tr>
+<tr>
+<td style="text-align: left">4.76714626254895</td>
+<td style="text-align: left">1.1917865656372375</td>
+<td style="text-align: left">195.106</td>
+<td style="text-align: left">172.4</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t71</td>
+<td style="text-align: left">0.999</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.02</td>
+</tr>
+<tr>
+<td style="text-align: left">4.717243567762263</td>
+<td style="text-align: left">1.1793108919405657</td>
+<td style="text-align: left">195.56400000000002</td>
+<td style="text-align: left">167.2</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">5</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">199.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t28</td>
 <td style="text-align: left">0.97</td>
 <td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.152447</td>
-<td style="text-align: left">1.152447</td>
-<td style="text-align: left">195.248</td>
-<td style="text-align: left">170.6</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">198.2</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t64</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.96</td>
-<td style="text-align: left">[16]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.128509</td>
-<td style="text-align: left">1.128509</td>
-<td style="text-align: left">195.392</td>
-<td style="text-align: left">177.8</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t92</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.99</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">1.127216</td>
-<td style="text-align: left">1.127216</td>
-<td style="text-align: left">195.584</td>
-<td style="text-align: left">175.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_02_27_002407_t76</td>
-<td style="text-align: left">20</td>
-<td style="text-align: left">0.97</td>
-<td style="text-align: left">[16]</td>
 <td style="text-align: left">0.001</td>
 </tr>
 </tbody></table>
@@ -640,10 +633,9 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <p>On completion, from the analytics, we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:</p>
 
 <ul>
-<li><em>lr</em>: 0.001</li>
-<li><em>gamma</em>: 0.99</li>
-<li><em>hidden_layers_shape</em>: [32]</li>
-<li><em>exploration_anneal_episodes</em>: 10</li>
+<li><em>lr</em>: 0.02</li>
+<li><em>gamma</em>: 0.999</li>
+<li><em>hidden_layers_shape</em>: [64]</li>
 </ul>
 
           <h1 id="development"><a name="development"></a>Development</h1>
@@ -735,9 +727,97 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 
           <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
 
-<p>Best solutions by OpenAI Lab users. <a href="http://kengz.me/openai_lab">Submission guideline, link to PR</a>.</p>
+<p>Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
 
-<h2 id="classic-problems">Classic Problems</h2>
+<h2 id="submission-instructions">Submission instructions</h2>
+
+<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. <strong>Commit</strong> only the source code, and <strong>attach</strong> the following files (to limit the repo size). to the PR:</p>
+
+<ul>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis.png</code></li>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_correlation.png</code></li>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
+<li><code class="prettyprint">&lt;best_trial_id&gt;.json</code></li>
+</ul>
+
+<h2 id="algorithms">Algorithms</h2>
+
+<p>The status of the algorithms in OpenAI Lab. Feel free to invent new ones!</p>
+
+<p><em>Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">algorithm</th>
+<th style="text-align: left">implemented?</th>
+<th style="text-align: left">eval score</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">double-DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">dueling-DQN</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SARSA</td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Q*(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Retrace(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h2 id="problems">Problems</h2>
+
+<h3 id="classic-problems">Classic Problems</h3>
 
 <table><thead>
 <tr>
@@ -746,20 +826,215 @@ python3 main.py -gbp -t 5 -e lunar_dqn | tee -a ./data/terminal.log;
 <th style="text-align: left">epis before solve / best 100-epi mean</th>
 <th style="text-align: left">author</th>
 <th style="text-align: left">experiment_spec</th>
-<th style="text-align: left">analytics</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left">CartPole-v0</td>
-<td style="text-align: left">1.4</td>
-<td style="text-align: left">15</td>
-<td style="text-align: left">kengz</td>
-<td style="text-align: left"><a href="http://kengz.me/openai_lab">rand_dqn</a></td>
-<td style="text-align: left"><a href="http://kengz.me/openai_lab">folder with graphs and top5 csv</a></td>
+<td style="text-align: left">5.3060</td>
+<td style="text-align: left">14</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left"><a href="http://kengz.me/openai_lab">dqn</a></td>
+</tr>
+<tr>
+<td style="text-align: left">CartPole-v1</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Acrobot-v1</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCar-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCarContinuous-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pendulum-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
 </tr>
 </tbody></table>
 
-<h2 id="box2d-problems">Box2D Problems</h2>
+<h3 id="box2d-problems">Box2D Problems</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">LunarLander-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">LunarLanderContinuous-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalker-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalkerHardcore-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">CarRacing-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="atari-problems">Atari Problems</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">AirRaid-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Alien-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Assault-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Breakout-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MsPacman-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pong-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Qbert-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SpaceInvader-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="pygame-problems">PyGame Problems</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">FlappyBird-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Snake-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="universe-problems">Universe Problems</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
 
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
