@@ -6,6 +6,8 @@ class DDPG(DQN):
 
     '''
     The DDPG agent (algo), from https://arxiv.org/abs/1509.02971
+    reference: https://yanpanlau.github.io/2016/10/11/Torcs-Keras.html
+    https://github.com/matthiasplappert/keras-rl
     '''
 
     def __init__(self, *args, **kwargs):
