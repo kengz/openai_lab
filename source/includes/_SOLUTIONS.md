@@ -4,12 +4,9 @@ Algorithms and best solutions by OpenAI Lab users. We want people to start from 
 
 ## Submission instructions
 
-If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. **Commit** only the source code, and **attach** the following files (to limit the repo size). to the PR:
+If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab.
 
-- `<experiment_id>_analysis.png`
-- `<experiment_id>_analysis_correlation.png`
-- `<experiment_id>_analysis_data.csv`
-- `<best_trial_id>.json`
+Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for submission guideline.
 
 
 ## Algorithms
@@ -36,11 +33,14 @@ _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC pap
 
 ## Problems
 
+The list of accepted solutions can be seen in the [`solution` PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+
+
 ### Classic Problems
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|5.3060|14|kengz/lgraesser|[dqn](http://kengz.me/openai_lab)|
+|CartPole-v0|5.305995|14|kengz/lgraesser|[dqn](https://github.com/kengz/openai_lab/pull/73)|
 |CartPole-v1|-|-|-|-|
 |Acrobot-v1|-|-|-|-|
 |MountainCar-v0|-|-|-|-|
