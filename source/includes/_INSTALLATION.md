@@ -76,7 +76,7 @@ _Notifications from the lab running on our remote server beast._
 
 ## Setup Experiments
 
-There are many existing experiments specified in `rl/asset/experiment_specs.json`, and you can add more. Pick the `experiment_name`s (the JSON key, e.g. `"dqn", "lunar_dqn"`), list under config key `experiment`. Then check [usage](#usage) to run the lab.
+There are many existing experiments specified in `rl/spec/*_experiment_specs.json`, and you can add more. Pick the `experiment_name`s (e.g. `"dqn", "lunar_dqn"`), specify in `config/default.json` or `config/production.json`. Then check [usage](#usage) to run the lab.
 
 
 ## <a name="dependencies"></a>Dependencies

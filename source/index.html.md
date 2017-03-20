@@ -14,9 +14,9 @@ toc_footers:
 includes:
   - INSTALLATION
   - USAGE
-  - DEVELOPMENT
   - ANALYSIS
   - SOLUTIONS
+  - DEVELOPMENT
   - ROADMAP
   - CONTRIBUTING
 

@@ -2,7 +2,7 @@
 
 The general flow for running a production lab is:
 
-1. Specify experiments in `rl/asset/experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
+1. Specify experiments in `rl/spec/*_experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
 2. Specify the names of the experiments to run in `config/production.json`
 3. Run the lab, e.g. `grunt -prod -resume`
 
@@ -134,11 +134,11 @@ The python command <flag>s are:
 - `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-d`: log debug info. Default: `False`
-- `-e <experiment>`: specify which of `rl/asset/experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
+- `-e <experiment>`: specify which inside the `rl/spec/*_experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
 - `-p`: run param selection. Default: `False`
 - `-q`: quiet mode, log warning only. Default: `False`
 - `-t <times>`: the number of sessions to run per trial. Default: `1`
-- `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in `rl/asset/problems.json`
+- `-x <max_episodes>`: Manually specifiy max number of episodes per trial. Default: `-1` and program defaults to value in `rl/spec/problems.json`
 
 
 ## Lab Demo
@@ -151,7 +151,7 @@ We specify input parameters for the experimental variable, run the experiment, r
 
 ### Specify Experiment
 
-The example below is fully specified in `rl/asset/classic_experiment_specs.json` under `dqn`:
+The example below is fully specified in `rl/spec/classic_experiment_specs.json` under `dqn`:
 
 ```json
 {
