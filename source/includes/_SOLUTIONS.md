@@ -24,9 +24,12 @@ _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC pap
 |[prioritized replay](https://arxiv.org/abs/1511.05952)|in-progress|-|
 |Q*(lambda)|-|-|
 |Retrace(lambda)|-|-|
+|[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|-|-|
+|[PG (Policy Gradient)](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)|-|-|
 |[DPG (Deterministic Policy Gradient aka actor-critic)](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|in-progress|-|
 |[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|in-progress|-|
 |[A3C (asynchronous advantage actor-critic)](https://arxiv.org/pdf/1602.01783.pdf)|-|-|
+|[TRPO](https://arxiv.org/abs/1502.05477)|-|-|
 |[Neural Episodic Control (NEC)](https://arxiv.org/abs/1703.01988)|next|-|
 |[EWC (Elastic Weight Consolidation)](https://arxiv.org/abs/1612.00796)|-|-|
 
