@@ -63,6 +63,33 @@
       "hidden_layers_activation": ["sigmoid", "relu"]
     }
   },
+  "dqn_v1": {
+    "problem": "CartPole-v1",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.01,
+      "decay": 0.0,
+      "gamma": 0.99,
+      "hidden_layers": [32],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 10
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [128]
+      ]
+    }
+  },
   "rand_dqn_v1": {
     "problem": "CartPole-v1",
     "Agent": "DQN",
