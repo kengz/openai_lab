@@ -303,7 +303,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
 <h2 id="setup-experiments">Setup Experiments</h2>
 
-<p>There are many existing experiments specified in <code class="prettyprint">rl/asset/experiment_specs.json</code>, and you can add more. Pick the <code class="prettyprint">experiment_name</code>s (the JSON key, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code>), list under config key <code class="prettyprint">experiment</code>. Then check <a href="#usage">usage</a> to run the lab.</p>
+<p>There are many existing experiments specified in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>, and you can add more. Pick the <code class="prettyprint">experiment_name</code>s (e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code>), specify in <code class="prettyprint">config/default.json</code> or <code class="prettyprint">config/production.json</code>. Then check <a href="#usage">usage</a> to run the lab.</p>
 
 <h2 id="dependencies"><a name="dependencies"></a>Dependencies</h2>
 
@@ -336,7 +336,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 <p>The general flow for running a production lab is:</p>
 
 <ol>
-<li>Specify experiments in <code class="prettyprint">rl/asset/experiment_specs.json</code>, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code></li>
+<li>Specify experiments in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code></li>
 <li>Specify the names of the experiments to run in <code class="prettyprint">config/production.json</code></li>
 <li>Run the lab, e.g. <code class="prettyprint">grunt -prod -resume</code></li>
 </ol>
@@ -454,11 +454,11 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-a</code>: Run <code class="prettyprint">analyze_experiment()</code> only to plot <code class="prettyprint">experiment_data</code>. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-b</code>: blind mode, do not render graphics. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-d</code>: log debug info. Default: <code class="prettyprint">False</code></li>
-<li><code class="prettyprint">-e &lt;experiment&gt;</code>: specify which of <code class="prettyprint">rl/asset/experiment_spec.json</code> to run. Default: <code class="prettyprint">-e dev_dqn</code>. Can be a <code class="prettyprint">experiment_name, experiment_id</code>.</li>
+<li><code class="prettyprint">-e &lt;experiment&gt;</code>: specify which inside the <code class="prettyprint">rl/spec/*_experiment_spec.json</code> to run. Default: <code class="prettyprint">-e dev_dqn</code>. Can be a <code class="prettyprint">experiment_name, experiment_id</code>.</li>
 <li><code class="prettyprint">-p</code>: run param selection. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-q</code>: quiet mode, log warning only. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-t &lt;times&gt;</code>: the number of sessions to run per trial. Default: <code class="prettyprint">1</code></li>
-<li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/asset/problems.json</code></li>
+<li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/spec/problems.json</code></li>
 </ul>
 
 <h2 id="lab-demo">Lab Demo</h2>
@@ -471,7 +471,7 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 
 <h3 id="specify-experiment">Specify Experiment</h3>
 
-<p>The example below is fully specified in <code class="prettyprint">rl/asset/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<p>The example below is fully specified in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
@@ -637,89 +637,6 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><em>gamma</em>: 0.999</li>
 <li><em>hidden_layers_shape</em>: [64]</li>
 </ul>
-
-          <h1 id="development"><a name="development"></a>Development</h1>
-
-<p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
-
-<p>The design of the code is clean enough to simply infer how things work by example.</p>
-
-<ul>
-<li><code class="prettyprint">data/</code>: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials</li>
-<li><code class="prettyprint">rl/agent/</code>: custom agents. Refer to <code class="prettyprint">base_agent.py</code> and <code class="prettyprint">dqn.py</code> to build your own</li>
-<li><code class="prettyprint">rl/asset/</code>: specify new problems and experiment_specs to run experiments for.</li>
-<li><code class="prettyprint">rl/hyperoptimizer/</code>: Hyperparameter optimizers for the Experiments</li>
-<li><code class="prettyprint">rl/memory/</code>: RL agent memory classes</li>
-<li><code class="prettyprint">rl/policy/</code>: RL agent policy classes</li>
-<li><code class="prettyprint">rl/preprocessor/</code>: RL agent preprocessor (state and memory) classes</li>
-<li><code class="prettyprint">rl/analytics.py</code>: the data analytics module for output experiment data</li>
-<li><code class="prettyprint">rl/experiment.py</code>: the main high level experiment logic</li>
-<li><code class="prettyprint">rl/util.py</code>: Generic util</li>
-</ul>
-
-<p>Each run is an <code class="prettyprint">experiment</code> that runs multiple <code class="prettyprint">Trial</code>s (not restricted to the same <code class="prettyprint">experiment_id</code> for future cross-training). Each <code class="prettyprint">Trial</code> runs multiple (by flag <code class="prettyprint">-t</code>) <code class="prettyprint">Session</code>s, so an <code class="prettyprint">trial</code> is a <code class="prettyprint">sess_grid</code>.</p>
-
-<p>Each trial collects the data from its sessions into <code class="prettyprint">trial_data</code>, which is saved to a JSON and as many plots as there are sessions. On the higher level, <code class="prettyprint">experiment</code> analyses the aggregate <code class="prettyprint">trial_data</code> to produce a best-sorted CSV and graphs of the variables (what&rsquo;s changed across experiments) vs outputs.</p>
-
-<h2 id="problem">problem</h2>
-
-<h2 id="agent">Agent</h2>
-
-<h2 id="hyperoptimizer">HyperOptimizer</h2>
-
-<p>A hyperoptimizer is a function <code class="prettyprint">h</code> that takes:</p>
-
-<ul>
-<li>a trial (objective) function <code class="prettyprint">Trial</code></li>
-<li>a param space <code class="prettyprint">P</code> (implemented in <code class="prettyprint">experiment_spec</code>)</li>
-</ul>
-
-<p>and run the algorithm:
-1. search the next p in P using its internal search algo, add to its internal <code class="prettyprint">param_search_list</code>
-2. run a (slow) function Trial(p) = score (inside trial data)
-3. update search using feedback score
-4. repeat till max steps or fitness condition met</p>
-
-<p>Furthermore, the search space P is a tensor space product of <code class="prettyprint">m</code> bounded real spaces <code class="prettyprint">R</code> and <code class="prettyprint">n</code> bounded discrete spaces <code class="prettyprint">N</code>.</p>
-
-<h3 id="implementation-wise">Implementation-wise:</h3>
-
-<ol>
-<li>we want order-preserving and persistence for the ability to resume/reproduce an experiment</li>
-<li>the search algo may save its belief data to facilitate search</li>
-<li>the Trial function shall be kept as a blackbox for generality of implementation</li>
-</ol>
-
-<h3 id="specification-of-search-space">Specification of search space:</h3>
-
-<p>1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in <code class="prettyprint">experiment_grid.param</code> like so:</p>
-<pre class="highlight json"><code><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"uniform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in <code class="prettyprint">experiment_grid.param</code> like so:
-<code class="prettyprint">&#39;lr&#39;: [0.01, 0.02, 0.05, 0.1, 0.2]</code></p>
-
-<p>The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.</p>
-
-<p>Note that whether a variable is real or discrete can be up to the author; some variable such as <code class="prettyprint">lr</code> can be sampled from interval <code class="prettyprint">0.001 to 0.1</code> or human-specified options <code class="prettyprint">[0.01, 0.02, 0.05, 0.1, 0.2]</code>. One way may be more efficient than the other depending on the search algorithm.</p>
-
-<p>The experiment will run it as:</p>
-<pre class="highlight python"><code><span class="c"># specify which hyperoptimizer class to use in spec for bookkeeping</span>
-<span class="n">Hopt</span> <span class="o">=</span> <span class="n">get_module</span><span class="p">(</span><span class="n">GREF</span><span class="p">,</span> <span class="n">experiment_spec</span><span class="p">[</span><span class="s">'HyperOptimizer'</span><span class="p">])</span>
-<span class="n">hopt</span> <span class="o">=</span> <span class="n">Hopt</span><span class="p">(</span><span class="n">Trial</span><span class="p">,</span> <span class="o">**</span><span class="n">experiment_kwargs</span><span class="p">)</span>
-<span class="n">experiment_data</span> <span class="o">=</span> <span class="n">hopt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</code></pre>
-<h2 id="memory">Memory</h2>
-
-<h2 id="optimizer">Optimizer</h2>
-
-<h2 id="policy">Policy</h2>
-
-<h2 id="preprocessor">PreProcessor</h2>
 
           <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
 
@@ -1047,6 +964,90 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <td style="text-align: left">-</td>
 </tr>
 </tbody></table>
+
+          <h1 id="development"><a name="development"></a>Development</h1>
+
+<p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
+
+<p>The design of the code is clean enough to simply infer how things work by example.</p>
+
+<ul>
+<li><code class="prettyprint">data/</code>: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials</li>
+<li><code class="prettyprint">rl/agent/</code>: custom agents. Refer to <code class="prettyprint">base_agent.py</code> and <code class="prettyprint">dqn.py</code> to build your own</li>
+<li><code class="prettyprint">rl/hyperoptimizer/</code>: Hyperparameter optimizers for the Experiments</li>
+<li><code class="prettyprint">rl/memory/</code>: RL agent memory classes</li>
+<li><code class="prettyprint">rl/optimizer/</code>: RL agent NN optimizer classes</li>
+<li><code class="prettyprint">rl/policy/</code>: RL agent policy classes</li>
+<li><code class="prettyprint">rl/preprocessor/</code>: RL agent preprocessor (state and memory) classes</li>
+<li><code class="prettyprint">rl/spec/</code>: specify new problems and experiment_specs to run experiments for.</li>
+<li><code class="prettyprint">rl/analytics.py</code>: the data analytics module for output experiment data</li>
+<li><code class="prettyprint">rl/experiment.py</code>: the main high level experiment logic</li>
+<li><code class="prettyprint">rl/util.py</code>: Generic util</li>
+</ul>
+
+<p>Each run is an <code class="prettyprint">experiment</code> that runs multiple <code class="prettyprint">Trial</code>s (not restricted to the same <code class="prettyprint">experiment_id</code> for future cross-training). Each <code class="prettyprint">Trial</code> runs multiple (by flag <code class="prettyprint">-t</code>) <code class="prettyprint">Session</code>s, so an <code class="prettyprint">trial</code> is a <code class="prettyprint">sess_grid</code>.</p>
+
+<p>Each trial collects the data from its sessions into <code class="prettyprint">trial_data</code>, which is saved to a JSON and as many plots as there are sessions. On the higher level, <code class="prettyprint">experiment</code> analyses the aggregate <code class="prettyprint">trial_data</code> to produce a best-sorted CSV and graphs of the variables (what&rsquo;s changed across experiments) vs outputs.</p>
+
+<h2 id="problem">problem</h2>
+
+<h2 id="agent">Agent</h2>
+
+<h2 id="hyperoptimizer">HyperOptimizer</h2>
+
+<p>A hyperoptimizer is a function <code class="prettyprint">h</code> that takes:</p>
+
+<ul>
+<li>a trial (objective) function <code class="prettyprint">Trial</code></li>
+<li>a param space <code class="prettyprint">P</code> (implemented in <code class="prettyprint">experiment_spec</code>)</li>
+</ul>
+
+<p>and run the algorithm:
+1. search the next p in P using its internal search algo, add to its internal <code class="prettyprint">param_search_list</code>
+2. run a (slow) function Trial(p) = score (inside trial data)
+3. update search using feedback score
+4. repeat till max steps or fitness condition met</p>
+
+<p>Furthermore, the search space P is a tensor space product of <code class="prettyprint">m</code> bounded real spaces <code class="prettyprint">R</code> and <code class="prettyprint">n</code> bounded discrete spaces <code class="prettyprint">N</code>.</p>
+
+<h3 id="implementation-wise">Implementation-wise:</h3>
+
+<ol>
+<li>we want order-preserving and persistence for the ability to resume/reproduce an experiment</li>
+<li>the search algo may save its belief data to facilitate search</li>
+<li>the Trial function shall be kept as a blackbox for generality of implementation</li>
+</ol>
+
+<h3 id="specification-of-search-space">Specification of search space:</h3>
+
+<p>1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in <code class="prettyprint">experiment_grid.param</code> like so:</p>
+<pre class="highlight json"><code><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"uniform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in <code class="prettyprint">experiment_grid.param</code> like so:
+<code class="prettyprint">&#39;lr&#39;: [0.01, 0.02, 0.05, 0.1, 0.2]</code></p>
+
+<p>The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.</p>
+
+<p>Note that whether a variable is real or discrete can be up to the author; some variable such as <code class="prettyprint">lr</code> can be sampled from interval <code class="prettyprint">0.001 to 0.1</code> or human-specified options <code class="prettyprint">[0.01, 0.02, 0.05, 0.1, 0.2]</code>. One way may be more efficient than the other depending on the search algorithm.</p>
+
+<p>The experiment will run it as:</p>
+<pre class="highlight python"><code><span class="c"># specify which hyperoptimizer class to use in spec for bookkeeping</span>
+<span class="n">Hopt</span> <span class="o">=</span> <span class="n">get_module</span><span class="p">(</span><span class="n">GREF</span><span class="p">,</span> <span class="n">experiment_spec</span><span class="p">[</span><span class="s">'HyperOptimizer'</span><span class="p">])</span>
+<span class="n">hopt</span> <span class="o">=</span> <span class="n">Hopt</span><span class="p">(</span><span class="n">Trial</span><span class="p">,</span> <span class="o">**</span><span class="n">experiment_kwargs</span><span class="p">)</span>
+<span class="n">experiment_data</span> <span class="o">=</span> <span class="n">hopt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre>
+<h2 id="memory">Memory</h2>
+
+<h2 id="optimizer">Optimizer</h2>
+
+<h2 id="policy">Policy</h2>
+
+<h2 id="preprocessor">PreProcessor</h2>
 
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
