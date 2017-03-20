@@ -6,18 +6,23 @@
 
 ---
 
+
 _An experimentation system for Reinforcement Learning using OpenAI and Keras._
 
-This lab is created to let us do Reinforcement Learning (RL) like science - _theorize, experiment_. We can theorize as fast as we think, and experiment as fast as the computers can run.
+The _OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy to use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experimental and analytics framework.
 
-With _OpenAI Lab_, we had solved a few OpenAI environments by running dozens of experiments, each with hundreds of trials. Each new experiment takes minimal effort to setup and run - we will show by example below.
+While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.
 
-Before this, experiments used to be hard and slow, because we often have to write most things from scratch and reinvent the wheels. To solve this, the lab provides a standard, extensible platform with a host of reusable components.
+To address this, the Lab does three things.
 
-_OpenAI Lab_ lowers the experimental complexity and enables an explosion of experiments - we can quickly add new RL component, make new combinations, run hyperparameter selection and solve the environments. This unlocks a new perspective to treat RL as a full-on experimental science.
+1. Handles the basic RL environment and algorithm setups.
+2. Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.
+3. Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are logged in a standardized format so that solutions can be reproduced by anyone using the Lab.
+
+With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.
 
 <img alt="Timelapse of OpenAI Lab" src="http://kengz.me/openai_lab/images/lab_demo_dqn.gif" />
-_Timelapse of OpenAI Lab (open the gif in new tab for larger size)._
+_Timelapse of OpenAI Lab, solving CartPole-v0._
 
 
 ## Lab Demo
@@ -30,7 +35,15 @@ We specify input parameters for the experimental variable, run the experiment, r
 
 ### Specify Experiment
 
-The example below is fully specified in `rl/asset/experiment_specs.json` under `dqn`:
+Each experiment involves:
+- a problem - an [OpenAI Gym environment](https://gym.openai.com/envs)
+- a RL agent with modular components `agent, memory, optimizer, policy, preprocessor`, each of which is an experimental variable.
+
+We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.
+
+### Specify Experiment
+
+The example below is fully specified in `rl/asset/classic_experiment_specs.json` under `dqn`:
 
 ```json
 {
@@ -43,22 +56,23 @@ The example below is fully specified in `rl/asset/experiment_specs.json` under `
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "train_per_n_new_exp": 1,
-      "lr": 0.001,
-      "gamma": 0.96,
-      "hidden_layers_shape": [16],
+      "lr": 0.01,
+      "decay": 0.0,
+      "gamma": 0.99,
+      "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 20
+      "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "lr": [0.001, 0.01, 0.02, 0.05],
-      "gamma": [0.95, 0.96, 0.97, 0.99],
-      "hidden_layers_shape": [
-        [8],
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
         [16],
-        [32]
-      ],
-      "exploration_anneal_episodes": [10, 20]
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
     }
   }
 }
@@ -74,7 +88,7 @@ The example below is fully specified in `rl/asset/experiment_specs.json` under `
     - `NoPreProcessor`
 - *parameter variables values*: the `"param_range"` JSON
 
-An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `96` param combinations (trials), and `5` repeated sessions per trial. Overall, this experiment will run `96 x 5 = 480` sessions.
+An **experiment** will run a trial for each combination of `param` values; each **trial** will run for multiple repeated **sessions**. For `dqn`, there are `4x4x5=80` param combinations (trials), and up to `5` repeated sessions per trial. Overall, this experiment will run at most `80 x 5 = 400` sessions.
 
 
 ### Lab Workflow
@@ -93,25 +107,24 @@ The workflow to setup this experiment is as follow:
 <img alt="The dqn experiment analytics" src="http://kengz.me/openai_lab/images/dqn.png" />
 <img alt="The dqn experiment analytics correlation" src="http://kengz.me/openai_lab/images/dqn_correlation.png" />
 
-_The dqn experiment analytics generated by the lab (open in new tab for larger size). This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves._
+_The dqn experiment analytics generated by the Lab. This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves._
 
 
-fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_exploration_anneal_episodes|variable_gamma|variable_hidden_layers_shape|variable_lr
-|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
-1.178061|1.178061|195.726|169.2|1.0|5|200.0|196.4|dqn-2017_02_27_002407_t44|10|0.99|[32]|0.001
-1.173569|1.173569|195.47|168.0|1.0|5|200.0|199.0|dqn-2017_02_27_002407_t32|10|0.97|[32]|0.001
-1.152447|1.152447|195.248|170.6|1.0|5|200.0|198.2|dqn-2017_02_27_002407_t64|20|0.96|[16]|0.001
-1.128509|1.128509|195.392|177.8|1.0|5|200.0|199.0|dqn-2017_02_27_002407_t92|20|0.99|[32]|0.001
-1.127216|1.127216|195.584|175.0|1.0|5|200.0|199.0|dqn-2017_02_27_002407_t76|20|0.97|[16]|0.001
+|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|5.305994917071314|1.3264987292678285|195.404|154.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
+|5.105207228739003|1.2763018071847507|195.13600000000002|160.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t50|0.99|[32]|0.01|
+|4.9561426920909355|1.2390356730227339|195.26000000000002|168.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t78|0.999|[64]|0.01|
+|4.76714626254895|1.1917865656372375|195.106|172.4|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t71|0.999|[32]|0.02|
+|4.717243567762263|1.1793108919405657|195.56400000000002|167.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
 
 _Analysis data table, top 5 trials._
 
-On completion, from the analytics (zoom on the graph), we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:
+On completion, from the analytics, we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:
 
-- *lr*: 0.001
-- *gamma*: 0.99
-- *hidden_layers_shape*: [32]
-- *exploration_anneal_episodes*: 10
+- *lr*: 0.02
+- *gamma*: 0.999
+- *hidden_layers_shape*: [64]
 
 
 ### Run Your Own Lab

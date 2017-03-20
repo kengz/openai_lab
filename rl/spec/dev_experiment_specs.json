@@ -118,7 +118,7 @@
     }
   },
   "dev": {
-    "problem": "Pendulum-v0",
+    "problem": "CartPole-v0",
     "Agent": "DDPG",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
@@ -129,8 +129,9 @@
       "lr": 0.01,
       "decay": 0.0,
       "gamma": 0.99,
-      "hidden_layers": [32],
+      "hidden_layers": [64],
       "hidden_layers_activation": "sigmoid",
+      "output_layer_activation": "linear",
       "exploration_anneal_episodes": 10,
       "auto_architecture": false,
       "num_hidden_layers": 3,

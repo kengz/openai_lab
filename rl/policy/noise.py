@@ -1,4 +1,5 @@
 import numpy as np
+from rl.util import logger
 from rl.policy.base_policy import Policy
 
 
@@ -37,7 +38,13 @@ class AnnealedGaussian(Policy):
     def select_action(self, state):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
-        action = agent.actor.predict(state)[0] + self.sample()
+        if self.env_spec['actions'] == 'continuous':
+            action = agent.actor.predict(state)[0] + self.sample()
+        else:
+            Q_state = agent.actor.predict(state)[0]
+            assert Q_state.ndim == 1
+            action = np.argmax(Q_state)
+            logger.info(str(Q_state)+' '+str(action))
         return action
 
     def update(self, sys_vars):

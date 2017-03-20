@@ -6,6 +6,8 @@ class DDPG(DQN):
 
     '''
     The DDPG agent (algo), from https://arxiv.org/abs/1509.02971
+    reference: https://yanpanlau.github.io/2016/10/11/Torcs-Keras.html
+    https://github.com/matthiasplappert/keras-rl
     '''
 
     def __init__(self, *args, **kwargs):
@@ -159,18 +161,18 @@ class DDPG(DQN):
     def train_target_networks(self):
         '''update both target networks'''
         actor_weights = self.actor.get_weights()
-        actor_target_weights = self.target_actor.get_weights()
+        target_actor_weights = self.target_actor.get_weights()
         for i, _w in enumerate(actor_weights):
-            actor_target_weights[i] = self.TAU * actor_weights[i] + (
-                1 - self.TAU) * actor_target_weights[i]
-        self.target_actor.set_weights(actor_target_weights)
+            target_actor_weights[i] = self.TAU * actor_weights[i] + (
+                1 - self.TAU) * target_actor_weights[i]
+        self.target_actor.set_weights(target_actor_weights)
 
         critic_weights = self.critic.get_weights()
-        critic_target_weights = self.target_critic.get_weights()
+        target_critic_weights = self.target_critic.get_weights()
         for i, _w in enumerate(critic_weights):
-            critic_target_weights[i] = self.TAU * critic_weights[i] + (
-                1 - self.TAU) * critic_target_weights[i]
-        self.target_critic.set_weights(critic_target_weights)
+            target_critic_weights[i] = self.TAU * critic_weights[i] + (
+                1 - self.TAU) * target_critic_weights[i]
+        self.target_critic.set_weights(target_critic_weights)
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
