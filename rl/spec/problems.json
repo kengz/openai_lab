@@ -24,7 +24,7 @@
     "RENDER": true,
     "GYM_ENV_NAME": "CartPole-v1",
     "SOLVED_MEAN_REWARD": 475.0,
-    "MAX_EPISODES": 300,
+    "MAX_EPISODES": 500,
     "REWARD_MEAN_LEN": 100
   },
   "Acrobot-v1": {
@@ -59,7 +59,7 @@
     "RENDER": true,
     "GYM_ENV_NAME": "LunarLander-v2",
     "SOLVED_MEAN_REWARD": 200.0,
-    "MAX_EPISODES": 400,
+    "MAX_EPISODES": 600,
     "REWARD_MEAN_LEN": 100
   },
   "LunarLanderContinuous-v2": {
