@@ -11,11 +11,11 @@ Then, submit the following:
 
 - [ ] problem: CartPole-v0
 - [ ] algorithm (commit code if new): DQN
-- [ ] best `fitness_score`: _only if higher
+- [ ] best `fitness_score`: _the highest_
 - [ ] author: _your name_
-- [ ] added new `experiment_spec`: dqn
+- [ ] commit `experiment_spec`: dqn
 - _attach (not commit)_ the experiment files:
+    - [ ] `<experiment_id>_analysis_data.csv` (zip)
+    - [ ] `<best_trial_id>.json` (zip)
     - [ ] `<experiment_id>_analysis.png`
     - [ ] `<experiment_id>_analysis_correlation.png`
-    - [ ] `<experiment_id>_analysis_data.csv`
-    - [ ] `<best_trial_id>.json`
