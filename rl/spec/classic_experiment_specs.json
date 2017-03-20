@@ -8,10 +8,9 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.01,
-      "decay": 0.0,
-      "gamma": 0.99,
-      "hidden_layers": [32],
+      "lr": 0.02,
+      "gamma": 0.999,
+      "hidden_layers": [64],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 10
     },
