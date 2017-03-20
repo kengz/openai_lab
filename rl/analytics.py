@@ -256,7 +256,6 @@ def compose_data(trial):
     param_variables = {
         pv: trial.experiment_spec['param'][pv] for
         pv in trial.param_variables}
-    param_variables = flat_cast_dict(param_variables)
 
     trial.data['metrics'].update(metrics)
     trial.data['param_variables'] = param_variables
@@ -373,7 +372,7 @@ def analyze_data(experiment_data_or_experiment_id):
     for data in experiment_data:
         stats = flatten_dict(data['stats'])
         stats.update({'trial_id': data['trial_id']})
-        param_variables = data['param_variables']
+        param_variables = flat_cast_dict(data['param_variables'])
         if stats['errored']:  # remove errored trials
             continue
         stats_array.append(stats)
