@@ -9,6 +9,25 @@ If you invent a new algorithm/combination that beats the best solutions, please 
 Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for submission guideline.
 
 
+## Solution Matrix
+
+A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**
+
+||DQN|double-DQN|SARSA|DDPG|
+|:---|:---|:---|:---|:---|
+|**CartPole-v0**|[5.305995](https://github.com/kengz/openai_lab/pull/73)|-|-|-|
+|**CartPole-v1**|-|-|-|-|
+|**Acrobot-v1**|-|-|-|-|
+|**MountainCar-v0**|-|-|-|-|
+|**MountainCarContinuous-v0**|-|-|-|-|
+|**Pendulum-v0**|-|-|-|-|
+|**LunarLander-v2**|-|-|-|-|
+|**LunarLanderContinuous-v2**|-|-|-|-|
+|**BipedalWalker-v2**|-|-|-|-|
+|**BipedalWalkerHardcore-v2**|-|-|-|-|
+|**CarRacing-v0**|-|-|-|-|
+
+
 ## Algorithms
 
 The status of the algorithms in OpenAI Lab. Feel free to invent new ones!
