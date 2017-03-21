@@ -11,7 +11,7 @@ Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.gith
 
 ## Solution Matrix
 
-A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**
+A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
@@ -65,7 +65,7 @@ _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC pap
 
 ## Problems
 
-The list of accepted solutions can be seen in the [`solution` PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 
 ### Classic Problems
