@@ -26,6 +26,16 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
 |**CarRacing-v0**|-|-|-|-|
+|**AirRaid-v0**|-|-|-|-|
+|**Alien-v0**|-|-|-|-|
+|**Assault-v0**|-|-|-|-|
+|**Breakout-v0**|-|-|-|-|
+|**MsPacman-v0**|-|-|-|-|
+|**Pong-v0**|-|-|-|-|
+|**Qbert-v0**|-|-|-|-|
+|**SpaceInvader-v0**|-|-|-|-|
+|**FlappyBird-v0**|-|-|-|-|
+|**Snake-v0**|-|-|-|-|
 
 
 ## Algorithms
