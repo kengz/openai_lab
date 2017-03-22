@@ -226,11 +226,11 @@
 
 <p>With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.</p>
 
-<p>See Lab&rsquo;s <a href="#solutions">Best Solutions</a> to some OpenAI environments.</p>
+<p>See the <a href="#solutions">Best Solutions</a> to some OpenAI environments that OpenAI Lab users have produced.</p>
 
 <h3 id="run-the-lab">Run the Lab</h3>
 
-<p>Next, see <a href="#installation">Installation</a>, <a href="#usage">Usage</a>, <a href="#development">Development</a>.</p>
+<p>Next, see <a href="#installation">Installation</a> and <a href="#usage">Usage</a>.</p>
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
@@ -243,13 +243,13 @@
 <span class="nb">cd </span>openai_lab
 ./bin/setup
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed. Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a></p>
+<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed. Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a>.</p>
 
 <aside class="notice">
-If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
+If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
 </aside>
 
-<p>2. Keras needs a backend in the home directory; setup your <code class="prettyprint">~/.keras/keras.json</code> using example file in <code class="prettyprint">config/keras.json</code>.</p>
+<p>2. Keras needs a backend in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
   </span><span class="s2">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
@@ -259,14 +259,14 @@ If you use OpenAI Lab for serious experimentations, forking this repo then clone
 </span></code></pre>
 <aside class="notice">
 We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-Use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
+If you wish, use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
 </aside>
 
 <p>3. <code class="prettyprint">bin/setup</code> also creates the needed config files needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
 
 <ul>
 <li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
-<li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code></li>
+<li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code>.</li>
 </ul>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
@@ -280,9 +280,9 @@ Use Theano once your lab produces a final model for a single retraining, since i
 </span></code></pre>
 <h2 id="setup-data-auto-sync">Setup Data Auto-sync</h2>
 
-<p>We find it extremely useful to have data file sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app on a computer or a smartphone.</p>
+<p>We find it extremely useful to have data file-sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app, on a computer or a smartphone.</p>
 
-<p>For auto-syncing lab <code class="prettyprint">data/</code> we use <a href="http://gruntjs.com/">Grunt</a> file watcher for automatically copying data files via Dropbox. In your dropbox, set up a shared folder <code class="prettyprint">~/Dropbox/openai_lab/data</code> and sync to desktop.</p>
+<p>For auto-syncing lab <code class="prettyprint">data/</code> we use <a href="http://gruntjs.com/">Grunt</a> file watcher for automatically copying data files to Dropbox. In your dropbox, set up a shared folder <code class="prettyprint">~/Dropbox/openai_lab/data</code> and sync to desktop.</p>
 
 <aside class="notice">
 Setup the config key <code>data_sync_destination</code> in <code>config/{default.json, production.json}</code>.
@@ -290,7 +290,7 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 
 <h2 id="setup-auto-notification">Setup Auto-notification</h2>
 
-<p>Experiments take a while to run, and we find it useful also to be notified automatically when it&rsquo;s complete. We use <a href="https://github.com/variadico/noti">noti</a>, which is also installed with <code class="prettyprint">bin/setup</code>.</p>
+<p>Experiments take a while to run, and we find it useful also to be notified automatically on completion. We use <a href="https://github.com/variadico/noti">noti</a>, which is also installed with <code class="prettyprint">bin/setup</code>.</p>
 
 <p>Set up a Slack, create a new channel <code class="prettyprint">#rl_monitor</code>, and get a <a href="https://my.slack.com/services/new/bot">Slack bot token</a>.</p>
 
@@ -307,7 +307,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
 <h2 id="dependencies"><a name="dependencies"></a>Dependencies</h2>
 
-<p>There is more than a dozen of dependencies. For the full list, inspect <code class="prettyprint">bin/setup</code>. Here are some major ones and their minimum required versions. If lab fails to run, check these first:</p>
+<p>There is more than a dozen of dependencies. For the full list, inspect <code class="prettyprint">bin/setup</code>. Here are some major ones and their minimal required versions. If Lab fails to run, check these first:</p>
 
 <ul>
 <li><code class="prettyprint">python3 &gt;= 3.4</code></li>
@@ -320,7 +320,7 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
 <h2 id="hardware">Hardware</h2>
 
-<p>For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there&rsquo;re so many moving parts. Here&rsquo;s what we referred:</p>
+<p>For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there&rsquo;re so many moving parts. Here&rsquo;s the recommended references:</p>
 
 <ul>
 <li><a href="https://pcpartpicker.com/list/xdbWBP">A ~$1000 PC build</a> (more expensive now ~$1200; buy your parts during Black Friday/sales.)</li>
@@ -333,17 +333,19 @@ Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> 
 
           <h1 id="usage"><a name="usage"></a>Usage</h1>
 
+<p><em>To understand the Lab&rsquo;s <a href="#framework">Framework and Demo, skip to the next section.</a></em></p>
+
 <p>The general flow for running a production lab is:</p>
 
 <ol>
-<li>Specify experiments in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code></li>
+<li>Specify experiment specs in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>, e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code></li>
 <li>Specify the names of the experiments to run in <code class="prettyprint">config/production.json</code></li>
 <li>Run the lab, e.g. <code class="prettyprint">grunt -prod -resume</code></li>
 </ol>
 
 <h2 id="commands">Commands</h2>
 
-<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command, logged to stdout as <code class="prettyprint">&gt;&gt; Composed command: python3 main.py ...</code>, which is harder to use.</p>
+<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command (harder to use), logged to stdout as <code class="prettyprint">&gt;&gt; Composed command: python3 main.py ...</code></p>
 
 <p>The useful grunt commands are:</p>
 <pre class="highlight shell"><code><span class="c"># when developing experiments specified in default.json</span>
@@ -367,9 +369,9 @@ grunt clear
 <p><strong>development</strong> mode:</p>
 
 <ul>
-<li>All grunt commands defaults to this mode</li>
+<li>All grunt commands default to this mode</li>
 <li>specify your dev experiment in <code class="prettyprint">config/default.json</code></li>
-<li>use only when developing your new algo</li>
+<li>use only when developing your new algorithms</li>
 <li>the file-sync is in mock mode (emulated log without real file copying)</li>
 <li>no auto-notification</li>
 </ul>
@@ -387,15 +389,17 @@ grunt clear
 <h2 id="run-remotely">Run Remotely</h2>
 
 <p>If you&rsquo;re using a remote server, run the commands inside a <code class="prettyprint">screen</code>. That is, log in via ssh, start a screen, run, then detach screen.</p>
-<pre class="highlight shell"><code>screen -S lab
-<span class="c"># enter the screen with the name "lab"</span>
+<pre class="highlight shell"><code><span class="c"># enter the screen with the name "lab"</span>
+screen -S lab
+<span class="c"># run real lab over ssh, in resume mode</span>
 grunt -prod -remote -resume
 <span class="c"># use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh</span>
+
 <span class="c"># to resume screen next time</span>
 screen -r lab
 <span class="c"># use Cmd+D to terminate screen when lab ends</span>
 </code></pre>
-<p>Since a remote server is away, you should check the system status occasionally to ensure no overrunning processes (memory leaks, stuck processes, overheating). Use <a href="https://github.com/nicolargo/glances"><code class="prettyprint">glances</code></a> (already installed in <code class="prettyprint">bin/setup</code>) to monitor your expensive machines.</p>
+<p>Since a remote server is away, you should check the system status occasionally to ensure no overrunning processes (memory growth, large processes, overheating). Use <a href="https://github.com/nicolargo/glances"><code class="prettyprint">glances</code></a> (already installed in <code class="prettyprint">bin/setup</code>) to monitor your expensive machines.</p>
 
 <aside class="notice">
 To monitor your system (CPU, RAM, GPU), run <code>glances</code>
@@ -406,7 +410,7 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 
 <h2 id="resume-lab">Resume Lab</h2>
 
-<p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code>. This will read the <code class="prettyprint">config/history.json</code>:</p>
+<p>Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a <code class="prettyprint">-resume</code> flag: <code class="prettyprint">grunt -prod -remote -resume</code>. This will use the <code class="prettyprint">config/history.json</code>:</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_03_19_004714"</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -461,17 +465,28 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/spec/problems.json</code></li>
 </ul>
 
-<h2 id="lab-demo">Lab Demo</h2>
+          <h1 id="framework"><a name="framework"></a>Framework</h1>
 
-<p>Each experiment involves:
-- a problem - an <a href="https://gym.openai.com/envs">OpenAI Gym environment</a>
-- a RL agent with modular components <code class="prettyprint">agent, memory, optimizer, policy, preprocessor</code>, each of which is an experimental variable.</p>
+<p>The experimental framework design and terminology should be familiar. The Lab runs <strong>experiments</strong> and produces data for <a href="#analysis">analysis</a>.</p>
 
-<p>We specify input parameters for the experimental variable, run the experiment, record and analyze the data, conclude if the agent solves the problem with high rewards.</p>
+<h2 id="definition">Definition</h2>
 
-<h3 id="specify-experiment">Specify Experiment</h3>
+<p>An <strong>experiment</strong> runs separate <strong>trials</strong> by varying parameters. Each <strong>trial</strong> runs multiple <strong>sessions</strong> for averaging the results.</p>
 
-<p>The example below is fully specified in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<p>An experiment consists of:</p>
+
+<ul>
+<li>an <strong>environment</strong> (problem) from <a href="https://gym.openai.com/envs">OpenAI Gym</a></li>
+<li>an <strong>agent</strong> to solve the environment.</li>
+</ul>
+
+<aside class="notice">
+An experiment runs the variations of agent by changing its parameters (experiment variables) while holding others constants (control), and measure the fitness_score (outcome) to solve the environment.
+</aside>
+
+<h2 id="specification">Specification</h2>
+
+<p>An experiment is specified by an <code class="prettyprint">experiment_spec</code> in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
@@ -482,10 +497,9 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
     </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
       </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
       </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -503,8 +517,94 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
+<p>It consists of:</p>
+
 <ul>
-<li><em>experiment</em>: <code class="prettyprint">dqn</code></li>
+<li><code class="prettyprint">experiment_name</code>: the key of the JSON. e.g. <code class="prettyprint">dqn</code></li>
+<li><code class="prettyprint">problem</code>: name of the environment. e.g. <code class="prettyprint">CartPole-v0</code></li>
+<li><strong>agent</strong>: and its components in <code class="prettyprint">rl/</code>, specified by the class name
+
+<ul>
+<li><code class="prettyprint">Agent</code>: the main agent class, typically with the algorithm like <code class="prettyprint">DQN, DDPG</code></li>
+<li><code class="prettyprint">HyperOptimizer</code>: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them</li>
+<li><code class="prettyprint">Memory</code>: the memory module of the agent, to specify how agent control or access memory</li>
+<li><code class="prettyprint">Optimizer</code>: the neural network optimizer of Agent</li>
+<li><code class="prettyprint">Policy</code>: the externalized policy of Agent</li>
+<li><code class="prettyprint">PreProcessor</code>: for the environment states. Useful for Atari with images.</li>
+</ul></li>
+<li><code class="prettyprint">param</code>: the default parameter values used (control variables)</li>
+<li><code class="prettyprint">param_range</code>: the hyperparameter space ranges to search through by <code class="prettyprint">HyperOptimimzer</code> (experiment variables).</li>
+</ul>
+
+<h2 id="running-process">Running Process</h2>
+
+<p>When the Lab runs an <strong>experiment</strong> with <code class="prettyprint">experiment_name</code> (e.g. <code class="prettyprint">dqn</code>):</p>
+
+<ul>
+<li>it creates a timestamped <code class="prettyprint">experiment_id</code> (<code class="prettyprint">dqn-2017_03_19_004714</code>)</li>
+<li>the <strong>experiment</strong> runs multiple trials over the hyperparameter space
+
+<ul>
+<li>the trials are ordered for resumability (in case machine dies)</li>
+<li>each trial has <code class="prettyprint">trial_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0</code>), tied to a unique set of param values</li>
+<li>a <strong>trial</strong> runs multiple sessions
+
+<ul>
+<li>each <strong>session</strong> has <code class="prettyprint">session_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0_s0</code>)</li>
+<li>a session runs the environment-agent, produces graphs and <code class="prettyprint">session_data</code> i.e. <code class="prettyprint">sys_vars</code></li>
+<li>the session saves its graph to <code class="prettyprint">&lt;session_id&gt;.png</code></li>
+<li>the session returns <code class="prettyprint">sys_vars</code> to its trial</li>
+</ul></li>
+<li>the trial gathers all the <code class="prettyprint">sys_vars</code>, run some averaging analytics, then compose all that into <code class="prettyprint">trial_data</code></li>
+<li>the trial returns the <code class="prettyprint">trial_data</code> and saves it to <code class="prettyprint">&lt;trial_id&gt;.json</code></li>
+</ul></li>
+<li>the experiment composes all <code class="prettyprint">trial_data</code> into a <code class="prettyprint">experiment_data</code></li>
+<li>it runs analytics to produce graphs <code class="prettyprint">&lt;experiment_id&gt;_analysis.png, &lt;experiment_id&gt;_correlation.png</code></li>
+<li>it compute the <code class="prettyprint">fitness_score</code> for each trial, rank them by best-first, then save the data grid to <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
+<li>experiment ends</li>
+</ul>
+
+<h2 id="lab-demo">Lab Demo</h2>
+
+<p>Given the framework explained above, here&rsquo;s a quick demo. Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a <code class="prettyprint">Boltzmann</code> policy, and try to find the best parameter sets for this new agent.</p>
+
+<h3 id="specify-experiment">Specify Experiment</h3>
+
+<p>The example below is fully specified in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Specifically of interests, we have specified the variables:</p>
+
+<ul>
+<li><em>experiment_name</em>: <code class="prettyprint">dqn</code></li>
 <li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
 <li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
 <li><em>control agent variables</em>:
@@ -515,24 +615,31 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">AdamOptimizer</code></li>
 <li><code class="prettyprint">NoPreProcessor</code></li>
 </ul></li>
-<li><em>parameter variables values</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
+<li><em>hyperparameter space</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
+<li><em>hyperparameter optimizer</em>: <code class="prettyprint">GridSearch</code></li>
 </ul>
 
-<p>An <strong>experiment</strong> will run a trial for each combination of <code class="prettyprint">param</code> values; each <strong>trial</strong> will run for multiple repeated <strong>sessions</strong>. For <code class="prettyprint">dqn</code>, there are <code class="prettyprint">4x4x5=80</code> param combinations (trials), and up to <code class="prettyprint">5</code> repeated sessions per trial. Overall, this experiment will run at most <code class="prettyprint">80 x 5 = 400</code> sessions.</p>
+<p>Given <code class="prettyprint">GridSearch HyperOptimizer</code>, this <strong>experiment</strong> will try all the discrete combinations of the <code class="prettyprint">param_range</code>, which makes for <code class="prettyprint">4x4x5=80</code> trials. Each <strong>trial</strong> will run a max of 5 <strong>sessions</strong> (terminate on 2 if fail to solve). Overall, this experiments will run at most <code class="prettyprint">80 x 5 = 400</code> sessions, then produce <code class="prettyprint">experiment_data</code> and the analytics.</p>
 
 <h3 id="lab-workflow">Lab Workflow</h3>
 
-<p>The workflow to setup this experiment is as follow:</p>
+<p>The example workflow to setup this experiment is as follow:</p>
 
 <ol>
 <li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
-<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">experiment_spec.json</code> to include this new variable,  reuse the other existing RL components, and specify the param range.</li>
+<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">rl/spec/classic_experiment_spec.json</code> to include this new variable, reuse the other existing RL components, and specify the param range.</li>
 <li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
-<li>Run <code class="prettyprint">grunt -prod</code></li>
-<li>Analyze the graphs and data (live-synced)</li>
+<li>Run experiment with <code class="prettyprint">grunt -prod</code></li>
+<li>Analyze the graphs and data</li>
 </ol>
 
-<h3 id="lab-results">Lab Results</h3>
+<p>Next, see the example lab results, and how to <a href="#analysis">analyze the data and graphs</a>.</p>
+
+          <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
+
+<p>How to analyze your lab results, and contribute to <a href="#solutions">Best Solutions</a></p>
+
+<h2 id="lab-results">Lab Results</h2>
 
 <div style="max-width: 100%"><img alt="The dqn experiment analytics" src="./images/dqn.png" />
 <br><br>
@@ -638,9 +745,17 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><em>hidden_layers_shape</em>: [64]</li>
 </ul>
 
-          <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
+<h2 id="variables">Variables</h2>
 
-<p>How to analyze your lab results, and contribute to <a href="#solutions">Best Solutions</a></p>
+<p>the aggregate &hellip; see analytics module</p>
+
+<h2 id="data">Data</h2>
+
+<p>jsons and sorted CSV</p>
+
+<h2 id="graphs">Graphs</h2>
+
+<p>Main and correlation, how to read</p>
 
           <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
 
