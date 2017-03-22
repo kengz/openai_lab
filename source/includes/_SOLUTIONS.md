@@ -6,7 +6,7 @@ Algorithms and best solutions by OpenAI Lab users. We want people to start from 
 
 If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab.
 
-Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for submission guideline.
+Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the submission guideline. See some previous example [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
 
 
 ## Solution Matrix
@@ -16,7 +16,7 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
 |**CartPole-v0**|[5.305995](https://github.com/kengz/openai_lab/pull/73)|[5.658951](https://github.com/kengz/openai_lab/pull/78)|-|-|
-|**CartPole-v1**|-|-|-|-|
+|**CartPole-v1**|[7.678957](https://github.com/kengz/openai_lab/pull/80)|-|-|-|
 |**Acrobot-v1**|-|-|-|-|
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
@@ -72,8 +72,8 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[5.658951](https://github.com/kengz/openai_lab/pull/78)|7|kengz/lgraesser|[double_dqn](https://github.com/kengz/openai_lab/pull/78)|
-|CartPole-v1|-|-|-|-|
+|CartPole-v0|[5.658951](https://github.com/kengz/openai_lab/pull/78)|7|kengz/lgraesser|double_dqn|
+|CartPole-v1|[7.678957](https://github.com/kengz/openai_lab/pull/80)|55|kengz/lgraesser|dqn_v1|
 |Acrobot-v1|-|-|-|-|
 |MountainCar-v0|-|-|-|-|
 |MountainCarContinuous-v0|-|-|-|-|
