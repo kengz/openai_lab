@@ -194,11 +194,11 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.01,
-      "gamma": 0.99,
-      "hidden_layers": [32],
+      "exploration_anneal_episodes": 10,
+      "gamma": 0.999,
+      "hidden_layers": [128],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "lr": 0.005
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
@@ -221,11 +221,11 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "max_evals": 100,
-      "lr": 0.01,
-      "gamma": 0.99,
-      "hidden_layers": [32],
+      "exploration_anneal_episodes": 10,
+      "gamma": 0.999,
+      "hidden_layers": [128],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
+      "lr": 0.005
     },
     "param_range": {
       "lr": {
