@@ -17,5 +17,6 @@ Then, submit the following:
 - _attach (not commit)_ the experiment files:
     - [ ] `<experiment_id>_analysis_data.csv` (zip)
     - [ ] `<best_trial_id>.json` (zip)
+    - [ ] `<best_trial_session_id>.png`
     - [ ] `<experiment_id>_analysis.png`
     - [ ] `<experiment_id>_analysis_correlation.png`
