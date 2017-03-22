@@ -8,13 +8,13 @@ cd openai_lab
 ./bin/setup
 ```
 
-`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed. Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies)
+`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed. Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies).
 
 <aside class="notice">
-If you use OpenAI Lab for serious experimentations, forking this repo then clone your fork, so you can commit code and even contribute to the Lab.
+If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
 </aside>
 
-2\. Keras needs a backend in the home directory; setup your `~/.keras/keras.json` using example file in `config/keras.json`.
+2\. Keras needs a backend in your home directory; setup `~/.keras/keras.json` using the example file in `config/keras.json`.
 
 ```json
 {
@@ -27,14 +27,14 @@ If you use OpenAI Lab for serious experimentations, forking this repo then clone
 
 <aside class="notice">
 We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-Use Theano once your lab produces a final model for a single retraining, since it's faster.
+If you wish, use Theano once your lab produces a final model for a single retraining, since it's faster.
 </aside>
 
 
 3\. `bin/setup` also creates the needed config files needed for lab [usage](#usage). See sections below for more info.
 
 - `config/default.json` for local development, used when `grunt` is ran without a production flag.
-- `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`
+- `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`.
 
 ```json
 {
@@ -51,9 +51,9 @@ Use Theano once your lab produces a final model for a single retraining, since i
 
 ## Setup Data Auto-sync
 
-We find it extremely useful to have data file sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app on a computer or a smartphone.
+We find it extremely useful to have data file-sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app, on a computer or a smartphone.
 
-For auto-syncing lab `data/` we use [Grunt](http://gruntjs.com/) file watcher for automatically copying data files via Dropbox. In your dropbox, set up a shared folder `~/Dropbox/openai_lab/data` and sync to desktop.
+For auto-syncing lab `data/` we use [Grunt](http://gruntjs.com/) file watcher for automatically copying data files to Dropbox. In your dropbox, set up a shared folder `~/Dropbox/openai_lab/data` and sync to desktop.
 
 <aside class="notice">
 Setup the config key <code>data_sync_destination</code> in <code>config/{default.json, production.json}</code>.
@@ -62,7 +62,7 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 
 ## Setup Auto-notification
 
-Experiments take a while to run, and we find it useful also to be notified automatically when it's complete. We use [noti](https://github.com/variadico/noti), which is also installed with `bin/setup`.
+Experiments take a while to run, and we find it useful also to be notified automatically on completion. We use [noti](https://github.com/variadico/noti), which is also installed with `bin/setup`.
 
 Set up a Slack, create a new channel `#rl_monitor`, and get a [Slack bot token](https://my.slack.com/services/new/bot).
 
@@ -81,7 +81,7 @@ There are many existing experiments specified in `rl/spec/*_experiment_specs.jso
 
 ## <a name="dependencies"></a>Dependencies
 
-There is more than a dozen of dependencies. For the full list, inspect `bin/setup`. Here are some major ones and their minimum required versions. If lab fails to run, check these first:
+There is more than a dozen of dependencies. For the full list, inspect `bin/setup`. Here are some major ones and their minimal required versions. If Lab fails to run, check these first:
 
 - `python3 >= 3.4`
 - `node >= 7.0`
@@ -93,7 +93,7 @@ There is more than a dozen of dependencies. For the full list, inspect `bin/setu
 
 ## Hardware
 
-For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there're so many moving parts. Here's what we referred:
+For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there're so many moving parts. Here's the recommended references:
 
 - [A ~$1000 PC build](https://pcpartpicker.com/list/xdbWBP) (more expensive now ~$1200; buy your parts during Black Friday/sales.)
 - [The official TensorFlow installation guide, with GPU setup info](https://www.tensorflow.org/install/install_linux)

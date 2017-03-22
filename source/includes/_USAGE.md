@@ -2,14 +2,14 @@
 
 The general flow for running a production lab is:
 
-1. Specify experiments in `rl/spec/*_experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
+1. Specify experiment specs in `rl/spec/*_experiment_specs.json`, e.g. `"dqn", "lunar_dqn"`
 2. Specify the names of the experiments to run in `config/production.json`
 3. Run the lab, e.g. `grunt -prod -resume`
 
 
 ## Commands
 
-We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command, logged to stdout as `>> Composed command: python3 main.py ...`, which is harder to use.
+We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command (harder to use), logged to stdout as `>> Composed command: python3 main.py ...`
 
 The useful grunt commands are:
 
@@ -36,9 +36,9 @@ See below for the full [Grunt Command Reference](#grunt-cmd) or the [Python Comm
 
 **development** mode:
 
-- All grunt commands defaults to this mode
+- All grunt commands default to this mode
 - specify your dev experiment in `config/default.json`
-- use only when developing your new algo
+- use only when developing your new algorithms
 - the file-sync is in mock mode (emulated log without real file copying)
 - no auto-notification
 
@@ -57,16 +57,18 @@ See below for the full [Grunt Command Reference](#grunt-cmd) or the [Python Comm
 If you're using a remote server, run the commands inside a `screen`. That is, log in via ssh, start a screen, run, then detach screen.
 
 ```shell
-screen -S lab
 # enter the screen with the name "lab"
+screen -S lab
+# run real lab over ssh, in resume mode
 grunt -prod -remote -resume
 # use Cmd+A+D to detach from screen, then Cmd+D to disconnect ssh
+
 # to resume screen next time
 screen -r lab
 # use Cmd+D to terminate screen when lab ends
 ```
 
-Since a remote server is away, you should check the system status occasionally to ensure no overrunning processes (memory leaks, stuck processes, overheating). Use [`glances`](https://github.com/nicolargo/glances) (already installed in `bin/setup`) to monitor your expensive machines.
+Since a remote server is away, you should check the system status occasionally to ensure no overrunning processes (memory growth, large processes, overheating). Use [`glances`](https://github.com/nicolargo/glances) (already installed in `bin/setup`) to monitor your expensive machines.
 
 <aside class="notice">
 To monitor your system (CPU, RAM, GPU), run <code>glances</code>
@@ -78,7 +80,7 @@ _Glances on remote server beast._
 
 ## Resume Lab
 
-Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a `-resume` flag: `grunt -prod -remote -resume`. This will read the `config/history.json`:
+Experiments take a long time to complete, and if your process gets terminated, resuming the lab is trivial with a `-resume` flag: `grunt -prod -remote -resume`. This will use the `config/history.json`:
 
 ```json
 {
@@ -87,7 +89,6 @@ Experiments take a long time to complete, and if your process gets terminated, r
 ```
 
 The `config/history.json` is created in the last run that maps `experiment_name`s to `experiment_id`s, and resume any incomplete experiments based on that `experiment_id`. You can manually tweak the file to set the resume target of course.
-
 
 
 ## <a name="grunt-cmd"></a>Grunt Command Reference
@@ -201,10 +202,10 @@ An **experiment** will run a trial for each combination of `param` values; each 
 
 ### Lab Workflow
 
-The workflow to setup this experiment is as follow:
+The example workflow to setup this experiment is as follow:
 
 1. Add the new theorized component `Boltzmann` in `rl/policy/boltzmann.py`
-2. Specify `dqn` experiment spec in `experiment_spec.json` to include this new variable,  reuse the other existing RL components, and specify the param range.
+2. Specify `dqn` experiment spec in `classic_experiment_spec.json` to include this new variable,  reuse the other existing RL components, and specify the param range.
 3. Add this experiment to the lab queue in `config/production.json`
 4. Run `grunt -prod`
 5. Analyze the graphs and data (live-synced)

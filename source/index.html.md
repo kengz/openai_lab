@@ -41,7 +41,8 @@ To address this, the Lab does three things.
 
 With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.
 
-See Lab's [Best Solutions](#solutions) to some OpenAI environments.
+See the [Best Solutions](#solutions) to some OpenAI environments that OpenAI Lab users have produced.
+
 
 ### Run the Lab
 
@@ -50,5 +51,5 @@ Next, see [Installation](#installation), [Usage](#usage), [Development](#develop
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
-_Timelapse of OpenAI Lab, solving CartPole-v0._
+*Timelapse of OpenAI Lab, solving CartPole-v0.*
 
