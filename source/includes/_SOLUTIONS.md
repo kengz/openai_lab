@@ -9,7 +9,7 @@ If you invent a new algorithm/combination that beats the best solutions, please 
 Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the submission guideline. See some previous example [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
 
 
-## Solution Matrix
+## <a name="solution-matrix"></a>Solution Matrix
 
 A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 

@@ -6,6 +6,8 @@ Follow the running process chain of data n graphs produced.
 
 submit these when u solve (link to submission)
 
+fitness ratio explanation
+
 ## Lab Results
 
 <div style="max-width: 100%"><img alt="The dqn experiment analytics" src="./images/dqn.png" />
