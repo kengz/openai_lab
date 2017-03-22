@@ -14,6 +14,7 @@ toc_footers:
 includes:
   - INSTALLATION
   - USAGE
+  - FRAMEWORK
   - ANALYSIS
   - SOLUTIONS
   - DEVELOPMENT
@@ -46,7 +47,7 @@ See the [Best Solutions](#solutions) to some OpenAI environments that OpenAI Lab
 
 ### Run the Lab
 
-Next, see [Installation](#installation), [Usage](#usage), [Development](#development).
+Next, see [Installation](#installation) and [Usage](#usage).
 
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
