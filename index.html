@@ -564,6 +564,41 @@ An experiment runs the variations of agent by changing its parameters (experimen
 <li>experiment ends</li>
 </ul>
 
+<h2 id="evaluation-metrics">Evaluation Metrics</h2>
+
+<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+
+<p><strong>1. the difficulty of building upon other’s work</strong></p>
+
+<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+
+<p><strong>2. the lack of rigor in comparisons</strong></p>
+
+<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
+
+<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
+
+<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
+
+<p>problem x {algorithms} ~ solutions</p>
+
+<p>fitness score on 4 parts:
+stability and reproducibility (solve ratio),
+speed (min episodes),
+potential (max reward),
+square for granularity</p>
+<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
+
+ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
+ideal_solved_ratio = 1
+ideal_fitness_score = fitness_score(
+    ideal_mean_rewards_per_epi, ideal_solved_ratio)
+return ideal_fitness_score
+</code></pre>
+<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
+
+<p>algorithm x {problems} ~ cross-solutions</p>
+
 <h2 id="lab-demo">Lab Demo</h2>
 
 <p>Given the framework explained above, here&rsquo;s a quick demo. Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a <code class="prettyprint">Boltzmann</code> policy, and try to find the best parameter sets for this new agent.</p>
@@ -638,6 +673,12 @@ An experiment runs the variations of agent by changing its parameters (experimen
           <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
 
 <p>How to analyze your lab results, and contribute to <a href="#solutions">Best Solutions</a></p>
+
+<p>Follow the running process chain of data n graphs produced.</p>
+
+<p>submit these when u solve (link to submission)</p>
+
+<p>fitness ratio explanation</p>
 
 <h2 id="lab-results">Lab Results</h2>
 
@@ -765,9 +806,9 @@ An experiment runs the variations of agent by changing its parameters (experimen
 
 <p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab.</p>
 
-<p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for submission guideline.</p>
+<p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
 
-<h2 id="solution-matrix">Solution Matrix</h2>
+<h2 id="solution-matrix"><a name="solution-matrix"></a>Solution Matrix</h2>
 
 <p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Algorithms</strong> v.s. <strong>Problems</strong>. The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
 
@@ -789,7 +830,7 @@ An experiment runs the variations of agent by changing its parameters (experimen
 </tr>
 <tr>
 <td style="text-align: left"><strong>CartPole-v1</strong></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">7.678957</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
@@ -1039,14 +1080,14 @@ An experiment runs the variations of agent by changing its parameters (experimen
 <td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">5.658951</a></td>
 <td style="text-align: left">7</td>
 <td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">double_dqn</a></td>
+<td style="text-align: left">double_dqn</td>
 </tr>
 <tr>
 <td style="text-align: left">CartPole-v1</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">7.678957</a></td>
+<td style="text-align: left">55</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">dqn_v1</td>
 </tr>
 <tr>
 <td style="text-align: left">Acrobot-v1</td>
