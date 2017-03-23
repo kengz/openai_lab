@@ -408,6 +408,8 @@ html, body {
   table {
     margin-bottom: 1em;
     overflow: auto;
+    display:table;
+    width: 100%;
     th,td {
       text-align: left;
       vertical-align: top;
@@ -416,6 +418,7 @@ html, body {
 
     th {
       padding: 5px 10px;
+      background-color: lighten($main-bg,2.4%);
       border-bottom: 1px solid #ccc;
       vertical-align: bottom;
     }
