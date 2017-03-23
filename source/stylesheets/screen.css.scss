@@ -407,8 +407,9 @@ html, body {
 
   table {
     margin-bottom: 1em;
+    margin-right: 0;
     overflow: auto;
-    display:table;
+    display: inline-block;
     width: 100%;
     th,td {
       text-align: left;
