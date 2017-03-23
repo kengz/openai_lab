@@ -465,9 +465,9 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/spec/problems.json</code></li>
 </ul>
 
-          <h1 id="framework"><a name="framework"></a>Framework</h1>
+          <h1 id="experiments"><a name="experiments"></a>Experiments</h1>
 
-<p>The experimental framework design and terminology should be familiar. The Lab runs <strong>experiments</strong> and produces data for <a href="#analysis">analysis</a>.</p>
+<p>The experimental framework design and terminology should be familiar, since it&rsquo;s borrowed from experimental science. The Lab runs <strong>experiments</strong> and produces data for <a href="#analysis">analysis</a>.</p>
 
 <h2 id="definition">Definition</h2>
 
@@ -536,7 +536,9 @@ An experiment runs the variations of agent by changing its parameters (experimen
 <li><code class="prettyprint">param_range</code>: the hyperparameter space ranges to search through by <code class="prettyprint">HyperOptimimzer</code> (experiment variables).</li>
 </ul>
 
-<h2 id="running-process">Running Process</h2>
+<h2 id="process-hierarchy">Process Hierarchy</h2>
+
+<p>How <code class="prettyprint">experiments &gt; trials &gt; sessions</code> are organized and ran.</p>
 
 <p>When the Lab runs an <strong>experiment</strong> with <code class="prettyprint">experiment_name</code> (e.g. <code class="prettyprint">dqn</code>):</p>
 
