@@ -2,7 +2,6 @@
 title: OpenAI Lab Doc
 
 language_tabs:
-  - python
 
 toc_footers:
   - <a href='https://github.com/kengz/openai_lab'>OpenAI Lab Github</a>
