@@ -13,6 +13,8 @@ Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.gith
 
 A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
+*scroll sideway to see more*
+
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
 |**CartPole-v0**|[5.305995](https://github.com/kengz/openai_lab/pull/73)|[5.658951](https://github.com/kengz/openai_lab/pull/78)|-|-|

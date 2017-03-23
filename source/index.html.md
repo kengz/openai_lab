@@ -14,7 +14,7 @@ toc_footers:
 includes:
   - INSTALLATION
   - USAGE
-  - FRAMEWORK
+  - EXPERIMENTS
   - ANALYSIS
   - SOLUTIONS
   - DEVELOPMENT

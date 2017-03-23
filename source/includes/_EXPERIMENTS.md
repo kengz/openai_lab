@@ -1,6 +1,6 @@
-# <a name="framework"></a>Framework
+# <a name="experiments"></a>Experiments
 
-The experimental framework design and terminology should be familiar. The Lab runs **experiments** and produces data for [analysis](#analysis).
+The experimental framework design and terminology should be familiar, since it's borrowed from experimental science. The Lab runs **experiments** and produces data for [analysis](#analysis).
 
 
 ## Definition
@@ -68,7 +68,9 @@ It consists of:
 - `param_range`: the hyperparameter space ranges to search through by `HyperOptimimzer` (experiment variables).
 
 
-## Running Process
+## Process Hierarchy
+
+How `experiments > trials > sessions` are organized and ran.
 
 When the Lab runs an **experiment** with `experiment_name` (e.g. `dqn`):
 
@@ -126,8 +128,6 @@ return ideal_fitness_score
 ### Algorithm Evaluation Metrics
 
 algorithm x {problems} ~ cross-solutions
-
-
 
 
 ## Lab Demo
