@@ -283,6 +283,7 @@ def plot_experiment(data_df, trial_id):
     (_mpl, _plt, sns) = scoped_mpl_import()
     experiment_id = parse_experiment_id(trial_id)
     hue = 'solved_ratio_of_sessions'
+    data_df = data_df.sort_values(hue)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     col_size = len(X_cols)
     row_size = len(EXPERIMENT_GRID_Y_COLS)
