@@ -1,5 +1,7 @@
 # <a name="development"></a>Development
 
+(pending writeup)
+
 This is still under active development, and documentation is sparse. The main code lives inside `rl/`.
 
 The design of the code is clean enough to simply infer how things work by example.
@@ -22,8 +24,21 @@ Each trial collects the data from its sessions into `trial_data`, which is saved
 
 
 ## problem
+
+simple, the split, how to add. each JSON key is?
+
 ## Agent
 ## HyperOptimizer
+
+use which first: 
+
+### LineSearch
+### GridSearch
+### RandomSearch
+
+### Implementation Guideline
+
+like TPE, Bayesian Optimizer etc.
 
 A hyperoptimizer is a function `h` that takes:
 
@@ -38,23 +53,21 @@ and run the algorithm:
 
 Furthermore, the search space P is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`.
 
-### Implementation-wise:
+**Implementation requirements:**
 
 1. we want order-preserving and persistence for the ability to resume/reproduce an experiment
 2. the search algo may save its belief data to facilitate search
 3. the Trial function shall be kept as a blackbox for generality of implementation
 
 
-### Specification of search space:
+**Specification of search space:**
 
 1\. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
 
 ```json
 "lr": {
-    "uniform": {
-        "low": 0.0001,
-        "high": 1.0
-    }
+  "min": 0.0005,
+  "max": 0.05
 }
 ```
 
