@@ -15,6 +15,7 @@ includes:
   - USAGE
   - EXPERIMENTS
   - ANALYSIS
+  - METRICS
   - SOLUTIONS
   - DEVELOPMENT
   - ROADMAP
