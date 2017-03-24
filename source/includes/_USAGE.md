@@ -101,6 +101,24 @@ The basic grunt command pattern is
 
 ```shell
 grunt <task> -<flag>
+
+# again, the useful grunt commands are:
+
+# when developing experiments specified in default.json
+grunt
+
+# run real lab experiments specified in production.json
+grunt -prod
+# run lab over ssh on remote server
+grunt -prod -remote
+# resume lab (previously incomplete experiments)
+grunt -prod -remote -resume
+
+# plot analysis graphs only
+grunt analyze -prod
+
+# clear data/ folder and cache files
+grunt clear
 ```
 
 The `<task>`s are:
