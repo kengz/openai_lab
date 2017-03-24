@@ -39,9 +39,11 @@ use which first:
 
 ### HyperOptimizer Roadmap
 
-- [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf)
+These are the future hyperparameter optimization algorithms we'd like to implement standalone in the Lab. The implementations for them currently exists, but they're too bloated, and their engineering aspects are not ideal for the Lab.
+
+- [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf)/[hyperopt](https://github.com/hyperopt/hyperopt)
 - [Bayesian Optimizer (Spearmint)](https://github.com/HIPS/Spearmint)
-- [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software).
+- [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software)
 
 
 ### Implementation Guideline
@@ -69,12 +71,12 @@ Note that the search space `P` is a tensor space product of `m` bounded real spa
 
 1. we want order-preserving and persistence in search for the ability to resume/reproduce an experiment.
 2. the search algorithm may have its own internal memory/belief to facilitate search.
-3. the Trial function shall be treated as a blackbox `Trial(p) = fitness_score` with input/output `(p, fitness_score)` for the generality of implementation/
+3. the `Trial` function shall be treated as a blackbox `Trial(p) = fitness_score` with input/output `(p, fitness_score)` for the generality of implementation/
 
 
 **Specification of search space:**
 
-1\. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in `experiment_grid.param` like so:
+1\. for real variable, specify a distribution (an interval is just a uniformly distributed space) in the `experiment_spec.param_range`. Example:
 
 ```json
 "lr": {
@@ -83,7 +85,7 @@ Note that the search space `P` is a tensor space product of `m` bounded real spa
 }
 ```
 
-2\. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in `experiment_grid.param` like so:
+2\. for discrete variable, specify a list of the values to search over (since it is finite anyway) in the `experiment_spec.param_range`. Example:
 
 
 ```json
@@ -91,9 +93,9 @@ Note that the search space `P` is a tensor space product of `m` bounded real spa
 ```
 
 
-The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.
+The hyperopt implementation shall be able to take these 2 types of param_range specs and construct its search space.
 
-Note that whether a variable is real or discrete can be up to the author; some variable such as `lr` can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
+Note that whether a variable is real or discrete can be up to the user; some variable such as `lr` can be sampled from interval `0.001 to 0.1` or human-specified options `[0.01, 0.02, 0.05, 0.1, 0.2]`. One way may be more efficient than the other depending on the search algorithm.
 
 The experiment will run it as:
 
