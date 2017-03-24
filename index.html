@@ -420,6 +420,24 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 
 <p>The basic grunt command pattern is</p>
 <pre class="highlight shell"><code>grunt &lt;task&gt; -&lt;flag&gt;
+
+<span class="c"># again, the useful grunt commands are:</span>
+
+<span class="c"># when developing experiments specified in default.json</span>
+grunt
+
+<span class="c"># run real lab experiments specified in production.json</span>
+grunt -prod
+<span class="c"># run lab over ssh on remote server</span>
+grunt -prod -remote
+<span class="c"># resume lab (previously incomplete experiments)</span>
+grunt -prod -remote -resume
+
+<span class="c"># plot analysis graphs only</span>
+grunt analyze -prod
+
+<span class="c"># clear data/ folder and cache files</span>
+grunt clear
 </code></pre>
 <p>The <code class="prettyprint">&lt;task&gt;</code>s are:</p>
 
@@ -533,7 +551,7 @@ An experiment runs the variations of agent by changing its parameters (experimen
 <li><code class="prettyprint">param_range</code>: the hyperparameter space ranges to search through by <code class="prettyprint">HyperOptimimzer</code> (experiment variables).</li>
 </ul>
 
-<h2 id="process-hierarchy">Process Hierarchy</h2>
+<h2 id="breakdown">Breakdown</h2>
 
 <p>How <code class="prettyprint">experiments &gt; trials &gt; sessions</code> are organized and ran.</p>
 
@@ -562,41 +580,6 @@ An experiment runs the variations of agent by changing its parameters (experimen
 <li>it compute the <code class="prettyprint">fitness_score</code> for each trial, rank them by best-first, then save the data grid to <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
 <li>experiment ends</li>
 </ul>
-
-<h2 id="evaluation-metrics">Evaluation Metrics</h2>
-
-<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
-
-<p><strong>1. the difficulty of building upon other’s work</strong></p>
-
-<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
-
-<p><strong>2. the lack of rigor in comparisons</strong></p>
-
-<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
-
-<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
-
-<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
-
-<p>problem x {algorithms} ~ solutions</p>
-
-<p>fitness score on 4 parts:
-stability and reproducibility (solve ratio),
-speed (min episodes),
-potential (max reward),
-square for granularity</p>
-<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
-
-ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
-ideal_solved_ratio = 1
-ideal_fitness_score = fitness_score(
-    ideal_mean_rewards_per_epi, ideal_solved_ratio)
-return ideal_fitness_score
-</code></pre>
-<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
-
-<p>algorithm x {problems} ~ cross-solutions</p>
 
 <h2 id="lab-demo">Lab Demo</h2>
 
@@ -667,7 +650,7 @@ return ideal_fitness_score
 <li>Analyze the graphs and data</li>
 </ol>
 
-<p>Next, see the example lab results, and how to <a href="#analysis">analyze the data and graphs</a>.</p>
+<p>Now that you can produce the experiment data and graphs, see how to <a href="#analysis">analyze them</a>.</p>
 
           <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
 
@@ -797,6 +780,43 @@ return ideal_fitness_score
 <h2 id="graphs">Graphs</h2>
 
 <p>Main and correlation, how to read</p>
+
+          <h2 id="metrics"><a name="metrics"></a>Metrics</h2>
+
+<p>(pending long writeup)</p>
+
+<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+
+<p><strong>1. the difficulty of building upon other’s work</strong></p>
+
+<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+
+<p><strong>2. the lack of rigor in comparisons</strong></p>
+
+<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
+
+<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
+
+<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
+
+<p>problem x {algorithms} ~ solutions</p>
+
+<p>fitness score on 4 parts:
+stability and reproducibility (solve ratio),
+speed (min episodes),
+potential (max reward),
+square for granularity</p>
+<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
+
+ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
+ideal_solved_ratio = 1
+ideal_fitness_score = fitness_score(
+    ideal_mean_rewards_per_epi, ideal_solved_ratio)
+return ideal_fitness_score
+</code></pre>
+<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
+
+<p>algorithm x {problems} ~ cross-solutions</p>
 
           <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
 
@@ -1285,6 +1305,8 @@ return ideal_fitness_score
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
+<p>(pending writeup)</p>
+
 <p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
 
 <p>The design of the code is clean enough to simply infer how things work by example.</p>
@@ -1309,46 +1331,65 @@ return ideal_fitness_score
 
 <h2 id="problem">problem</h2>
 
+<p>simple, the split, how to add. each JSON key is?</p>
+
 <h2 id="agent">Agent</h2>
 
 <h2 id="hyperoptimizer">HyperOptimizer</h2>
+
+<p>use which first: </p>
+
+<h3 id="linesearch">LineSearch</h3>
+
+<h3 id="gridsearch">GridSearch</h3>
+
+<h3 id="randomsearch">RandomSearch</h3>
+
+<h3 id="implementation-guideline">Implementation Guideline</h3>
+
+<p><strong>HyperOptimizer Roadmap</strong>: <a href="https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf">TPE</a>, <a href="https://github.com/HIPS/Spearmint">Bayesian Optimizer (Spearmint)</a>, <a href="http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software">SMAC</a>.</p>
+
+<p>All implemented hyperoptimizers shall extend the base <code class="prettyprint">HyperOptimizer</code> class in <code class="prettyprint">rl/hyperoptimizer/base_hyperoptimizer.py</code> and follow its design for compatibility. Below we show this design to be general theoretically and practically. Moreover, do not use bloated dependencies.</p>
+
+<p><strong>Theoretical design:</strong></p>
 
 <p>A hyperoptimizer is a function <code class="prettyprint">h</code> that takes:</p>
 
 <ul>
 <li>a trial (objective) function <code class="prettyprint">Trial</code></li>
-<li>a param space <code class="prettyprint">P</code> (implemented in <code class="prettyprint">experiment_spec</code>)</li>
+<li>a parameter space <code class="prettyprint">P</code> (implemented in <code class="prettyprint">experiment_spec</code>)</li>
 </ul>
 
-<p>and run the algorithm:
-1. search the next p in P using its internal search algo, add to its internal <code class="prettyprint">param_search_list</code>
-2. run a (slow) function Trial(p) = score (inside trial data)
-3. update search using feedback score
-4. repeat till max steps or fitness condition met</p>
-
-<p>Furthermore, the search space P is a tensor space product of <code class="prettyprint">m</code> bounded real spaces <code class="prettyprint">R</code> and <code class="prettyprint">n</code> bounded discrete spaces <code class="prettyprint">N</code>.</p>
-
-<h3 id="implementation-wise">Implementation-wise:</h3>
+<p>and runs the algorithm:</p>
 
 <ol>
-<li>we want order-preserving and persistence for the ability to resume/reproduce an experiment</li>
-<li>the search algo may save its belief data to facilitate search</li>
-<li>the Trial function shall be kept as a blackbox for generality of implementation</li>
+<li>search the next <code class="prettyprint">p</code> in <code class="prettyprint">P</code> using its internal search algorithm, add to its internal <code class="prettyprint">param_search_list</code></li>
+<li>run a (slow) function <code class="prettyprint">Trial(p) = fitness_score</code> (inside trial data)</li>
+<li>update search using the feedback <code class="prettyprint">fitness_score</code></li>
+<li>repeat until max steps or fitness condition met</li>
 </ol>
 
-<h3 id="specification-of-search-space">Specification of search space:</h3>
+<p>Note that the search space <code class="prettyprint">P</code> is a tensor space product of <code class="prettyprint">m</code> bounded real spaces <code class="prettyprint">R</code> and <code class="prettyprint">n</code> bounded discrete spaces <code class="prettyprint">N</code>.</p>
+
+<p><strong>Implementation requirements:</strong></p>
+
+<ol>
+<li>we want order-preserving and persistence in search for the ability to resume/reproduce an experiment.</li>
+<li>the search algorithm may have its own internal memory/belief to facilitate search.</li>
+<li>the Trial function shall be treated as a blackbox <code class="prettyprint">Trial(p) = fitness_score</code> with input/output <code class="prettyprint">(p, fitness_score)</code> for the generality of implementation/</li>
+</ol>
+
+<p><strong>Specification of search space:</strong></p>
 
 <p>1. for real variable, specify a distribution (an interval is just a uniformly distributed space). specify in <code class="prettyprint">experiment_grid.param</code> like so:</p>
 <pre class="highlight json"><code><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"uniform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
-    </span><span class="p">}</span><span class="w">
+  </span><span class="s2">"min"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0005</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"max"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in <code class="prettyprint">experiment_grid.param</code> like so:
-<code class="prettyprint">&#39;lr&#39;: [0.01, 0.02, 0.05, 0.1, 0.2]</code></p>
-
+<p>2. for discrete variable, specify a list of the values to search over (since it is finite anyway). specify in <code class="prettyprint">experiment_grid.param</code> like so:</p>
+<pre class="highlight json"><code><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.2</span><span class="p">]</span><span class="w">
+</span></code></pre>
 <p>The hyperopt implementation shall be able to take these 2 types of specs and construct its search space.</p>
 
 <p>Note that whether a variable is real or discrete can be up to the author; some variable such as <code class="prettyprint">lr</code> can be sampled from interval <code class="prettyprint">0.001 to 0.1</code> or human-specified options <code class="prettyprint">[0.01, 0.02, 0.05, 0.1, 0.2]</code>. One way may be more efficient than the other depending on the search algorithm.</p>
