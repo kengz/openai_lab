@@ -59,12 +59,12 @@ A hyperoptimizer is a function `h` that takes:
 
 and runs the algorithm:
 
-1. search the next `p` in `P` using its internal search algorithm, add to its internal `param_search_list`
+1. search the next `p` in `P` using its internal search algorithm, add to its internal `param_search_list`.
 2. run a (slow) function `Trial(p) = fitness_score` (inside trial data)
 3. update search using the feedback `fitness_score`
 4. repeat until max steps or fitness condition met
 
-Note that the search space `P` is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`.
+Note that the search space `P` is a tensor space product of `m` bounded real spaces `R` and `n` bounded discrete spaces `N`. The search path in `param_search_list` must also be well-ordered to ensure resumability.
 
 
 **Implementation requirements:**
@@ -85,7 +85,7 @@ Note that the search space `P` is a tensor space product of `m` bounded real spa
 }
 ```
 
-2\. for discrete variable, specify a list of the values to search over (since it is finite anyway) in the `experiment_spec.param_range`. Example:
+2\. for discrete variable, specify a list of the values to search over (since it is finite anyway) in the `experiment_spec.param_range`. This will automatically be sorted when read into `HyperOptimizer` to ensure ordering. Example:
 
 
 ```json
