@@ -1,4 +1,4 @@
-## <a name="metrics"></a>Metrics
+# <a name="metrics"></a>Metrics
 
 (pending long writeup)
 

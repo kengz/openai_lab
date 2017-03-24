@@ -1,6 +1,6 @@
 # <a name="experiments"></a>Experiments
 
-The experimental framework design and terminology should be familiar, since it's borrowed from experimental science. The Lab runs **experiments** and produces data for [analysis](#analysis).
+The experimental framework design and terminology should be familiar, since they're borrowed from experimental science. The Lab runs **experiments** and produces data for [analysis](#analysis).
 
 
 ## Definition
@@ -68,7 +68,7 @@ It consists of:
 - `param_range`: the hyperparameter space ranges to search through by `HyperOptimimzer` (experiment variables).
 
 
-## Breakdown
+## <a name="structure"></a>Structure
 
 How `experiments > trials > sessions` are organized and ran.
 
@@ -91,9 +91,11 @@ When the Lab runs an **experiment** with `experiment_name` (e.g. `dqn`):
 - experiment ends
 
 
-## Lab Demo
+## <a name="demo"></a>Lab Demo
 
-Given the framework explained above, here's a quick demo. Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a `Boltzmann` policy, and try to find the best parameter sets for this new agent.
+Given the framework explained above, here's a quick demo.
+
+Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a `Boltzmann` policy, and try to find the best parameter sets for this new agent.
 
 ### Specify Experiment
 

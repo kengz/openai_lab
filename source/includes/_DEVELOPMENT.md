@@ -41,7 +41,7 @@ use which first:
 
 These are the future hyperparameter optimization algorithms we'd like to implement standalone in the Lab. The implementations for them currently exists, but they're too bloated, and their engineering aspects are not ideal for the Lab.
 
-- [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf)/[hyperopt](https://github.com/hyperopt/hyperopt)
+- [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf) / [hyperopt](https://github.com/hyperopt/hyperopt)
 - [Bayesian Optimizer (Spearmint)](https://github.com/HIPS/Spearmint)
 - [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software)
 
