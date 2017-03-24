@@ -1345,9 +1345,15 @@ return ideal_fitness_score
 
 <h3 id="randomsearch">RandomSearch</h3>
 
-<h3 id="implementation-guideline">Implementation Guideline</h3>
+<h3 id="hyperoptimizer-roadmap">HyperOptimizer Roadmap</h3>
 
-<p><strong>HyperOptimizer Roadmap</strong>: <a href="https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf">TPE</a>, <a href="https://github.com/HIPS/Spearmint">Bayesian Optimizer (Spearmint)</a>, <a href="http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software">SMAC</a>.</p>
+<ul>
+<li><a href="https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf">TPE</a></li>
+<li><a href="https://github.com/HIPS/Spearmint">Bayesian Optimizer (Spearmint)</a></li>
+<li><a href="http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software">SMAC</a>.</li>
+</ul>
+
+<h3 id="implementation-guideline">Implementation Guideline</h3>
 
 <p>All implemented hyperoptimizers shall extend the base <code class="prettyprint">HyperOptimizer</code> class in <code class="prettyprint">rl/hyperoptimizer/base_hyperoptimizer.py</code> and follow its design for compatibility. Below we show this design to be general theoretically and practically. Moreover, do not use bloated dependencies.</p>
 
