@@ -68,7 +68,7 @@ It consists of:
 - `param_range`: the hyperparameter space ranges to search through by `HyperOptimimzer` (experiment variables).
 
 
-## Process Hierarchy
+## Breakdown
 
 How `experiments > trials > sessions` are organized and ran.
 
