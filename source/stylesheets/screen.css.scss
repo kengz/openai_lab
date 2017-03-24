@@ -412,6 +412,7 @@ html, body {
     display: inline-block;
     width: 100%;
     th,td {
+      white-space: nowrap;
       text-align: left;
       vertical-align: top;
       line-height: 1.6;
@@ -426,6 +427,10 @@ html, body {
 
     td {
       padding: 10px;
+    }
+
+    td:last-child {
+      width: 100%;
     }
 
     tr:last-child {
