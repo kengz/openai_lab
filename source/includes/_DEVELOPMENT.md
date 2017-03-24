@@ -36,9 +36,15 @@ use which first:
 ### GridSearch
 ### RandomSearch
 
-### Implementation Guideline
 
-**HyperOptimizer Roadmap**: [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf), [Bayesian Optimizer (Spearmint)](https://github.com/HIPS/Spearmint), [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software).
+### HyperOptimizer Roadmap
+
+- [TPE](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf)
+- [Bayesian Optimizer (Spearmint)](https://github.com/HIPS/Spearmint)
+- [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/#software).
+
+
+### Implementation Guideline
 
 All implemented hyperoptimizers shall extend the base `HyperOptimizer` class in `rl/hyperoptimizer/base_hyperoptimizer.py` and follow its design for compatibility. Below we show this design to be general theoretically and practically. Moreover, do not use bloated dependencies.
 
