@@ -1,6 +1,6 @@
 # <a name="analysis"></a>Analysis
 
-Now that the lab is running, we can analyze the lab results, and contribute to the [Best Solutions](#solutions).
+Once the Lab is running experiments, it will produce data. This section will details how to analyze and understand the data, before we can contribute to the [Best Solutions](#solutions).
 
 An experiment produces 3 types of data files in the folder `data/<experiment_id>/`:
 
@@ -15,7 +15,8 @@ An experiment produces 3 types of data files in the folder `data/<experiment_id>
 Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
 </aside>
 
-We will go through an example with the data from the [Lab Demo](#demo).
+
+We will illustrate with an example experiment data from the [Lab Demo](#demo).
 
 
 ## Graphs
