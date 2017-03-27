@@ -10,6 +10,30 @@
 
 <p align="center"><em>The example above was created with Slate. Check it out at <a href="https://lord.github.io/slate">lord.github.io/slate</a>.</em></p>
 
+
+## OpenAI Lab Doc
+
+### Installation and Usage
+
+1. safer to git clone another copy of OpenAI Lab to your local, then do `git check doc` into the doc branch (to prevent file conflicts, and to allow you to work continuously without problems switching branches)
+2. install dependencies: you should have ruby already. do `bundle install`
+3. run `bundle exec middleman server`. Go to `localhost:4567` on your browser.
+4. edit the `source/` folder, save files, then refresh the browser to see new changes.
+5. git commit ur stuff (becareful with files; also images needs to be `git add -f` because they are gitignored). push to the doc branch
+6. run `./deploy.sh` and it will deploy. check kengz.me/openai_lab on your browser
+
+### Edit the files
+1. [simple markdown guide](https://github.com/lord/slate/wiki/Markdown-Syntax); more reference on the already existing docs in `source/includes/`
+2. create new section of doc as `source/includes/_SOME_SECTION.md`. Edit it.
+3. include that section in `source/index.html.md` top section `includes`. Note that ordering is reflected there.
+
+### Deploy
+
+- commit and push the changes to the `doc` branch
+- run `./deploy`
+- visit [kengz.me/openai_lab](http://kengz.me/openai_lab)
+
+
 Features
 ------------
 
@@ -59,13 +83,6 @@ vagrant up
 You can now see the docs at http://localhost:4567. Whoa! That was fast!
 
 Now that Slate is all set up on your machine, you'll probably want to learn more about [editing Slate markdown](https://github.com/lord/slate/wiki/Markdown-Syntax), or [how to publish your docs](https://github.com/lord/slate/wiki/Deploying-Slate).
-
-#### Deploy
-
-- commit and push the changes to the `doc` branch
-- run `./deploy`
-- visit [kengz.me/openai_lab](http://kengz.me/openai_lab)
-
 
 If you'd prefer to use Docker, instructions are available [in the wiki](https://github.com/lord/slate/wiki/Docker).
 
