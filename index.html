@@ -932,41 +932,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><a href="#metrics">learn more about the evaluation metrics</a></li>
 </ul>
 
-          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
-
-<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
-
-<p><strong>1. the difficulty of building upon other’s work</strong></p>
-
-<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
-
-<p><strong>2. the lack of rigor in comparisons</strong></p>
-
-<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
-
-<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
-
-<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
-
-<p>problem x {algorithms} ~ solutions</p>
-
-<p>fitness score on 4 parts:
-stability and reproducibility (solve ratio),
-speed (min episodes),
-potential (max reward),
-square for granularity</p>
-<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
-
-ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
-ideal_solved_ratio = 1
-ideal_fitness_score = fitness_score(
-    ideal_mean_rewards_per_epi, ideal_solved_ratio)
-return ideal_fitness_score
-</code></pre>
-<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
-
-<p>algorithm x {problems} ~ cross-solutions</p>
-
           <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
 
 <p>Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
@@ -1037,7 +1002,7 @@ return ideal_fitness_score
 <tr>
 <td style="text-align: left"><strong>LunarLander-v2</strong></td>
 <td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">1.838516</a></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.020506</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 </tr>
@@ -1303,10 +1268,10 @@ return ideal_fitness_score
 </thead><tbody>
 <tr>
 <td style="text-align: left">LunarLander-v2</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">1.838516</a></td>
-<td style="text-align: left">259</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.020506</a></td>
+<td style="text-align: left">247</td>
 <td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">lunar_dqn</td>
+<td style="text-align: left">lunar_double_dqn</td>
 </tr>
 <tr>
 <td style="text-align: left">LunarLanderContinuous-v2</td>
@@ -1453,6 +1418,41 @@ return ideal_fitness_score
 <td style="text-align: left">-</td>
 </tr>
 </tbody></table>
+
+          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
+
+<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+
+<p><strong>1. the difficulty of building upon other’s work</strong></p>
+
+<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+
+<p><strong>2. the lack of rigor in comparisons</strong></p>
+
+<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
+
+<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
+
+<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
+
+<p>problem x {algorithms} ~ solutions</p>
+
+<p>fitness score on 4 parts:
+stability and reproducibility (solve ratio),
+speed (min episodes),
+potential (max reward),
+square for granularity</p>
+<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
+
+ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
+ideal_solved_ratio = 1
+ideal_fitness_score = fitness_score(
+    ideal_mean_rewards_per_epi, ideal_solved_ratio)
+return ideal_fitness_score
+</code></pre>
+<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
+
+<p>algorithm x {problems} ~ cross-solutions</p>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
