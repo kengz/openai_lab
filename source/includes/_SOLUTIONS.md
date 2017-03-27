@@ -23,7 +23,7 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
 |**Pendulum-v0**|-|-|-|-|
-|**LunarLander-v2**|-|-|-|-|
+|**LunarLander-v2**|[1.838516](https://github.com/kengz/openai_lab/pull/84)|-|-|-|
 |**LunarLanderContinuous-v2**|-|-|-|-|
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
@@ -86,7 +86,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|LunarLander-v2|-|-|-|-|
+|LunarLander-v2|[1.838516](https://github.com/kengz/openai_lab/pull/84)|259|kengz/lgraesser|lunar_dqn|
 |LunarLanderContinuous-v2|-|-|-|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
