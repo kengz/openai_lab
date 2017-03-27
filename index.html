@@ -676,31 +676,43 @@ An experiment runs the variations of agent by changing its parameters (experimen
 Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
 </aside>
 
-<p>We will illustrate with an example experiment from the <a href="#demo">Lab Demo</a>.</p>
+<p>We will illustrate with an example experiment from the <a href="#demo">Lab Demo</a>, with the actual data from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn solution PR</a>.</p>
 
 <h2 id="graphs">Graphs</h2>
 
 <h3 id="session-graphs">Session Graphs</h3>
+
+<blockquote>
+<p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
+<em>The best session graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
+</blockquote>
 
 <p>When an experiment is running, the lab will plot the session graphs live, one for each session.</p>
 
 <p>A session graph has 3 subplots:</p>
 
 <ol>
-<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (<code class="prettyprint">epsilon</code>, <code class="prettyprint">tau</code>, etc. depending on the policy). The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
-<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above. Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently <em>strong</em> and <em>stable</em>.</p></li>
-<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s neural net. This graph is all the losses  concatenated over time, over all episodes. There is no definite unit for the loss as it depends on what loss function is used in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
+<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (<code class="prettyprint">epsilon</code>, <code class="prettyprint">tau</code>, etc. depending on the policy).</p>
+
+<p>The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
+<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above.</p>
+
+<p>Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently <em>strong</em> and <em>stable</em>.</p></li>
+<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s neural net. This graph is all the losses  concatenated over time, over all episodes.</p>
+
+<p>There is no specific unit for the loss as it depends on what loss function is used in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
 </ol>
 
 <aside class="notice">
 When developing a new algorithm, use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
 </aside>
 
-<p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" /></p>
-
-<p><em>The best session graph from the dqn experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
-
 <h3 id="analysis-graph">Analysis Graph</h3>
+
+<blockquote>
+<p><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
+<em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
+</blockquote>
 
 <p>The <strong>analysis graph</strong> is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
 
@@ -708,12 +720,12 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><strong>The y-axis measurement metrics</strong></p>
 
-<ul>
-<li><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</li>
-<li><code class="prettyprint">mean_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the average solution potential of a trial.</li>
-<li><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</li>
-<li><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.</li>
-</ul>
+<ol>
+<li><p><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</p></li>
+<li><p><code class="prettyprint">mean_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the average solution potential of a trial.</p></li>
+<li><p><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</p></li>
+<li><p><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.</p></li>
+</ol>
 
 <p><strong>The hue metrics</strong></p>
 
@@ -741,13 +753,13 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
 
-<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" /></div>
-
-<p><em>(new adjacent possible)</em></p>
-
-<p><em>The analysis graph from the dqn experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
-
 <h3 id="correlation-graph">Correlation graph</h3>
+
+<blockquote>
+<p><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" /></p>
+
+<p><em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
+</blockquote>
 
 <p><em>(new adjacent possible)</em></p>
 
@@ -758,10 +770,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.</p>
 
 <p>The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.</p>
-
-<p><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" /></p>
-
-<p><em>The correlation graph from the dqn experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
 
 <h2 id="data">Data</h2>
 
@@ -774,51 +782,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>The <code class="prettyprint">trial_id</code> will tell us which <code class="prettyprint">trial_data</code> to check for even more details on the best trials. Usually we can also spot some trend in the right parameter columns.</p>
 
 <p>The best <code class="prettyprint">&lt;trial_id&gt;.json</code> will show us directly what is its <code class="prettyprint">experiment_spec</code>, and more stats about the trial. When <a href="#solutions">submitting a solution PR</a>, retrieve the <code class="prettyprint">experiment_spec</code> to update the default <code class="prettyprint">*_experiment_spec.json</code>, and get the <code class="prettyprint">fitness_score</code> from here too.</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"experiment_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"solved_ratio_of_sessions"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"param_variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-    </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"epi_stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">195</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"min"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"std"</span><span class="p">:</span><span class="w"> </span><span class="mf">34.94796</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"errored"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
-  </span><span class="err">...</span><span class="w">
-</span></code></pre>
+
 <table><thead>
 <tr>
 <th style="text-align: left">fitness_score</th>
@@ -907,9 +871,53 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 </tbody></table>
 
-<p><em><code class="prettyprint">dqn-2017_03_19_004714_analysis_data.csv</code>, top 5 trials. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02].</em></p>
-
-<p>This concludes the analysis. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with the variables:</p>
+<p><em><code class="prettyprint">dqn-2017_03_19_004714_analysis_data.csv</code>, top 5 trials, from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.</em></p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"experiment_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"solved_ratio_of_sessions"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"param_variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+    </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"epi_stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">195</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"min"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"std"</span><span class="p">:</span><span class="w"> </span><span class="mf">34.94796</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"errored"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span></code></pre>
+<p>This concludes the analysis. See the <a href="https://github.com/kengz/openai_lab/pull/73">solution PR here</a>. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with <code class="prettyprint">fitness_score=5.305995</code>, and the variables:</p>
 
 <ul>
 <li><em>lr</em>: 0.02</li>
@@ -925,8 +933,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 </ul>
 
           <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
-
-<p>(pending long writeup)</p>
 
 <p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
 
@@ -1030,7 +1036,7 @@ return ideal_fitness_score
 </tr>
 <tr>
 <td style="text-align: left"><strong>LunarLander-v2</strong></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">1.838516</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
@@ -1297,10 +1303,10 @@ return ideal_fitness_score
 </thead><tbody>
 <tr>
 <td style="text-align: left">LunarLander-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">1.838516</a></td>
+<td style="text-align: left">259</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">lunar_dqn</td>
 </tr>
 <tr>
 <td style="text-align: left">LunarLanderContinuous-v2</td>
