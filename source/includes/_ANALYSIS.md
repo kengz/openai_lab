@@ -125,6 +125,17 @@ The `trial_id` will tell us which `trial_data` to check for even more details on
 The best `<trial_id>.json` will show us directly what is its `experiment_spec`, and more stats about the trial. When [submitting a solution PR](#solutions), retrieve the `experiment_spec` to update the default `*_experiment_spec.json`, and get the `fitness_score` from here too.
 
 
+|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|5.305994917071314|1.3264987292678285|195.404|154.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
+|5.105207228739003|1.2763018071847507|195.13600000000002|160.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t50|0.99|[32]|0.01|
+|4.9561426920909355|1.2390356730227339|195.26000000000002|168.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t78|0.999|[64]|0.01|
+|4.76714626254895|1.1917865656372375|195.106|172.4|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t71|0.999|[32]|0.02|
+|4.717243567762263|1.1793108919405657|195.56400000000002|167.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
+
+*`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02].*
+
+
 ```json
 {
   "experiment_spec": {
@@ -172,16 +183,6 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
   ...
 ```
 
-
-|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
-|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
-|5.305994917071314|1.3264987292678285|195.404|154.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
-|5.105207228739003|1.2763018071847507|195.13600000000002|160.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t50|0.99|[32]|0.01|
-|4.9561426920909355|1.2390356730227339|195.26000000000002|168.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t78|0.999|[64]|0.01|
-|4.76714626254895|1.1917865656372375|195.106|172.4|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t71|0.999|[32]|0.02|
-|4.717243567762263|1.1793108919405657|195.56400000000002|167.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
-
-*`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02].*
 
 This concludes the analysis. The best trial is `  dqn-2017_03_19_004714_t79`, with the variables:
 
