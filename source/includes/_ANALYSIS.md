@@ -88,6 +88,13 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 
 <div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
 <br><br></div>
+
+*(new adjacent possible)*
+
+*The analysis graph from the dqn experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
+
+
+
 <img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" />
 
 
