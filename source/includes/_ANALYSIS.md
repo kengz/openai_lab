@@ -16,7 +16,7 @@ Refer to <a href="#structure">Experiments > Structure</a> to see how the files a
 </aside>
 
 
-We will illustrate with an example experiment from the [Lab Demo](#demo).
+We will illustrate with an example experiment from the [Lab Demo](#demo), with the actual data from the [dqn solution PR](https://github.com/kengz/openai_lab/pull/73).
 
 
 ## Graphs
@@ -24,15 +24,27 @@ We will illustrate with an example experiment from the [Lab Demo](#demo).
 
 ### Session Graphs
 
+><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
+>*The best session graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.*
+
+
 When an experiment is running, the lab will plot the session graphs live, one for each session.
 
 A session graph has 3 subplots:
 
-1. **total rewards and exploration rate vs episode**: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (`epsilon`, `tau`, etc. depending on the policy). The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.
+1. **total rewards and exploration rate vs episode**: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (`epsilon`, `tau`, etc. depending on the policy).
 
-2. **mean rewards over the last 100 episodes vs episode**: measures the 100-episode mean of the total rewards from above. Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently *strong* and *stable*.
+    The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.
 
-3. **loss vs time**: measures the loss of the agent's neural net. This graph is all the losses  concatenated over time, over all episodes. There is no definite unit for the loss as it depends on what loss function is used in the NN architecture (typically `mean_squared_error`). As the NN starts getting more accurate, the loss should decrease.
+
+2. **mean rewards over the last 100 episodes vs episode**: measures the 100-episode mean of the total rewards from above.
+
+    Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently *strong* and *stable*.
+
+
+3. **loss vs time**: measures the loss of the agent's neural net. This graph is all the losses  concatenated over time, over all episodes.
+
+    There is no specific unit for the loss as it depends on what loss function is used in the NN architecture (typically `mean_squared_error`). As the NN starts getting more accurate, the loss should decrease.
 
 
 <aside class="notice">
@@ -40,12 +52,11 @@ When developing a new algorithm, use the session graph to immediately see how th
 </aside>
 
 
-<img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
-
-*The best session graph from the dqn experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.*
-
-
 ### Analysis Graph
+
+><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
+>*The analysis graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
+
 
 The **analysis graph** is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the *measurement metrics on the y-axis*, and the *experiment variables on the x-axis*.
 
@@ -53,10 +64,13 @@ The **analysis graph** is the primary graph used to judge the overall experiment
 
 **The y-axis measurement metrics**
 
-- `fitness_score`: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see [metrics](#metrics) for more.
-- `mean_rewards_stats_mean`: the statistical mean of all the `mean_rewards` over all the sessions of a trial. Measures the average solution potential of a trial.
-- `max_total_rewards_stats_mean`: the statistical mean of all the `max_total_rewards` over all the sessions of a trial. Measures the agent's average peak performance.
-- `epi_stats_mean`: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.
+1. `fitness_score`: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see [metrics](#metrics) for more.
+
+2. `mean_rewards_stats_mean`: the statistical mean of all the `mean_rewards` over all the sessions of a trial. Measures the average solution potential of a trial.
+
+3. `max_total_rewards_stats_mean`: the statistical mean of all the `max_total_rewards` over all the sessions of a trial. Measures the agent's average peak performance.
+
+4. `epi_stats_mean`: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.
 
 
 **The hue metrics**
@@ -86,14 +100,11 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 **trend across x-values**: to find a stable and good *x-value*, observe the vertical gaps in distribution, the clustering of darker points. Usually there's one maxima with a steady trend towards it. Recall that the plots flatten the other *x'* values, but the dependence on *x* value is usually very consistent across *x'* that there will still be a flattened trend.
 
 
-<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" /></div>
-
-*(new adjacent possible)*
-
-*The analysis graph from the dqn experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
-
-
 ### Correlation graph
+
+><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" />
+
+>*The correlation graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.*
 
 *(new adjacent possible)*
 
@@ -106,10 +117,6 @@ The diagonals simply shows the population distribution for that x-value; the dia
 
 The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.
 
-<img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" />
-
-
-*The correlation graph from the dqn experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.*
 
 
 ## Data
@@ -133,7 +140,7 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
 |4.76714626254895|1.1917865656372375|195.106|172.4|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t71|0.999|[32]|0.02|
 |4.717243567762263|1.1793108919405657|195.56400000000002|167.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
 
-*`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02].*
+*`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials, from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.*
 
 
 ```json
@@ -184,7 +191,7 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
 ```
 
 
-This concludes the analysis. The best trial is `  dqn-2017_03_19_004714_t79`, with `fitness_score=5.305995`, and the variables:
+This concludes the analysis. See the [solution PR here](https://github.com/kengz/openai_lab/pull/73). The best trial is `  dqn-2017_03_19_004714_t79`, with `fitness_score=5.305995`, and the variables:
 
 - *lr*: 0.02
 - *gamma*: 0.999
