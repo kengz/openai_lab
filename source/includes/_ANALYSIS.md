@@ -73,21 +73,17 @@ The granularity of the `solved_ratio_of_sessions` depends on the number of sessi
 Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.
 
 
-**How to read the analysis graph**
+**How to read**
 
+Every subplot in the graph shows the distribution of all the trial points in the pair of *y vs x* variables, with the other *x'* dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.
 
-how to read
+Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn.swarmplot.html) which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.
 
-what y are, hue, trial data points, how mean
-high slow, closeness, corres to stability
+**Population distribution**: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the *x* is a stabler value for the *y* value even when other *x'* dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.
 
-swarmplot to show dist vs scatter plot
+**trend across y-values**: the fitter trial will show up higher in the y-axes (except for `epi_stats_mean`). Generally good solutions are scarce and they show up at higher `fitness_score`, whereas the non-solutions get clustered in the lower region. Notice how the `fitness_score` plots can clearly distinguish the good solutions (darker points), whereas in the `mean)rewards_stats_mean` and `max_total_rewards_stats_mean` plots it is hard to tell apart. We will discuss how the custom-formulated `fitness_score` function achieves this in the [metrics](#metrics) section.
 
-, over all trials. Do the mean mean. for each trial data take the mean.  The y ax
-
-When an experiment is complete, the lab will aggregate the `trial_data` over all trials into `experiment_data`, and produce the experiment analysis data.
-
-
+**trend across x-values**: to find a stable and good *x-value*, observe the vertical gaps in distribution, the clustering of darker points. Usually there's one maxima with a steady trend towards it. Recall that the plots flatten the other *x'* values, but the dependence on *x* value is usually very consistent across *x'* that there will still be a flattened trend.
 
 
 <div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
