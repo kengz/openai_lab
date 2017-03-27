@@ -88,6 +88,33 @@
       ]
     }
   },
+  "sarsa": {
+    "problem": "CartPole-v0",
+    "Agent": "DeepSarsa",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 10
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
+    }
+  },
   "rand_sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepSarsa",
@@ -97,7 +124,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 100,
+      "max_evals": 50,
       "lr": 0.01,
       "gamma": 0.99,
       "hidden_layers": [32],
@@ -315,6 +342,35 @@
       "exploration_anneal_episodes": 500
     },
     "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ],
+      "exploration_anneal_episodes": [200, 400, 600]
+    }
+  },
+  "rand_acrobot": {
+    "problem": "Acrobot-v1",
+    "Agent": "DQN",
+    "HyperOptimizer": "RandomSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "max_evals": 100,
+      "lr": 0.01,
+      "gamma": 0.99,
+      "hidden_layers": [32],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 500
+    },
+    "param_range": {
       "lr": {
         "min": 0.0005,
         "max": 0.05
@@ -381,7 +437,7 @@
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers": [128, 64],
-      "hidden_layers_activation": "relu",
+      "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 200,
       "epi_change_lr": 300
@@ -390,12 +446,10 @@
       "lr": [0.001, 0.005, 0.01],
       "gamma": [0.97, 0.99, 0.999],
       "hidden_layers": [
-        [128],
-        [256],
-        [128, 64],
-        [256, 128],
-        [256, 128, 64],
-        [512, 256, 128, 64]
+        [400],
+        [400, 200],
+        [400, 200, 100],
+        [400, 200, 100, 50]
       ]
     }
   },
@@ -429,12 +483,11 @@
         "max": 0.9999
       },
       "hidden_layers": [
-        [200],
         [400],
         [400, 200],
-        [400, 200, 100]
+        [400, 200, 100],
+        [400, 200, 100, 50]
       ],
-      "hidden_layers_activation": ["sigmoid", "relu"],
       "exploration_anneal_episodes": [300, 400, 500]
     }
   },
