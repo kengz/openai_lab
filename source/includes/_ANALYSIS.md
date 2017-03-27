@@ -184,7 +184,7 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
 ```
 
 
-This concludes the analysis. The best trial is `  dqn-2017_03_19_004714_t79`, with the variables:
+This concludes the analysis. The best trial is `  dqn-2017_03_19_004714_t79`, with `fitness_score=5.305995`, and the variables:
 
 - *lr*: 0.02
 - *gamma*: 0.999
