@@ -19,16 +19,15 @@ Refer to <a href="#structure">Experiments > Structure</a> to see how the files a
 We will illustrate with an example experiment from the [Lab Demo](#demo), with the actual data from the [dqn solution PR](https://github.com/kengz/openai_lab/pull/73).
 
 
-## Graphs
-
-
-### Session Graphs
+## Session Graphs
 
 ><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
 >*The best session graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.*
 
 
 When an experiment is running, the lab will plot the session graphs live, one for each session.
+
+### How to read
 
 A session graph has 3 subplots:
 
@@ -52,7 +51,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 </aside>
 
 
-### Analysis Graph
+## Analysis Graph
 
 ><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
 >*The analysis graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
@@ -62,7 +61,7 @@ The **analysis graph** is the primary graph used to judge the overall experiment
 
 *(new adjacent possible)*
 
-**The y-axis measurement metrics**
+### The y-axis measurement metrics
 
 1. `fitness_score`: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see [metrics](#metrics) for more.
 
@@ -73,7 +72,7 @@ The **analysis graph** is the primary graph used to judge the overall experiment
 4. `epi_stats_mean`: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.
 
 
-**The hue metrics**
+### The hue metrics
 
 Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:
 
@@ -87,7 +86,7 @@ The granularity of the `solved_ratio_of_sessions` depends on the number of sessi
 Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.
 
 
-**How to read**
+### How to read
 
 Every subplot in the graph shows the distribution of all the trial points in the pair of *y vs x* variables, with the other *x'* dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.
 
@@ -100,7 +99,7 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 **trend across x-values**: to find a stable and good *x-value*, observe the vertical gaps in distribution, the clustering of darker points. Usually there's one maxima with a steady trend towards it. Recall that the plots flatten the other *x'* values, but the dependence on *x* value is usually very consistent across *x'* that there will still be a flattened trend.
 
 
-### Correlation graph
+## Correlation Graph
 
 ><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" />
 
@@ -111,7 +110,7 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 The **correlation graph** reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.
 
 
-**How to read**
+### How to read
 
 The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.
 
@@ -123,7 +122,7 @@ The points are semi-transparent, so if they overlap, their colors will stack ins
 
 After glancing through the graphs, it will be easier to understand the data and find the targets.
 
-**How to read**
+### How to read
 
 The `<experiment_id>_analysis_data.csv` will show the data for each trial, sorted by the highest `fitness_score` first. The left columns are the measured output values; then they're separated by the `trial_id`; the right columns are the parameter values for the trial.
 
