@@ -328,7 +328,7 @@
   "acrobot": {
     "problem": "Acrobot-v1",
     "Agent": "DQN",
-    "HyperOptimizer": "RandomSearch",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
