@@ -334,24 +334,21 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 100,
+      "train_per_n_new_exp": 4,
       "lr": 0.01,
       "gamma": 0.99,
       "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 500
+      "exploration_anneal_episodes": 200
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
-        [16],
-        [32],
-        [64],
-        [16, 8],
-        [32, 16]
+        [100],
+        [200, 100]
       ],
-      "exploration_anneal_episodes": [200, 400, 600]
+      "exploration_anneal_episodes": [100, 200]
     }
   },
   "rand_acrobot": {
@@ -364,11 +361,12 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "max_evals": 100,
+      "train_per_n_new_exp": 4,
       "lr": 0.01,
       "gamma": 0.99,
       "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 500
+      "exploration_anneal_episodes": 200
     },
     "param_range": {
       "lr": {
@@ -380,14 +378,10 @@
         "max": 0.9999
       },
       "hidden_layers": [
-        [16],
-        [32],
-        [64],
-        [128],
-        [16, 8],
-        [64, 32]
+        [100],
+        [200, 100]
       ],
-      "exploration_anneal_episodes": [200, 400, 600]
+      "exploration_anneal_episodes": [100, 200]
     }
   },
   "pendulum": {
