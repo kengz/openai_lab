@@ -23,7 +23,7 @@ STATS_COLS = [
     'trial_id'
 ]
 
-EXPERIMENT_GRID_Y_COLS = [
+EXPERIMENT_DATA_Y_COLS = [
     'fitness_score',
     'mean_rewards_stats_mean',
     'max_total_rewards_stats_mean',
@@ -286,7 +286,7 @@ def plot_experiment(data_df, trial_id):
     data_df = data_df.sort_values(hue)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     col_size = len(X_cols)
-    row_size = len(EXPERIMENT_GRID_Y_COLS)
+    row_size = len(EXPERIMENT_DATA_Y_COLS)
     groups = data_df.groupby(hue)
 
     # for main grid plot
@@ -295,7 +295,7 @@ def plot_experiment(data_df, trial_id):
         row_size, col_size, figsize=(col_size*4, row_size*3),
         sharex='col', sharey='row')
     for ix, x in enumerate(X_cols):
-        for iy, y in enumerate(EXPERIMENT_GRID_Y_COLS):
+        for iy, y in enumerate(EXPERIMENT_DATA_Y_COLS):
             big_ax = axes[iy] if col_size == 1 else axes[iy][ix]
             uniq_df = data_df[x].unique()
             if (data_df[x].dtype.name == 'category' or
