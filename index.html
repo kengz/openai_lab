@@ -203,7 +203,7 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="openai-lab">OpenAI Lab </br> <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a0e6bbbb6c4845ccaab2db9aecfecbb0" alt="Codacy Badge" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Coverage"><img src="https://api.codacy.com/project/badge/Coverage/9e55f845b10b4b51b213620bfb98e4b3" alt="Codacy Badge" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&amp;label=Fork" alt="GitHub forks" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&amp;label=Star" alt="GitHub stars" /></a></h1>
+        <h1 id="openai-lab">OpenAI Lab </br> <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9e55f845b10b4b51b213620bfb98e4b3" alt="Codacy Badge" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Coverage"><img src="https://api.codacy.com/project/badge/Coverage/9e55f845b10b4b51b213620bfb98e4b3" alt="Codacy Badge" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&amp;label=Fork" alt="GitHub forks" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&amp;label=Star" alt="GitHub stars" /></a></h1>
 
 <p><strong>(DOC UNDER CONSTRUCTION)</strong></p>
 
@@ -656,7 +656,7 @@ An experiment runs the variations of agent by changing its parameters (experimen
 
           <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
 
-<p>Once the Lab is running experiments, it will produce data. This section will details how to analyze and understand the data, before we can contribute to the <a href="#solutions">Best Solutions</a>.</p>
+<p>Once the Lab is running experiments, it will produce data. This section details how to analyze and understand the data, before we can contribute to the <a href="#solutions">Best Solutions</a>.</p>
 
 <p>An experiment produces 3 types of data files in the folder <code class="prettyprint">data/&lt;experiment_id&gt;/</code>:</p>
 
@@ -676,81 +676,149 @@ An experiment runs the variations of agent by changing its parameters (experimen
 Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
 </aside>
 
-<p>We will illustrate with an example experiment data from the <a href="#demo">Lab Demo</a>.</p>
+<p>We will illustrate with an example experiment from the <a href="#demo">Lab Demo</a>.</p>
 
 <h2 id="graphs">Graphs</h2>
 
 <h3 id="session-graphs">Session Graphs</h3>
 
-<p>When an experiment is running, the lab will draw the session graphs live, one for each session.</p>
+<p>When an experiment is running, the lab will plot the session graphs live, one for each session.</p>
 
-<p>This graph has 3 subplots:</p>
+<p>A session graph has 3 subplots:</p>
 
 <ol>
-<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the total rewards attained (blue) at the end of each episode, in relation to the exploration rate (red), which could be <code class="prettyprint">epsilon, tau</code>, etc. depending on the policy. The 2 lines usually show some negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
-<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above. This metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is <em>strong</em> and <em>stable</em> enough.</p></li>
-<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s Neural Net. This graph is all the losses  concatenated over time, over all episodes. There is no definite unit for loss as it depends on what loss function we use in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
+<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (<code class="prettyprint">epsilon</code>, <code class="prettyprint">tau</code>, etc. depending on the policy). The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
+<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above. Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently <em>strong</em> and <em>stable</em>.</p></li>
+<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s neural net. This graph is all the losses  concatenated over time, over all episodes. There is no definite unit for the loss as it depends on what loss function is used in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
 </ol>
 
 <aside class="notice">
-Use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
+When developing a new algorithm, use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
 </aside>
 
 <p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" /></p>
 
-<p><em>The best session graph from the dqn experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves and masters it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
+<p><em>The best session graph from the dqn experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
 
 <h3 id="analysis-graph">Analysis Graph</h3>
 
-<p>The <strong>analysis graph</strong> is the primary visual used to judge the overall experiment - how all the trials perform. It is a pair-plots of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
+<p>The <strong>analysis graph</strong> is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
 
 <p><em>(new adjacent possible)</em></p>
 
 <p><strong>The y-axis measurement metrics</strong></p>
 
 <ul>
-<li><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent. The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</li>
+<li><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</li>
 <li><code class="prettyprint">mean_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the average solution potential of a trial.</li>
-<li><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s maximum potential to gather rewards in an episode.</li>
-<li><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the session is solved faster.</li>
+<li><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</li>
+<li><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.</li>
 </ul>
 
-<p><strong>The hue</strong></p>
+<p><strong>The hue metrics</strong></p>
 
-<p>Each data point represents a trial, with the relevant data point averaged over its sessions. The points are colored (see legend) with the hue:</p>
+<p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
 
 <ul>
-<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial. 0 means no session is solved, 1 means all sessions are solved.</li>
+<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial. 0 means none, 1 means all.</li>
 </ul>
 
 <p>The granularity of the <code class="prettyprint">solved_ratio_of_sessions</code> depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it&rsquo;s the best tradeoff between granularity and computation time.</p>
 
 <p><em>(new adjacent possible)</em></p>
 
-<p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum in terms of solvability: agents who cannot solve at all, can solve occasionally, can always solve. The agents in between may be valuable when developing an new algorithm, because a strong agent may be hard to find in the early stage.</p>
+<p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.</p>
 
-<p>how to read</p>
+<p><strong>How to read</strong></p>
 
-<p>what y are, hue, trial data points, how mean
-high slow, closeness, corres to stability</p>
+<p>Every subplot in the graph shows the distribution of all the trial points in the pair of <em>y vs x</em> variables, with the other <em>x&rsquo;</em> dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.</p>
 
-<p>swarmplot to show dist vs scatter plot</p>
+<p>Note that these will use <a href="http://seaborn.pydata.org/generated/seaborn.swarmplot.html">swarmplot</a> which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.</p>
 
-<p>, over all trials. Do the mean mean. for each trial data take the mean.  The y ax</p>
+<p><strong>Population distribution</strong>: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the <em>x</em> is a stabler value for the <em>y</em> value even when other <em>x&rsquo;</em> dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.</p>
 
-<p>When an experiment is complete, the lab will aggregate the <code class="prettyprint">trial_data</code> over all trials into <code class="prettyprint">experiment_data</code>, and produce the experiment analysis data.</p>
+<p><strong>trend across y-values</strong>: the fitter trial will show up higher in the y-axes (except for <code class="prettyprint">epi_stats_mean</code>). Generally good solutions are scarce and they show up at higher <code class="prettyprint">fitness_score</code>, whereas the non-solutions get clustered in the lower region. Notice how the <code class="prettyprint">fitness_score</code> plots can clearly distinguish the good solutions (darker points), whereas in the <code class="prettyprint">mean)rewards_stats_mean</code> and <code class="prettyprint">max_total_rewards_stats_mean</code> plots it is hard to tell apart. We will discuss how the custom-formulated <code class="prettyprint">fitness_score</code> function achieves this in the <a href="#metrics">metrics</a> section.</p>
 
-<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
-<br><br></div>
+<p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
+
+<div style="max-width: 100%"><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" /></div>
+
+<p><em>(new adjacent possible)</em></p>
+
+<p><em>The analysis graph from the dqn experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
+
+<h3 id="correlation-graph">Correlation graph</h3>
+
+<p><em>(new adjacent possible)</em></p>
+
+<p>The <strong>correlation graph</strong> reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.</p>
+
+<p><strong>How to read</strong></p>
+
+<p>The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.</p>
+
+<p>The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.</p>
 
 <p><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" /></p>
 
-<p><em>The dqn experiment analytics generated by the Lab. This is a pairplot, where we isolate each variable, flatten the others, plot each trial as a point. The darker the color the higher ratio of the repeated sessions the trial solves.</em></p>
+<p><em>The correlation graph from the dqn experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
 
 <h2 id="data">Data</h2>
 
-<p>jsons and sorted CSV</p>
+<p>After glancing through the graphs, it will be easier to understand the data and find the targets.</p>
 
+<p><strong>How to read</strong></p>
+
+<p>The <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code> will show the data for each trial, sorted by the highest <code class="prettyprint">fitness_score</code> first. The left columns are the measured output values; then they&rsquo;re separated by the <code class="prettyprint">trial_id</code>; the right columns are the parameter values for the trial.</p>
+
+<p>The <code class="prettyprint">trial_id</code> will tell us which <code class="prettyprint">trial_data</code> to check for even more details on the best trials. Usually we can also spot some trend in the right parameter columns.</p>
+
+<p>The best <code class="prettyprint">&lt;trial_id&gt;.json</code> will show us directly what is its <code class="prettyprint">experiment_spec</code>, and more stats about the trial. When <a href="#solutions">submitting a solution PR</a>, retrieve the <code class="prettyprint">experiment_spec</code> to update the default <code class="prettyprint">*_experiment_spec.json</code>, and get the <code class="prettyprint">fitness_score</code> from here too.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"experiment_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"solved_ratio_of_sessions"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"param_variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+    </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"epi_stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">195</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"min"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"std"</span><span class="p">:</span><span class="w"> </span><span class="mf">34.94796</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"errored"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span></code></pre>
 <table><thead>
 <tr>
 <th style="text-align: left">fitness_score</th>
@@ -839,9 +907,9 @@ high slow, closeness, corres to stability</p>
 </tr>
 </tbody></table>
 
-<p><em>Analysis data table, top 5 trials.</em></p>
+<p><em><code class="prettyprint">dqn-2017_03_19_004714_analysis_data.csv</code>, top 5 trials. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02].</em></p>
 
-<p>On completion, from the analytics, we conclude that the experiment is a success, and the best agent that solves the problem has the parameters:</p>
+<p>This concludes the analysis. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with the variables:</p>
 
 <ul>
 <li><em>lr</em>: 0.02</li>
@@ -849,9 +917,12 @@ high slow, closeness, corres to stability</p>
 <li><em>hidden_layers_shape</em>: [64]</li>
 </ul>
 
-<h2 id="metrics">Metrics</h2>
+<p>Now that you know how to analyze the data,</p>
 
-<p>Merge metrics and variables? later</p>
+<ul>
+<li><a href="#solutions">start finding problems to beat and submitting your solutions</a></li>
+<li><a href="#metrics">learn more about the evaluation metrics</a></li>
+</ul>
 
           <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
 
@@ -897,6 +968,8 @@ return ideal_fitness_score
 <h2 id="submission-instructions">Submission instructions</h2>
 
 <p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab.</p>
+
+<p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
 
 <p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
 
