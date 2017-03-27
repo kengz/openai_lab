@@ -676,11 +676,9 @@ An experiment runs the variations of agent by changing its parameters (experimen
 Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
 </aside>
 
-<p>We will illustrate with an example experiment from the <a href="#demo">Lab Demo</a>, with the actual data from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn solution PR</a>.</p>
+<p>We will illustrate with an example experiment from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn solution PR</a>.</p>
 
-<h2 id="graphs">Graphs</h2>
-
-<h3 id="session-graphs">Session Graphs</h3>
+<h2 id="session-graphs">Session Graphs</h2>
 
 <blockquote>
 <p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
@@ -688,6 +686,8 @@ Refer to <a href="#structure">Experiments > Structure</a> to see how the files a
 </blockquote>
 
 <p>When an experiment is running, the lab will plot the session graphs live, one for each session.</p>
+
+<h3 id="how-to-read">How to read</h3>
 
 <p>A session graph has 3 subplots:</p>
 
@@ -707,7 +707,7 @@ Refer to <a href="#structure">Experiments > Structure</a> to see how the files a
 When developing a new algorithm, use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
 </aside>
 
-<h3 id="analysis-graph">Analysis Graph</h3>
+<h2 id="analysis-graph">Analysis Graph</h2>
 
 <blockquote>
 <p><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
@@ -718,7 +718,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><em>(new adjacent possible)</em></p>
 
-<p><strong>The y-axis measurement metrics</strong></p>
+<h3 id="the-y-axis-measurement-metrics">The y-axis measurement metrics</h3>
 
 <ol>
 <li><p><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</p></li>
@@ -727,7 +727,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><p><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.</p></li>
 </ol>
 
-<p><strong>The hue metrics</strong></p>
+<h3 id="the-hue-metrics">The hue metrics</h3>
 
 <p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
 
@@ -741,7 +741,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.</p>
 
-<p><strong>How to read</strong></p>
+<h3 id="how-to-read">How to read</h3>
 
 <p>Every subplot in the graph shows the distribution of all the trial points in the pair of <em>y vs x</em> variables, with the other <em>x&rsquo;</em> dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.</p>
 
@@ -753,7 +753,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
 
-<h3 id="correlation-graph">Correlation graph</h3>
+<h2 id="correlation-graph">Correlation Graph</h2>
 
 <blockquote>
 <p><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" /></p>
@@ -765,7 +765,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>The <strong>correlation graph</strong> reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.</p>
 
-<p><strong>How to read</strong></p>
+<h3 id="how-to-read">How to read</h3>
 
 <p>The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.</p>
 
@@ -775,7 +775,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>After glancing through the graphs, it will be easier to understand the data and find the targets.</p>
 
-<p><strong>How to read</strong></p>
+<h3 id="how-to-read">How to read</h3>
 
 <p>The <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code> will show the data for each trial, sorted by the highest <code class="prettyprint">fitness_score</code> first. The left columns are the measured output values; then they&rsquo;re separated by the <code class="prettyprint">trial_id</code>; the right columns are the parameter values for the trial.</p>
 
