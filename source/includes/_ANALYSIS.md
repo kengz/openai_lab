@@ -16,7 +16,7 @@ Refer to <a href="#structure">Experiments > Structure</a> to see how the files a
 </aside>
 
 
-We will illustrate with an example experiment from the [Lab Demo](#demo), with the actual data from the [dqn solution PR](https://github.com/kengz/openai_lab/pull/73).
+We will illustrate with an example experiment from the [dqn solution PR](https://github.com/kengz/openai_lab/pull/73).
 
 
 ## Session Graphs
