@@ -17,13 +17,13 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
-|**CartPole-v0**|[5.305995](https://github.com/kengz/openai_lab/pull/73)|[5.658951](https://github.com/kengz/openai_lab/pull/78)|-|-|
-|**CartPole-v1**|[7.678957](https://github.com/kengz/openai_lab/pull/80)|[9.089594](https://github.com/kengz/openai_lab/pull/82)|-|-|
+|**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|-|-|
+|**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
 |**Acrobot-v1**|-|-|-|-|
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
 |**Pendulum-v0**|-|-|-|-|
-|**LunarLander-v2**|[1.838516](https://github.com/kengz/openai_lab/pull/84)|[2.020506](https://github.com/kengz/openai_lab/pull/87)|-|-|
+|**LunarLander-v2**|[2.296613](https://github.com/kengz/openai_lab/pull/84)|[2.812674](https://github.com/kengz/openai_lab/pull/87)|-|-|
 |**LunarLanderContinuous-v2**|-|-|-|-|
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
@@ -74,8 +74,8 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[5.658951](https://github.com/kengz/openai_lab/pull/78)|7|kengz/lgraesser|double_dqn|
-|CartPole-v1|[9.089594](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
+|CartPole-v0|[10.31487](https://github.com/kengz/openai_lab/pull/78)|7|kengz/lgraesser|double_dqn|
+|CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
 |Acrobot-v1|-|-|-|-|
 |MountainCar-v0|-|-|-|-|
 |MountainCarContinuous-v0|-|-|-|-|
@@ -86,7 +86,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|LunarLander-v2|[2.020506](https://github.com/kengz/openai_lab/pull/87)|247|kengz/lgraesser|lunar_double_dqn|
+|LunarLander-v2|[2.812674](https://github.com/kengz/openai_lab/pull/87)|247|kengz/lgraesser|lunar_double_dqn|
 |LunarLanderContinuous-v2|-|-|-|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
