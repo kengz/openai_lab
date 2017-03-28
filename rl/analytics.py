@@ -198,7 +198,7 @@ def fitness_score(stats):
     mean_rewards_per_epi = stats['mean_rewards_per_epi_stats']['mean']
     stability = stats['stability_stats']['mean']
     consistency = stats['solved_ratio_of_sessions']
-    amplifier = ((1+stability)*(1+consistency))**2
+    amplifier = (1+stability)*((1+consistency)**2)
     distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
     fitness = mean_rewards_per_epi * distinguisher
     return fitness
@@ -218,7 +218,7 @@ def ideal_fitness_score(problem):
     ideal_mean_rewards_per_epi = solved_mean_reward / ideal_epi
     ideal_stability = 1
     ideal_consistency = 1
-    amplifier = ((1+ideal_stability)*(1+ideal_consistency))**2
+    amplifier = (1+ideal_stability)*((1+ideal_consistency)**2)
     distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
     ideal_fitness = ideal_mean_rewards_per_epi * distinguisher
     return ideal_fitness
