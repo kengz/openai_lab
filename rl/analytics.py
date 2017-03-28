@@ -152,24 +152,61 @@ class Grapher(object):
         del_self_attr(self)
 
 
-def fitness_score(mean_rewards_per_epi, solved_ratio_of_sessions):
+def calc_stability(sys_vars):
     '''
-    calculate the fitness score for hyperparameter optimization
-    +1 to ratio to account for partial solution where ratio = 0
-    use square to isolate early-fail high mean_rewards/epi value
+    calculate the stability of a session using its sys_vars
+    stability 1 = perfectly stable
+    0.5 = half-ish unstable
+    0 = totally unstable, cannot yield solution
     '''
-    return mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
+    stability_gap = sys_vars['REWARD_MEAN_LEN']
+    # find index i.e. epi of first solved
+    first_solved_epi = next(
+        (idx for idx, total_r in enumerate(sys_vars['total_rewards_history'])
+            if total_r > sys_vars['SOLVED_MEAN_REWARD']), None)
+    last_epi = sys_vars['epi']
+
+    if (first_solved_epi is None or
+            first_solved_epi > last_epi - stability_gap):
+        mastery_gap = np.inf
+    else:
+        mastery_gap = last_epi - first_solved_epi
+    stability = stability_gap / mastery_gap
+    return stability
 
 
-def ideal_fitness_score(mean_rewards, epi, solved_epi_speedup):
+def fitness_score(stats):
+    '''
+    calculate the fitness score (see doc Metrics for more)
+    1. solution rewards
+    2. solving speed: /epi
+    3. stability
+    4. consistency
+    5. granularity
+    6. separability
+    '''
+    # TODO uhm implication on negative scores?
+    mean_rewards_per_epi = stats['mean_rewards_per_epi_stats']['mean']
+    stability = stats['stability_stats']['mean']
+    consistency = stats['solved_ratio_of_sessions']
+    fitness = mean_rewards_per_epi * ((1+stability)*(1+consistency))**2
+    return fitness
+
+
+def ideal_fitness_score(problem):
     '''
     calculate the ideal fitness_score with perfect solved ratio
     for hyperparameter optimization to select
     '''
-    ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
-    ideal_solved_ratio = 1
-    ideal_fitness_score = fitness_score(
-        ideal_mean_rewards_per_epi, ideal_solved_ratio)
+    solved_mean_reward = problem['SOLVED_MEAN_REWARD']
+    max_episodes = problem['MAX_EPISODES']
+    solved_epi_speedup = 3 if solved_mean_reward > 0 else 1./3
+    ideal_epi = max_episodes / solved_epi_speedup
+    ideal_mean_rewards_per_epi = solved_mean_reward / ideal_epi
+    ideal_stability = 1
+    ideal_consistency = 1
+    ideal_fitness = ideal_mean_rewards_per_epi * \
+        ((1+ideal_stability)*(1+ideal_consistency))**2
     return ideal_fitness_score
 
 
@@ -203,6 +240,7 @@ def compose_data(trial):
         lambda sv: np.max(sv['total_rewards_history']), sys_vars_array)))
     epi_array = np.array(list(map(lambda sv: sv['epi'], sys_vars_array)))
     mean_rewards_per_epi_array = np.divide(mean_rewards_array, epi_array + 1)
+    stability_array = list(map(calc_stability, sys_vars_array))
     t_array = np.array(list(map(lambda sv: sv['t'], sys_vars_array)))
     time_taken_array = np.array(list(map(
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
@@ -225,6 +263,7 @@ def compose_data(trial):
         'mean_rewards_stats': basic_stats(mean_rewards_array),
         'mean_rewards_per_epi_stats': basic_stats(
             mean_rewards_per_epi_array),
+        'stability_stats': basic_stats(stability_array),
         'max_total_rewards_stats': basic_stats(max_total_rewards_array),
         'epi_stats': basic_stats(epi_array),
         't_stats': basic_stats(t_array),
@@ -392,8 +431,7 @@ def analyze_data(experiment_data_or_experiment_id):
             data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
-        ['fitness_score'],
-        inplace=True, ascending=False)
+        ['fitness_score'], inplace=True, ascending=False)
 
     trial_id = experiment_data[0]['trial_id']
     save_experiment_data(data_df, trial_id)
