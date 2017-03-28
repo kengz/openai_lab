@@ -170,11 +170,10 @@ def calc_stability(sys_vars):
             if total_r > sys_vars['SOLVED_MEAN_REWARD']), None)
     last_epi = sys_vars['epi']
 
-    if (first_solved_epi is None or
-            first_solved_epi > last_epi - stability_gap):
+    if first_solved_epi is None:
         mastery_gap = np.inf
-    else:
-        mastery_gap = last_epi - first_solved_epi
+    else:  # get max if mastery_gap is smaller (faster) than needed - perfect
+        mastery_gap = max(last_epi - first_solved_epi, stability_gap)
     stability = stability_gap / mastery_gap
     return stability
 
