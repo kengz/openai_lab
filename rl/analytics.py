@@ -176,7 +176,7 @@ def calc_stability(sys_vars):
             if total_r > r_threshold), None)
     last_epi = sys_vars['epi']
 
-    if (first_solved_epi is None) or (total_r_history[last_epi] < r_threshold):
+    if (first_solved_epi is None) or (total_r_history[-1] < r_threshold):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
         mastery_gap = max(last_epi - first_solved_epi, stability_gap)
