@@ -198,10 +198,11 @@ class Session(object):
             getattr(self.policy, 'e', 0) or getattr(self.policy, 'tau', 0))
         avg_len = sys_vars['REWARD_MEAN_LEN']
         # Calculating mean_reward over last 100 episodes
-        # case away from np for json serializable (dumb python)
+        # cast away from np for json serializable (dumb python)
         mean_rewards = float(
             np.mean(sys_vars['total_rewards_history'][-avg_len:]))
-        solved = (mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
+        solved = 0 if (sys_vars['SOLVED_MEAN_REWARD'] is None) else (
+            mean_rewards >= sys_vars['SOLVED_MEAN_REWARD'])
         sys_vars['mean_rewards'] = mean_rewards
         sys_vars['mean_rewards_history'].append(mean_rewards)
         sys_vars['solved'] = solved
