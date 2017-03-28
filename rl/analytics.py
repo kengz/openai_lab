@@ -254,6 +254,9 @@ def compose_data(trial):
     solved_time_taken_array = np.array(list(map(
         lambda sv: timestamp_elapse_to_seconds(sv['time_taken']),
         solved_sys_vars_array)))
+    best_idx = list(mean_rewards_per_epi_array).index(
+        max(mean_rewards_per_epi_array))
+    best_session_id = '{}_s{}'.format(trial.data['trial_id'], best_idx)
 
     # compose sys_vars stats
     stats = {
@@ -283,11 +286,11 @@ def compose_data(trial):
         'fitness_score': stats['fitness_score'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
-        'mean_rewards_stats_mean': stats['mean_rewards_stats']['mean'],
-        'epi_stats_mean': stats['epi_stats']['mean'],
+        'best_session_id': best_session_id,
+        'best_session_mean_rewards': mean_rewards_array[best_idx],
+        'best_session_epi': epi_array.tolist()[best_idx],
+        'best_session_stability': stability_array[best_idx],
         'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
-        'max_total_rewards_stats_mean': stats[
-            'max_total_rewards_stats']['mean'],
         't_stats_mean': stats['t_stats']['mean'],
     }
 
