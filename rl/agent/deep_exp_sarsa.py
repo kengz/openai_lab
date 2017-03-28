@@ -10,9 +10,9 @@ class DeepExpectedSarsa(DeepSarsa):
     Policy = epsilonGreedyPolicy
     '''
 
-    def compute_Q_states(self, last_exp):
+    def compute_Q_states(self, minibatch):
         (Q_states, Q_next_states, _max) = super(
-            DeepExpectedSarsa, self).compute_Q_states(last_exp)
+            DeepExpectedSarsa, self).compute_Q_states(minibatch)
 
         curr_e = self.policy.e
         curr_e_per_a = curr_e / self.env_spec['action_dim']

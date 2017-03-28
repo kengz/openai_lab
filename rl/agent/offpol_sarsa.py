@@ -16,13 +16,13 @@ class OffPolicySarsa(DQN):
         super(OffPolicySarsa, self).__init__(*args, **kwargs)
         self.eval_e = 0.05
 
-    def compute_Q_states(self, last_exp):
+    def compute_Q_states(self, minibatch):
         (Q_states, Q_next_states, _max) = super(
-            OffPolicySarsa, self).compute_Q_states(last_exp)
+            OffPolicySarsa, self).compute_Q_states(minibatch)
 
         e_per_action = self.eval_e / self.env_spec['action_dim']
 
         Q_next_states_max = np.amax(Q_next_states, axis=1)
-        expected_Q = (1 - self.eval_e) * Q_next_states_max + \
+        Q_next_states_selected = (1 - self.eval_e) * Q_next_states_max + \
             np.sum(Q_next_states * e_per_action, axis=1)
-        return (Q_states, None, expected_Q)
+        return (Q_states, None, Q_next_states_selected)
