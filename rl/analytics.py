@@ -159,18 +159,24 @@ class Grapher(object):
 def calc_stability(sys_vars):
     '''
     calculate the stability of a session using its sys_vars
+    when problem is unsolved (unbounded), use 1 sigma 95% of max
     stability 1 = perfectly stable
     0.5 = half-ish unstable
     0 = totally unstable, cannot yield solution
     '''
     stability_gap = sys_vars['REWARD_MEAN_LEN']
+    total_r_history = sys_vars['total_rewards_history']
+    if sys_vars['SOLVED_MEAN_REWARD'] is None:
+        r_threshold = 0.95 * max(total_r_history)
+    else:
+        r_threshold = sys_vars['SOLVED_MEAN_REWARD']
     # find index i.e. epi of first solved
     first_solved_epi = next(
-        (idx for idx, total_r in enumerate(sys_vars['total_rewards_history'])
-            if total_r > sys_vars['SOLVED_MEAN_REWARD']), None)
+        (idx for idx, total_r in enumerate(total_r_history)
+            if total_r > r_threshold), None)
     last_epi = sys_vars['epi']
 
-    if first_solved_epi is None:
+    if (first_solved_epi is None) or (total_r_history[last_epi] < r_threshold):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
         mastery_gap = max(last_epi - first_solved_epi, stability_gap)
