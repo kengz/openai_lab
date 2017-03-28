@@ -209,6 +209,8 @@ def ideal_fitness_score(problem):
     calculate the ideal fitness_score with perfect solved ratio
     for hyperparameter optimization to select
     '''
+    if problem['SOLVED_MEAN_REWARD'] is None:
+        return np.inf  # for unsolved environments
     solved_mean_reward = problem['SOLVED_MEAN_REWARD']
     max_episodes = problem['MAX_EPISODES']
     solved_epi_speedup = 3
@@ -216,10 +218,10 @@ def ideal_fitness_score(problem):
     ideal_mean_rewards_per_epi = solved_mean_reward / ideal_epi
     ideal_stability = 1
     ideal_consistency = 1
-    amplifier = ((1+stability)*(1+consistency))**2
+    amplifier = ((1+ideal_stability)*(1+ideal_consistency))**2
     distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
     ideal_fitness = ideal_mean_rewards_per_epi * distinguisher
-    return ideal_fitness_score
+    return ideal_fitness
 
 
 def basic_stats(array):
