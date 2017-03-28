@@ -121,6 +121,8 @@ class TargetedEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     def update(self, sys_vars):
         '''strategy to update epsilon in agent'''
         epi = sys_vars['epi']
+        assert sys_vars['SOLVED_MEAN_REWARD'] is not None, \
+            'this policy needs an explicit target SOLVED_MEAN_REWARD'
         SOLVED_MEAN_REWARD = sys_vars['SOLVED_MEAN_REWARD']
         REWARD_MEAN_LEN = sys_vars['REWARD_MEAN_LEN']
         PARTIAL_MEAN_LEN = int(REWARD_MEAN_LEN * 0.20)
