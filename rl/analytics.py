@@ -186,7 +186,8 @@ def fitness_score(stats):
     3. stability
     4. consistency
     5. granularity
-    6. separability
+    6. amplification of good results
+    7. distinguishability
     '''
     mean_rewards_per_epi = stats['mean_rewards_per_epi_stats']['mean']
     stability = stats['stability_stats']['mean']
