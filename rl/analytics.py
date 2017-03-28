@@ -12,22 +12,26 @@ MPL_BACKEND = 'agg' if (
     environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
 
 STATS_COLS = [
+    'best_session_epi',
+    'best_session_id',
+    'best_session_mean_rewards',
+    'best_session_stability',
     'fitness_score',
     'mean_rewards_per_epi_stats_mean',
     'mean_rewards_stats_mean',
+    'mean_rewards_stats_max',
     'epi_stats_mean',
+    'epi_stats_min',
     'solved_ratio_of_sessions',
-    'num_of_sessions',
     'max_total_rewards_stats_mean',
-    't_stats_mean',
-    'trial_id'
+    'trial_id',
 ]
 
 EXPERIMENT_DATA_Y_COLS = [
     'fitness_score',
-    'mean_rewards_stats_mean',
+    'mean_rewards_stats_max',
     'max_total_rewards_stats_mean',
-    'epi_stats_mean'
+    'epi_stats_min',
 ]
 
 
@@ -260,36 +264,40 @@ def compose_data(trial):
 
     # compose sys_vars stats
     stats = {
-        'num_of_sessions': len(sys_vars_array),
-        'solved_num_of_sessions': len(solved_sys_vars_array),
-        'solved_ratio_of_sessions': float(len(
-            solved_sys_vars_array)) / trial.times,
+        'best_session_epi': epi_array.tolist()[best_idx],
+        'best_session_id': best_session_id,
+        'best_session_mean_rewards': mean_rewards_array[best_idx],
+        'best_session_stability': stability_array[best_idx],
         'errored': any(errored_array),
+        'epi_stats': basic_stats(epi_array),
+        'max_total_rewards_stats': basic_stats(max_total_rewards_array),
         'mean_rewards_stats': basic_stats(mean_rewards_array),
         'mean_rewards_per_epi_stats': basic_stats(
             mean_rewards_per_epi_array),
-        'stability_stats': basic_stats(stability_array),
-        'max_total_rewards_stats': basic_stats(max_total_rewards_array),
-        'epi_stats': basic_stats(epi_array),
-        't_stats': basic_stats(t_array),
-        'time_taken_stats': basic_stats(time_taken_array),
+        'num_of_sessions': len(sys_vars_array),
         'solved_epi_stats': basic_stats(solved_epi_array),
+        'solved_num_of_sessions': len(solved_sys_vars_array),
+        'solved_ratio_of_sessions': float(len(
+            solved_sys_vars_array)) / trial.times,
         'solved_t_stats': basic_stats(solved_t_array),
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
+        'stability_stats': basic_stats(stability_array),
+        't_stats': basic_stats(t_array),
+        'time_taken_stats': basic_stats(time_taken_array),
     }
     stats.update({
         'fitness_score': fitness_score(stats)
     })
 
-    # summary metrics
+    # summary metrics picked from stats
     metrics = {
+        'best_session_epi': stats['best_session_epi'],
+        'best_session_id': stats['best_session_id'],
+        'best_session_mean_rewards': stats['best_session_mean_rewards'],
+        'best_session_stability': stats['best_session_stability'],
         'fitness_score': stats['fitness_score'],
         'mean_rewards_per_epi_stats_mean': stats[
             'mean_rewards_per_epi_stats']['mean'],
-        'best_session_id': best_session_id,
-        'best_session_mean_rewards': mean_rewards_array[best_idx],
-        'best_session_epi': epi_array.tolist()[best_idx],
-        'best_session_stability': stability_array[best_idx],
         'solved_ratio_of_sessions': stats['solved_ratio_of_sessions'],
         't_stats_mean': stats['t_stats']['mean'],
     }
