@@ -219,7 +219,7 @@ def ideal_fitness_score(problem):
     ideal_stability = 1
     ideal_consistency = 1
     amplifier = (1+ideal_stability)*((1+ideal_consistency)**2)
-    distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
+    distinguisher = amplifier ** np.sign(ideal_mean_rewards_per_epi)
     ideal_fitness = ideal_mean_rewards_per_epi * distinguisher
     return ideal_fitness
 
