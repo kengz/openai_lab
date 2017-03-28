@@ -406,6 +406,8 @@ class Trial(object):
                     break
 
         log_trial_delimiter(self, 'End')
+        compose_data(self)  # final update, for resume mode
+        self.save()
         trial_data = copy.deepcopy(self.data)
         self.clear()
         return trial_data

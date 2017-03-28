@@ -365,7 +365,7 @@ def load_data_array_from_experiment_id(id_str):
 def save_experiment_data(data_df, trial_id):
     experiment_id = parse_experiment_id(trial_id)
     filename = './data/{0}/{0}_analysis_data.csv'.format(experiment_id)
-    data_df.to_csv(filename, index=False)
+    data_df.round(6).to_csv(filename, index=False)
     logger.info(
         'experiment data saved to {}'.format(filename))
 
