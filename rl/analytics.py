@@ -275,9 +275,7 @@ def compose_data(trial):
         'solved_time_taken_stats': basic_stats(solved_time_taken_array),
     }
     stats.update({
-        'fitness_score': fitness_score(
-            stats['mean_rewards_per_epi_stats']['mean'],
-            stats['solved_ratio_of_sessions'])
+        'fitness_score': fitness_score(stats)
     })
 
     # summary metrics
