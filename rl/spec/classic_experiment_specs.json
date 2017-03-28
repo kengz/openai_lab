@@ -371,9 +371,37 @@
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
         [100],
-        [200, 100]
-      ],
-      "exploration_anneal_episodes": [100, 200]
+        [200],
+        [200, 100],
+        [400, 200, 100]
+      ]
+    }
+  },
+  "acrobot_double_dqn": {
+    "problem": "Acrobot-v1",
+    "Agent": "DoubleDQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "train_per_n_new_exp": 4,
+      "lr": 0.01,
+      "gamma": 0.99,
+      "hidden_layers": [32],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 200
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [100],
+        [200],
+        [200, 100],
+        [400, 200, 100]
+      ]
     }
   },
   "rand_acrobot": {
@@ -405,9 +433,10 @@
       "hidden_layers": [
         [100],
         [200],
-        [200, 100]
+        [200, 100],
+        [400, 200, 100]
       ],
-      "exploration_anneal_episodes": [50, 100, 200, 300]
+      "exploration_anneal_episodes": [200, 400]
     }
   },
   "pendulum": {
