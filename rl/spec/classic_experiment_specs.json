@@ -137,21 +137,46 @@
         "max": 0.05
       },
       "gamma": {
-        "min": 0.90,
+        "min": 0.95,
         "max": 0.999
       },
       "hidden_layers": [
         [16],
         [32],
         [64],
-        [128],
         [16, 8],
         [32, 16]
-      ],
-      "exploration_anneal_episodes": [10, 20, 40]
+      ]
     }
   },
   "exp_sarsa": {
+    "problem": "CartPole-v0",
+    "Agent": "DeepExpectedSarsa",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "EpsilonGreedyPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.001,
+      "gamma": 0.99,
+      "hidden_layers": [32],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 20
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.96, 0.97, 0.99],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
+    }
+  },
+  "rand_exp_sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepExpectedSarsa",
     "HyperOptimizer": "RandomSearch",
@@ -173,18 +198,16 @@
         "max": 0.05
       },
       "gamma": {
-        "min": 0.90,
+        "min": 0.95,
         "max": 0.999
       },
       "hidden_layers": [
         [16],
         [32],
         [64],
-        [128],
         [16, 8],
         [32, 16]
-      ],
-      "exploration_anneal_episodes": [10, 20, 40]
+      ]
     }
   },
   "offpol_sarsa": {
@@ -206,9 +229,11 @@
       "lr": [0.001, 0.005, 0.01, 0.02],
       "gamma": [0.95, 0.96, 0.97, 0.99],
       "hidden_layers": [
-        [8],
         [16],
-        [32]
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
       ]
     }
   },
@@ -346,9 +371,37 @@
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
         [100],
-        [200, 100]
-      ],
-      "exploration_anneal_episodes": [100, 200]
+        [200],
+        [200, 100],
+        [400, 200, 100]
+      ]
+    }
+  },
+  "acrobot_double_dqn": {
+    "problem": "Acrobot-v1",
+    "Agent": "DoubleDQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "train_per_n_new_exp": 4,
+      "lr": 0.01,
+      "gamma": 0.99,
+      "hidden_layers": [32],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 200
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [100],
+        [200],
+        [200, 100],
+        [400, 200, 100]
+      ]
     }
   },
   "rand_acrobot": {
@@ -380,9 +433,10 @@
       "hidden_layers": [
         [100],
         [200],
-        [200, 100]
+        [200, 100],
+        [400, 200, 100]
       ],
-      "exploration_anneal_episodes": [50, 100, 200, 300]
+      "exploration_anneal_episodes": [200, 400]
     }
   },
   "pendulum": {
@@ -465,12 +519,12 @@
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 200,
-      "epi_change_lr": 500
+      "exploration_anneal_episodes": 400,
+      "epi_change_lr": 600
     },
     "param_range": {
       "lr": {
-        "min": 0.0005,
+        "min": 0.001,
         "max": 0.05
       },
       "gamma": {

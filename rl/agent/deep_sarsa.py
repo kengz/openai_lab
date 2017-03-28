@@ -16,18 +16,18 @@ class DeepSarsa(DQN):
         self.n_epoch = 1
         self.final_n_epoch = 1
 
-    def compute_Q_states(self, last_exp):
+    def compute_Q_states(self, minibatch):
         (Q_states, Q_next_states, _max) = super(
-            DeepSarsa, self).compute_Q_states(last_exp)
-        next_action = self.select_action(last_exp['next_states'][0])
+            DeepSarsa, self).compute_Q_states(minibatch)
+        next_action = self.select_action(minibatch['next_states'][0])
         Q_next_states_selected = Q_next_states[:, next_action]
         return (Q_states, Q_next_states, Q_next_states_selected)
 
     def train_an_epoch(self):
-        last_exp = self.memory.pop()
+        minibatch = self.memory.pop()
         (Q_states, _next, Q_next_states_selected
-         ) = self.compute_Q_states(last_exp)
+         ) = self.compute_Q_states(minibatch)
         Q_targets = self.compute_Q_targets(
-            last_exp, Q_states, Q_next_states_selected)
-        loss = self.model.train_on_batch(last_exp['states'], Q_targets)
+            minibatch, Q_states, Q_next_states_selected)
+        loss = self.model.train_on_batch(minibatch['states'], Q_targets)
         return loss
