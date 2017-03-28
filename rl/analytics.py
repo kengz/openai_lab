@@ -185,11 +185,12 @@ def fitness_score(stats):
     5. granularity
     6. separability
     '''
-    # TODO uhm implication on negative scores?
     mean_rewards_per_epi = stats['mean_rewards_per_epi_stats']['mean']
     stability = stats['stability_stats']['mean']
     consistency = stats['solved_ratio_of_sessions']
-    fitness = mean_rewards_per_epi * ((1+stability)*(1+consistency))**2
+    amplifier = ((1+stability)*(1+consistency))**2
+    distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
+    fitness = mean_rewards_per_epi * distinguisher
     return fitness
 
 
@@ -200,13 +201,14 @@ def ideal_fitness_score(problem):
     '''
     solved_mean_reward = problem['SOLVED_MEAN_REWARD']
     max_episodes = problem['MAX_EPISODES']
-    solved_epi_speedup = 3 if solved_mean_reward > 0 else 1./3
+    solved_epi_speedup = 3
     ideal_epi = max_episodes / solved_epi_speedup
     ideal_mean_rewards_per_epi = solved_mean_reward / ideal_epi
     ideal_stability = 1
     ideal_consistency = 1
-    ideal_fitness = ideal_mean_rewards_per_epi * \
-        ((1+ideal_stability)*(1+ideal_consistency))**2
+    amplifier = ((1+stability)*(1+consistency))**2
+    distinguisher = amplifier ** np.sign(mean_rewards_per_epi)
+    ideal_fitness = ideal_mean_rewards_per_epi * distinguisher
     return ideal_fitness_score
 
 
