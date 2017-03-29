@@ -932,6 +932,594 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><a href="#metrics">learn more about the evaluation metrics</a></li>
 </ul>
 
+          <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
+
+<p>Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
+
+<h2 id="submission-instructions">Submission instructions</h2>
+
+<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab.</p>
+
+<p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
+
+<p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
+
+<h2 id="fitness-matrix"><a name="fitness-matrix"></a>Fitness Matrix</h2>
+
+<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>. The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
+
+<table><thead>
+<tr>
+<th style="text-align: left"></th>
+<th style="text-align: left">DQN</th>
+<th style="text-align: left">double-DQN</th>
+<th style="text-align: left">SARSA</th>
+<th style="text-align: left">DDPG</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>CartPole-v0</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/73">9.487062</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">10.31487</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>CartPole-v1</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">11.68838</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Acrobot-v1</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MountainCar-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MountainCarContinuous-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Pendulum-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>LunarLander-v2</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">2.296613</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.812674</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>LunarLanderContinuous-v2</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>BipedalWalker-v2</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>BipedalWalkerHardcore-v2</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>CarRacing-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>AirRaid-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Alien-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Assault-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Breakout-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MsPacman-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Pong-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Qbert-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>SpaceInvader-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>FlappyBird-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Snake-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h2 id="agents">Agents</h2>
+
+<p>The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see <a href="#agents">Agents</a></p>
+
+<p><em>Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">algorithm</th>
+<th style="text-align: left">implemented?</th>
+<th style="text-align: left">eval score</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">double-DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">dueling-DQN</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SARSA</td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Q*(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Retrace(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h2 id="environments">Environments</h2>
+
+<p>The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
+
+<h3 id="classic-environments">Classic Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">CartPole-v0</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
+<td style="text-align: left">9</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">offpol_sarsa</td>
+</tr>
+<tr>
+<td style="text-align: left">CartPole-v1</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
+<td style="text-align: left">16</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">double_dqn_v1</td>
+</tr>
+<tr>
+<td style="text-align: left">Acrobot-v1</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCar-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCarContinuous-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pendulum-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="box2d-environments">Box2D Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">LunarLander-v2</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.812674</a></td>
+<td style="text-align: left">247</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">lunar_double_dqn</td>
+</tr>
+<tr>
+<td style="text-align: left">LunarLanderContinuous-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalker-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalkerHardcore-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">CarRacing-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="atari-environments">Atari Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">AirRaid-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Alien-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Assault-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Breakout-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MsPacman-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pong-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Qbert-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SpaceInvader-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="pygame-environments">PyGame Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">FlappyBird-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Snake-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="universe-environments">Universe Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
+
+<p>The Lab setup allows us to run experiments at scale; the standardized framework also allows us to reliably compare multiple agents (algorithms) and environments (problems). These are shown with the <a href="#fitness-matrix">Fitness Matrix</a>, which also necessitates a higher level evaluation metric.</p>
+
+<p>With the Lab, we are breeding multiple agents across many environments and selecting the best ones. Naturally, this selection metric is called the <code class="prettyprint">fitness_score</code>. Some evolutionary search algorithm for the <code class="prettyprint">HyperOptimizer</code> is on our <a href="#roadmap">roadmap</a>.</p>
+
+<p>The Fitness Matrix is a projection from the parameter space of each agent-environment pair, where each matrix cell is the highest fitness score the agent could achieve in the environment.</p>
+
+<p>To understand the bigger picture, the domain for the fitness function for each matrix cell is the parameter space of the agent conditioned on the environment. Inside the parameter space, each point gets mapped to a fitness score.</p>
+
+<p>To analogize, see fitness score as temperature, then we have a heatmap inside the parameter space, and we are searching for the hottest point and recording that in a cell of the Fitness Matrix.</p>
+
+<p>In this section, we will formalize these ideas.</p>
+
+<h2 id="fitness-score">Fitness Score</h2>
+
+<p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
+
+<p>The fitness score of a trial is designed as follows:</p>
+
+<p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
+
+<p>or renaming variables by what the terms represent:</p>
+
+<p><code class="prettyprint">fitness_score = power * distinguisher</code></p>
+
+<p>where</p>
+
+<ul>
+<li><code class="prettyprint">power = mean_rewards_per_epi_mean</code></li>
+<li><code class="prettyprint">distinguisher = amplifier ** sign(power)</code></li>
+<li><code class="prettyprint">amplifier = (1+stability_mean) * ((1+consistency)**2)</code></li>
+</ul>
+
+<p>The fitness score is designed to capture the following:</p>
+
+<ol>
+<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code></li>
+<li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
+<li><strong>stability</strong>: session-level stability, <code class="prettyprint">stability_gap / mastery_gap</code></li>
+<li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
+<li><strong>granularity</strong>: in <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code> to ensure partial solution doesn&rsquo;t get lost when stability and consistency = 0</li>
+<li><strong>amplification</strong>: amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code>, and by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code></li>
+<li><strong>distinguishability</strong>: multiply amplifier if <code class="prettyprint">power</code> is positive, else divide; essentially <code class="prettyprint">*(amplifier**sign(power))</code></li>
+</ol>
+
+<h3 id="strength">Strength</h3>
+
+<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is.</p>
+
+<h3 id="speed">Speed</h3>
+
+<p>Given two same <code class="prettyprint">mean_rewards</code>, the agent that achieves it in less episodes is faster, with <code class="prettyprint">speed = 1/epi</code>. This yields the notion of <code class="prettyprint">power = strength * speed = mean_rewards_per_epi</code>. Use the sessions-mean of a trial, i.e. <code class="prettyprint">mean_rewards_per_epi_mean</code> = mean of multiple <code class="prettyprint">mean_rewards_per_epi</code> values.</p>
+
+<h3 id="stability">Stability</h3>
+
+<p><code class="prettyprint">stability = stability_gap / mastery_gap</code> for a session, with range <code class="prettyprint">0.0 - 1.0</code> from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple <code class="prettyprint">stability</code> values.</p>
+
+<ul>
+<li><code class="prettyprint">stability_gap</code> = the episodic-length of measurement, typically 100 episodes, given in <code class="prettyprint">problem[&#39;REWARD_MEAN_LEN&#39;]</code></li>
+<li><code class="prettyprint">mastery_gap</code> = how many episodes since the first solution does it take to solve the environment</li>
+</ul>
+
+<p><code class="prettyprint">mastery_gap = max(last_epi - first_solved_epi, stability_gap)</code>, so that we use <code class="prettyprint">mastery_gap = stability_gap</code> for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set <code class="prettyprint">mastery_gap = INF</code> to yield stability 0.0.</p>
+
+<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 1 sigma variation.</p>
+
+<h3 id="consistency">Consistency</h3>
+
+<p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
+
+<p><code class="prettyprint">consistency = 0</code> always for unsolved problems (unbounded rewards) since solution is undefined.</p>
+
+<h3 id="granularity">Granularity</h3>
+
+<p>When <code class="prettyprint">stability=0</code> or <code class="prettyprint">consistency=0</code> the multiplier will drop to zero, regardless if there is any partial solutions. This will make training harder as the agent will not learn from partial solutions if these are treated as non-solutions. So, restore the granularity that preserves partial solution simply by adding 1, i.e. <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code>.</p>
+
+<h3 id="amplification">Amplification</h3>
+
+<p>To separate solutions from noise, amplify the good ones and separate them out, while diminish and cluster the worse ones together. Amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code> since it&rsquo;s of the same order as <code class="prettyprint">power</code>. Amplify by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code> since trial stability is of the next order. Amplifier is always positive.</p>
+
+<h3 id="distinguishability">Distinguishability</h3>
+
+<p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
+
+<h2 id="full-formalization">Full Formalization</h2>
+
+<p>Given a function <code class="prettyprint">f</code> with the form described above, define the f mapping, P, heatmap, etc.</p>
+
+<h2 id="motivations">Motivations</h2>
+
+<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+
+<p><strong>1. the difficulty of building upon other’s work</strong></p>
+
+<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+
+<p><strong>2. the lack of rigor in comparisons</strong></p>
+
+<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>.</p>
+
           <h1 id="algorithms"><a name="algorithms"></a>Algorithms</h1>
 
 <p>The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms. These are just a starting point. Please invent your own! </p>
@@ -1115,607 +1703,6 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 <h3 id="policy-gradient">Policy Gradient</h3>
 
 <h4 id="deep-deterministic-policy-gradients-in-progress">Deep Deterministic Policy Gradients:  In progress</h4>
-
-          <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
-
-<p>Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
-
-<h2 id="submission-instructions">Submission instructions</h2>
-
-<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab.</p>
-
-<p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
-
-<p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
-
-<h2 id="solution-matrix"><a name="solution-matrix"></a>Solution Matrix</h2>
-
-<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Algorithms</strong> v.s. <strong>Problems</strong>. The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
-
-<table><thead>
-<tr>
-<th style="text-align: left"></th>
-<th style="text-align: left">DQN</th>
-<th style="text-align: left">double-DQN</th>
-<th style="text-align: left">SARSA</th>
-<th style="text-align: left">DDPG</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left"><strong>CartPole-v0</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/73">9.487062</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">10.31487</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CartPole-v1</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">11.68838</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Acrobot-v1</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCar-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCarContinuous-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pendulum-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLander-v2</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">2.296613</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.812674</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLanderContinuous-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalker-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalkerHardcore-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CarRacing-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>AirRaid-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Alien-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Assault-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Breakout-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MsPacman-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pong-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Qbert-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SpaceInvader-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>FlappyBird-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Snake-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h2 id="algorithms">Algorithms</h2>
-
-<p>The status of the algorithms in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented algorithms, see <a href="#algorithms">Algorithms</a></p>
-
-<p><em>Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
-
-<table><thead>
-<tr>
-<th style="text-align: left">algorithm</th>
-<th style="text-align: left">implemented?</th>
-<th style="text-align: left">eval score</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">double-DQN</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">dueling-DQN</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">SARSA</td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Q*(lambda)</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Retrace(lambda)</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
-<td style="text-align: left">next</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h2 id="problems">Problems</h2>
-
-<p>The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
-
-<h3 id="classic-problems">Classic Problems</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">CartPole-v0</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
-<td style="text-align: left">9</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">double_dqn</td>
-</tr>
-<tr>
-<td style="text-align: left">CartPole-v1</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
-<td style="text-align: left">16</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">double_dqn_v1</td>
-</tr>
-<tr>
-<td style="text-align: left">Acrobot-v1</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">MountainCar-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">MountainCarContinuous-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Pendulum-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="box2d-problems">Box2D Problems</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">LunarLander-v2</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.812674</a></td>
-<td style="text-align: left">247</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">lunar_double_dqn</td>
-</tr>
-<tr>
-<td style="text-align: left">LunarLanderContinuous-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">BipedalWalker-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">BipedalWalkerHardcore-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">CarRacing-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="atari-problems">Atari Problems</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">AirRaid-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Alien-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Assault-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Breakout-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">MsPacman-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Pong-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Qbert-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">SpaceInvader-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="pygame-problems">PyGame Problems</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">FlappyBird-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Snake-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="universe-problems">Universe Problems</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
-
-<p>Running experiments at this scale necessitates a higher level metric.</p>
-
-<p>The lab makes comparisons among agents and environments possible - it&rsquo;s almost screaming for it. NOPE. In the Lab, we are breeding hundreds of agents across many environments. The choice of the name is intentional</p>
-
-<p>With the Lab, we are breeding hundreds of agents across many environments, and selecting the best ones. Naturally, this selection metric the <code class="prettyprint">fitness_score</code>. Some evolutionary search algorithm for the <code class="prettyprint">HyperOptimizer</code> is on our roadmap.</p>
-
-<p>Also briefly talk about the higher level generalized metrics, with fitness_score as the temperature function.</p>
-
-<h2 id="fitness-score">Fitness Score</h2>
-
-<p>The fitness score of a trial is defined as</p>
-
-<p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
-
-<p>or renaming variables by what the terms represent:</p>
-
-<p><code class="prettyprint">fitness_score = power * distinguisher</code></p>
-
-<p>where</p>
-
-<ul>
-<li><code class="prettyprint">power = mean_rewards_per_epi_mean</code></li>
-<li><code class="prettyprint">distinguisher = amplifier ** sign(power)</code></li>
-<li><code class="prettyprint">amplifier = (1+stability_mean) * ((1+consistency)**2)</code></li>
-</ul>
-
-<p>The fitness score is designed to capture the following:</p>
-
-<ol>
-<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code></li>
-<li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
-<li><strong>stability</strong>: session-level stability, <code class="prettyprint">stability_gap / mastery_gap</code></li>
-<li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
-<li><strong>granularity</strong>: in <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code> to ensure partial solution doesn&rsquo;t get lost when stability and consistency = 0</li>
-<li><strong>amplification</strong>: amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code>, and by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code></li>
-<li><strong>distinguishability</strong>: multiply amplifier if <code class="prettyprint">power</code> is positive, else divide; essentially <code class="prettyprint">*(amplifier**sign(power))</code></li>
-</ol>
-
-<h3 id="strength">Strength</h3>
-
-<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is.</p>
-
-<h3 id="speed">Speed</h3>
-
-<p>Given two same <code class="prettyprint">mean_rewards</code>, the agent that achieves it in less episodes is faster, with <code class="prettyprint">speed = 1/epi</code>. This yields the notion of <code class="prettyprint">power = strength * speed = mean_rewards_per_epi</code>. Use the sessions-mean of a trial, i.e. <code class="prettyprint">mean_rewards_per_epi_mean</code> = mean of multiple <code class="prettyprint">mean_rewards_per_epi</code> values.</p>
-
-<h3 id="stability">Stability</h3>
-
-<p><code class="prettyprint">stability = stability_gap / mastery_gap</code> for a session, with range <code class="prettyprint">0.0 - 1.0</code> from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple <code class="prettyprint">stability</code> values.</p>
-
-<ul>
-<li><code class="prettyprint">stability_gap</code> = the episodic-length of measurement, typically 100 episodes, given in <code class="prettyprint">problem[&#39;REWARD_MEAN_LEN&#39;]</code></li>
-<li><code class="prettyprint">mastery_gap</code> = how many episodes since the first solution does it take to solve the environment</li>
-</ul>
-
-<p><code class="prettyprint">mastery_gap = max(last_epi - first_solved_epi, stability_gap)</code>, so that we use <code class="prettyprint">mastery_gap = stability_gap</code> for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set <code class="prettyprint">mastery_gap = INF</code> to yield stability 0.0.</p>
-
-<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 1 sigma variation.</p>
-
-<h3 id="consistency">Consistency</h3>
-
-<p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
-
-<p><code class="prettyprint">consistency = 0</code> always for unsolved problems (unbounded rewards) since solution is undefined.</p>
-
-<h3 id="granularity">Granularity</h3>
-
-<p>When <code class="prettyprint">stability=0</code> or <code class="prettyprint">consistency=0</code> the multiplier will drop to zero, regardless if there is any partial solutions. This will make training harder as the agent will not learn from partial solutions if these are treated as non-solutions. So, restore the granularity that preserves partial solution simply by adding 1, i.e. <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code>.</p>
-
-<h3 id="amplification">Amplification</h3>
-
-<p>To separate solutions from noise, amplify the good ones and separate them out, while diminish and cluster the worse ones together. Amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code> since it&rsquo;s of the same order as <code class="prettyprint">power</code>. Amplify by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code> since trial stability is of the next order. Amplifier is always positive.</p>
-
-<h3 id="distinguishability">Distinguishability</h3>
-
-<p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
-
-<h2 id="motivations">Motivations</h2>
-
-<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
-
-<p><strong>1. the difficulty of building upon other’s work</strong></p>
-
-<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
-
-<p><strong>2. the lack of rigor in comparisons</strong></p>
-
-<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#solution-matrix">Solution Matrix</a>.</p>
-
-<p>We now describe the evaluation metrics for <strong>problems</strong> and <strong>algorithms</strong>.</p>
-
-<h3 id="problem-evaluation-metrics">Problem Evaluation Metrics</h3>
-
-<p>problem x {algorithms} ~ solutions</p>
-
-<p>fitness score on 4 parts:
-stability and reproducibility (solve ratio),
-speed (min episodes),
-potential (max reward),
-square for granularity</p>
-<pre class="highlight plaintext"><code>mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
-
-ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
-ideal_solved_ratio = 1
-ideal_fitness_score = fitness_score(
-    ideal_mean_rewards_per_epi, ideal_solved_ratio)
-return ideal_fitness_score
-</code></pre>
-<h3 id="algorithm-evaluation-metrics">Algorithm Evaluation Metrics</h3>
-
-<p>algorithm x {problems} ~ cross-solutions</p>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
