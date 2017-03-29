@@ -38,7 +38,7 @@ For more details, please see chapter 6 of [Reinforcement Learning: An Introducti
 
 Since the policy that is used to evaluate the target is fixed (a greedy policy that selects the action that maximises the Q-value for a particular state) and is different to the policy used to determine which state-action pairs are being visited, it is possible to use experience replay to train an agent. This is often needed to Agents act in environments to get experiences. Experiences consist of the state, the action taken, the next state, and the reward, and are denoted as <S_t, A_t, R_{t+1}, S_{t+1}>. These experiences are stored in the agents memory. Periodically during an episode the agent is trained. During training n batches of size m are selected from memory and the Q update step is performed. This is different to Sarsa algorithms which are on-policy and agents are trained after each experience using only the most recent experience.
     
-####Deep Q-Learning:
+#### Deep Q-Learning:
 Standard Q-learning algorithm with experience replay. Online training every n experiences.
 
 Q update:
@@ -54,7 +54,7 @@ Agents:
 - DQN: function approximator - feedforward neural network
 - ConvDQN:  function approximator - convolutional network
 
-####Double Q-Learning: 
+#### Double Q-Learning: 
 Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S', the other is used to evaluate the action in state S'. Periodically the roles of each Q function are switched. Online training every n experiences.
 
 Q update(alternate between 1 and 2)
@@ -135,11 +135,11 @@ Sarsa is typically an on policy algorithm. However, if a different policy is use
 Q update and translation to neural network update: Same as DQN with fixed epsilon.
 
 Agents
-- OffPolicySarsa
+- OffPolicySarsa: function approximator - feedforward neural network
 
-###Policy Gradient 
+### Policy Gradient 
 
-####Deep Deterministic Policy Gradients:  In progress
+#### Deep Deterministic Policy Gradients:  In progress
 
 
 
