@@ -1,6 +1,6 @@
 # <a name="solutions"></a>Best Solutions
 
-Algorithms and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.
+Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.
 
 ## Submission instructions
 
@@ -11,9 +11,9 @@ To learn how to analyze experiment data, refer to [Analysis](#analysis).
 Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the submission guideline. See some previous example [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
 
 
-## <a name="solution-matrix"></a>Solution Matrix
+## <a name="fitness-matrix"></a>Fitness Matrix
 
-A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
@@ -40,11 +40,11 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 |**Snake-v0**|-|-|-|-|
 
 
-## Algorithms
+## Agents
 
-The status of the algorithms in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented algorithms, see [Algorithms](#algorithms)
+The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see [Agents](#agents)
 
-_Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
+_Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
 
 |algorithm|implemented?|eval score|
 |:---|:---|:---|
@@ -65,12 +65,12 @@ _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC pap
 |[EWC (Elastic Weight Consolidation)](https://arxiv.org/abs/1612.00796)|-|-|
 
 
-## Problems
+## Environments
 
 The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 
-### Classic Problems
+### Classic Environments
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
@@ -82,7 +82,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |Pendulum-v0|-|-|-|-|
 
 
-### Box2D Problems
+### Box2D Environments
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
@@ -93,7 +93,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |CarRacing-v0|-|-|-|-|
 
 
-### Atari Problems
+### Atari Environments
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
@@ -107,7 +107,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |SpaceInvader-v0|-|-|-|-|
 
 
-### PyGame Problems
+### PyGame Environments
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
@@ -115,7 +115,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |Snake-v0|-|-|-|-|
 
 
-### Universe Problems
+### Universe Environments
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|

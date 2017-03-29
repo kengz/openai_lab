@@ -1,18 +1,23 @@
 # <a name="metrics"></a>Metrics
 
+The Lab setup allows us to run experiments at scale; the standardized framework also allows us to reliably compare multiple agents (algorithms) and environments (problems). These are shown with the [Fitness Matrix](#fitness-matrix), which also necessitates a higher level evaluation metric.
 
-Running experiments at this scale necessitates a higher level metric.
+With the Lab, we are breeding multiple agents across many environments and selecting the best ones. Naturally, this selection metric is called the `fitness_score`. Some evolutionary search algorithm for the `HyperOptimizer` is on our [roadmap](#roadmap).
 
-The lab makes comparisons among agents and environments possible - it's almost screaming for it. NOPE. In the Lab, we are breeding hundreds of agents across many environments. The choice of the name is intentional
+The Fitness Matrix is a projection from the parameter space of each agent-environment pair, where each matrix cell is the highest fitness score the agent could achieve in the environment.
 
-With the Lab, we are breeding hundreds of agents across many environments, and selecting the best ones. Naturally, this selection metric the `fitness_score`. Some evolutionary search algorithm for the `HyperOptimizer` is on our roadmap.
+To understand the bigger picture, the domain for the fitness function for each matrix cell is the parameter space of the agent conditioned on the environment. Inside the parameter space, each point gets mapped to a fitness score.
 
-Also briefly talk about the higher level generalized metrics, with fitness_score as the temperature function.
+To analogize, see fitness score as temperature, then we have a heatmap inside the parameter space, and we are searching for the hottest point and recording that in a cell of the Fitness Matrix.
+
+In this section, we will formalize these ideas.
 
 
 ## Fitness Score
 
-The fitness score of a trial is defined as
+The fitness function `f` is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.
+
+The fitness score of a trial is designed as follows:
 
 `fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)`
 
@@ -75,6 +80,11 @@ To separate solutions from noise, amplify the good ones and separate them out, w
 Always amplify to make better solutions have more positive fitness score. If `power` is negative, amplify toward the 0 axis, i.e. divide by amplifier. If `power` is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, `distinguisher = amplifier**sign(power)`.
 
 
+## Full Formalization
+
+Given a function `f` with the form described above, define the f mapping, P, heatmap, etc.
+
+
 ## Motivations
 
 OpenAI Lab exists to address 2 major problems in RL, and WildML's Denny sums them up best in his post [Engineering Is The Bottleneck In (Deep Learning) Research](http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/). They are:
@@ -85,15 +95,4 @@ As the Lab grows, we hope that engineers and researchers can experiment with an 
 
 **2. the lack of rigor in comparisons**
 
-Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab's [Solution Matrix](#solution-matrix).
-
-We now describe the evaluation metrics for **problems** and **algorithms**.
-
-### Problem Evaluation Metrics
-
-problem x {algorithms} ~ solutions
-
-
-### Algorithm Evaluation Metrics
-
-algorithm x {problems} ~ cross-solutions
+Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab's [Fitness Matrix](#fitness-matrix).
