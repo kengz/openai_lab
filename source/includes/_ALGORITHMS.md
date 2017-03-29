@@ -1,6 +1,6 @@
 # <a name="algorithms"></a>Algorithms
 
-The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms.
+The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms. These are just a starting point. Please invent your own! We will also continue to add algorithms over time. 
 
 ## What is reinforcement learning?
 
