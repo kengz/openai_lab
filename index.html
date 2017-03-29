@@ -1421,6 +1421,85 @@ When developing a new algorithm, use the session graph to immediately see how th
 
           <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
 
+<p>Running experiments at this scale necessitates a higher level metric.</p>
+
+<p>The lab makes comparisons among agents and environments possible - it&rsquo;s almost screaming for it. NOPE. In the Lab, we are breeding hundreds of agents across many environments. The choice of the name is intentional</p>
+
+<p>With the Lab, we are breeding hundreds of agents across many environments, and selecting the best ones. Naturally, this selection metric the <code class="prettyprint">fitness_score</code>. Some evolutionary search algorithm for the <code class="prettyprint">HyperOptimizer</code> is on our roadmap.</p>
+
+<p>Also briefly talk about the higher level generalized metrics, with fitness_score as the temperature function.</p>
+
+<h2 id="fitness-score">Fitness Score</h2>
+
+<p>The fitness score of a trial is defined as</p>
+
+<p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
+
+<p>or renaming variables by what the terms represent:</p>
+
+<p><code class="prettyprint">fitness_score = power * distinguisher</code></p>
+
+<p>where</p>
+
+<ul>
+<li><code class="prettyprint">power = mean_rewards_per_epi_mean</code></li>
+<li><code class="prettyprint">distinguisher = amplifier ** sign(power)</code></li>
+<li><code class="prettyprint">amplifier = (1+stability_mean) * ((1+consistency)**2)</code></li>
+</ul>
+
+<p>The fitness score is designed to capture the following:</p>
+
+<ol>
+<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code></li>
+<li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
+<li><strong>stability</strong>: session-level stability, <code class="prettyprint">stability_gap / mastery_gap</code></li>
+<li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
+<li><strong>granularity</strong>: in <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code> to ensure partial solution doesn&rsquo;t get lost when stability and consistency = 0</li>
+<li><strong>amplification</strong>: amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code>, and by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code></li>
+<li><strong>distinguishability</strong>: multiply amplifier if <code class="prettyprint">power</code> is positive, else divide; essentially <code class="prettyprint">*(amplifier**sign(power))</code></li>
+</ol>
+
+<h3 id="strength">Strength</h3>
+
+<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is.</p>
+
+<h3 id="speed">Speed</h3>
+
+<p>Given two same <code class="prettyprint">mean_rewards</code>, the agent that achieves it in less episodes is faster, with <code class="prettyprint">speed = 1/epi</code>. This yields the notion of <code class="prettyprint">power = strength * speed = mean_rewards_per_epi</code>. Use the sessions-mean of a trial, i.e. <code class="prettyprint">mean_rewards_per_epi_mean</code> = mean of multiple <code class="prettyprint">mean_rewards_per_epi</code> values.</p>
+
+<h3 id="stability">Stability</h3>
+
+<p><code class="prettyprint">stability = stability_gap / mastery_gap</code> for a session, with range <code class="prettyprint">0.0 - 1.0</code> from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple <code class="prettyprint">stability</code> values.</p>
+
+<ul>
+<li><code class="prettyprint">stability_gap</code> = the episodic-length of measurement, typically 100 episodes, given in <code class="prettyprint">problem[&#39;REWARD_MEAN_LEN&#39;]</code></li>
+<li><code class="prettyprint">mastery_gap</code> = how many episodes since the first solution does it take to solve the environment</li>
+</ul>
+
+<p><code class="prettyprint">mastery_gap = max(last_epi - first_solved_epi, stability_gap)</code>, so that we use <code class="prettyprint">mastery_gap = stability_gap</code> for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set <code class="prettyprint">mastery_gap = INF</code> to yield stability 0.0.</p>
+
+<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 1 sigma variation.</p>
+
+<h3 id="consistency">Consistency</h3>
+
+<p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
+
+<p><code class="prettyprint">consistency = 0</code> always for unsolved problems (unbounded rewards) since solution is undefined.</p>
+
+<h3 id="granularity">Granularity</h3>
+
+<p>When <code class="prettyprint">stability=0</code> or <code class="prettyprint">consistency=0</code> the multiplier will drop to zero, regardless if there is any partial solutions. This will make training harder as the agent will not learn from partial solutions if these are treated as non-solutions. So, restore the granularity that preserves partial solution simply by adding 1, i.e. <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code>.</p>
+
+<h3 id="amplification">Amplification</h3>
+
+<p>To separate solutions from noise, amplify the good ones and separate them out, while diminish and cluster the worse ones together. Amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code> since it&rsquo;s of the same order as <code class="prettyprint">power</code>. Amplify by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code> since trial stability is of the next order. Amplifier is always positive.</p>
+
+<h3 id="distinguishability">Distinguishability</h3>
+
+<p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
+
+<h2 id="motivations">Motivations</h2>
+
 <p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
 
 <p><strong>1. the difficulty of building upon other’s work</strong></p>
