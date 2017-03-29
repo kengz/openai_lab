@@ -74,7 +74,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[13.41222](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|double_dqn|
+|CartPole-v0|[13.41222](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|offpol_sarsa|
 |CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
 |Acrobot-v1|-|-|-|-|
 |MountainCar-v0|-|-|-|-|

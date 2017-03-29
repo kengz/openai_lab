@@ -93,21 +93,6 @@ We now describe the evaluation metrics for **problems** and **algorithms**.
 
 problem x {algorithms} ~ solutions
 
-fitness score on 4 parts:
-stability and reproducibility (solve ratio),
-speed (min episodes),
-potential (max reward),
-square for granularity
-
-```
-mean_rewards_per_epi * (1+solved_ratio_of_sessions)**2
-
-ideal_mean_rewards_per_epi = mean_rewards / (epi/solved_epi_speedup)
-ideal_solved_ratio = 1
-ideal_fitness_score = fitness_score(
-    ideal_mean_rewards_per_epi, ideal_solved_ratio)
-return ideal_fitness_score
-```
 
 ### Algorithm Evaluation Metrics
 
