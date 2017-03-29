@@ -17,7 +17,7 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
-|**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|-|-|
+|**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|[13.41222](https://github.com/kengz/openai_lab/pull/91)|-|
 |**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
 |**Acrobot-v1**|-|-|-|-|
 |**MountainCar-v0**|-|-|-|-|
@@ -74,7 +74,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[10.31487](https://github.com/kengz/openai_lab/pull/78)|7|kengz/lgraesser|double_dqn|
+|CartPole-v0|[13.41222](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|double_dqn|
 |CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
 |Acrobot-v1|-|-|-|-|
 |MountainCar-v0|-|-|-|-|
