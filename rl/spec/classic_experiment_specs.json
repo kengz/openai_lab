@@ -219,8 +219,8 @@
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.001,
-      "gamma": 0.99,
+      "lr": 0.005,
+      "gamma": 0.97,
       "hidden_layers": [32],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 20
