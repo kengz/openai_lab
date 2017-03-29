@@ -42,7 +42,7 @@ A matrix of the best `fitness_score` of **Algorithms** v.s. **Problems**. The li
 
 ## Algorithms
 
-The status of the algorithms in OpenAI Lab. Feel free to invent new ones!
+The status of the algorithms in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented algorithms, see [Algorithms](#algorithms)
 
 _Pending: we still need a way to cross-evaluate algorithms. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
 
