@@ -1,6 +1,6 @@
 # <a name="algorithms"></a>Algorithms
 
-The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms. These are just a starting point. Please invent your own! We will also continue to add algorithms over time. 
+The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms. These are just a starting point. Please invent your own! 
 
 ## What is reinforcement learning?
 
@@ -9,7 +9,8 @@ The currently implemented algorithms combine deep neural networks with a number 
 *Most RL research is conducted within the mathematical framework of Markov decision processes (MDPs). MDPs involve a decision-making agent interacting with its environment so as to maximize the cumulative reward it receives over time. The agent perceives aspects of the environment's state and selects actions. The agent may estimate a value function and use it to construct better and better decision-making policies over time.*
 
 *RL algorithms are methods for solving this kind of problem, that is, problems involving sequences of decisions in which each decision affects what opportunities are available later, in which the effects need not be deterministic, and in which there are long-term goals. RL methods are intended to address the kind of learning and decision making problems that people and animals face in their normal, everyday lives*
-        *- Rich Sutton*
+        
+*Rich Sutton*
 
 For further reading on reinforcement learning see [David Silver's lectures](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html) and the book, Reinforcement Learning: An Introduction, by Sutton and Barto.
 
