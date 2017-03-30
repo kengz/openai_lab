@@ -82,7 +82,21 @@ To separate solutions from noise, amplify the good ones and separate them out, w
 Always amplify to make better solutions have more positive fitness score. If `power` is negative, amplify toward the 0 axis, i.e. divide by amplifier. If `power` is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, `distinguisher = amplifier**sign(power)`.
 
 
-## Full Formalization
+## Generalized Metrics
+
+With the fitness function defined above, we can evaluate a single agent in a single environment. In fact, this is a single experiment with multiple trials, and we compute a fitness score per trial, using the trial's parameter values. We then pick the max fitness score for the Fitness Matrix.
+
+Given that the Lab can run multiple agents across environments in its standardized framework, naturally we ask:
+
+- we can evaluate **one agent in one environment**, (experiment metrics)
+- how do we evaluate and compare **multiple agents in one environment**? (environment metrics)
+- how about **one agent in multiple environments**? (agent metrics)
+- how about the universal-view of **multiple agents in multiple environments**? (universal metrics)
+
+This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.
+
+
+### Formalization
 
 Given a function `f` with the form described above, define the f mapping, P, heatmap, etc.
 
