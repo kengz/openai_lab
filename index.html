@@ -1160,7 +1160,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
-<td style="text-align: left">in-progress</td>
+<td style="text-align: left">✓</td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
@@ -1175,12 +1175,12 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left">next</td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left">next</td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
@@ -1507,6 +1507,8 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 2 sigma variation.</p>
 
+<p>The reasoning for the definition is this: an agent has to achieve a high mean rewards within the <code class="prettyprint">stability_gap</code>. If in between the first solved and latest episode there&rsquo;s a huge drop in total rewards, this would pull the mean rewards down, and the agent would need more episodes to increase the mean to the solution threshold, and that makes the <code class="prettyprint">mastery_gap</code> longer. On the contrary, if there&rsquo;s no huge drops of total rewards in between, it will reach the solution threshold the fastest.</p>
+
 <h3 id="consistency">Consistency</h3>
 
 <p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
@@ -1541,6 +1543,12 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
 
 <h3 id="formalization">Formalization</h3>
+
+<p>Let <code class="prettyprint">a ∈ A</code> be an agent in the Agent space, <code class="prettyprint">e ∈ E</code> be an environment in the Environment space, and <code class="prettyprint">P</code> be a parameter space. For agent <code class="prettyprint">a</code> in the environment <code class="prettyprint">e</code>, let its parameter space be a subspace <code class="prettyprint">P_{a|e} ⊂ P</code>, i.e. the parameters of <code class="prettyprint">a</code> conditioning on <code class="prettyprint">e</code>, since the agent parameters are always specific to solving an environment. When clear from context, we leave out the suffixes.</p>
+
+<p><code class="prettyprint">P_{a|e} = [P_0, P_1, ...]</code></p>
+
+<p>OK shit need latex.</p>
 
 <p>Given a function <code class="prettyprint">f</code> with the form described above, define the f mapping, P, heatmap, etc.</p>
 
