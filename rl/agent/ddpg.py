@@ -138,6 +138,8 @@ class DDPG(DQN):
             (1 - minibatch['terminals']) * Q_prime
         critic_loss = self.critic.train_on_batch(
             [minibatch['states'], minibatch['actions']], y)
+        errors = abs(Q_prime - y)
+        self.memory.update(errors)
         return critic_loss
 
     def train_actor(self, minibatch):
