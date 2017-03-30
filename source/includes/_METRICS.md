@@ -63,6 +63,8 @@ Given two same `mean_rewards`, the agent that achieves it in less episodes is fa
 
 As for determining `first_solved_epi`, for a solvable problem, it's the first index (episode) of when `total_rewards > problem['SOLVED_MEAN_REWARD']`; for an unsolved problem (unbounded rewards) the criteria changes to when `total_rewards > 0.95 * max_total_rewards`, with 0.95 chosen for 2 sigma variation.
 
+The reasoning for the definition is this: an agent has to achieve a high mean rewards within the `stability_gap`. If in between the first solved and latest episode there's a huge drop in total rewards, this would pull the mean rewards down, and the agent would need more episodes to increase the mean to the solution threshold, and that makes the `mastery_gap` longer. On the contrary, if there's no huge drops of total rewards in between, it will reach the solution threshold the fastest.
+
 ### Consistency
 
 `consistency = solved_ratio_of_session` for a trial, with range `0.0 - 1.0` from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.
