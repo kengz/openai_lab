@@ -100,6 +100,13 @@ This section formalizes the generalized metrics for these, and shows that the Fi
 
 ### Formalization
 
+Let `a ∈ A` be an agent in the Agent space, `e ∈ E` be an environment in the Environment space, and `P` be a parameter space. For agent `a` in the environment `e`, let its parameter space be a subspace `P_{a|e} ⊂ P`, i.e. the parameters of `a` conditioning on `e`, since the agent parameters are always specific to solving an environment. When clear from context, we leave out the suffixes.
+
+`P_{a|e} = [P_0, P_1, ...]`
+
+OK shit need latex.
+
+
 Given a function `f` with the form described above, define the f mapping, P, heatmap, etc.
 
 

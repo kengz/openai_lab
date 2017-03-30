@@ -52,11 +52,11 @@ _Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. 
 |[double-DQN](https://arxiv.org/abs/1509.06461)|✓|-|
 |[dueling-DQN](https://arxiv.org/abs/1511.06581)|-|-|
 |SARSA|✓|-|
-|[prioritized replay](https://arxiv.org/abs/1511.05952)|in-progress|-|
+|[prioritized replay](https://arxiv.org/abs/1511.05952)|✓|-|
 |Q*(lambda)|-|-|
 |Retrace(lambda)|-|-|
-|[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|-|-|
-|[PG (Policy Gradient)](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)|-|-|
+|[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|next|-|
+|[PG (Policy Gradient)](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)|next|-|
 |[DPG (Deterministic Policy Gradient aka actor-critic)](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|in-progress|-|
 |[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|in-progress|-|
 |[A3C (asynchronous advantage actor-critic)](https://arxiv.org/pdf/1602.01783.pdf)|-|-|
