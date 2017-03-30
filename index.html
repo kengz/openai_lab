@@ -710,7 +710,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <h2 id="analysis-graph">Analysis Graph</h2>
 
 <blockquote>
-<p><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
+<p><img alt="The dqn analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
 <em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
 </blockquote>
 
@@ -746,6 +746,11 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>Every subplot in the graph shows the distribution of all the trial points in the pair of <em>y vs x</em> variables, with the other <em>x&rsquo;</em> dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.</p>
 
 <p>Note that these will use <a href="http://seaborn.pydata.org/generated/seaborn.swarmplot.html">swarmplot</a> which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.</p>
+
+<blockquote>
+<p><img alt="The acrobot random search analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png" />
+<em>An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the <a href="https://github.com/kengz/openai_lab/pull/94">rand_acrobot PR</a></em></p>
+</blockquote>
 
 <p><strong>Population distribution</strong>: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the <em>x</em> is a stabler value for the <em>y</em> value even when other <em>x&rsquo;</em> dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.</p>
 
@@ -1520,7 +1525,22 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
 
-<h2 id="full-formalization">Full Formalization</h2>
+<h2 id="generalized-metrics">Generalized Metrics</h2>
+
+<p>With the fitness function defined above, we can evaluate a single agent in a single environment. In fact, this is a single experiment with multiple trials, and we compute a fitness score per trial, using the trial&rsquo;s parameter values. We then pick the max fitness score for the Fitness Matrix.</p>
+
+<p>Given that the Lab can run multiple agents across environments in its standardized framework, naturally we ask:</p>
+
+<ul>
+<li>we can evaluate <strong>one agent in one environment</strong>, (experiment metrics)</li>
+<li>how do we evaluate and compare <strong>multiple agents in one environment</strong>? (environment metrics)</li>
+<li>how about <strong>one agent in multiple environments</strong>? (agent metrics)</li>
+<li>how about the universal-view of <strong>multiple agents in multiple environments</strong>? (universal metrics)</li>
+</ul>
+
+<p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
+
+<h3 id="formalization">Formalization</h3>
 
 <p>Given a function <code class="prettyprint">f</code> with the form described above, define the f mapping, P, heatmap, etc.</p>
 
