@@ -785,14 +785,18 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <table><thead>
 <tr>
+<th style="text-align: left">best_session_epi</th>
+<th style="text-align: left">best_session_id</th>
+<th style="text-align: left">best_session_mean_rewards</th>
+<th style="text-align: left">best_session_stability</th>
 <th style="text-align: left">fitness_score</th>
 <th style="text-align: left">mean_rewards_per_epi_stats_mean</th>
 <th style="text-align: left">mean_rewards_stats_mean</th>
+<th style="text-align: left">mean_rewards_stats_max</th>
 <th style="text-align: left">epi_stats_mean</th>
+<th style="text-align: left">epi_stats_min</th>
 <th style="text-align: left">solved_ratio_of_sessions</th>
-<th style="text-align: left">num_of_sessions</th>
 <th style="text-align: left">max_total_rewards_stats_mean</th>
-<th style="text-align: left">t_stats_mean</th>
 <th style="text-align: left">trial_id</th>
 <th style="text-align: left">variable_gamma</th>
 <th style="text-align: left">variable_hidden_layers</th>
@@ -800,72 +804,92 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 </thead><tbody>
 <tr>
-<td style="text-align: left">5.305994917071314</td>
-<td style="text-align: left">1.3264987292678285</td>
-<td style="text-align: left">195.404</td>
-<td style="text-align: left">154.2</td>
+<td style="text-align: left">114</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t79_s2</td>
+<td style="text-align: left">195.59</td>
 <td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
+<td style="text-align: left">9.487062</td>
+<td style="text-align: left">1.326499</td>
+<td style="text-align: left">195.404</td>
+<td style="text-align: left">195.66</td>
+<td style="text-align: left">154.2</td>
+<td style="text-align: left">114.0</td>
+<td style="text-align: left">1.0</td>
 <td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
 <td style="text-align: left">dqn-2017_03_19_004714_t79</td>
 <td style="text-align: left">0.999</td>
 <td style="text-align: left">[64]</td>
 <td style="text-align: left">0.02</td>
 </tr>
 <tr>
-<td style="text-align: left">5.105207228739003</td>
-<td style="text-align: left">1.2763018071847507</td>
-<td style="text-align: left">195.13600000000002</td>
-<td style="text-align: left">160.6</td>
+<td style="text-align: left">140</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t28_s0</td>
+<td style="text-align: left">196.11</td>
 <td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t50</td>
-<td style="text-align: left">0.99</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.01</td>
-</tr>
-<tr>
-<td style="text-align: left">4.9561426920909355</td>
-<td style="text-align: left">1.2390356730227339</td>
-<td style="text-align: left">195.26000000000002</td>
-<td style="text-align: left">168.6</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t78</td>
-<td style="text-align: left">0.999</td>
-<td style="text-align: left">[64]</td>
-<td style="text-align: left">0.01</td>
-</tr>
-<tr>
-<td style="text-align: left">4.76714626254895</td>
-<td style="text-align: left">1.1917865656372375</td>
-<td style="text-align: left">195.106</td>
-<td style="text-align: left">172.4</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t71</td>
-<td style="text-align: left">0.999</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.02</td>
-</tr>
-<tr>
-<td style="text-align: left">4.717243567762263</td>
-<td style="text-align: left">1.1793108919405657</td>
-<td style="text-align: left">195.56400000000002</td>
+<td style="text-align: left">9.434487</td>
+<td style="text-align: left">1.179311</td>
+<td style="text-align: left">195.564</td>
+<td style="text-align: left">196.11</td>
 <td style="text-align: left">167.2</td>
+<td style="text-align: left">140.0</td>
 <td style="text-align: left">1.0</td>
-<td style="text-align: left">5</td>
 <td style="text-align: left">200.0</td>
-<td style="text-align: left">199.0</td>
 <td style="text-align: left">dqn-2017_03_19_004714_t28</td>
 <td style="text-align: left">0.97</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">153</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t16_s2</td>
+<td style="text-align: left">195.48</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">9.279524</td>
+<td style="text-align: left">1.159941</td>
+<td style="text-align: left">195.466</td>
+<td style="text-align: left">195.7</td>
+<td style="text-align: left">168.6</td>
+<td style="text-align: left">153.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t16</td>
+<td style="text-align: left">0.95</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">157</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t36_s4</td>
+<td style="text-align: left">196.07</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">9.242832</td>
+<td style="text-align: left">1.155354</td>
+<td style="text-align: left">195.602</td>
+<td style="text-align: left">196.07</td>
+<td style="text-align: left">169.0</td>
+<td style="text-align: left">157.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t36</td>
+<td style="text-align: left">0.97</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">149</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t48_s3</td>
+<td style="text-align: left">195.63</td>
+<td style="text-align: left">0.970874</td>
+<td style="text-align: left">9.024263</td>
+<td style="text-align: left">1.131328</td>
+<td style="text-align: left">195.678</td>
+<td style="text-align: left">195.83</td>
+<td style="text-align: left">175.0</td>
+<td style="text-align: left">149.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t48</td>
+<td style="text-align: left">0.99</td>
 <td style="text-align: left">[32]</td>
 <td style="text-align: left">0.001</td>
 </tr>
@@ -892,8 +916,12 @@ When developing a new algorithm, use the session graph to immediately see how th
     </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"best_session_epi"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_03_19_004714_t79_s2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_mean_rewards"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.59</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_stability"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.487062</span><span class="p">,</span><span class="w">
     </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
     </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
     </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
@@ -901,23 +929,9 @@ When developing a new algorithm, use the session graph to immediately see how th
     </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
     </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
   </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"param_variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-    </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"epi_stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">195</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"min"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"std"</span><span class="p">:</span><span class="w"> </span><span class="mf">34.94796</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"errored"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.305995</span><span class="p">,</span><span class="w">
   </span><span class="err">...</span><span class="w">
 </span></code></pre>
-<p>This concludes the analysis. See the <a href="https://github.com/kengz/openai_lab/pull/73">solution PR here</a>. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with <code class="prettyprint">fitness_score=5.305995</code>, and the variables:</p>
+<p>This concludes the analysis. See the <a href="https://github.com/kengz/openai_lab/pull/73">solution PR here</a>. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with <code class="prettyprint">fitness_score=9.487062</code>, and the variables:</p>
 
 <ul>
 <li><em>lr</em>: 0.02</li>
@@ -973,7 +987,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 <tr>
 <td style="text-align: left"><strong>Acrobot-v1</strong></td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/94">-0.1706583</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
@@ -1227,10 +1241,10 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 <tr>
 <td style="text-align: left">Acrobot-v1</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/94">-0.1706583</a></td>
+<td style="text-align: left">-100.96</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">rand_acrobot</td>
 </tr>
 <tr>
 <td style="text-align: left">MountainCar-v0</td>
@@ -1437,7 +1451,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
 
-<p>The fitness score of a trial is designed as follows:</p>
+<p>The fitness function&rsquo;s design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the <code class="prettyprint">mean rewards</code> metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under <em>strength</em>.</p>
+
+<p>The fitness score of a trial is as follows:</p>
 
 <p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
 
@@ -1456,7 +1472,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>The fitness score is designed to capture the following:</p>
 
 <ol>
-<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code></li>
+<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code> (over the past 100 episodes)</li>
 <li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
 <li><strong>stability</strong>: session-level stability, <code class="prettyprint">stability_gap / mastery_gap</code></li>
 <li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
@@ -1467,7 +1483,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h3 id="strength">Strength</h3>
 
-<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is.</p>
+<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is. The mean is taken over the past 100 episodes, as common to OpenAI gym.</p>
 
 <h3 id="speed">Speed</h3>
 
@@ -1484,7 +1500,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><code class="prettyprint">mastery_gap = max(last_epi - first_solved_epi, stability_gap)</code>, so that we use <code class="prettyprint">mastery_gap = stability_gap</code> for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set <code class="prettyprint">mastery_gap = INF</code> to yield stability 0.0.</p>
 
-<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 1 sigma variation.</p>
+<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 2 sigma variation.</p>
 
 <h3 id="consistency">Consistency</h3>
 
