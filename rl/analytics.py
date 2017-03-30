@@ -167,7 +167,8 @@ def calc_stability(sys_vars):
     stability_gap = sys_vars['REWARD_MEAN_LEN']
     total_r_history = sys_vars['total_rewards_history']
     if sys_vars['SOLVED_MEAN_REWARD'] is None:
-        r_threshold = 0.95 * max(total_r_history)
+        max_rewards = max(total_r_history)
+        r_threshold = max_rewards * (0.95 ** np.sign(max_rewards))
     else:
         r_threshold = sys_vars['SOLVED_MEAN_REWARD']
     # find index i.e. epi of first solved
