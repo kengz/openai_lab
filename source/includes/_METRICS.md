@@ -17,7 +17,9 @@ In this section, we will formalize these ideas.
 
 The fitness function `f` is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.
 
-The fitness score of a trial is designed as follows:
+The fitness function's design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the `mean rewards` metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under *strength*.
+
+The fitness score of a trial is as follows:
 
 `fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)`
 
@@ -33,7 +35,7 @@ where
 
 The fitness score is designed to capture the following:
 
-1. **strength**: `mean_rewards`
+1. **strength**: `mean_rewards` (over the past 100 episodes)
 2. **speed**: `1/epi`
 3. **stability**: session-level stability, `stability_gap / mastery_gap`
 4. **consistency**: AKA trial-level stability, `solved_ratio_of_session`
@@ -44,7 +46,7 @@ The fitness score is designed to capture the following:
 
 ### Strength
 
-The higher (more positive) the `mean_rewards` an agent gets, the stronger it is.
+The higher (more positive) the `mean_rewards` an agent gets, the stronger it is. The mean is taken over the past 100 episodes, as common to OpenAI gym.
 
 ### Speed
 
@@ -59,7 +61,7 @@ Given two same `mean_rewards`, the agent that achieves it in less episodes is fa
 
 `mastery_gap = max(last_epi - first_solved_epi, stability_gap)`, so that we use `mastery_gap = stability_gap` for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set `mastery_gap = INF` to yield stability 0.0.
 
-As for determining `first_solved_epi`, for a solvable problem, it's the first index (episode) of when `total_rewards > problem['SOLVED_MEAN_REWARD']`; for an unsolved problem (unbounded rewards) the criteria changes to when `total_rewards > 0.95 * max_total_rewards`, with 0.95 chosen for 1 sigma variation.
+As for determining `first_solved_epi`, for a solvable problem, it's the first index (episode) of when `total_rewards > problem['SOLVED_MEAN_REWARD']`; for an unsolved problem (unbounded rewards) the criteria changes to when `total_rewards > 0.95 * max_total_rewards`, with 0.95 chosen for 2 sigma variation.
 
 ### Consistency
 
