@@ -131,13 +131,13 @@ The `trial_id` will tell us which `trial_data` to check for even more details on
 The best `<trial_id>.json` will show us directly what is its `experiment_spec`, and more stats about the trial. When [submitting a solution PR](#solutions), retrieve the `experiment_spec` to update the default `*_experiment_spec.json`, and get the `fitness_score` from here too.
 
 
-|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|epi_stats_mean|solved_ratio_of_sessions|num_of_sessions|max_total_rewards_stats_mean|t_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
-|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
-|5.305994917071314|1.3264987292678285|195.404|154.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
-|5.105207228739003|1.2763018071847507|195.13600000000002|160.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t50|0.99|[32]|0.01|
-|4.9561426920909355|1.2390356730227339|195.26000000000002|168.6|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t78|0.999|[64]|0.01|
-|4.76714626254895|1.1917865656372375|195.106|172.4|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t71|0.999|[32]|0.02|
-|4.717243567762263|1.1793108919405657|195.56400000000002|167.2|1.0|5|200.0|199.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
+|best_session_epi|best_session_id|best_session_mean_rewards|best_session_stability|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|mean_rewards_stats_max|epi_stats_mean|epi_stats_min|solved_ratio_of_sessions|max_total_rewards_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|114|dqn-2017_03_19_004714_t79_s2|195.59|1.0|9.487062|1.326499|195.404|195.66|154.2|114.0|1.0|200.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
+|140|dqn-2017_03_19_004714_t28_s0|196.11|1.0|9.434487|1.179311|195.564|196.11|167.2|140.0|1.0|200.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
+|153|dqn-2017_03_19_004714_t16_s2|195.48|1.0|9.279524|1.159941|195.466|195.7|168.6|153.0|1.0|200.0|dqn-2017_03_19_004714_t16|0.95|[64]|0.001|
+|157|dqn-2017_03_19_004714_t36_s4|196.07|1.0|9.242832|1.155354|195.602|196.07|169.0|157.0|1.0|200.0|dqn-2017_03_19_004714_t36|0.97|[64]|0.001|
+|149|dqn-2017_03_19_004714_t48_s3|195.63|0.970874|9.024263|1.131328|195.678|195.83|175.0|149.0|1.0|200.0|dqn-2017_03_19_004714_t48|0.99|[32]|0.001|
 
 *`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials, from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.*
 
@@ -163,8 +163,12 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
     "problem": "CartPole-v0"
   },
   "metrics": {
+    "best_session_epi": 114,
+    "best_session_id": "dqn-2017_03_19_004714_t79_s2",
+    "best_session_mean_rewards": 195.59,
+    "best_session_stability": 1,
     "epi_stats_mean": 154.2,
-    "fitness_score": 5.305995,
+    "fitness_score": 9.487062,
     "max_total_rewards_stats_mean": 200,
     "mean_rewards_per_epi_stats_mean": 1.326499,
     "mean_rewards_stats_mean": 195.404,
@@ -172,25 +176,11 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
     "t_stats_mean": 199,
     "time_taken": "0:41:19"
   },
-  "param_variables": {
-    "gamma": 0.999,
-    "hidden_layers": [64],
-    "lr": 0.02
-  },
-  "stats": {
-    "epi_stats": {
-      "max": 195,
-      "mean": 154.2,
-      "min": 114,
-      "std": 34.94796
-    },
-    "errored": false,
-    "fitness_score": 5.305995,
   ...
 ```
 
 
-This concludes the analysis. See the [solution PR here](https://github.com/kengz/openai_lab/pull/73). The best trial is `  dqn-2017_03_19_004714_t79`, with `fitness_score=5.305995`, and the variables:
+This concludes the analysis. See the [solution PR here](https://github.com/kengz/openai_lab/pull/73). The best trial is `  dqn-2017_03_19_004714_t79`, with `fitness_score=9.487062`, and the variables:
 
 - *lr*: 0.02
 - *gamma*: 0.999
