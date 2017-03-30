@@ -19,7 +19,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. The li
 |:---|:---|:---|:---|:---|
 |**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|[13.41222](https://github.com/kengz/openai_lab/pull/91)|-|
 |**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
-|**Acrobot-v1**|[-0.22717](https://github.com/kengz/openai_lab/pull/92)|-|-|-|
+|**Acrobot-v1**|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|-|-|-|
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
 |**Pendulum-v0**|-|-|-|-|
@@ -76,7 +76,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |:---|:---|:---|:---|:---|:---|
 |CartPole-v0|[13.41222](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|offpol_sarsa|
 |CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
-|Acrobot-v1|[-0.22717](https://github.com/kengz/openai_lab/pull/92)|-109.38|kengz/lgraesser|acrobot|
+|Acrobot-v1|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|-100.96|kengz/lgraesser|rand_acrobot|
 |MountainCar-v0|-|-|-|-|
 |MountainCarContinuous-v0|-|-|-|-|
 |Pendulum-v0|-|-|-|-|
