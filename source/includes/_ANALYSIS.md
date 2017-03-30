@@ -53,9 +53,8 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 ## Analysis Graph
 
-><img alt="The dqn experiment analytics" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
+><img alt="The dqn analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
 >*The analysis graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
-
 
 The **analysis graph** is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the *measurement metrics on the y-axis*, and the *experiment variables on the x-axis*.
 
@@ -91,6 +90,9 @@ Multiple sessions allow us to observe the consistency of an agent. As we have no
 Every subplot in the graph shows the distribution of all the trial points in the pair of *y vs x* variables, with the other *x'* dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.
 
 Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn.swarmplot.html) which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.
+
+><img alt="The acrobot random search analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png" />
+>*An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the [rand_acrobot PR](https://github.com/kengz/openai_lab/pull/94)*
 
 **Population distribution**: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the *x* is a stabler value for the *y* value even when other *x'* dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.
 
