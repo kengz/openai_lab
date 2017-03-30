@@ -234,12 +234,13 @@ class Session(object):
             if processed_exp is not None:
                 agent.memory.add_exp(*processed_exp)
 
+            # print("MEMORY: ERROR")
             # print(agent.memory.exp['error'])
-            # print(agent.memory.exp['states'])
+            # print("==================================")
 
             sys_vars['done'] = done
             agent.update(sys_vars)
-            if agent.to_train(sys_vars):
+            if agent.to_train(sys_vars) and self.memory.size() > self.agent.batch_size:
                 agent.train(sys_vars)
             sys_vars['total_rewards'] += reward
             if done:
