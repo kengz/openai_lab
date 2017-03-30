@@ -14,11 +14,11 @@ class NoPreProcessor(PreProcessor):
     def preprocess_state(self):
         return self.state
 
-    def preprocess_memory(self, action, reward, next_state, done):
+    def preprocess_memory(self, action, reward, next_state, done, error):
         '''No state processing'''
-        self.add_raw_exp(action, reward, next_state, done)
-        (_state, action, reward, next_state, done) = self.exp_queue[-1]
-        processed_exp = (action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done, error)
+        (_state, action, reward, next_state, done, error) = self.exp_queue[-1]
+        processed_exp = (action, reward, next_state, done, error)
         return processed_exp
 
 
@@ -35,16 +35,16 @@ class StackStates(PreProcessor):
         processed_state = np.concatenate([self.previous_state, self.state])
         return processed_state
 
-    def preprocess_memory(self, action, reward, next_state, done):
+    def preprocess_memory(self, action, reward, next_state, done, error):
         '''Concatenate: previous + current states'''
-        self.add_raw_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done, error)
         if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
-        (state, action, reward, next_state, done) = self.exp_queue[-1]
+        (state, action, reward, next_state, done, error) = self.exp_queue[-1]
         processed_state = self.preprocess_state()
         processed_next_state = np.concatenate([state, next_state])
         self.debug_state(processed_state, processed_next_state)
-        processed_exp = (action, reward, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done, error)
         return processed_exp
 
 
@@ -61,14 +61,14 @@ class DiffStates(PreProcessor):
         processed_state = self.state - self.previous_state
         return processed_state
 
-    def preprocess_memory(self, action, reward, next_state, done):
+    def preprocess_memory(self, action, reward, next_state, done, error):
         '''Change in state, curr_state - last_state'''
-        self.add_raw_exp(action, reward, next_state, done)
+        self.add_raw_exp(action, reward, next_state, done, error)
         if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
-        (state, action, reward, next_state, done) = self.exp_queue[-1]
+        (state, action, reward, next_state, done, error) = self.exp_queue[-1]
         processed_state = self.preprocess_state()
         processed_next_state = next_state - state
         self.debug_state(processed_state, processed_next_state)
-        processed_exp = (action, reward, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done, error)
         return processed_exp

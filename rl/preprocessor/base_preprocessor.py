@@ -67,15 +67,15 @@ class PreProcessor(object):
         self.previous_state = self.state
         self.state = next_state
 
-    def add_raw_exp(self, action, reward, next_state, done):
+    def add_raw_exp(self, action, reward, next_state, done, error):
         '''
         Buffer currently set to hold only last 4 experiences
         Amount needed for Atari games preprocessing
         '''
-        self.exp_queue.append([self.state, action, reward, next_state, done])
+        self.exp_queue.append([self.state, action, reward, next_state, done, error])
         if (self.exp_queue_size() > self.MAX_QUEUE_SIZE):
             del self.exp_queue[0]
         self.advance_state(next_state)
 
-    def preprocess_memory(self, action, reward, next_state, done):
+    def preprocess_memory(self, action, reward, next_state, done, error):
         raise NotImplementedError()

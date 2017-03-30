@@ -67,9 +67,9 @@ class HighLowMemory(LinearMemory):
         self.max_reward = -math.inf
         self.min_reward = math.inf
 
-    def add_exp(self, action, reward, next_state, terminal):
+    def add_exp(self, action, reward, next_state, terminal, error):
         super(HighLowMemory, self).add_exp(
-            action, reward, next_state, terminal)
+            action, reward, next_state, terminal, error)
         if terminal:
             epi_exp = {
                 'exp': self.exp,
@@ -159,6 +159,9 @@ class HighLowMemory(LinearMemory):
         assert len(minibatch['rewards']) == size, 'minibatch has the wrong size'
 
         return minibatch
+
+    def update(self, updates):
+        pass
 
 
 class HighLowMemoryWithForgetting(HighLowMemory):

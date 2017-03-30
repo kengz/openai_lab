@@ -32,3 +32,8 @@ class Memory(object):
     def rand_minibatch(self, size):
         '''get a batch of experiences by indices'''
         raise NotImplementedError()
+
+    def update(self, updates):
+        '''update elements of the memory as requires'''
+        raise NotImplementedError()
+
