@@ -213,7 +213,7 @@
 
 <p>While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.</p>
 
-<p>To address this, the Lab does three things.</p>
+<p>To address this, the Lab does three things:</p>
 
 <ol>
 <li>Handles the basic RL environment and algorithm setups.</li>
@@ -727,7 +727,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><p><code class="prettyprint">epi_stats_min</code>: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.</p></li>
 </ol>
 
-<h3 id="the-hue-metrics">The hue metrics</h3>
+<p><a name="hue"></a>### The hue metrics</p>
 
 <p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
 
@@ -1449,7 +1449,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>In this section, we will formalize these ideas.</p>
 
-<h2 id="fitness-score">Fitness Score</h2>
+<h2 id="fitness-score"><a name="fitness"></a>Fitness Score</h2>
 
 <p><em>(new adjacent possible)</em></p>
 
@@ -1541,9 +1541,11 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
 
-<h3 id="formalization">Formalization</h3>
+<h3 id="generalization"><a name="generalization"></a>Generalization</h3>
 
 <p><em>(new adjacent possible)</em></p>
+
+<p>We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the <a href="#fitness-matrix">Fitness Matrix</a>.</p>
 
 <p><em>We&rsquo;re using LaTeX for better symbolic rendering.</em></p>
 
@@ -1853,19 +1855,44 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 
 <p>Check the latest under the <a href="https://github.com/kengz/openai_lab/projects">Github Projects</a></p>
 
-<h2 id="motivations">Motivations</h2>
+<h2 id="motivations"><a name="motivations"></a>Motivations</h2>
 
-<p>(<em>under work</em>)</p>
+<p>We the authors never set out to build the OpenAI Lab with any grand vision in mind. We just wanted to test our RL ideas in the OpenAI Gym, faced many problems along the way, and their solutions became features. These opened up new adjacent possibles to do new things, and even more problems, and so on. Before we knew it, the critical components fell it place and we had something very similar to a scientific lab.</p>
 
-<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+<p>The problems faced by us are numerous and diverse, but there are several major categories. The first two are nicely described by WildML&rsquo;s Denny in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>, which resonates strongly with a lot of people.</p>
 
 <p><strong>1. the difficulty of building upon other’s work</strong></p>
 
-<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+<p>If you have tried to implement any algorithms by looking at someone elses code, chances are it&rsquo;s painful. Sometimes you just want to research a small component like a prioritized memory, but you&rsquo;d have to write 90% of the unrelated components from scratch. Simply look at the solution source codes submitted to the OpenAI Gym leaderboard; you can&rsquo;t extend them to build something much bigger.</p>
+
+<p>There is no design or engineering standards for reinforcement learning, and that contributes to the major inertia in RL research. A lot of times research ideas are not difficult to come by, but implementing them is hard because there is <em>no reliable foundation to build on</em>.</p>
+
+<p>We patiently built every piece of that foundation because giving up wasn&rsquo;t an option, so here it is. As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components, and of course, contribute back.</p>
 
 <p><strong>2. the lack of rigor in comparisons</strong></p>
 
-<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>.</p>
+<p>Denny describes this already, <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">read his blog</a>.</p>
+
+<p>As the Lab became mature, we became more ambitious and try to solve more environment, with more agents. This naturally begs the question, &ldquo;how do we compare them, across agents and environments?&rdquo;</p>
+
+<p>Multiple experiments running in the Lab will produce standardized data analytics and evaluation metrics. This will allow us to compare agents and environments meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>. It also inspired a <a href="#metrics">generalization of evaluation metrics</a>, which we have only discovered recently.</p>
+
+<p><strong>3. inertia to high level vision</strong></p>
+
+<p>When you&rsquo;re heels down implementing an algorithm and the extra 90% side components from scratch, it&rsquo;s hard to organize your work from a high level. Having to worry about other irrelevant components also makes you lose focus. The Lab removes that inertia and frees us from that myopic vision.</p>
+
+<p>This freedom means more mental energy and time to focus on the essential components of research. It opens up new adjacent possibles and has us asking new questions. Below are a few things that we came up due to this freedom of high level vision:</p>
+
+<ul>
+<li>independently discovery of RankedMemory, which is essentially the Priorized Experience Replay (PER) idea.</li>
+<li>the study of hyperparameters at scale, with the <a href="#analysis">Analysis Graph</a>.</li>
+<li>new high level, powerful visuals from the <a href="#analysis">analysis graphs</a> to eyeball the performance and potentials of an agent.</li>
+<li>auto-architecture of agent&rsquo;s neural net, because we wanted to study some variables of the NN architecture as hyperparameters.</li>
+<li>the perspective of RL as experimental science, and experimenting as breeding agents in the environments.</li>
+<li>the design of a new <a href="#fitness"><code class="prettyprint">fitness_score</code> that provides richer evaluation metrics</a>, which considers solution speed, stability, consistency, and much more.</li>
+<li>the <a href="#fitness-matrix">Fitness Matrix</a> and the ability to compare fitness_score across its grid.</li>
+<li>the <a href="#generalization">generalization of evaluation metrics</a>, which casts the hyperoptimization problem as one of temperature fields and differential calculus. Also gives the Fitness Fields Matrix.</li>
+</ul>
 
           <h1 id="contributing"><a name="contributing"></a>Contributing</h1>
 
