@@ -17,7 +17,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |:---|:---|:---|:---|:---|
 |**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|[13.41222](https://github.com/kengz/openai_lab/pull/91)|-|
 |**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
-|**Acrobot-v1**|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|-|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-|
+|**Acrobot-v1**|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|[-0.1755333](https://github.com/kengz/openai_lab/pull/98)|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-|
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
 |**Pendulum-v0**|-|-|-|-|
