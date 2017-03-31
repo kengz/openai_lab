@@ -43,7 +43,7 @@ To address this, the Lab does three things.
 
 With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.
 
-See the [Best Solutions](#solutions) to some OpenAI environments that OpenAI Lab users have produced.
+See the [Solutions](#solutions) to some OpenAI environments that OpenAI Lab users have produced.
 
 
 ### Run the Lab

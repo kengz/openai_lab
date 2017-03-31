@@ -1,6 +1,6 @@
 # <a name="analysis"></a>Analysis
 
-Once the Lab is running experiments, it will produce data. This section details how to analyze and understand the data, before we can contribute to the [Best Solutions](#solutions).
+Once the Lab is running experiments, it will produce data. This section details how to analyze and understand the data, before we can contribute to the [Solutions](#solutions).
 
 An experiment produces 3 types of data files in the folder `data/<experiment_id>/`:
 
