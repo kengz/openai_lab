@@ -114,7 +114,7 @@
       "first_hidden_layer_size": 512,
       "e": 0.01,
       "alpha": 0.6,
-      "mem_max_len" : 50
+      "max_len" : 7
     },
     "param_range": {
       "gamma": [0.97, 0.99],

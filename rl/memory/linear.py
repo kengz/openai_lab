@@ -72,6 +72,11 @@ class LinearMemory(Memory):
 
 
 class LinearMemoryWithForgetting(LinearMemory):
+    
+    def __init__(self, max_len=50000, 
+                            **kwargs):  # absorb generic param without breaking
+        super(LinearMemoryWithForgetting, self).__init__()
+        self.max_len = max_len
 
     '''
     Linear memory with uniform sampling, retaining last 50k experiences
@@ -84,10 +89,14 @@ class LinearMemoryWithForgetting(LinearMemory):
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal, error)
 
-        self.trim_exp(max_len=50000)
+        self.trim_exp(max_len=self.max_len)
 
 
 class LongLinearMemoryWithForgetting(LinearMemory):
+    def __init__(self, max_len=500000, 
+                            **kwargs):  # absorb generic param without breaking
+        super(LongLinearMemoryWithForgetting, self).__init__()
+        self.max_len = max_len
 
     '''
     Linear memory with uniform sampling, retaining last 500k experiences
@@ -100,7 +109,7 @@ class LongLinearMemoryWithForgetting(LinearMemory):
         super(LongLinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal, error)
 
-        self.trim_exp(max_len=500000)
+        self.trim_exp(max_len=self.max_len)
 
 
 class LeftTailMemory(LinearMemory):

@@ -10,17 +10,16 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
-    def __init__(self, e, alpha, mem_max_len,
+    def __init__(self, e=0.1, alpha=0.6, max_len=10000,
                             **kwargs): 
-        super(PrioritizedExperienceReplay, self).__init__()
+        super(PrioritizedExperienceReplay, self).__init__(max_len)
         # Prevents experiences with error of 0 from being replayed
         self.e = e
         # Controls how spiked the distribution is. alpha = 0 corresponds to uniform
         self.alpha = alpha 
         self.curr_data_inds = None
         self.curr_tree_inds = None
-        self.mem_max_len = mem_max_len
-        self.prio_tree = SumTree(self.mem_max_len)
+        self.prio_tree = SumTree(self.max_len)
 
     def get_priority(self, error):
         return (error + self.e) ** self.alpha
