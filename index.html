@@ -710,7 +710,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <h2 id="analysis-graph">Analysis Graph</h2>
 
 <blockquote>
-<p><img src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" title="Analysis graph" alt="41a86170 0cf9 11e7 84b8 8f3fcae24c95" />
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24389521/2e8c1b38-1350-11e7-8a84-6f47e702af62.png" title="Analysis graph" alt="2e8c1b38 1350 11e7 8a84 6f47e702af62" />
 <em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
 </blockquote>
 
@@ -722,9 +722,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <ol>
 <li><p><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</p></li>
-<li><p><code class="prettyprint">mean_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the average solution potential of a trial.</p></li>
+<li><p><code class="prettyprint">mean_rewards_stats_max</code>: the max of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the max solution power of a trial.</p></li>
 <li><p><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</p></li>
-<li><p><code class="prettyprint">epi_stats_mean</code>: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.</p></li>
+<li><p><code class="prettyprint">epi_stats_min</code>: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.</p></li>
 </ol>
 
 <h3 id="the-hue-metrics">The hue metrics</h3>
@@ -732,7 +732,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
 
 <ul>
-<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial. 0 means none, 1 means all.</li>
+<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial, 0 means none, 1 means all.</li>
 </ul>
 
 <p>The granularity of the <code class="prettyprint">solved_ratio_of_sessions</code> depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it&rsquo;s the best tradeoff between granularity and computation time.</p>
@@ -754,7 +754,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><strong>Population distribution</strong>: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the <em>x</em> is a stabler value for the <em>y</em> value even when other <em>x&rsquo;</em> dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.</p>
 
-<p><strong>trend across y-values</strong>: the fitter trial will show up higher in the y-axes (except for <code class="prettyprint">epi_stats_mean</code>). Generally good solutions are scarce and they show up at higher <code class="prettyprint">fitness_score</code>, whereas the non-solutions get clustered in the lower region. Notice how the <code class="prettyprint">fitness_score</code> plots can clearly distinguish the good solutions (darker points), whereas in the <code class="prettyprint">mean)rewards_stats_mean</code> and <code class="prettyprint">max_total_rewards_stats_mean</code> plots it is hard to tell apart. We will discuss how the custom-formulated <code class="prettyprint">fitness_score</code> function achieves this in the <a href="#metrics">metrics</a> section.</p>
+<p><strong>trend across y-values</strong>: the fitter trial will show up higher in the y-axes (except for <code class="prettyprint">epi_stats_min</code>). Generally good solutions are scarce and they show up at higher <code class="prettyprint">fitness_score</code>, whereas the non-solutions get clustered in the lower region. Notice how the <code class="prettyprint">fitness_score</code> plots can clearly distinguish the good solutions (darker points), whereas in the <code class="prettyprint">mean_rewards_stats_max</code> and <code class="prettyprint">max_total_rewards_stats_mean</code> plots it is hard to tell apart. We will discuss how the custom-formulated <code class="prettyprint">fitness_score</code> function achieves this in the <a href="#metrics">metrics</a> section.</p>
 
 <p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
 
@@ -950,19 +950,19 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><a href="#metrics">learn more about the evaluation metrics</a></li>
 </ul>
 
-          <h1 id="best-solutions"><a name="solutions"></a>Best Solutions</h1>
+          <h1 id="solutions"><a name="solutions"></a>Solutions</h1>
 
 <p>Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
 
 <h2 id="submission-instructions">Submission instructions</h2>
 
-<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
+<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See examples from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
 
 <p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
 
 <h2 id="fitness-matrix"><a name="fitness-matrix"></a>Fitness Matrix</h2>
 
-<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>. The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
+<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>, sourced from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>. See <a href="#metrics">Metric</a> for the design of fitness score and generalized metrics.</p>
 
 <table><thead>
 <tr>
@@ -1451,6 +1451,8 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h2 id="fitness-score">Fitness Score</h2>
 
+<p><em>(new adjacent possible)</em></p>
+
 <p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
 
 <p>The fitness function&rsquo;s design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the <code class="prettyprint">mean rewards</code> metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under <em>strength</em>.</p>
@@ -1541,26 +1543,14 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h3 id="formalization">Formalization</h3>
 
+<p><em>(new adjacent possible)</em></p>
+
 <p><em>We&rsquo;re using LaTeX for better symbolic rendering.</em></p>
 
 <p><img src="images/metric_1.png" alt="Metric 1" />
 <img src="images/metric_2.png" alt="Metric 2" />
 <img src="images/metric_3.png" alt="Metric 3" />
 <img src="images/metric_4.png" alt="Metric 4" /></p>
-
-<h2 id="motivations">Motivations</h2>
-
-<p>(<em>under work</em>)</p>
-
-<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
-
-<p><strong>1. the difficulty of building upon other’s work</strong></p>
-
-<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
-
-<p><strong>2. the lack of rigor in comparisons</strong></p>
-
-<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>.</p>
 
           <h1 id="algorithms"><a name="algorithms"></a>Algorithms</h1>
 
@@ -1862,6 +1852,20 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
 <p>Check the latest under the <a href="https://github.com/kengz/openai_lab/projects">Github Projects</a></p>
+
+<h2 id="motivations">Motivations</h2>
+
+<p>(<em>under work</em>)</p>
+
+<p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
+
+<p><strong>1. the difficulty of building upon other’s work</strong></p>
+
+<p>As the Lab grows, we hope that engineers and researchers can experiment with an idea fast by building on top of our existing components.</p>
+
+<p><strong>2. the lack of rigor in comparisons</strong></p>
+
+<p>Multiple experiments running in the Lab will produce the same analytics and the evaluation metrics. This will allow us to compare algorithms and problems meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>.</p>
 
           <h1 id="contributing"><a name="contributing"></a>Contributing</h1>
 
