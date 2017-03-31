@@ -295,7 +295,7 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> in <code>config/{default.json, production.json}</code>.
 </aside>
 
-<p><img alt="Notifications from the lab running on our remote server beast" src="./images/noti.png" />
+<p><img src="images/noti.png" title="Notifications from the lab running on our remote server beast" alt="Noti" />
 <em>Notifications from the lab running on our remote server beast.</em></p>
 
 <h2 id="setup-experiments">Setup Experiments</h2>
@@ -402,7 +402,7 @@ screen -r lab
 To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 </aside>
 
-<p><img alt="Glances to monitor your system" src="./images/glances.png" />
+<p><img src="images/glances.png" title="Glances to monitor your system" alt="Glances" />
 <em>Glances on remote server beast.</em></p>
 
 <h2 id="resume-lab">Resume Lab</h2>
@@ -710,7 +710,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <h2 id="analysis-graph">Analysis Graph</h2>
 
 <blockquote>
-<p><img alt="The dqn analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" />
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png" title="Analysis graph" alt="41a86170 0cf9 11e7 84b8 8f3fcae24c95" />
 <em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
 </blockquote>
 
@@ -748,7 +748,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>Note that these will use <a href="http://seaborn.pydata.org/generated/seaborn.swarmplot.html">swarmplot</a> which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.</p>
 
 <blockquote>
-<p><img alt="The acrobot random search analysis graph" src="https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png" />
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png" title="The acrobot random search analysis graph" alt="0197e3e4 14dd 11e7 9523 4e8bd23c75e9" />
 <em>An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the <a href="https://github.com/kengz/openai_lab/pull/94">rand_acrobot PR</a></em></p>
 </blockquote>
 
@@ -761,9 +761,8 @@ When developing a new algorithm, use the session graph to immediately see how th
 <h2 id="correlation-graph">Correlation Graph</h2>
 
 <blockquote>
-<p><img alt="The dqn experiment analytics correlation" src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" /></p>
-
-<p><em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" title="Correlation graph" alt="418a9b54 0cf9 11e7 8aac f0df817def43" />
+<em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
 </blockquote>
 
 <p><em>(new adjacent possible)</em></p>
@@ -957,11 +956,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h2 id="submission-instructions">Submission instructions</h2>
 
-<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab.</p>
+<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
 
 <p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
-
-<p>Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See some previous example <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
 
 <h2 id="fitness-matrix"><a name="fitness-matrix"></a>Fitness Matrix</h2>
 
@@ -1544,15 +1541,16 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h3 id="formalization">Formalization</h3>
 
-<p>Let <code class="prettyprint">a ∈ A</code> be an agent in the Agent space, <code class="prettyprint">e ∈ E</code> be an environment in the Environment space, and <code class="prettyprint">P</code> be a parameter space. For agent <code class="prettyprint">a</code> in the environment <code class="prettyprint">e</code>, let its parameter space be a subspace <code class="prettyprint">P_{a|e} ⊂ P</code>, i.e. the parameters of <code class="prettyprint">a</code> conditioning on <code class="prettyprint">e</code>, since the agent parameters are always specific to solving an environment. When clear from context, we leave out the suffixes.</p>
+<p><em>We&rsquo;re using LaTeX for better symbolic rendering.</em></p>
 
-<p><code class="prettyprint">P_{a|e} = [P_0, P_1, ...]</code></p>
-
-<p>OK shit need latex.</p>
-
-<p>Given a function <code class="prettyprint">f</code> with the form described above, define the f mapping, P, heatmap, etc.</p>
+<p><img src="images/metric_1.png" alt="Metric 1" />
+<img src="images/metric_2.png" alt="Metric 2" />
+<img src="images/metric_3.png" alt="Metric 3" />
+<img src="images/metric_4.png" alt="Metric 4" /></p>
 
 <h2 id="motivations">Motivations</h2>
+
+<p>(<em>under work</em>)</p>
 
 <p>OpenAI Lab exists to address 2 major problems in RL, and WildML&rsquo;s Denny sums them up best in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>. They are:</p>
 

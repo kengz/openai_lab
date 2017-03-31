@@ -1,0 +1,100 @@
+\title{Generalized Fitness Metrics}
+\author{
+        Wah Loon Keng \\
+            \and
+        Laura Graesser\\
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Generalized fitness metrics formalization for the OpenAI Lab.
+\end{abstract}
+
+\section{Formalization}
+
+Let $a \in A$ be an agent in the Agent space, $e \in E$ be an environment in the Environment space, and $P$ be a parameter space. For agent $a$ in the environment $e$, let its parameter space be a subspace $P_{a|e} \subset P$, i.e. the parameter space of $a$ conditioning on $e$, since the agent parameters are always specific to solving an environment. Whenever context is clear and $a, e$ are implied, we can drop the suffixes.
+
+A position $p \in P$ is a vector, where $p = [ p_0, p_1, \cdots , p_n ]$. For example, $p_0$ can be the learning rate, $p_1$ the $\gamma$, and so on.
+
+When an agent is subject to multiple environments, for example in the case of transfer learning, we can condition on those environments jointly. The parameter space of agent $a$ in environments $e1, e2$ is written as $P_{a|e1,e2}$. Then, for a universal agent subject to all environments in $E$, we write $P_{a|E}$.
+
+Let $f$ be the fitness function defined earlier. Formally it is $f: P \longrightarrow \mathbb{R}$, where $f(p) = fitness\_score$, for a parameter vector $p \in P$. Again,
+$$fitness\_score = \ power \times ((1+\overline{stability}) \times (1+consistency)^2)^{sign(power)}$$
+where $$power = \overline{(mean\_rewards/epi)}$$
+
+We now have all the components to formalize the generalized evaluation metric.
+
+Let us be given an agent $a \in A$, subject to an environment $e \in E$. The parameter space of the agent is $P_{a|e} \subset P$. We also have the fitness function $f: P_{a|e} \longrightarrow \mathbb{R}$.
+
+In an experiment, we sample multiple parameter vectors $p_{a|e} \in P_{a|e}$, and run $Trial(p_{a|e})$ to output trial data, which are then composed into experiment data and used to compute the fitness score. Essentially for each trial with parameter $p_{a|e}$, we get $f(p_{a|e}) = fitness\_score$.
+
+\begin{enumerate}
+  \item For \textbf{one agent in one environment}, we compute
+  \begin{align*}
+  \{a, e, P_{a|e}\} \longrightarrow f(P_{a|e})
+  \end{align*}
+
+  Note that $f(P_{a|e})$ is the fitness field, i.e. the parameter space where each point $p_{a|e} \in P_{a|e}$ is assigned a scalar $fitness\_score = f(p_{a|e})$. Analogize it as a temperature field, where higher $fitness\_score$ represent higher temperature in the space. We will use temperature and fitness interchangeably from now.
+
+  For each experiment, we select the best trial, i.e. $p_{best} \in P_{a|e}$ that yields the highest $fitness\_score$, or ``the point with the highest temperature''. Since most of our parameter dimensions are smooth manifolds or can be embedded in one, we can expect the $fitness\_score$ to change smoothly, i.e. the "temperature gradient" is smooth.
+
+  As far as the smoothness assumptions hold, this allows us to apply the differential calculus and its optimization strategies to the problem. By direct analogy, we can apply the study of temperature gradient fields here, especially the heat equation. We are just realizing with this, and so will leave it as an open problem for you to research.
+
+  For now, we will start with some simpler ideas quantify the performance of the agent $a$ and the difficulty of the environment $e$ via some properties of the temperature (fitness) field. If the temperate gradient is sharp with narrow radius, the environment is harder to solve, and requires very precise parameter turning. The peak temperature represents the limit by which how well the agent could solve the environment. If there are multiple hotspots, with broader temperature gradient, then it is easy to find a solution parameter to the problem.
+
+  
+  \item For \textbf{multiple agents in one environment}, we compute
+  \begin{align*}
+  \{a_1, e, P_{a_1|e}\} \longrightarrow f(P_{a_1|e}) \\
+  \{a_2, e, P_{a_2|e}\} \longrightarrow f(P_{a_2|e}) \\
+  \vdots \\
+  \{a_n, e, P_{a_n|e}\} \longrightarrow f(P_{a_n|e}) \\
+  \end{align*}
+
+  We then get a list of fitness fields $\{f(P_{a_1|e}), f(P_{a_2|e}), \cdots, f(P_{a_n|e})\}$. By probing the environment with multiple agents, we can measure the nature of the environment using the properties of these fitness fields as mentioned above, such as the temperature radius and peaks.
+
+  For example, if for both weak and strong agents the radius is wide and the peak high, then the environment is easy. Whereas if the radius is narrow and peak low for weaker agents, then the environment is hard and can only be solved by stronger agents.
+
+  
+  \item For \textbf{one agent in multiple environments}, we compute
+  \begin{align*}
+  \{a, e_1, P_{a|e_1}\} \longrightarrow f(P_{a|e_1}) \\
+  \{a, e_2, P_{a|e_2}\} \longrightarrow f(P_{a|e_2}) \\
+  \vdots \\
+  \{a, e_m, P_{a|e_m}\} \longrightarrow f(P_{a|e_m}) \\
+  \end{align*}
+
+  We then get a list of fitness fields $\{f(P_{a|e_1}), f(P_{a|e_2}), \cdots, f(P_{a|e_m})\}$. This is complementary to the scenario above; we are evaluating an agent in multiple environments.
+
+  If the agent produces temperature field with wide radius and high peaks for both easy and hard environments, then it is strong, and vice versa.
+
+  \pagebreak
+
+  \item For \textbf{multiple agents in multiple environments}, we combine the two above and get a matrix of fitness fields,
+
+  \[
+  \begin{bmatrix}
+      f(P_{a_1|e_1}) & f(P_{a_2|e_1}) & \hdots & f(P_{a_n|e_1}) \\
+      f(P_{a_1|e_2}) & f(P_{a_2|e_2}) & \hdots & f(P_{a_n|e_2}) \\
+      \vdots         & \vdots         & \ddots & \vdots         \\
+      f(P_{a_1|e_m}) & f(P_{a_2|e_m}) & \hdots & f(P_{a_n|e_m})
+  \end{bmatrix}
+  \]
+
+  This Fitness Fields Matrix completes our generalization. It is the universal evaluation metric that measures the entire universe of environments and agents (problems and solutions). An analogy is computational and complexity theory, where we have classes of problems, and classes of algorithms to solve them. At this early stage, we are not quite sure what to do with this Fitness Fields Matrix yet.
+
+  Currently, we project the Fitness Fields Matrix into the Solution Matrix, by picking the highest fitness score $f(p_{best, a_i|e_j})$ for each matrix entry $(i, j)$.
+
+
+
+\end{enumerate}
+
+\end{document}
