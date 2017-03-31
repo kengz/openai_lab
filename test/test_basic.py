@@ -26,6 +26,8 @@ class BasicTest(unittest.TestCase):
         data_df = run('q_table')
         assert isinstance(data_df, pd.DataFrame)
 
+    @unittest.skipIf(environ.get('CI'),
+                     "Causing build to crash since it's unstable.")
     @classmethod
     def test_dqn_pass(cls):
         data_df = run('test_dqn_pass')
