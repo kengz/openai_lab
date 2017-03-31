@@ -236,7 +236,7 @@ class Session(object):
 
             sys_vars['done'] = done
             agent.update(sys_vars)
-            if agent.to_train(sys_vars) and self.memory.size() > self.agent.batch_size:
+            if agent.to_train(sys_vars):
                 agent.train(sys_vars)
             sys_vars['total_rewards'] += reward
             if done:
