@@ -3,7 +3,7 @@
     "problem": "Dev-Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LongLinearMemoryWithForgetting",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
@@ -21,7 +21,9 @@
       "epi_change_lr": 5000,
       "auto_architecture":  true,
       "num_hidden_layers" : 3,
-      "num_initial_channels" : 8
+      "num_initial_channels" : 8,
+      "mem_size" : 500000
+
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -37,7 +39,7 @@
     "problem": "Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LongLinearMemoryWithForgetting",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
@@ -52,7 +54,8 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000
+      "epi_change_lr": 5000,
+      "mem_size" : 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -63,7 +66,7 @@
     "problem": "Breakout-v0",
     "Agent": "DoubleConvDQN",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LongLinearMemoryWithForgetting",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
@@ -78,7 +81,8 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000
+      "epi_change_lr": 5000,
+      "mem_size" : 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -89,7 +93,7 @@
     "problem": "AirRaid-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LongLinearMemoryWithForgetting",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
@@ -104,7 +108,8 @@
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 10000,
-      "epi_change_lr": 10000
+      "epi_change_lr": 10000,
+      "mem_size" : 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
