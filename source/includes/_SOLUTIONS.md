@@ -11,7 +11,7 @@ To learn how to analyze experiment data, refer to [Analysis](#analysis).
 
 ## <a name="fitness-matrix"></a>Fitness Matrix
 
-A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. These are sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
+A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed). See [Metric](#metrics) for the design of fitness score and generalized metrics.
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
