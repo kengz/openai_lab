@@ -47,11 +47,11 @@ class Atari(PreProcessor):
         processed_state = np.stack(processed_state_queue, axis=-1)
         return processed_state
 
-    def preprocess_memory(self, action, reward, next_state, done):
-        self.add_raw_exp(action, reward, next_state, done)
+    def preprocess_memory(self, action, reward, next_state, done, error):
+        self.add_raw_exp(action, reward, next_state, done, error)
         if (self.exp_queue_size() < self.MAX_QUEUE_SIZE):  # insufficient queue
             return
-        (_state, action, reward, next_state, done) = self.exp_queue[-1]
+        (_state, action, reward, next_state, done, error) = self.exp_queue[-1]
         processed_next_state_queue = (
             process_image_atari(self.exp_queue[-1][3]),
             process_image_atari(self.exp_queue[-2][3]),
@@ -60,5 +60,5 @@ class Atari(PreProcessor):
         processed_state = self.preprocess_state()
         processed_next_state = np.stack(processed_next_state_queue, axis=-1)
         self.debug_state(processed_state, processed_next_state)
-        processed_exp = (action, reward, processed_next_state, done)
+        processed_exp = (action, reward, processed_next_state, done, error)
         return processed_exp
