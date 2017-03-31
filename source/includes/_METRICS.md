@@ -100,17 +100,17 @@ This section formalizes the generalized metrics for these, and shows that the Fi
 
 ### Formalization
 
-Let `a ∈ A` be an agent in the Agent space, `e ∈ E` be an environment in the Environment space, and `P` be a parameter space. For agent `a` in the environment `e`, let its parameter space be a subspace `P_{a|e} ⊂ P`, i.e. the parameters of `a` conditioning on `e`, since the agent parameters are always specific to solving an environment. When clear from context, we leave out the suffixes.
+*We're using LaTeX for better symbolic rendering.*
 
-`P_{a|e} = [P_0, P_1, ...]`
-
-OK shit need latex.
-
-
-Given a function `f` with the form described above, define the f mapping, P, heatmap, etc.
+![](./images/metric_1.png)
+![](./images/metric_2.png)
+![](./images/metric_3.png)
+![](./images/metric_4.png)
 
 
 ## Motivations
+
+(*under work*)
 
 OpenAI Lab exists to address 2 major problems in RL, and WildML's Denny sums them up best in his post [Engineering Is The Bottleneck In (Deep Learning) Research](http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/). They are:
 
