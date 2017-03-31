@@ -13,7 +13,7 @@ To analogize, see fitness score as temperature, then we have a heatmap inside th
 In this section, we will formalize these ideas.
 
 
-## Fitness Score
+## <a name="fitness"></a>Fitness Score
 
 *(new adjacent possible)*
 
@@ -100,9 +100,11 @@ Given that the Lab can run multiple agents across environments in its standardiz
 This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.
 
 
-### Formalization
+### <a name="generalization"></a>Generalization
 
 *(new adjacent possible)*
+
+We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the [Fitness Matrix](#fitness-matrix).
 
 *We're using LaTeX for better symbolic rendering.*
 

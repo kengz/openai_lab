@@ -35,7 +35,7 @@ The _OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _th
 
 While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.
 
-To address this, the Lab does three things.
+To address this, the Lab does three things:
 
 1. Handles the basic RL environment and algorithm setups.
 2. Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.
