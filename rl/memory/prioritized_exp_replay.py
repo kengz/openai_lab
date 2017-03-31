@@ -10,7 +10,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
-    def __init__(self, e=0.1, alpha=0.6, max_len=10000,
+    def __init__(self, e=0.01, alpha=0.6, max_len=10000,
                             **kwargs): 
         super(PrioritizedExperienceReplay, self).__init__(max_len)
         # Prevents experiences with error of 0 from being replayed
@@ -20,19 +20,44 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         self.curr_data_inds = None
         self.curr_tree_inds = None
         self.prio_tree = SumTree(self.max_len)
+        self.head = 0
 
     def get_priority(self, error):
         return (error + self.e) ** self.alpha
 
     def add_exp(self, action, reward, next_state, terminal, error):
-        super(PrioritizedExperienceReplay, self).add_exp(
-            action, reward, next_state, terminal, error)
+        '''
+        Round robin memory updating
+        '''
+        if self.size() < self.max_len:
+            self.exp['states'].append(self.state)
+            self.exp['actions'].append(self.encode_action(action))
+            # self.exp['actions'].append(action)
+            self.exp['rewards'].append(reward)
+            self.exp['next_states'].append(next_state)
+            self.exp['terminals'].append(int(terminal))
+            self.exp['error'].append(error)
+            self.state = next_state
+            self.head += 1
+            if self.head >= self.max_len:
+                self.head = 0
+        else:
+            self.exp['states'][self.head] = self.state
+            self.exp['actions'][self.head] = self.encode_action(action)
+            # self.exp['actions'][self.head] = action
+            self.exp['rewards'][self.head]  = reward
+            self.exp['next_states'][self.head] = next_state
+            self.exp['terminals'][self.head] = int(terminal)
+            self.exp['error'][self.head]  = error
+            self.state = next_state
+            self.head += 1
+            if self.head >= self.max_len:
+                self.head = 0
         
         p = self.get_priority(error)
         self.prio_tree.add(p)
 
-        # TO DO: How to update both consistently when 
-        # memoy units are at capacity
+        assert self.head == self.prio_tree.head
 
     def rand_minibatch(self, size):
         '''
@@ -90,11 +115,11 @@ class SumTree(object):
     See https://jaromiru.com/2016/11/07/lets-make-a-dqn-double-learning-and-prioritized-experience-replay/
     for a good introduction to PER
     '''
-    write = 0
 
     def __init__(self, capacity):
         self.capacity = capacity
         self.tree = np.zeros( 2*capacity - 1 )
+        self.head = 0
 
     def _propagate(self, idx, change):
         parent = (idx - 1) // 2
@@ -120,13 +145,13 @@ class SumTree(object):
         return self.tree[0]
 
     def add(self, p):
-        idx = self.write + self.capacity - 1
+        idx = self.head + self.capacity - 1
 
         self.update(idx, p)
 
-        self.write += 1
-        if self.write >= self.capacity:
-            self.write = 0
+        self.head += 1
+        if self.head >= self.capacity:
+            self.head = 0
 
     def update(self, idx, p):
         change = p - self.tree[idx]
