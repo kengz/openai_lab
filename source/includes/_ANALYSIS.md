@@ -53,7 +53,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 ## Analysis Graph
 
->![](https://cloud.githubusercontent.com/assets/8209263/24087747/41a86170-0cf9-11e7-84b8-8f3fcae24c95.png "Analysis graph")
+>![](https://cloud.githubusercontent.com/assets/8209263/24389521/2e8c1b38-1350-11e7-8a84-6f47e702af62.png "Analysis graph")
 >*The analysis graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
 
 The **analysis graph** is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the *measurement metrics on the y-axis*, and the *experiment variables on the x-axis*.
@@ -64,18 +64,18 @@ The **analysis graph** is the primary graph used to judge the overall experiment
 
 1. `fitness_score`: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see [metrics](#metrics) for more.
 
-2. `mean_rewards_stats_mean`: the statistical mean of all the `mean_rewards` over all the sessions of a trial. Measures the average solution potential of a trial.
+2. `mean_rewards_stats_max`: the max of all the `mean_rewards` over all the sessions of a trial. Measures the max solution power of a trial.
 
 3. `max_total_rewards_stats_mean`: the statistical mean of all the `max_total_rewards` over all the sessions of a trial. Measures the agent's average peak performance.
 
-4. `epi_stats_mean`: the statistical mean of the termination episode of a session. The lower the better, as it would imply that the agent solves the environment faster on average.
+4. `epi_stats_min`: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.
 
 
 ### The hue metrics
 
 Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:
 
-- `solved_ratio_of_sessions`: how many sessions are solved out of the total sessions in a trial. 0 means none, 1 means all.
+- `solved_ratio_of_sessions`: how many sessions are solved out of the total sessions in a trial, 0 means none, 1 means all.
 
 The granularity of the `solved_ratio_of_sessions` depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it's the best tradeoff between granularity and computation time.
 
@@ -96,7 +96,7 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 
 **Population distribution**: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the *x* is a stabler value for the *y* value even when other *x'* dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.
 
-**trend across y-values**: the fitter trial will show up higher in the y-axes (except for `epi_stats_mean`). Generally good solutions are scarce and they show up at higher `fitness_score`, whereas the non-solutions get clustered in the lower region. Notice how the `fitness_score` plots can clearly distinguish the good solutions (darker points), whereas in the `mean)rewards_stats_mean` and `max_total_rewards_stats_mean` plots it is hard to tell apart. We will discuss how the custom-formulated `fitness_score` function achieves this in the [metrics](#metrics) section.
+**trend across y-values**: the fitter trial will show up higher in the y-axes (except for `epi_stats_min`). Generally good solutions are scarce and they show up at higher `fitness_score`, whereas the non-solutions get clustered in the lower region. Notice how the `fitness_score` plots can clearly distinguish the good solutions (darker points), whereas in the `mean_rewards_stats_max` and `max_total_rewards_stats_mean` plots it is hard to tell apart. We will discuss how the custom-formulated `fitness_score` function achieves this in the [metrics](#metrics) section.
 
 **trend across x-values**: to find a stable and good *x-value*, observe the vertical gaps in distribution, the clustering of darker points. Usually there's one maxima with a steady trend towards it. Recall that the plots flatten the other *x'* values, but the dependence on *x* value is usually very consistent across *x'* that there will still be a flattened trend.
 
