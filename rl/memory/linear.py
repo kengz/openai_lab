@@ -72,8 +72,8 @@ class LinearMemory(Memory):
 
 
 class LinearMemoryWithForgetting(LinearMemory):
-    
-    def __init__(self, max_len=50000, 
+
+    def __init__(self, max_len=50000,
                             **kwargs):  # absorb generic param without breaking
         super(LinearMemoryWithForgetting, self).__init__()
         self.max_len = max_len

@@ -186,9 +186,6 @@ class DQN(Agent):
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
 
-        # print("MINIBATCH ERROR")
-        # print(minibatch['error'])
-
         (Q_states, _states, Q_next_states_max) = self.compute_Q_states(
             minibatch)
         Q_targets = self.compute_Q_targets(
@@ -197,12 +194,6 @@ class DQN(Agent):
         loss = self.model.train_on_batch(minibatch['states'], Q_targets)
         
         errors = abs(np.sum(Q_states  - Q_targets, axis=1))
-        # print("STATES")
-        # print(Q_states)
-        # print("TARGETS")
-        # print(Q_targets)
-        # print("NEW ERRORS")
-        # print(errors)
         self.memory.update(errors)
         return loss
 

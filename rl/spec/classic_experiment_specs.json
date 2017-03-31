@@ -41,7 +41,7 @@
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 10,
       "e": 0.01,
-      "alpha": 0.6,
+      "alpha": 0.5,
       "mem_max_len" : 20000
     },
     "param_range": {
