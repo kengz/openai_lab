@@ -92,26 +92,6 @@ class LinearMemoryWithForgetting(LinearMemory):
         self.trim_exp(max_len=self.max_len)
 
 
-class LongLinearMemoryWithForgetting(LinearMemory):
-    def __init__(self, max_len=500000, 
-                            **kwargs):  # absorb generic param without breaking
-        super(LongLinearMemoryWithForgetting, self).__init__()
-        self.max_len = max_len
-
-    '''
-    Linear memory with uniform sampling, retaining last 500k experiences
-    '''
-
-    def add_exp(self, action, reward, next_state, terminal, error):
-        '''
-        add exp as usual, but preserve only the recent episodes
-        '''
-        super(LongLinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal, error)
-
-        self.trim_exp(max_len=self.max_len)
-
-
 class LeftTailMemory(LinearMemory):
 
     '''
