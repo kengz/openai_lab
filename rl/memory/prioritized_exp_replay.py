@@ -53,7 +53,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
             self.head += 1
             if self.head >= self.max_len:
                 self.head = 0
-        
+    
         p = self.get_priority(error)
         self.prio_tree.add(p)
 
