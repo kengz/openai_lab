@@ -70,7 +70,7 @@ Set up a Slack, create a new channel `#rl_monitor`, and get a [Slack bot token](
 Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> in <code>config/{default.json, production.json}</code>.
 </aside>
 
-<img alt="Notifications from the lab running on our remote server beast" src="./images/noti.png" />
+![](./images/noti.png "Notifications from the lab running on our remote server beast")
 _Notifications from the lab running on our remote server beast._
 
 

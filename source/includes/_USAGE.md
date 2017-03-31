@@ -76,8 +76,8 @@ Since a remote server is away, you should check the system status occasionally t
 To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 </aside>
 
-<img alt="Glances to monitor your system" src="./images/glances.png" />
-_Glances on remote server beast._
+![](./images/glances.png "Glances to monitor your system")
+*Glances on remote server beast.*
 
 
 ## Resume Lab
