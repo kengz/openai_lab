@@ -23,7 +23,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. The li
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|-|-|-|-|
 |**Pendulum-v0**|-|-|-|-|
-|**LunarLander-v2**|[2.296613](https://github.com/kengz/openai_lab/pull/84)|[2.812674](https://github.com/kengz/openai_lab/pull/87)|-|-|
+|**LunarLander-v2**|[2.296613](https://github.com/kengz/openai_lab/pull/84)|[2.812674](https://github.com/kengz/openai_lab/pull/87)|[3.024702](https://github.com/kengz/openai_lab/pull/96)|-|
 |**LunarLanderContinuous-v2**|-|-|-|-|
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
@@ -86,7 +86,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|LunarLander-v2|[2.812674](https://github.com/kengz/openai_lab/pull/87)|247|kengz/lgraesser|lunar_double_dqn|
+|LunarLander-v2|[3.024702](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
 |LunarLanderContinuous-v2|-|-|-|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
