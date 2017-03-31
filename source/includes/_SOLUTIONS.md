@@ -1,17 +1,17 @@
-# <a name="solutions"></a>Best Solutions
+# <a name="solutions"></a>Solutions
 
 Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.
 
 ## Submission instructions
 
-If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the submission guideline. See some previous example [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
+If you invent a new algorithm/combination that beats the best solutions, please submit a [Pull Request](https://github.com/kengz/openai_lab/pulls) to the OpenAI Lab. Refer to the [PR template](https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the submission guideline. See examples from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
 
 To learn how to analyze experiment data, refer to [Analysis](#analysis).
 
 
 ## <a name="fitness-matrix"></a>Fitness Matrix
 
-A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+A matrix of the best `fitness_score` of **Agents** v.s. **Environments**. These are sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed).
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
