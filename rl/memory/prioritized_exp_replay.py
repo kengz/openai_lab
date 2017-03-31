@@ -6,7 +6,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     '''
     Replay memory with random sampling weighted by the absolute
     size of the value function error
-    
+
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
@@ -84,12 +84,12 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         return tree_inds, data_inds
 
     def update(self, updates):
-        for i in range(len(updates)):
+        for i, u in enumerate(updates):
             t_idx = self.curr_tree_inds[i]
             d_idx = self.curr_data_inds[i]
-            p = self.get_priority(updates[i])
+            p = self.get_priority(u)
             self.prio_tree.update(t_idx, p)
-            self.exp['error'][d_idx] = updates[i]
+            self.exp['error'][d_idx] = u
 
 
 class SumTree(object):
