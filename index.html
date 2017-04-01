@@ -355,9 +355,6 @@ grunt -prod -remote
 <span class="c"># resume lab (previously incomplete experiments)</span>
 grunt -prod -remote -resume
 
-<span class="c"># plot analysis graphs only</span>
-grunt analyze -prod
-
 <span class="c"># clear data/ folder and cache files</span>
 grunt clear
 </code></pre>
@@ -433,9 +430,6 @@ grunt -prod -remote
 <span class="c"># resume lab (previously incomplete experiments)</span>
 grunt -prod -remote -resume
 
-<span class="c"># plot analysis graphs only</span>
-grunt analyze -prod
-
 <span class="c"># clear data/ folder and cache files</span>
 grunt clear
 </code></pre>
@@ -443,7 +437,6 @@ grunt clear
 
 <ul>
 <li><em>(default empty)</em>: run the lab</li>
-<li><code class="prettyprint">analyze</code>: generate analysis data and graphs only, without running the lab. This can be used when you wish to see the analysis results midway during a long-running experiment. Run it on a separate terminal window as <code class="prettyprint">grunt analyze -prod</code></li>
 <li><code class="prettyprint">clear</code>: clear the <code class="prettyprint">data/</code> folder and cache files. <strong>Be careful</strong> and make sure your data is already copied to the sync location</li>
 </ul>
 
@@ -470,7 +463,6 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <p>The python command <flag>s are:</p>
 
 <ul>
-<li><code class="prettyprint">-a</code>: Run <code class="prettyprint">analyze_experiment()</code> only to plot <code class="prettyprint">experiment_data</code>. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-b</code>: blind mode, do not render graphics. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-d</code>: log debug info. Default: <code class="prettyprint">False</code></li>
 <li><code class="prettyprint">-e &lt;experiment&gt;</code>: specify which inside the <code class="prettyprint">rl/spec/*_experiment_spec.json</code> to run. Default: <code class="prettyprint">-e dev_dqn</code>. Can be a <code class="prettyprint">experiment_name, experiment_id</code>.</li>
@@ -479,6 +471,1068 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 <li><code class="prettyprint">-t &lt;times&gt;</code>: the number of sessions to run per trial. Default: <code class="prettyprint">1</code></li>
 <li><code class="prettyprint">-x &lt;max_episodes&gt;</code>: Manually specifiy max number of episodes per trial. Default: <code class="prettyprint">-1</code> and program defaults to value in <code class="prettyprint">rl/spec/problems.json</code></li>
 </ul>
+
+          <h1 id="experiments"><a name="experiments"></a>Experiments</h1>
+
+<p>The experimental framework design and terminology should be familiar, since they&rsquo;re borrowed from experimental science. The Lab runs experiments and produces data for <a href="#analysis">analysis</a>.</p>
+
+<h2 id="definition">Definition</h2>
+
+<p>An <strong>experiment</strong> runs separate <strong>trials</strong> by varying parameters. Each <strong>trial</strong> runs multiple <strong>sessions</strong> for averaging the results.</p>
+
+<p>An experiment consists of:</p>
+
+<ul>
+<li>an <strong>environment</strong> (problem) from <a href="https://gym.openai.com/envs">OpenAI Gym</a></li>
+<li>an <strong>agent</strong> to solve the environment.</li>
+</ul>
+
+<aside class="notice">
+An experiment runs the variations of agent by changing its parameters (experiment variables) while holding others constants (control), and measure the fitness_score (outcome) to solve the environment.
+</aside>
+
+<h2 id="specification">Specification</h2>
+
+<p>An experiment is specified by an <code class="prettyprint">experiment_spec</code> in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>It consists of:</p>
+
+<ul>
+<li><code class="prettyprint">experiment_name</code>: the key of the JSON. e.g. <code class="prettyprint">dqn</code></li>
+<li><code class="prettyprint">problem</code>: name of the environment. e.g. <code class="prettyprint">CartPole-v0</code></li>
+<li><strong>agent</strong>: and its components in <code class="prettyprint">rl/</code>, specified by the class name
+
+<ul>
+<li><code class="prettyprint">Agent</code> (Learning algorithm): decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.</li>
+<li><code class="prettyprint">Policy</code>: decision function for acting in an environment. Controls exploration vs. exploitation trade off(e.g. epsilon greedy, boltzmann)</li>
+<li><code class="prettyprint">Memory</code>: for storing experiences gained by acting in an environment. Controls how experiences are sampled for an agent to learn from. (e.g. random uniform with no forgetting, prioritized sampling with forgetting)</li>
+<li><code class="prettyprint">Optimizer</code>: controls how to optimize the function approximators contained within the agent (e.g. Stochatic Gradient Descent, Adam) </li>
+<li><code class="prettyprint">HyperOptimizer</code>: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them (e.g grid search, random search)</li>
+<li><code class="prettyprint">Preprocessor</code>: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.</li>
+</ul></li>
+<li><code class="prettyprint">param</code>: the default parameter values used (control variables)</li>
+<li><code class="prettyprint">param_range</code>: the hyperparameter space ranges to search through by <code class="prettyprint">HyperOptimimzer</code> (experiment variables).</li>
+</ul>
+
+<h2 id="structure"><a name="structure"></a>Structure</h2>
+
+<p>How <code class="prettyprint">experiments &gt; trials &gt; sessions</code> are organized and ran.</p>
+
+<p>When the Lab runs an <strong>experiment</strong> with <code class="prettyprint">experiment_name</code> (e.g. <code class="prettyprint">dqn</code>):</p>
+
+<ul>
+<li>it creates a timestamped <code class="prettyprint">experiment_id</code> (<code class="prettyprint">dqn-2017_03_19_004714</code>)</li>
+<li>the <strong>experiment</strong> runs multiple trials over the hyperparameter space
+
+<ul>
+<li>the trials are ordered for resumability (in case machine dies)</li>
+<li>each trial has <code class="prettyprint">trial_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0</code>), tied to a unique set of param values</li>
+<li>a <strong>trial</strong> runs multiple sessions
+
+<ul>
+<li>each <strong>session</strong> has <code class="prettyprint">session_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0_s0</code>)</li>
+<li>a session runs the environment-agent, produces graphs and <code class="prettyprint">session_data</code> i.e. <code class="prettyprint">sys_vars</code></li>
+<li>the session saves its graph to <code class="prettyprint">&lt;session_id&gt;.png</code></li>
+<li>the session returns <code class="prettyprint">sys_vars</code> to its trial</li>
+</ul></li>
+<li>the trial gathers all the <code class="prettyprint">sys_vars</code>, run some averaging analytics, then compose all that into <code class="prettyprint">trial_data</code></li>
+<li>the trial returns the <code class="prettyprint">trial_data</code> and saves it to <code class="prettyprint">&lt;trial_id&gt;.json</code></li>
+</ul></li>
+<li>the experiment composes all <code class="prettyprint">trial_data</code> into a <code class="prettyprint">experiment_data</code></li>
+<li>it runs analytics to produce graphs <code class="prettyprint">&lt;experiment_id&gt;_analysis.png, &lt;experiment_id&gt;_correlation.png</code></li>
+<li>it compute the <code class="prettyprint">fitness_score</code> for each trial, rank them by best-first, then save the data grid to <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
+<li>experiment ends</li>
+</ul>
+
+<h2 id="lab-demo"><a name="demo"></a>Lab Demo</h2>
+
+<p>Given the framework explained above, here&rsquo;s a quick demo.</p>
+
+<p>Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a <code class="prettyprint">Boltzmann</code> policy, and try to find the best parameter sets for this new agent.</p>
+
+<h3 id="specify-experiment">Specify Experiment</h3>
+
+<p>The example below is fully specified in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Specifically of interests, we have specified the variables:</p>
+
+<ul>
+<li><em>experiment_name</em>: <code class="prettyprint">dqn</code></li>
+<li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
+<li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
+<li><em>control agent variables</em>:
+
+<ul>
+<li><code class="prettyprint">DQN</code> agent</li>
+<li><code class="prettyprint">LinearMemoryWithForgetting</code></li>
+<li><code class="prettyprint">AdamOptimizer</code></li>
+<li><code class="prettyprint">NoPreProcessor</code></li>
+</ul></li>
+<li><em>hyperparameter space</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
+<li><em>hyperparameter optimizer</em>: <code class="prettyprint">GridSearch</code></li>
+</ul>
+
+<p>Given <code class="prettyprint">GridSearch HyperOptimizer</code>, this <strong>experiment</strong> will try all the discrete combinations of the <code class="prettyprint">param_range</code>, which makes for <code class="prettyprint">4x4x5=80</code> trials. Each <strong>trial</strong> will run a max of 5 <strong>sessions</strong> (terminate on 2 if fail to solve). Overall, this experiments will run at most <code class="prettyprint">80 x 5 = 400</code> sessions, then produce <code class="prettyprint">experiment_data</code> and the analytics.</p>
+
+<h3 id="lab-workflow">Lab Workflow</h3>
+
+<p>The example workflow to setup this experiment is as follow:</p>
+
+<ol>
+<li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
+<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">rl/spec/classic_experiment_spec.json</code> to include this new variable, reuse the other existing RL components, and specify the param range.</li>
+<li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
+<li>Run experiment with <code class="prettyprint">grunt -prod</code></li>
+<li>Analyze the graphs and data</li>
+</ol>
+
+<p>Now that you can produce the experiment data and graphs, see how to <a href="#analysis">analyze them</a>.</p>
+
+          <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
+
+<p>Once the Lab is running experiments, it will produce data. This section details how to analyze and understand the data, before we can contribute to the <a href="#solutions">Solutions</a>.</p>
+
+<p>An experiment produces 3 types of data files in the folder <code class="prettyprint">data/&lt;experiment_id&gt;/</code>:</p>
+
+<ul>
+<li><strong>session plots</strong>: <code class="prettyprint">&lt;session_id&gt;.png</code></li>
+<li><strong>trial_data</strong>: <code class="prettyprint">&lt;trial_id&gt;.json</code></li>
+<li><strong>experiment data</strong>:
+
+<ul>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis.png</code></li>
+<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_correlation.png</code></li>
+</ul></li>
+</ul>
+
+<aside class="notice">
+Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
+</aside>
+
+<p>We will illustrate with an example experiment from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn solution PR</a>.</p>
+
+<h2 id="session-graphs">Session Graphs</h2>
+
+<blockquote>
+<p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
+<em>The best session graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
+</blockquote>
+
+<p>When an experiment is running, the lab will plot the session graphs live, one for each session.</p>
+
+<h3 id="how-to-read">How to read</h3>
+
+<p>A session graph has 3 subplots:</p>
+
+<ol>
+<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (<code class="prettyprint">epsilon</code>, <code class="prettyprint">tau</code>, etc. depending on the policy).</p>
+
+<p>The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
+<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above.</p>
+
+<p>Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently <em>strong</em> and <em>stable</em>.</p></li>
+<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s neural net. This graph is all the losses  concatenated over time, over all episodes.</p>
+
+<p>There is no specific unit for the loss as it depends on what loss function is used in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
+</ol>
+
+<aside class="notice">
+When developing a new algorithm, use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
+</aside>
+
+<h2 id="analysis-graph">Analysis Graph</h2>
+
+<blockquote>
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24582680/bc9fd9ae-1702-11e7-881b-38f7f379d6ff.png" title="Analysis graph" alt="Bc9fd9ae 1702 11e7 881b 38f7f379d6ff" />
+<em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
+</blockquote>
+
+<p>The <strong>analysis graph</strong> is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
+
+<h3 id="the-y-axis-measurement-metrics">The y-axis measurement metrics</h3>
+
+<ol>
+<li><p><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</p></li>
+<li><p><code class="prettyprint">mean_rewards_stats_max</code>: the max of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the max solution power of a trial.</p></li>
+<li><p><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</p></li>
+<li><p><code class="prettyprint">epi_stats_min</code>: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.</p></li>
+</ol>
+
+<p><a name="hue"></a>### The hue metrics</p>
+
+<p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
+
+<ul>
+<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial, 0 means none, 1 means all.</li>
+</ul>
+
+<p>The granularity of the <code class="prettyprint">solved_ratio_of_sessions</code> depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it&rsquo;s the best tradeoff between granularity and computation time.</p>
+
+<p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.</p>
+
+<h3 id="how-to-read">How to read</h3>
+
+<p>Every subplot in the graph shows the distribution of all the trial points in the pair of <em>y vs x</em> variables, with the other <em>x&rsquo;</em> dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.</p>
+
+<p>Note that these will use <a href="http://seaborn.pydata.org/generated/seaborn.swarmplot.html">swarmplot</a> which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.</p>
+
+<blockquote>
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24582554/1fbefc98-1700-11e7-85f8-b0740b25007f.png" title="The acrobot random search analysis graph" alt="1fbefc98 1700 11e7 85f8 b0740b25007f" />
+<em>An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the <a href="https://github.com/kengz/openai_lab/pull/94">rand_acrobot-2017_03_28_082754 PR</a></em></p>
+</blockquote>
+
+<p><strong>Population distribution</strong>: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the <em>x</em> is a stabler value for the <em>y</em> value even when other <em>x&rsquo;</em> dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.</p>
+
+<p><strong>trend across y-values</strong>: the fitter trial will show up higher in the y-axes (except for <code class="prettyprint">epi_stats_min</code>). Generally good solutions are scarce and they show up at higher <code class="prettyprint">fitness_score</code>, whereas the non-solutions get clustered in the lower region. Notice how the <code class="prettyprint">fitness_score</code> plots can clearly distinguish the good solutions (darker points), whereas in the <code class="prettyprint">mean_rewards_stats_max</code> and <code class="prettyprint">max_total_rewards_stats_mean</code> plots it is hard to tell apart. We will discuss how the custom-formulated <code class="prettyprint">fitness_score</code> function achieves this in the <a href="#metrics">metrics</a> section.</p>
+
+<p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
+
+<h2 id="correlation-graph">Correlation Graph</h2>
+
+<blockquote>
+<p><img src="https://cloud.githubusercontent.com/assets/8209263/24582681/be76f4ec-1702-11e7-9935-2491189ab1e6.png" title="Correlation graph" alt="Be76f4ec 1702 11e7 9935 2491189ab1e6" />
+<em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
+</blockquote>
+
+<p>The <strong>correlation graph</strong> reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.</p>
+
+<h3 id="how-to-read">How to read</h3>
+
+<p>The diagonals simply shows the population distribution for that x-value; the off-diagonal plots show the fitness score heatmap that tells how to best combine separate parameter values. Note that the heatmap color scheme does not represent absolute fitness, but points are colored by which <code class="prettyprint">fitness_score_bin</code> they fall into.</p>
+
+<p>The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.</p>
+
+<h2 id="data">Data</h2>
+
+<p>After glancing through the graphs, it will be easier to understand the data and find the targets.</p>
+
+<h3 id="how-to-read">How to read</h3>
+
+<p>The <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code> will show the data for each trial, sorted by the highest <code class="prettyprint">fitness_score</code> first. The left columns are the measured output values; then they&rsquo;re separated by the <code class="prettyprint">trial_id</code>; the right columns are the parameter values for the trial.</p>
+
+<p>The <code class="prettyprint">trial_id</code> will tell us which <code class="prettyprint">trial_data</code> to check for even more details on the best trials. Usually we can also spot some trend in the right parameter columns.</p>
+
+<p>The best <code class="prettyprint">&lt;trial_id&gt;.json</code> will show us directly what is its <code class="prettyprint">experiment_spec</code>, and more stats about the trial. When <a href="#solutions">submitting a solution PR</a>, retrieve the <code class="prettyprint">experiment_spec</code> to update the default <code class="prettyprint">*_experiment_spec.json</code>, and get the <code class="prettyprint">fitness_score</code> from here too.</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">best_session_epi</th>
+<th style="text-align: left">best_session_id</th>
+<th style="text-align: left">best_session_mean_rewards</th>
+<th style="text-align: left">best_session_stability</th>
+<th style="text-align: left">fitness_score</th>
+<th style="text-align: left">mean_rewards_per_epi_stats_mean</th>
+<th style="text-align: left">mean_rewards_stats_mean</th>
+<th style="text-align: left">mean_rewards_stats_max</th>
+<th style="text-align: left">epi_stats_mean</th>
+<th style="text-align: left">epi_stats_min</th>
+<th style="text-align: left">solved_ratio_of_sessions</th>
+<th style="text-align: left">max_total_rewards_stats_mean</th>
+<th style="text-align: left">trial_id</th>
+<th style="text-align: left">variable_gamma</th>
+<th style="text-align: left">variable_hidden_layers</th>
+<th style="text-align: left">variable_lr</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">114</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t79_s2</td>
+<td style="text-align: left">195.59</td>
+<td style="text-align: left">0.845361</td>
+<td style="text-align: left">9.635032</td>
+<td style="text-align: left">1.326499</td>
+<td style="text-align: left">195.404</td>
+<td style="text-align: left">195.66</td>
+<td style="text-align: left">154.2</td>
+<td style="text-align: left">114.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t79</td>
+<td style="text-align: left">0.999</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.02</td>
+</tr>
+<tr>
+<td style="text-align: left">157</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t36_s4</td>
+<td style="text-align: left">196.07</td>
+<td style="text-align: left">1.010526</td>
+<td style="text-align: left">9.282276</td>
+<td style="text-align: left">1.155354</td>
+<td style="text-align: left">195.602</td>
+<td style="text-align: left">196.07</td>
+<td style="text-align: left">169.0</td>
+<td style="text-align: left">157.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t36</td>
+<td style="text-align: left">0.97</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">140</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t28_s0</td>
+<td style="text-align: left">196.11</td>
+<td style="text-align: left">0.989474</td>
+<td style="text-align: left">9.178363</td>
+<td style="text-align: left">1.179311</td>
+<td style="text-align: left">195.564</td>
+<td style="text-align: left">196.11</td>
+<td style="text-align: left">167.2</td>
+<td style="text-align: left">140.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t28</td>
+<td style="text-align: left">0.97</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+<tr>
+<td style="text-align: left">123</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t50_s0</td>
+<td style="text-align: left">195.16</td>
+<td style="text-align: left">0.96875</td>
+<td style="text-align: left">9.074483</td>
+<td style="text-align: left">1.276302</td>
+<td style="text-align: left">195.136</td>
+<td style="text-align: left">195.3</td>
+<td style="text-align: left">160.6</td>
+<td style="text-align: left">123.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t50</td>
+<td style="text-align: left">0.99</td>
+<td style="text-align: left">[32]</td>
+<td style="text-align: left">0.01</td>
+</tr>
+<tr>
+<td style="text-align: left">153</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t16_s2</td>
+<td style="text-align: left">195.48</td>
+<td style="text-align: left">1.010526</td>
+<td style="text-align: left">8.98669</td>
+<td style="text-align: left">1.159941</td>
+<td style="text-align: left">195.466</td>
+<td style="text-align: left">195.7</td>
+<td style="text-align: left">168.6</td>
+<td style="text-align: left">153.0</td>
+<td style="text-align: left">1.0</td>
+<td style="text-align: left">200.0</td>
+<td style="text-align: left">dqn-2017_03_19_004714_t16</td>
+<td style="text-align: left">0.95</td>
+<td style="text-align: left">[64]</td>
+<td style="text-align: left">0.001</td>
+</tr>
+</tbody></table>
+
+<p><em><code class="prettyprint">dqn-2017_03_19_004714_analysis_data.csv</code>, top 5 trials, from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.</em></p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"experiment_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"best_session_epi"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_03_19_004714_t79_s2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_mean_rewards"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.59</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"best_session_stability"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8453608</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.635032</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"solved_ratio_of_sessions"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span></code></pre>
+<p>This concludes the analysis. See the <a href="https://github.com/kengz/openai_lab/pull/73">solution PR here</a>. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with <code class="prettyprint">fitness_score=9.487062</code>, and the variables:</p>
+
+<ul>
+<li><em>lr</em>: 0.02</li>
+<li><em>gamma</em>: 0.999</li>
+<li><em>hidden_layers_shape</em>: [64]</li>
+</ul>
+
+<p>Now that you know how to analyze the data,</p>
+
+<ul>
+<li><a href="#solutions">start finding problems to beat and submitting your solutions</a></li>
+<li><a href="#metrics">learn more about the evaluation metrics</a></li>
+</ul>
+
+          <h1 id="solutions"><a name="solutions"></a>Solutions</h1>
+
+<p>Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
+
+<h2 id="submission-instructions">Submission instructions</h2>
+
+<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See examples from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
+
+<p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
+
+<h2 id="fitness-matrix"><a name="fitness-matrix"></a>Fitness Matrix</h2>
+
+<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>, sourced from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>. See <a href="#metrics">Metric</a> for the design of fitness score and generalized metrics.</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left"></th>
+<th style="text-align: left">DQN</th>
+<th style="text-align: left">double-DQN</th>
+<th style="text-align: left">SARSA</th>
+<th style="text-align: left">DDPG</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>CartPole-v0</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/73">9.635032</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">10.34826</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">12.98525</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>CartPole-v1</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">13.22935</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">16.06697</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Acrobot-v1</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/94">-0.1051617</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/98">-0.1045992</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/97">-0.1127294</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MountainCar-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MountainCarContinuous-v0</strong></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Pendulum-v0</strong></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>LunarLander-v2</strong></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">2.786624</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.992104</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/96">3.313421</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>LunarLanderContinuous-v2</strong></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>BipedalWalker-v2</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>BipedalWalkerHardcore-v2</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>CarRacing-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>AirRaid-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Alien-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Assault-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Breakout-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>MsPacman-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Pong-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Qbert-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>SpaceInvader-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>FlappyBird-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Snake-v0</strong></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h2 id="agents">Agents</h2>
+
+<p>The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see <a href="#agents">Agents</a></p>
+
+<p><em>Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">algorithm</th>
+<th style="text-align: left">implemented?</th>
+<th style="text-align: left">eval score</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">double-DQN</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">dueling-DQN</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SARSA</td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
+<td style="text-align: left">✓</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Q*(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Retrace(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
+<td style="text-align: left">in-progress</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h2 id="environments">Environments</h2>
+
+<p>The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
+
+<h3 id="classic-environments">Classic Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">CartPole-v0</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">12.98525</a></td>
+<td style="text-align: left">9</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">offpol_sarsa</td>
+</tr>
+<tr>
+<td style="text-align: left">CartPole-v1</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">16.06697</a></td>
+<td style="text-align: left">16</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">double_dqn_v1</td>
+</tr>
+<tr>
+<td style="text-align: left">Acrobot-v1</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/98">-0.1045992</a></td>
+<td style="text-align: left">-104.34</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">acrobot_offpol_sarsa</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCar-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MountainCarContinuous-v0</td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pendulum-v0</td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="box2d-environments">Box2D Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">LunarLander-v2</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/96">3.313421</a></td>
+<td style="text-align: left">200</td>
+<td style="text-align: left">kengz/lgraesser</td>
+<td style="text-align: left">lunar_offpol_sarsa</td>
+</tr>
+<tr>
+<td style="text-align: left">LunarLanderContinuous-v2</td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left"><em>n/a</em></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalker-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">BipedalWalkerHardcore-v2</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">CarRacing-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="atari-environments">Atari Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">AirRaid-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Alien-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Assault-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Breakout-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">MsPacman-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Pong-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Qbert-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">SpaceInvader-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="pygame-environments">PyGame Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">FlappyBird-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Snake-v0</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+<h3 id="universe-environments">Universe Environments</h3>
+
+<table><thead>
+<tr>
+<th style="text-align: left">problem</th>
+<th style="text-align: left">fitness score</th>
+<th style="text-align: left">epis before solve / best 100-epi mean</th>
+<th style="text-align: left">author</th>
+<th style="text-align: left">experiment_spec</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
+
+          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
+
+<p>The Lab setup allows us to run experiments at scale; the standardized framework also allows us to reliably compare multiple agents (algorithms) and environments (problems). These are shown with the <a href="#fitness-matrix">Fitness Matrix</a>, which also necessitates a higher level evaluation metric.</p>
+
+<p>With the Lab, we are breeding multiple agents across many environments and selecting the best ones. Naturally, this selection metric is called the <code class="prettyprint">fitness_score</code>. Some evolutionary search algorithm for the <code class="prettyprint">HyperOptimizer</code> is on our <a href="#roadmap">roadmap</a>.</p>
+
+<p>The Fitness Matrix is a projection from the parameter space of each agent-environment pair, where each matrix cell is the highest fitness score the agent could achieve in the environment.</p>
+
+<p>To understand the bigger picture, the domain for the fitness function for each matrix cell is the parameter space of the agent conditioned on the environment. Inside the parameter space, each point gets mapped to a fitness score.</p>
+
+<p>To analogize, see fitness score as temperature, then we have a heatmap inside the parameter space, and we are searching for the hottest point and recording that in a cell of the Fitness Matrix.</p>
+
+<p>In this section, we will formalize these ideas.</p>
+
+<h2 id="fitness-score"><a name="fitness"></a>Fitness Score</h2>
+
+<p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
+
+<p>The fitness function&rsquo;s design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the <code class="prettyprint">mean rewards</code> metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under <em>strength</em>.</p>
+
+<p>The fitness score of a trial is as follows:</p>
+
+<p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
+
+<p>or renaming variables by what the terms represent:</p>
+
+<p><code class="prettyprint">fitness_score = power * distinguisher</code></p>
+
+<p>where</p>
+
+<ul>
+<li><code class="prettyprint">power = mean_rewards_per_epi_mean</code></li>
+<li><code class="prettyprint">distinguisher = amplifier ** sign(power)</code></li>
+<li><code class="prettyprint">amplifier = (1+stability_mean) * ((1+consistency)**2)</code></li>
+</ul>
+
+<p>The fitness score is designed to capture the following:</p>
+
+<ol>
+<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code> (over the past 100 episodes)</li>
+<li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
+<li><strong>stability</strong>: session-level stability, <code class="prettyprint">stable_epi_count / mastery_gap</code></li>
+<li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
+<li><strong>granularity</strong>: in <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code> to ensure partial solution doesn&rsquo;t get lost when stability and consistency = 0</li>
+<li><strong>amplification</strong>: amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code>, and by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code></li>
+<li><strong>distinguishability</strong>: multiply amplifier if <code class="prettyprint">power</code> is positive, else divide; essentially <code class="prettyprint">*(amplifier**sign(power))</code></li>
+</ol>
+
+<h3 id="strength">Strength</h3>
+
+<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is. The mean is taken over the past 100 episodes, as common to OpenAI gym.</p>
+
+<h3 id="speed">Speed</h3>
+
+<p>Given two same <code class="prettyprint">mean_rewards</code>, the agent that achieves it in less episodes is faster, with <code class="prettyprint">speed = 1/epi</code>. This yields the notion of <code class="prettyprint">power = strength * speed = mean_rewards_per_epi</code>. Use the sessions-mean of a trial, i.e. <code class="prettyprint">mean_rewards_per_epi_mean</code> = mean of multiple <code class="prettyprint">mean_rewards_per_epi</code> values.</p>
+
+<h3 id="stability">Stability</h3>
+
+<p><code class="prettyprint">stability = stable_epi_count / mastery_gap</code> for a session, with range <code class="prettyprint">0.0 - 1.0</code> from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple <code class="prettyprint">stability</code> values.</p>
+
+<ul>
+<li><code class="prettyprint">stable_epi_count</code> = the number of stable episodes, where stable means an episode passes the <code class="prettyprint">r_threshold</code>.</li>
+<li><code class="prettyprint">r_threshold</code> = <code class="prettyprint">sys_vars[&#39;SOLVED_MEAN_REWARD&#39;]</code> if the problem is solvable; <code class="prettyprint">max_rewards - (0.10 * (max_rewards-min_rewards))</code> otherwise.</li>
+<li><code class="prettyprint">first_solved_epi</code> = first episode that passes the <code class="prettyprint">r_threshold</code>.</li>
+<li><code class="prettyprint">mastery_gap</code> = <code class="prettyprint">last_epi - first_solved_epi</code> normally, or <code class="prettyprint">INF</code> to yield stability 0.0 if <code class="prettyprint">first_solved_epi</code> is undefined because no episode passes the threshold.</li>
+</ul>
+
+<p>The reasoning for the definition is simple: regardless if the problem is solved or not, we want to see if the agent could stability its performance. Once it solves (for solvable problems) or achieves a sufficiently high score (unsolved problems), its <code class="prettyprint">mean_rewards</code> every episode should not drop too much, even when accounting for random fluctuations. We can define a minimal threshold (10% less than the ideal) that the subsequent episodes should surpass. Then, the stability is simple the ratio of the number of episodes that pass the threshold after the first solution.</p>
+
+<h3 id="consistency">Consistency</h3>
+
+<p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
+
+<p><code class="prettyprint">consistency = 0</code> always for unsolved problems (unbounded rewards) since solution is undefined.</p>
+
+<h3 id="granularity">Granularity</h3>
+
+<p>When <code class="prettyprint">stability=0</code> or <code class="prettyprint">consistency=0</code> the multiplier will drop to zero, regardless if there is any partial solutions. This will make training harder as the agent will not learn from partial solutions if these are treated as non-solutions. So, restore the granularity that preserves partial solution simply by adding 1, i.e. <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code>.</p>
+
+<h3 id="amplification">Amplification</h3>
+
+<p>To separate solutions from noise, amplify the good ones and separate them out, while diminish and cluster the worse ones together. Amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code> since it&rsquo;s of the same order as <code class="prettyprint">power</code>. Amplify by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code> since trial stability is of the next order. Amplifier is always positive.</p>
+
+<h3 id="distinguishability">Distinguishability</h3>
+
+<p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
+
+<h2 id="generalized-metrics">Generalized Metrics</h2>
+
+<p>With the fitness function defined above, we can evaluate a single agent in a single environment. In fact, this is a single experiment with multiple trials, and we compute a fitness score per trial, using the trial&rsquo;s parameter values. We then pick the max fitness score for the Fitness Matrix.</p>
+
+<p>Given that the Lab can run multiple agents across environments in its standardized framework, naturally we ask:</p>
+
+<ul>
+<li>we can evaluate <strong>one agent in one environment</strong>, (experiment metrics)</li>
+<li>how do we evaluate and compare <strong>multiple agents in one environment</strong>? (environment metrics)</li>
+<li>how about <strong>one agent in multiple environments</strong>? (agent metrics)</li>
+<li>how about the universal-view of <strong>multiple agents in multiple environments</strong>? (universal metrics)</li>
+</ul>
+
+<p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
+
+<h3 id="generalization"><a name="generalization"></a>Generalization</h3>
+
+<p>We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the <a href="#fitness-matrix">Fitness Matrix</a>.</p>
+
+<p><em>We&rsquo;re using LaTeX for better symbolic rendering.</em></p>
+
+<p><img src="images/metric_1.png" alt="Metric 1" />
+<img src="images/metric_2.png" alt="Metric 2" />
+<img src="images/metric_3.png" alt="Metric 3" />
+<img src="images/metric_4.png" alt="Metric 4" /></p>
 
           <h1 id="agents"><a name="agents"></a>Agents</h1>
 
@@ -826,7 +1880,7 @@ return A</p>
 
 <p>Q-learning algorithms attempt to estimate the optimal Q function, i.e thevalue of taking action A in state S under a specific policy. Q-learning algorithms have an implicit policy, typically \epsilon-greedy in which the action with the maximum Q value is selected with probability(1 - \epsilon) and a random action is taken with probability \epsilon. The random actions encourage exploration of the state space and help prevent algorithms from getting stuck in local minima. Q-learning algorithms are off-policy algorithms in that the policy used to evaluate the value of the action taken is different to the policy used to determine which state-action pairs are visited. It is also a temporal difference algorithm. Updates  to the Q function are based on existing estimates. The estimate in time t is updated using an estimate from time t+1. This allows Q-Learning algorithms to be online and incremental, so the agent can be trained during an episode. The update to Q_t(S, A) is as follows</p>
 
-<p>$$ Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma max_A Q(S_{t+1}, A) - Q(S_t, A)] $$</p>
+<p><img src="images/q_learning.png" alt="Q learning" /></p>
 
 <p>For more details, please see chapter 6 of <a href="https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf">Reinforcement Learning: An Introduction, Sutton and Barto</a></p>
 
@@ -836,16 +1890,7 @@ return A</p>
 
 <p>Standard Q-learning algorithm with experience replay. Online training every n experiences.</p>
 
-<p>Q update:</p>
-
-<p>$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma max_a Q(S&rsquo;, A) - Q(S, A)] $$</p>
-
-<p>Translation to neural network update:</p>
-
-<p>Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma max_a Q(S&rsquo;, A)]</p>
+<p><img src="images/deep_q_learning.png" alt="Deep q learning" /></p>
 
 <p>Agents: </p>
 
@@ -858,19 +1903,7 @@ Target (y vals):  [R + \gamma max_a Q(S&rsquo;, A)]</p>
 
 <p>Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S&rsquo;, the other is used to evaluate the action in state S&rsquo;. Periodically the roles of each Q function are switched. Online training every n experiences.</p>
 
-<p>Q update(alternate between 1 and 2)</p>
-
-<ol>
-<li>$ Q_1(S, A) \Leftarrow Q_1(S, A) + \alpha [R + \gamma Q_2(S&rsquo;, argmax_A Q_1(S&rsquo;, A)) - Q1(S, A)] $</li>
-<li>$Q_2(S, A) \Leftarrow Q_2(S, A) + \alpha [R + \gamma Q_1(S&rsquo;, argmax_A Q_2(S&rsquo;, A)) - Q2(S, A)] $</li>
-</ol>
-
-<p>Translation to neural network update:</p>
-
-<p>Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q_1(S, A) or Q_2(S, A)<br>
-Target (y vals):  [R + \gamma Q_1(S&rsquo;, argmax_A Q_2(S&rsquo;, A))] or [R + \gamma Q_2(S&rsquo;, argmax_A Q_1(S&rsquo;, A))]</p>
+<p><img src="images/double_q_learning.png" alt="Double q learning" /></p>
 
 <p>Agents</p>
 
@@ -883,18 +1916,7 @@ Target (y vals):  [R + \gamma Q_1(S&rsquo;, argmax_A Q_2(S&rsquo;, A))] or [R + 
 
 <p>Deep Q-Learning algorithms tends to be unstable. To address this issue, create two Q function approximators, one for exploration, Q_e, and one for evaluating the target, Q_t. The target is a copy of the exploration network with frozen weights which lag the exploration network. These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See <a href="http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf">David Silver&rsquo;s</a> lecture slides for more details. Online training every n experiences.</p>
 
-<p>Q update:</p>
-
-<p>$$Q_e(S, A) \Leftarrow Q_e(S, A) + \alpha [R + \gamma max_A Q_t(S&rsquo;, A) - Q_e(S, A)]$$
-Periodically set $Q_t = Q_e$ (e.g. after every episode) or $Q_t = (1 - \epsilon)Q_t + \epsilon Q_e$</p>
-
-<p>Translation to neural network update:</p>
-
-<p>Learning rate: \alpha
-Input (x vals):  $(S, A)$
-Network output: $Q_e(S, A)$
-Target $(y vals):  [R + \gamma max_A Q_t(S&rsquo;, A)]$
-Update is to $Q_e$</p>
+<p><img src="images/freeze_dqn.png" alt="Freeze dqn" /></p>
 
 <p>Agents</p>
 
@@ -908,8 +1930,7 @@ Update is to $Q_e$</p>
 
 <p>Sarsa update:</p>
 
-<p>Select $A_{t+1}$ in state $S_{t+1}$ using policy
-$Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A)]$</p>
+<p><img src="images/sarsa.png" alt="Sarsa" /></p>
 
 <p>This update is made each time the agent acts in an environment and gets an experience <S_t, A_t, R_{t+1}, S_{t+1}></p>
 
@@ -917,16 +1938,7 @@ $Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1
 
 <p>Standard Sarsa algortthm</p>
 
-<p>Q update (same as Q-Learning):</p>
-
-<p>$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma max_a Q(S&rsquo;, A) - Q(S, A)] $$</p>
-
-<p>Translation to neural network update:</p>
-
-<p>Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma max_a Q(S&rsquo;, A)]</p>
+<p><img src="images/deep_sarsa.png" alt="Deep sarsa" /></p>
 
 <p>Agents</p>
 
@@ -938,16 +1950,7 @@ Target (y vals):  [R + \gamma max_a Q(S&rsquo;, A)]</p>
 
 <p>Uses the expected value of the Q function under the current policy to construct the target instead of the Q-value for the action selected.</p>
 
-<p>Q update (same and Q-Learning):</p>
-
-<p>$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma E_a Q(S&rsquo;, a) - Q(S, A)] $$</p>
-
-<p>Translation to neural network update:</p>
-
-<p>Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
+<p><img src="images/expected_sarsa.png" alt="Expected sarsa" /></p>
 
 <p>Agents</p>
 
@@ -969,1079 +1972,13 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 
 <h3 id="policy-gradient">Policy Gradient</h3>
 
-<h4 id="deep-deterministic-policy-gradients-in-progress">Deep Deterministic Policy Gradients:  In progress</h4>
-
-          <h1 id="experiments"><a name="experiments"></a>Experiments</h1>
-
-<p>The experimental framework design and terminology should be familiar, since they&rsquo;re borrowed from experimental science. The Lab runs experiments and produces data for <a href="#analysis">analysis</a>.</p>
-
-<h2 id="definition">Definition</h2>
-
-<p>An <strong>experiment</strong> runs separate <strong>trials</strong> by varying parameters. Each <strong>trial</strong> runs multiple <strong>sessions</strong> for averaging the results.</p>
-
-<p>An experiment consists of:</p>
-
-<ul>
-<li>an <strong>environment</strong> (problem) from <a href="https://gym.openai.com/envs">OpenAI Gym</a></li>
-<li>an <strong>agent</strong> to solve the environment.</li>
-</ul>
-
-<aside class="notice">
-An experiment runs the variations of agent by changing its parameters (experiment variables) while holding others constants (control), and measure the fitness_score (outcome) to solve the environment.
-</aside>
-
-<h2 id="specification">Specification</h2>
-
-<p>An experiment is specified by an <code class="prettyprint">experiment_spec</code> in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>.</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
-      </span><span class="p">]</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>It consists of:</p>
-
-<ul>
-<li><code class="prettyprint">experiment_name</code>: the key of the JSON. e.g. <code class="prettyprint">dqn</code></li>
-<li><code class="prettyprint">problem</code>: name of the environment. e.g. <code class="prettyprint">CartPole-v0</code></li>
-<li><strong>agent</strong>: and its components in <code class="prettyprint">rl/</code>, specified by the class name
-
-<ul>
-<li><code class="prettyprint">Agent</code> (Learning algorithm): decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.</li>
-<li><code class="prettyprint">Policy</code>: decision function for acting in an environment. Controls exploration vs. exploitation trade off(e.g. epsilon greedy, boltzmann)</li>
-<li><code class="prettyprint">Memory</code>: for storing experiences gained by acting in an environment. Controls how experiences are sampled for an agent to learn from. (e.g. random uniform with no forgetting, prioritized sampling with forgetting)</li>
-<li><code class="prettyprint">Optimizer</code>: controls how to optimize the function approximators contained within the agent (e.g. Stochatic Gradient Descent, Adam) </li>
-<li><code class="prettyprint">HyperOptimizer</code>: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them (e.g grid search, random search)</li>
-<li><code class="prettyprint">Preprocessor</code>: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.</li>
-</ul></li>
-<li><code class="prettyprint">param</code>: the default parameter values used (control variables)</li>
-<li><code class="prettyprint">param_range</code>: the hyperparameter space ranges to search through by <code class="prettyprint">HyperOptimimzer</code> (experiment variables).</li>
-</ul>
-
-<h2 id="structure"><a name="structure"></a>Structure</h2>
-
-<p>How <code class="prettyprint">experiments &gt; trials &gt; sessions</code> are organized and ran.</p>
-
-<p>When the Lab runs an <strong>experiment</strong> with <code class="prettyprint">experiment_name</code> (e.g. <code class="prettyprint">dqn</code>):</p>
-
-<ul>
-<li>it creates a timestamped <code class="prettyprint">experiment_id</code> (<code class="prettyprint">dqn-2017_03_19_004714</code>)</li>
-<li>the <strong>experiment</strong> runs multiple trials over the hyperparameter space
-
-<ul>
-<li>the trials are ordered for resumability (in case machine dies)</li>
-<li>each trial has <code class="prettyprint">trial_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0</code>), tied to a unique set of param values</li>
-<li>a <strong>trial</strong> runs multiple sessions
-
-<ul>
-<li>each <strong>session</strong> has <code class="prettyprint">session_id</code> (<code class="prettyprint">dqn-2017_03_19_004714_t0_s0</code>)</li>
-<li>a session runs the environment-agent, produces graphs and <code class="prettyprint">session_data</code> i.e. <code class="prettyprint">sys_vars</code></li>
-<li>the session saves its graph to <code class="prettyprint">&lt;session_id&gt;.png</code></li>
-<li>the session returns <code class="prettyprint">sys_vars</code> to its trial</li>
-</ul></li>
-<li>the trial gathers all the <code class="prettyprint">sys_vars</code>, run some averaging analytics, then compose all that into <code class="prettyprint">trial_data</code></li>
-<li>the trial returns the <code class="prettyprint">trial_data</code> and saves it to <code class="prettyprint">&lt;trial_id&gt;.json</code></li>
-</ul></li>
-<li>the experiment composes all <code class="prettyprint">trial_data</code> into a <code class="prettyprint">experiment_data</code></li>
-<li>it runs analytics to produce graphs <code class="prettyprint">&lt;experiment_id&gt;_analysis.png, &lt;experiment_id&gt;_correlation.png</code></li>
-<li>it compute the <code class="prettyprint">fitness_score</code> for each trial, rank them by best-first, then save the data grid to <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
-<li>experiment ends</li>
-</ul>
-
-<h2 id="lab-demo"><a name="demo"></a>Lab Demo</h2>
-
-<p>Given the framework explained above, here&rsquo;s a quick demo.</p>
-
-<p>Suppose we aim to solve the CartPole-v0 problem with the plain DQN agent.  Suppose again for this experiment, we implement a new agent component, namely a <code class="prettyprint">Boltzmann</code> policy, and try to find the best parameter sets for this new agent.</p>
-
-<h3 id="specify-experiment">Specify Experiment</h3>
-
-<p>The example below is fully specified in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code>:</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
-      </span><span class="p">]</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>Specifically of interests, we have specified the variables:</p>
-
-<ul>
-<li><em>experiment_name</em>: <code class="prettyprint">dqn</code></li>
-<li><em>problem</em>: <a href="https://gym.openai.com/envs/CartPole-v0">CartPole-v0</a></li>
-<li><em>variable agent component</em>: <code class="prettyprint">Boltzmann</code> policy</li>
-<li><em>control agent variables</em>:
-
-<ul>
-<li><code class="prettyprint">DQN</code> agent</li>
-<li><code class="prettyprint">LinearMemoryWithForgetting</code></li>
-<li><code class="prettyprint">AdamOptimizer</code></li>
-<li><code class="prettyprint">NoPreProcessor</code></li>
-</ul></li>
-<li><em>hyperparameter space</em>: the <code class="prettyprint">&quot;param_range&quot;</code> JSON</li>
-<li><em>hyperparameter optimizer</em>: <code class="prettyprint">GridSearch</code></li>
-</ul>
-
-<p>Given <code class="prettyprint">GridSearch HyperOptimizer</code>, this <strong>experiment</strong> will try all the discrete combinations of the <code class="prettyprint">param_range</code>, which makes for <code class="prettyprint">4x4x5=80</code> trials. Each <strong>trial</strong> will run a max of 5 <strong>sessions</strong> (terminate on 2 if fail to solve). Overall, this experiments will run at most <code class="prettyprint">80 x 5 = 400</code> sessions, then produce <code class="prettyprint">experiment_data</code> and the analytics.</p>
-
-<h3 id="lab-workflow">Lab Workflow</h3>
-
-<p>The example workflow to setup this experiment is as follow:</p>
-
-<ol>
-<li>Add the new theorized component <code class="prettyprint">Boltzmann</code> in <code class="prettyprint">rl/policy/boltzmann.py</code></li>
-<li>Specify <code class="prettyprint">dqn</code> experiment spec in <code class="prettyprint">rl/spec/classic_experiment_spec.json</code> to include this new variable, reuse the other existing RL components, and specify the param range.</li>
-<li>Add this experiment to the lab queue in <code class="prettyprint">config/production.json</code></li>
-<li>Run experiment with <code class="prettyprint">grunt -prod</code></li>
-<li>Analyze the graphs and data</li>
-</ol>
-
-<p>Now that you can produce the experiment data and graphs, see how to <a href="#analysis">analyze them</a>.</p>
-
-          <h1 id="analysis"><a name="analysis"></a>Analysis</h1>
-
-<p>Once the Lab is running experiments, it will produce data. This section details how to analyze and understand the data, before we can contribute to the <a href="#solutions">Solutions</a>.</p>
-
-<p>An experiment produces 3 types of data files in the folder <code class="prettyprint">data/&lt;experiment_id&gt;/</code>:</p>
-
-<ul>
-<li><strong>session plots</strong>: <code class="prettyprint">&lt;session_id&gt;.png</code></li>
-<li><strong>trial_data</strong>: <code class="prettyprint">&lt;trial_id&gt;.json</code></li>
-<li><strong>experiment data</strong>:
-
-<ul>
-<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code></li>
-<li><code class="prettyprint">&lt;experiment_id&gt;_analysis.png</code></li>
-<li><code class="prettyprint">&lt;experiment_id&gt;_analysis_correlation.png</code></li>
-</ul></li>
-</ul>
-
-<aside class="notice">
-Refer to <a href="#structure">Experiments > Structure</a> to see how the files are produced.
-</aside>
-
-<p>We will illustrate with an example experiment from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn solution PR</a>.</p>
-
-<h2 id="session-graphs">Session Graphs</h2>
-
-<blockquote>
-<p><img alt="The best session graph" src="https://cloud.githubusercontent.com/assets/8209263/24180935/404370ea-0e8e-11e7-8f20-f8691ee03e7b.png" />
-<em>The best session graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. From the session graph we can see that the agent starts learning the CartPole-v0 task at around episode 15, then solves it before episode 20. Over time the loss decreases, the solution becomes stabler, and the mean rewards increases until the session is solved reliably.</em></p>
-</blockquote>
-
-<p>When an experiment is running, the lab will plot the session graphs live, one for each session.</p>
-
-<h3 id="how-to-read">How to read</h3>
-
-<p>A session graph has 3 subplots:</p>
-
-<ol>
-<li><p><strong>total rewards and exploration rate vs episode</strong>: directly records the (blue) total rewards attained at the end of each episode, in relation to the (red) exploration rate (<code class="prettyprint">epsilon</code>, <code class="prettyprint">tau</code>, etc. depending on the policy).</p>
-
-<p>The 2 lines usually show negative correlation - when the exploration rate drops, the total rewards should rise. When a solution becomes stable, the blue line should stay around its max.</p></li>
-<li><p><strong>mean rewards over the last 100 episodes vs episode</strong>: measures the 100-episode mean of the total rewards from above.</p>
-
-<p>Defined by OpenAI, this metric is usually how a solution is identified - when it hits a target solution score, which would mean that the solution is sufficiently <em>strong</em> and <em>stable</em>.</p></li>
-<li><p><strong>loss vs time</strong>: measures the loss of the agent&rsquo;s neural net. This graph is all the losses  concatenated over time, over all episodes.</p>
-
-<p>There is no specific unit for the loss as it depends on what loss function is used in the NN architecture (typically <code class="prettyprint">mean_squared_error</code>). As the NN starts getting more accurate, the loss should decrease.</p></li>
-</ol>
-
-<aside class="notice">
-When developing a new algorithm, use the session graph to immediately see how the agent is performing without needing to wait for the entire session to complete.
-</aside>
-
-<h2 id="analysis-graph">Analysis Graph</h2>
-
-<blockquote>
-<p><img src="https://cloud.githubusercontent.com/assets/8209263/24389521/2e8c1b38-1350-11e7-8a84-6f47e702af62.png" title="Analysis graph" alt="2e8c1b38 1350 11e7 8a84 6f47e702af62" />
-<em>The analysis graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. There&rsquo;re numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.</em></p>
-</blockquote>
-
-<p>The <strong>analysis graph</strong> is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
-
-<h3 id="the-y-axis-measurement-metrics">The y-axis measurement metrics</h3>
-
-<ol>
-<li><p><code class="prettyprint">fitness_score</code>: the final evaluation metric the Lab uses to select a fit agent (an agent with the fit parameter set for that class of Agent). The design and purpose of it is more involved - see <a href="#metrics">metrics</a> for more.</p></li>
-<li><p><code class="prettyprint">mean_rewards_stats_max</code>: the max of all the <code class="prettyprint">mean_rewards</code> over all the sessions of a trial. Measures the max solution power of a trial.</p></li>
-<li><p><code class="prettyprint">max_total_rewards_stats_mean</code>: the statistical mean of all the <code class="prettyprint">max_total_rewards</code> over all the sessions of a trial. Measures the agent&rsquo;s average peak performance.</p></li>
-<li><p><code class="prettyprint">epi_stats_min</code>: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.</p></li>
-</ol>
-
-<p><a name="hue"></a>### The hue metrics</p>
-
-<p>Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:</p>
-
-<ul>
-<li><code class="prettyprint">solved_ratio_of_sessions</code>: how many sessions are solved out of the total sessions in a trial, 0 means none, 1 means all.</li>
-</ul>
-
-<p>The granularity of the <code class="prettyprint">solved_ratio_of_sessions</code> depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it&rsquo;s the best tradeoff between granularity and computation time.</p>
-
-<p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.</p>
-
-<h3 id="how-to-read">How to read</h3>
-
-<p>Every subplot in the graph shows the distribution of all the trial points in the pair of <em>y vs x</em> variables, with the other <em>x&rsquo;</em> dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.</p>
-
-<p>Note that these will use <a href="http://seaborn.pydata.org/generated/seaborn.swarmplot.html">swarmplot</a> which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.</p>
-
-<blockquote>
-<p><img src="https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png" title="The acrobot random search analysis graph" alt="0197e3e4 14dd 11e7 9523 4e8bd23c75e9" />
-<em>An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the <a href="https://github.com/kengz/openai_lab/pull/94">rand_acrobot PR</a></em></p>
-</blockquote>
-
-<p><strong>Population distribution</strong>: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the <em>x</em> is a stabler value for the <em>y</em> value even when other <em>x&rsquo;</em> dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.</p>
-
-<p><strong>trend across y-values</strong>: the fitter trial will show up higher in the y-axes (except for <code class="prettyprint">epi_stats_min</code>). Generally good solutions are scarce and they show up at higher <code class="prettyprint">fitness_score</code>, whereas the non-solutions get clustered in the lower region. Notice how the <code class="prettyprint">fitness_score</code> plots can clearly distinguish the good solutions (darker points), whereas in the <code class="prettyprint">mean_rewards_stats_max</code> and <code class="prettyprint">max_total_rewards_stats_mean</code> plots it is hard to tell apart. We will discuss how the custom-formulated <code class="prettyprint">fitness_score</code> function achieves this in the <a href="#metrics">metrics</a> section.</p>
-
-<p><strong>trend across x-values</strong>: to find a stable and good <em>x-value</em>, observe the vertical gaps in distribution, the clustering of darker points. Usually there&rsquo;s one maxima with a steady trend towards it. Recall that the plots flatten the other <em>x&rsquo;</em> values, but the dependence on <em>x</em> value is usually very consistent across <em>x&rsquo;</em> that there will still be a flattened trend.</p>
-
-<h2 id="correlation-graph">Correlation Graph</h2>
-
-<blockquote>
-<p><img src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" title="Correlation graph" alt="418a9b54 0cf9 11e7 8aac f0df817def43" />
-<em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
-</blockquote>
-
-<p>The <strong>correlation graph</strong> reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.</p>
-
-<h3 id="how-to-read">How to read</h3>
-
-<p>The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.</p>
-
-<p>The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.</p>
-
-<h2 id="data">Data</h2>
-
-<p>After glancing through the graphs, it will be easier to understand the data and find the targets.</p>
-
-<h3 id="how-to-read">How to read</h3>
-
-<p>The <code class="prettyprint">&lt;experiment_id&gt;_analysis_data.csv</code> will show the data for each trial, sorted by the highest <code class="prettyprint">fitness_score</code> first. The left columns are the measured output values; then they&rsquo;re separated by the <code class="prettyprint">trial_id</code>; the right columns are the parameter values for the trial.</p>
-
-<p>The <code class="prettyprint">trial_id</code> will tell us which <code class="prettyprint">trial_data</code> to check for even more details on the best trials. Usually we can also spot some trend in the right parameter columns.</p>
-
-<p>The best <code class="prettyprint">&lt;trial_id&gt;.json</code> will show us directly what is its <code class="prettyprint">experiment_spec</code>, and more stats about the trial. When <a href="#solutions">submitting a solution PR</a>, retrieve the <code class="prettyprint">experiment_spec</code> to update the default <code class="prettyprint">*_experiment_spec.json</code>, and get the <code class="prettyprint">fitness_score</code> from here too.</p>
-
-<table><thead>
-<tr>
-<th style="text-align: left">best_session_epi</th>
-<th style="text-align: left">best_session_id</th>
-<th style="text-align: left">best_session_mean_rewards</th>
-<th style="text-align: left">best_session_stability</th>
-<th style="text-align: left">fitness_score</th>
-<th style="text-align: left">mean_rewards_per_epi_stats_mean</th>
-<th style="text-align: left">mean_rewards_stats_mean</th>
-<th style="text-align: left">mean_rewards_stats_max</th>
-<th style="text-align: left">epi_stats_mean</th>
-<th style="text-align: left">epi_stats_min</th>
-<th style="text-align: left">solved_ratio_of_sessions</th>
-<th style="text-align: left">max_total_rewards_stats_mean</th>
-<th style="text-align: left">trial_id</th>
-<th style="text-align: left">variable_gamma</th>
-<th style="text-align: left">variable_hidden_layers</th>
-<th style="text-align: left">variable_lr</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">114</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t79_s2</td>
-<td style="text-align: left">195.59</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">9.487062</td>
-<td style="text-align: left">1.326499</td>
-<td style="text-align: left">195.404</td>
-<td style="text-align: left">195.66</td>
-<td style="text-align: left">154.2</td>
-<td style="text-align: left">114.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t79</td>
-<td style="text-align: left">0.999</td>
-<td style="text-align: left">[64]</td>
-<td style="text-align: left">0.02</td>
-</tr>
-<tr>
-<td style="text-align: left">140</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t28_s0</td>
-<td style="text-align: left">196.11</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">9.434487</td>
-<td style="text-align: left">1.179311</td>
-<td style="text-align: left">195.564</td>
-<td style="text-align: left">196.11</td>
-<td style="text-align: left">167.2</td>
-<td style="text-align: left">140.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t28</td>
-<td style="text-align: left">0.97</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">153</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t16_s2</td>
-<td style="text-align: left">195.48</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">9.279524</td>
-<td style="text-align: left">1.159941</td>
-<td style="text-align: left">195.466</td>
-<td style="text-align: left">195.7</td>
-<td style="text-align: left">168.6</td>
-<td style="text-align: left">153.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t16</td>
-<td style="text-align: left">0.95</td>
-<td style="text-align: left">[64]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">157</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t36_s4</td>
-<td style="text-align: left">196.07</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">9.242832</td>
-<td style="text-align: left">1.155354</td>
-<td style="text-align: left">195.602</td>
-<td style="text-align: left">196.07</td>
-<td style="text-align: left">169.0</td>
-<td style="text-align: left">157.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t36</td>
-<td style="text-align: left">0.97</td>
-<td style="text-align: left">[64]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-<tr>
-<td style="text-align: left">149</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t48_s3</td>
-<td style="text-align: left">195.63</td>
-<td style="text-align: left">0.970874</td>
-<td style="text-align: left">9.024263</td>
-<td style="text-align: left">1.131328</td>
-<td style="text-align: left">195.678</td>
-<td style="text-align: left">195.83</td>
-<td style="text-align: left">175.0</td>
-<td style="text-align: left">149.0</td>
-<td style="text-align: left">1.0</td>
-<td style="text-align: left">200.0</td>
-<td style="text-align: left">dqn-2017_03_19_004714_t48</td>
-<td style="text-align: left">0.99</td>
-<td style="text-align: left">[32]</td>
-<td style="text-align: left">0.001</td>
-</tr>
-</tbody></table>
-
-<p><em><code class="prettyprint">dqn-2017_03_19_004714_analysis_data.csv</code>, top 5 trials, from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.</em></p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"experiment_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.999</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="s2">"metrics"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"best_session_epi"</span><span class="p">:</span><span class="w"> </span><span class="mi">114</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"best_session_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dqn-2017_03_19_004714_t79_s2"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"best_session_mean_rewards"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.59</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"best_session_stability"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">154.2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fitness_score"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.487062</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"max_total_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"mean_rewards_per_epi_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.326499</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"mean_rewards_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mf">195.404</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"solved_ratio_of_sessions"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"t_stats_mean"</span><span class="p">:</span><span class="w"> </span><span class="mi">199</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"time_taken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:41:19"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="err">...</span><span class="w">
-</span></code></pre>
-<p>This concludes the analysis. See the <a href="https://github.com/kengz/openai_lab/pull/73">solution PR here</a>. The best trial is <code class="prettyprint">dqn-2017_03_19_004714_t79</code>, with <code class="prettyprint">fitness_score=9.487062</code>, and the variables:</p>
-
-<ul>
-<li><em>lr</em>: 0.02</li>
-<li><em>gamma</em>: 0.999</li>
-<li><em>hidden_layers_shape</em>: [64]</li>
-</ul>
-
-<p>Now that you know how to analyze the data,</p>
-
-<ul>
-<li><a href="#solutions">start finding problems to beat and submitting your solutions</a></li>
-<li><a href="#metrics">learn more about the evaluation metrics</a></li>
-</ul>
-
-          <h1 id="solutions"><a name="solutions"></a>Solutions</h1>
-
-<p>Agents and best solutions by OpenAI Lab users. We want people to start from working solutions instead of stumbling their ways there.</p>
-
-<h2 id="submission-instructions">Submission instructions</h2>
-
-<p>If you invent a new algorithm/combination that beats the best solutions, please submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request</a> to the OpenAI Lab. Refer to the <a href="https://github.com/kengz/openai_lab/blob/master/.github/PULL_REQUEST_TEMPLATE.md">PR template</a> for the submission guideline. See examples from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>.</p>
-
-<p>To learn how to analyze experiment data, refer to <a href="#analysis">Analysis</a>.</p>
-
-<h2 id="fitness-matrix"><a name="fitness-matrix"></a>Fitness Matrix</h2>
-
-<p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>, sourced from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>. See <a href="#metrics">Metric</a> for the design of fitness score and generalized metrics.</p>
-
-<table><thead>
-<tr>
-<th style="text-align: left"></th>
-<th style="text-align: left">DQN</th>
-<th style="text-align: left">double-DQN</th>
-<th style="text-align: left">SARSA</th>
-<th style="text-align: left">DDPG</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left"><strong>CartPole-v0</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/73">9.487062</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">10.31487</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CartPole-v1</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">11.68838</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Acrobot-v1</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/94">-0.1706583</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/98">-0.1755333</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/97">-0.1626845</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCar-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCarContinuous-v0</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pendulum-v0</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLander-v2</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">2.296613</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.812674</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/96">3.024702</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLanderContinuous-v2</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalker-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalkerHardcore-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CarRacing-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>AirRaid-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Alien-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Assault-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Breakout-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MsPacman-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pong-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Qbert-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SpaceInvader-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>FlappyBird-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Snake-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h2 id="agents">Agents</h2>
-
-<p>The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see <a href="#agents">Agents</a></p>
-
-<p><em>Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
-
-<table><thead>
-<tr>
-<th style="text-align: left">algorithm</th>
-<th style="text-align: left">implemented?</th>
-<th style="text-align: left">eval score</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">double-DQN</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">dueling-DQN</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">SARSA</td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Q*(lambda)</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Retrace(lambda)</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
-<td style="text-align: left">next</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
-<td style="text-align: left">next</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
-<td style="text-align: left">next</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h2 id="environments">Environments</h2>
-
-<p>The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
-
-<h3 id="classic-environments">Classic Environments</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">CartPole-v0</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">13.41222</a></td>
-<td style="text-align: left">9</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">offpol_sarsa</td>
-</tr>
-<tr>
-<td style="text-align: left">CartPole-v1</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">14.12158</a></td>
-<td style="text-align: left">16</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">double_dqn_v1</td>
-</tr>
-<tr>
-<td style="text-align: left">Acrobot-v1</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/97">-0.1626845</a></td>
-<td style="text-align: left">-120.16</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">acrobot_offpol_sarsa</td>
-</tr>
-<tr>
-<td style="text-align: left">MountainCar-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">MountainCarContinuous-v0</td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Pendulum-v0</td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="box2d-environments">Box2D Environments</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">LunarLander-v2</td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/96">3.024702</a></td>
-<td style="text-align: left">200</td>
-<td style="text-align: left">kengz/lgraesser</td>
-<td style="text-align: left">lunar_offpol_sarsa</td>
-</tr>
-<tr>
-<td style="text-align: left">LunarLanderContinuous-v2</td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">BipedalWalker-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">BipedalWalkerHardcore-v2</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">CarRacing-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="atari-environments">Atari Environments</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">AirRaid-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Alien-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Assault-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Breakout-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">MsPacman-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Pong-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Qbert-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">SpaceInvader-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="pygame-environments">PyGame Environments</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">FlappyBird-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Snake-v0</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-<h3 id="universe-environments">Universe Environments</h3>
-
-<table><thead>
-<tr>
-<th style="text-align: left">problem</th>
-<th style="text-align: left">fitness score</th>
-<th style="text-align: left">epis before solve / best 100-epi mean</th>
-<th style="text-align: left">author</th>
-<th style="text-align: left">experiment_spec</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
-
-          <h1 id="metrics"><a name="metrics"></a>Metrics</h1>
-
-<p>The Lab setup allows us to run experiments at scale; the standardized framework also allows us to reliably compare multiple agents (algorithms) and environments (problems). These are shown with the <a href="#fitness-matrix">Fitness Matrix</a>, which also necessitates a higher level evaluation metric.</p>
-
-<p>With the Lab, we are breeding multiple agents across many environments and selecting the best ones. Naturally, this selection metric is called the <code class="prettyprint">fitness_score</code>. Some evolutionary search algorithm for the <code class="prettyprint">HyperOptimizer</code> is on our <a href="#roadmap">roadmap</a>.</p>
-
-<p>The Fitness Matrix is a projection from the parameter space of each agent-environment pair, where each matrix cell is the highest fitness score the agent could achieve in the environment.</p>
-
-<p>To understand the bigger picture, the domain for the fitness function for each matrix cell is the parameter space of the agent conditioned on the environment. Inside the parameter space, each point gets mapped to a fitness score.</p>
-
-<p>To analogize, see fitness score as temperature, then we have a heatmap inside the parameter space, and we are searching for the hottest point and recording that in a cell of the Fitness Matrix.</p>
-
-<p>In this section, we will formalize these ideas.</p>
-
-<h2 id="fitness-score"><a name="fitness"></a>Fitness Score</h2>
-
-<p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
-
-<p>The fitness function&rsquo;s design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the <code class="prettyprint">mean rewards</code> metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under <em>strength</em>.</p>
-
-<p>The fitness score of a trial is as follows:</p>
-
-<p><code class="prettyprint">fitness_score = mean_rewards_per_epi_mean * [(1+stability_mean) * ((1+consistency)**2)] ** sign(mean_rewards_per_epi_mean)</code></p>
-
-<p>or renaming variables by what the terms represent:</p>
-
-<p><code class="prettyprint">fitness_score = power * distinguisher</code></p>
-
-<p>where</p>
-
-<ul>
-<li><code class="prettyprint">power = mean_rewards_per_epi_mean</code></li>
-<li><code class="prettyprint">distinguisher = amplifier ** sign(power)</code></li>
-<li><code class="prettyprint">amplifier = (1+stability_mean) * ((1+consistency)**2)</code></li>
-</ul>
-
-<p>The fitness score is designed to capture the following:</p>
-
-<ol>
-<li><strong>strength</strong>: <code class="prettyprint">mean_rewards</code> (over the past 100 episodes)</li>
-<li><strong>speed</strong>: <code class="prettyprint">1/epi</code></li>
-<li><strong>stability</strong>: session-level stability, <code class="prettyprint">stability_gap / mastery_gap</code></li>
-<li><strong>consistency</strong>: AKA trial-level stability, <code class="prettyprint">solved_ratio_of_session</code></li>
-<li><strong>granularity</strong>: in <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code> to ensure partial solution doesn&rsquo;t get lost when stability and consistency = 0</li>
-<li><strong>amplification</strong>: amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code>, and by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code></li>
-<li><strong>distinguishability</strong>: multiply amplifier if <code class="prettyprint">power</code> is positive, else divide; essentially <code class="prettyprint">*(amplifier**sign(power))</code></li>
-</ol>
-
-<h3 id="strength">Strength</h3>
-
-<p>The higher (more positive) the <code class="prettyprint">mean_rewards</code> an agent gets, the stronger it is. The mean is taken over the past 100 episodes, as common to OpenAI gym.</p>
-
-<h3 id="speed">Speed</h3>
-
-<p>Given two same <code class="prettyprint">mean_rewards</code>, the agent that achieves it in less episodes is faster, with <code class="prettyprint">speed = 1/epi</code>. This yields the notion of <code class="prettyprint">power = strength * speed = mean_rewards_per_epi</code>. Use the sessions-mean of a trial, i.e. <code class="prettyprint">mean_rewards_per_epi_mean</code> = mean of multiple <code class="prettyprint">mean_rewards_per_epi</code> values.</p>
-
-<h3 id="stability">Stability</h3>
-
-<p><code class="prettyprint">stability = stability_gap / mastery_gap</code> for a session, with range <code class="prettyprint">0.0 - 1.0</code> from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple <code class="prettyprint">stability</code> values.</p>
-
-<ul>
-<li><code class="prettyprint">stability_gap</code> = the episodic-length of measurement, typically 100 episodes, given in <code class="prettyprint">problem[&#39;REWARD_MEAN_LEN&#39;]</code></li>
-<li><code class="prettyprint">mastery_gap</code> = how many episodes since the first solution does it take to solve the environment</li>
-</ul>
-
-<p><code class="prettyprint">mastery_gap = max(last_epi - first_solved_epi, stability_gap)</code>, so that we use <code class="prettyprint">mastery_gap = stability_gap</code> for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set <code class="prettyprint">mastery_gap = INF</code> to yield stability 0.0.</p>
-
-<p>As for determining <code class="prettyprint">first_solved_epi</code>, for a solvable problem, it&rsquo;s the first index (episode) of when <code class="prettyprint">total_rewards &gt; problem[&#39;SOLVED_MEAN_REWARD&#39;]</code>; for an unsolved problem (unbounded rewards) the criteria changes to when <code class="prettyprint">total_rewards &gt; 0.95 * max_total_rewards</code>, with 0.95 chosen for 2 sigma variation.</p>
-
-<p>The reasoning for the definition is this: an agent has to achieve a high mean rewards within the <code class="prettyprint">stability_gap</code>. If in between the first solved and latest episode there&rsquo;s a huge drop in total rewards, this would pull the mean rewards down, and the agent would need more episodes to increase the mean to the solution threshold, and that makes the <code class="prettyprint">mastery_gap</code> longer. On the contrary, if there&rsquo;s no huge drops of total rewards in between, it will reach the solution threshold the fastest.</p>
-
-<h3 id="consistency">Consistency</h3>
-
-<p><code class="prettyprint">consistency = solved_ratio_of_session</code> for a trial, with range <code class="prettyprint">0.0 - 1.0</code> from inconsistent to consistent. This is the trial-level measurement of stability, as it measures how consistently the agent can solve an environment given multiple repeated sessions.</p>
-
-<p><code class="prettyprint">consistency = 0</code> always for unsolved problems (unbounded rewards) since solution is undefined.</p>
-
-<h3 id="granularity">Granularity</h3>
-
-<p>When <code class="prettyprint">stability=0</code> or <code class="prettyprint">consistency=0</code> the multiplier will drop to zero, regardless if there is any partial solutions. This will make training harder as the agent will not learn from partial solutions if these are treated as non-solutions. So, restore the granularity that preserves partial solution simply by adding 1, i.e. <code class="prettyprint">1+stability</code> and <code class="prettyprint">1+consistency</code>.</p>
-
-<h3 id="amplification">Amplification</h3>
-
-<p>To separate solutions from noise, amplify the good ones and separate them out, while diminish and cluster the worse ones together. Amplify by session-level stability linearly with <code class="prettyprint">*(1+stability)</code> since it&rsquo;s of the same order as <code class="prettyprint">power</code>. Amplify by trial-level stability quadratically with <code class="prettyprint">*(1+consistency)**2</code> since trial stability is of the next order. Amplifier is always positive.</p>
-
-<h3 id="distinguishability">Distinguishability</h3>
-
-<p>Always amplify to make better solutions have more positive fitness score. If <code class="prettyprint">power</code> is negative, amplify toward the 0 axis, i.e. divide by amplifier. If <code class="prettyprint">power</code> is positive, amplify away from the 0 axis, i.e. multiply the amplifier. Essentially, <code class="prettyprint">distinguisher = amplifier**sign(power)</code>.</p>
-
-<h2 id="generalized-metrics">Generalized Metrics</h2>
-
-<p>With the fitness function defined above, we can evaluate a single agent in a single environment. In fact, this is a single experiment with multiple trials, and we compute a fitness score per trial, using the trial&rsquo;s parameter values. We then pick the max fitness score for the Fitness Matrix.</p>
-
-<p>Given that the Lab can run multiple agents across environments in its standardized framework, naturally we ask:</p>
-
-<ul>
-<li>we can evaluate <strong>one agent in one environment</strong>, (experiment metrics)</li>
-<li>how do we evaluate and compare <strong>multiple agents in one environment</strong>? (environment metrics)</li>
-<li>how about <strong>one agent in multiple environments</strong>? (agent metrics)</li>
-<li>how about the universal-view of <strong>multiple agents in multiple environments</strong>? (universal metrics)</li>
-</ul>
-
-<p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
-
-<h3 id="generalization"><a name="generalization"></a>Generalization</h3>
-
-<p>We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the <a href="#fitness-matrix">Fitness Matrix</a>.</p>
-
-<p><em>We&rsquo;re using LaTeX for better symbolic rendering.</em></p>
-
-<p><img src="images/metric_1.png" alt="Metric 1" />
-<img src="images/metric_2.png" alt="Metric 2" />
-<img src="images/metric_3.png" alt="Metric 3" />
-<img src="images/metric_4.png" alt="Metric 4" /></p>
+<h3 id="deep-deterministic-policy-gradients-in-progress">Deep Deterministic Policy Gradients:  In progress</h3>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
-<p><strong>(THIS SECTION IS UNDER CONSTRUCTION)</strong></p>
+<p><strong>This section is still under construction</strong>.</p>
 
-<p>(pending writeup)</p>
-
-<p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
+<p>For agent-specific development, see <a href="#agents">Agents</a>. This section details the general, non-agent development guideline.</p>
 
 <p>The design of the code is clean enough to simply infer how things work by example.</p>
 
@@ -2059,19 +1996,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><code class="prettyprint">rl/util.py</code>: Generic util</li>
 </ul>
 
-<p>Each run is an <code class="prettyprint">experiment</code> that runs multiple <code class="prettyprint">Trial</code>s (not restricted to the same <code class="prettyprint">experiment_id</code> for future cross-training). Each <code class="prettyprint">Trial</code> runs multiple (by flag <code class="prettyprint">-t</code>) <code class="prettyprint">Session</code>s, so an <code class="prettyprint">trial</code> is a <code class="prettyprint">sess_grid</code>.</p>
-
-<p>Each trial collects the data from its sessions into <code class="prettyprint">trial_data</code>, which is saved to a JSON and as many plots as there are sessions. On the higher level, <code class="prettyprint">experiment</code> analyses the aggregate <code class="prettyprint">trial_data</code> to produce a best-sorted CSV and graphs of the variables (what&rsquo;s changed across experiments) vs outputs.</p>
-
 <h2 id="problem">problem</h2>
 
 <p>simple, the split, how to add. each JSON key is?</p>
-
-<h2 id="quick-start">Quick start</h2>
-
-<p>code for running a dqn agent</p>
-
-<p>Walk through json file</p>
 
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
