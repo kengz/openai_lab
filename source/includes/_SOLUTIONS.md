@@ -15,13 +15,13 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 
 ||DQN|double-DQN|SARSA|DDPG|
 |:---|:---|:---|:---|:---|
-|**CartPole-v0**|[9.487062](https://github.com/kengz/openai_lab/pull/73)|[10.31487](https://github.com/kengz/openai_lab/pull/78)|[13.41222](https://github.com/kengz/openai_lab/pull/91)|-|
-|**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
-|**Acrobot-v1**|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|[-0.1755333](https://github.com/kengz/openai_lab/pull/98)|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-|
+|**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|
+|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|-|
+|**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|
 |**MountainCar-v0**|-|-|-|-|
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|-|
 |**Pendulum-v0**|*n/a*|*n/a*|*n/a*|-|
-|**LunarLander-v2**|[2.296613](https://github.com/kengz/openai_lab/pull/84)|[2.812674](https://github.com/kengz/openai_lab/pull/87)|[3.024702](https://github.com/kengz/openai_lab/pull/96)|-|
+|**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|
 |**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|-|
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
@@ -72,9 +72,9 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[13.41222](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|offpol_sarsa|
-|CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
-|Acrobot-v1|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-120.16|kengz/lgraesser|acrobot_offpol_sarsa|
+|CartPole-v0|[12.98525](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|offpol_sarsa|
+|CartPole-v1|[16.06697](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
+|Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|-|-|-|-|
 |MountainCarContinuous-v0|*n/a*|*n/a*|*n/a*|-|
 |Pendulum-v0|*n/a*|*n/a*|*n/a*|-|
@@ -84,7 +84,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|LunarLander-v2|[3.024702](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
+|LunarLander-v2|[3.313421](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
 |LunarLanderContinuous-v2|*n/a*|*n/a*|*n/a*|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
