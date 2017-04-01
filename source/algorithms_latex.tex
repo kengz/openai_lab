@@ -97,7 +97,20 @@ Input (x vals): $(S, A)$ \\
 Network output: $Q(S, A)$ \\
 Target (y vals): $[R + \gamma E_a Q(S'€™, a)]$
 
-\subsection{Off Policy Expected Sarsa}
+\newpage
+\section{Policy}
+
+\subsection{Epsilon Greedy Policy}
+
+With probability (1 - epsilon): \\
+$~~~~ A \leftarrow max_a Q(S, a)$ \\
+With probability epsilon: \\
+$~~~~ A \leftarrow random ~A$ \\
+return A
+
+\subsection{Boltzmann Policy}
+
+$$ p_a = \frac{exp(\frac{Q_a}{tau})}{\sum_a’ exp(\frac{Q_a}{tau})’}$$
 
 \end{document}
 

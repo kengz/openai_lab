@@ -61,11 +61,7 @@ Depending on the algorithm  used, agents may directly approximate the policy (po
 
 All of the algorithms implemented so far are value-based. The policy for acting at each timestep is often a simple epsilon-greedy policy.
 
-With probability (1 - epsilon):
-    $$ A \leftArrow = max_a Q(S, a)$$
-With probability epsilon:
-    $$ A \leftArraow random action
-return A
+![](./images/e_greedy.png)
 
 Alternatively, an indirect policy may use the Q-value to output a probability distribution over actions, and sample actions based on this distribution. This is the approach taken by the Boltzmann policies.
 
@@ -92,7 +88,7 @@ When actions are not random this policy selects actions by summing the outputs f
 ### Boltzmann Policy
 Parameterized by the starting value for tau (`init_tau`), min value for tau (`final_tau`), and the number of epsiodes to anneal epsilon over (`exploration_anneal_episodes`). At each step this policy selects actions based on the following probability distribution
 
-$$ p_a = exp(Q_a / tau) / sum_a' (Q_a' / tau)$$
+![](./images/boltzmann.png)
 
 Tau is decayed linearly over time in the same way as in the EpsilonGreedyPolicy.
 
