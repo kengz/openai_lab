@@ -43,7 +43,7 @@ Since the policy that is used to evaluate the target is fixed (a greedy policy t
 
 Standard Q-learning algorithm with experience replay. Online training every n experiences.
 
-![](./DeepQLearning.png)
+![](./images/DeepQLearning.png)
 
 Agents: 
 
@@ -54,7 +54,7 @@ Agents:
 
 Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S', the other is used to evaluate the action in state S'. Periodically the roles of each Q function are switched. Online training every n experiences.
 
-![](./DoubleQLearning.png)
+![](./images/DoubleQLearning.png)
 
 Agents
 
@@ -65,7 +65,7 @@ Agents
 
 Deep Q-Learning algorithms tends to be unstable. To address this issue, create two Q function approximators, one for exploration, Q_e, and one for evaluating the target, Q_t. The target is a copy of the exploration network with frozen weights which lag the exploration network. These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See [David Silver's](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf) lecture slides for more details. Online training every n experiences.
 
-![](./FreezeDQN.png)
+![](./images/FreezeDQN.png)
 
  Agents
 
@@ -77,7 +77,7 @@ Sarsa algorithms also attempt to estimate the optimal Q function. They are on po
 
 Sarsa update:
 
-![](./Sarsa.png)
+![](./images/Sarsa.png)
 
 This update is made each time the agent acts in an environment and gets an experience <S_t, A_t, R_{t+1}, S_{t+1}>
 
@@ -95,7 +95,7 @@ Agents
 
 Uses the expected value of the Q function under the current policy to construct the target instead of the Q-value for the action selected.
 
-![](./ExpectedSarsa.png)
+![](./images/ExpectedSarsa.png)
 
 Agents
 
