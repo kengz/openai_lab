@@ -346,6 +346,8 @@ def plot_experiment(data_df, trial_id):
     experiment_id = parse_experiment_id(trial_id)
     hue = 'solved_ratio_of_sessions'
     data_df = data_df.sort_values(hue)
+    fitness_hue = 'fitness_score_bin'
+    data_df[fitness_hue] = pd.cut(data_df['fitness_score'], bins=5)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     col_size = len(X_cols)
     row_size = len(EXPERIMENT_DATA_Y_COLS)
@@ -405,7 +407,7 @@ def plot_experiment(data_df, trial_id):
         filter(lambda x: data_df[x].dtype in numerics, X_cols))
     with sns.axes_style('white', {'axes.linewidth': 0.2}):
         g = sns.pairplot(
-            data_df, vars=numeric_X_cols, hue=hue,
+            data_df, vars=numeric_X_cols, hue=fitness_hue,
             size=3, aspect=1, plot_kws={'s': 50, 'alpha': 0.5})
         g.fig.suptitle(wrap_text(experiment_id))
         g = g.add_legend()
