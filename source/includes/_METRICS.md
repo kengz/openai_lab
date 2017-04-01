@@ -37,7 +37,7 @@ The fitness score is designed to capture the following:
 
 1. **strength**: `mean_rewards` (over the past 100 episodes)
 2. **speed**: `1/epi`
-3. **stability**: session-level stability, `stability_gap / mastery_gap`
+3. **stability**: session-level stability, `stable_epi_count / mastery_gap`
 4. **consistency**: AKA trial-level stability, `solved_ratio_of_session`
 5. **granularity**: in `1+stability` and `1+consistency` to ensure partial solution doesn't get lost when stability and consistency = 0
 6. **amplification**: amplify by session-level stability linearly with `*(1+stability)`, and by trial-level stability quadratically with `*(1+consistency)**2`
@@ -54,16 +54,15 @@ Given two same `mean_rewards`, the agent that achieves it in less episodes is fa
 
 ### Stability
 
-`stability = stability_gap / mastery_gap` for a session, with range `0.0 - 1.0` from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple `stability` values.
+`stability = stable_epi_count / mastery_gap` for a session, with range `0.0 - 1.0` from unstable to stable. Measures session-level stability. Use the sessions-mean of a trial, i.e. mean of multiple `stability` values.
 
-- `stability_gap` = the episodic-length of measurement, typically 100 episodes, given in `problem['REWARD_MEAN_LEN']`
-- `mastery_gap` = how many episodes since the first solution does it take to solve the environment
+- `stable_epi_count` = the number of stable episodes, where stable means an episode passes the `r_threshold`.
+- `r_threshold` = `sys_vars['SOLVED_MEAN_REWARD']` if the problem is solvable; `max_rewards - (0.10 * (max_rewards-min_rewards))` otherwise.
+- `first_solved_epi` = first episode that passes the `r_threshold`.
+- `mastery_gap` = `last_epi - first_solved_epi` normally, or `INF` to yield stability 0.0 if `first_solved_epi` is undefined because no episode passes the threshold.
 
-`mastery_gap = max(last_epi - first_solved_epi, stability_gap)`, so that we use `mastery_gap = stability_gap` for any faster mastery to cap the ratio at 1.0. If problem is unsolved, set `mastery_gap = INF` to yield stability 0.0.
+The reasoning for the definition is simple: regardless if the problem is solved or not, we want to see if the agent could stability its performance. Once it solves (for solvable problems) or achieves a sufficiently high score (unsolved problems), its `mean_rewards` every episode should not drop too much, even when accounting for random fluctuations. We can define a minimal threshold (10% less than the ideal) that the subsequent episodes should surpass. Then, the stability is simple the ratio of the number of episodes that pass the threshold after the first solution.
 
-As for determining `first_solved_epi`, for a solvable problem, it's the first index (episode) of when `total_rewards > problem['SOLVED_MEAN_REWARD']`; for an unsolved problem (unbounded rewards) the criteria changes to when `total_rewards > 0.95 * max_total_rewards`, with 0.95 chosen for 2 sigma variation.
-
-The reasoning for the definition is this: an agent has to achieve a high mean rewards within the `stability_gap`. If in between the first solved and latest episode there's a huge drop in total rewards, this would pull the mean rewards down, and the agent would need more episodes to increase the mean to the solution threshold, and that makes the `mastery_gap` longer. On the contrary, if there's no huge drops of total rewards in between, it will reach the solution threshold the fastest.
 
 ### Consistency
 
