@@ -141,7 +141,7 @@ The size of the memory is unbounded and experiences are sampled random uniformly
 "dqn": {
     "Memory": "LinearMemoryWithForgetting",
     "param": {
-      "max_len" : 10000
+      "max_len" : 10000        // leave blank for defaults
     },
 ```
 
@@ -196,10 +196,34 @@ def rand_minibatch(self, size):
 ```
 
 ## Optimizer
+Controls how to optimize the function approximators contained within the agent. For feedforward and convolutional neural networks, we suggest using Adam with the default parameters for everything except the learning rate as this is widely considered to be the best algorithm for optmizing deep neural network based function approximators. For recurrent neural networks we suggest using RMSprop.
+
+### SGD
+Stochastic Gradient Descent. Parameterized by `lr` (learning rate), `momentum`, `decay` and `nestorov. See [Keras](https://keras.io/optimizers/#sgd) for more details.
+
+```json
+ "dqn": {
+    "Optimizer": "AdamOptimizer",
+    "param": {
+      "lr": 0.02,                      // leave blank for defaults
+      "momentum" : 0.9,     // leave blank for defaults
+      "decay": 0.00001,     // leave blank for defaults
+      "nesterov": true         // leave blank for defaults
+    },
+```
+
+### Adam
+Parameterized by `lr` (learning rate),  `beta_1`, `beta_2`, `epsilon`, `decay`. See [Keras](https://keras.io/optimizers/#adam) for more details.
+
+### RMSprop
+Parameterized by `lr` (learning rate),  `rho`, `epsilon`, `decay`. See [Keras](https://keras.io/optimizers/#rmsprop) for more details.
 
 ## HyperOptimizer
+Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order as correspond to rough grained >> finer grained search
 
-use which first: 
+1. LineSearch
+2. GridSearch
+3. RandomSearch
 
 ### LineSearch
 ### GridSearch
@@ -274,3 +298,5 @@ Hopt = get_module(GREF, experiment_spec['HyperOptimizer'])
 hopt = Hopt(Trial, **experiment_kwargs)
 experiment_data = hopt.run()
 ```
+
+## Preprocessor
