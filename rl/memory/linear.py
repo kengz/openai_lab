@@ -13,7 +13,7 @@ class LinearMemory(Memory):
     def __init__(self, **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
-            'states', 'actions', 'rewards', 'next_states', 'terminals']
+            'states', 'actions', 'rewards', 'next_states', 'terminals', 'error']
         self.exp = {k: [] for k in self.exp_keys}
         log_self(self)
 
@@ -30,7 +30,7 @@ class LinearMemory(Memory):
             for k in self.exp_keys:
                 del self.exp[k][0]
 
-    def add_exp(self, action, reward, next_state, terminal):
+    def add_exp(self, action, reward, next_state, terminal, error):
         '''
         after the env.step(a) that returns s', r,
         using the previously stored state for the s,
@@ -41,6 +41,7 @@ class LinearMemory(Memory):
         self.exp['rewards'].append(reward)
         self.exp['next_states'].append(next_state)
         self.exp['terminals'].append(int(terminal))
+        self.exp['error'].append(error)
         self.state = next_state
 
     def _get_exp(self, exp_name, inds):
@@ -66,37 +67,29 @@ class LinearMemory(Memory):
         minibatch = self.get_exp(rand_inds)
         return minibatch
 
+    def update(self, updates):
+        pass
+
 
 class LinearMemoryWithForgetting(LinearMemory):
+
+    def __init__(self, max_len=50000,
+                            **kwargs):  # absorb generic param without breaking
+        super(LinearMemoryWithForgetting, self).__init__()
+        self.max_len = max_len
 
     '''
     Linear memory with uniform sampling, retaining last 50k experiences
     '''
 
-    def add_exp(self, action, reward, next_state, terminal):
+    def add_exp(self, action, reward, next_state, terminal, error):
         '''
         add exp as usual, but preserve only the recent episodes
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal)
+            action, reward, next_state, terminal, error)
 
-        self.trim_exp(max_len=50000)
-
-
-class LongLinearMemoryWithForgetting(LinearMemory):
-
-    '''
-    Linear memory with uniform sampling, retaining last 500k experiences
-    '''
-
-    def add_exp(self, action, reward, next_state, terminal):
-        '''
-        add exp as usual, but preserve only the recent episodes
-        '''
-        super(LongLinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal)
-
-        self.trim_exp(max_len=500000)
+        self.trim_exp(max_len=self.max_len)
 
 
 class LeftTailMemory(LinearMemory):

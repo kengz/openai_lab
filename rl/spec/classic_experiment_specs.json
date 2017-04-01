@@ -26,6 +26,36 @@
       ]
     }
   },
+  "dqn_per": {
+    "problem": "CartPole-v0",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 10,
+      "e": 0.01,
+      "alpha": 0.5,
+      "mem_max_len" : 20000
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
+    }
+  },
   "rand_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
