@@ -164,7 +164,7 @@ def calc_stability(sys_vars):
     0.5 = half-ish unstable
     0 = totally unstable, cannot yield solution
     '''
-    stability_gap = sys_vars['REWARD_MEAN_LEN']
+    MEASUREMENT_GAP = sys_vars['REWARD_MEAN_LEN']
     total_r_history = sys_vars['total_rewards_history']
     if sys_vars['SOLVED_MEAN_REWARD'] is None:
         max_rewards = max(total_r_history)
@@ -180,8 +180,8 @@ def calc_stability(sys_vars):
     if (first_solved_epi is None) or (total_r_history[-1] < r_threshold):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
-        mastery_gap = max(last_epi - first_solved_epi, stability_gap)
-    stability = stability_gap / mastery_gap
+        mastery_gap = max(last_epi - first_solved_epi, MEASUREMENT_GAP)
+    stability = MEASUREMENT_GAP / mastery_gap
     return stability
 
 
