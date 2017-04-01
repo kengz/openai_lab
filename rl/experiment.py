@@ -422,25 +422,17 @@ def analyze_experiment(trial_or_experiment_id):
     return analyze_data(experiment_data)
 
 
-def run(name_id_spec, times=1,
-        param_selection=False, analyze_only=False,
-        **kwargs):
+def run(name_id_spec, times=1, param_selection=False, **kwargs):
     '''
     primary method:
     specify:
     - experiment_name(str) or experiment_spec(Dict): run new trial,
     - experiment_id(str): rerun any incomplete trials from the experiment
     - trial_id(str): rerun trial from data
-    - trial_id(str) with analyze_only=True: plot graphs from data
     This runs all trials, specified by the obtained experiment_spec
     for a specified number of sessions per trial
     Multiple trials are ran if param_selection=True
     '''
-    # run plots on data only
-    if analyze_only:
-        analyze_experiment(name_id_spec)
-        return
-
     experiment_kwargs = {
         'experiment_spec': None,
         'experiment_id_override': None,

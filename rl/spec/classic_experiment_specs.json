@@ -273,7 +273,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "EpsilonGreedyPolicy",
+    "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "lr": 0.005,
