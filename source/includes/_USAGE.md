@@ -26,9 +26,6 @@ grunt -prod -remote
 # resume lab (previously incomplete experiments)
 grunt -prod -remote -resume
 
-# plot analysis graphs only
-grunt analyze -prod
-
 # clear data/ folder and cache files
 grunt clear
 ```
@@ -114,9 +111,6 @@ grunt -prod -remote
 # resume lab (previously incomplete experiments)
 grunt -prod -remote -resume
 
-# plot analysis graphs only
-grunt analyze -prod
-
 # clear data/ folder and cache files
 grunt clear
 ```
@@ -124,7 +118,6 @@ grunt clear
 The `<task>`s are:
 
 - _(default empty)_: run the lab
-- `analyze`: generate analysis data and graphs only, without running the lab. This can be used when you wish to see the analysis results midway during a long-running experiment. Run it on a separate terminal window as `grunt analyze -prod`
 - `clear`: clear the `data/` folder and cache files. **Be careful** and make sure your data is already copied to the sync location
 
 
@@ -152,7 +145,6 @@ python3 main.py -bp -t 5 -e dqn | tee -a ./data/terminal.log;
 
 The python command <flag>s are:
 
-- `-a`: Run `analyze_experiment()` only to plot `experiment_data`. Default: `False`
 - `-b`: blind mode, do not render graphics. Default: `False`
 - `-d`: log debug info. Default: `False`
 - `-e <experiment>`: specify which inside the `rl/spec/*_experiment_spec.json` to run. Default: `-e dev_dqn`. Can be a `experiment_name, experiment_id`.
