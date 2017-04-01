@@ -136,7 +136,6 @@ Crucially, the memory controls how long experiences are stored for, and which ex
 The size of the memory is unbounded and experiences are sampled random uniformly from memory.
 
 ### LinearMemoryWithForgetting
-Parameterizes by `max_len` param which bounds the size of the memory. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.
 
 ```json
 "dqn": {
@@ -145,6 +144,8 @@ Parameterizes by `max_len` param which bounds the size of the memory. Once memor
       "max_len" : 10000
     },
 ```
+
+Parameterizes by `max_len` param which bounds the size of the memory. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.
 
 ### LeftTailMemory
 Like linear memory with sampling via a left-tail distribution. This has the effect of drawing more from newer experiences.
@@ -158,8 +159,6 @@ p = (1 + e)** alpha
 
 The parameter `e` > 0 is  a constant added onto the error to prevent experiences with error 0 never being sampled. `alpha` controls how spiked the distribution is. The lower `alpha` the closer to unform the distribution is. `alpha` = 0 corresponds to uniform random sampling.
 
-This has the effect of drawing more from experiences that the learning algorithm doesn't perform well on, i.e. the experiences from which is has most to learn. The size of the memory is bounded as in LinearMemoryWithForgetting.
-
 ```json
 "dqn": {
     "Memory": "PrioritizedExperienceReplay",
@@ -169,6 +168,8 @@ This has the effect of drawing more from experiences that the learning algorithm
       "max_len" : 10000
     },
 ```
+
+This has the effect of drawing more from experiences that the learning algorithm doesn't perform well on, i.e. the experiences from which is has most to learn. The size of the memory is bounded as in LinearMemoryWithForgetting.
 
 ### RankedMemory
 
