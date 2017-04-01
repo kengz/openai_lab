@@ -33,7 +33,7 @@ RL problems are characterized by incomplete information. The transition probabil
 
 Q-learning algorithms attempt to estimate the optimal Q function, i.e thevalue of taking action A in state S under a specific policy. Q-learning algorithms have an implicit policy, typically \epsilon-greedy in which the action with the maximum Q value is selected with probability(1 - \epsilon) and a random action is taken with probability \epsilon. The random actions encourage exploration of the state space and help prevent algorithms from getting stuck in local minima. Q-learning algorithms are off-policy algorithms in that the policy used to evaluate the value of the action taken is different to the policy used to determine which state-action pairs are visited. It is also a temporal difference algorithm. Updates  to the Q function are based on existing estimates. The estimate in time t is updated using an estimate from time t+1. This allows Q-Learning algorithms to be online and incremental, so the agent can be trained during an episode. The update to Q_t(S, A) is as follows
 
-![](./Q-Learning.png)
+![](./q_learning.png)
 
 For more details, please see chapter 6 of [Reinforcement Learning: An Introduction, Sutton and Barto](https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf)
 
@@ -43,7 +43,7 @@ Since the policy that is used to evaluate the target is fixed (a greedy policy t
 
 Standard Q-learning algorithm with experience replay. Online training every n experiences.
 
-![](./images/DeepQLearning.png)
+![](./images/deep_q_learning.png)
 
 Agents: 
 
@@ -54,7 +54,7 @@ Agents:
 
 Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S', the other is used to evaluate the action in state S'. Periodically the roles of each Q function are switched. Online training every n experiences.
 
-![](./images/DoubleQLearning.png)
+![](./images/double_q_learning.png)
 
 Agents
 
@@ -65,7 +65,7 @@ Agents
 
 Deep Q-Learning algorithms tends to be unstable. To address this issue, create two Q function approximators, one for exploration, Q_e, and one for evaluating the target, Q_t. The target is a copy of the exploration network with frozen weights which lag the exploration network. These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See [David Silver's](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf) lecture slides for more details. Online training every n experiences.
 
-![](./images/FreezeDQN.png)
+![](./images/freeze_dqn.png)
 
  Agents
 
@@ -77,7 +77,7 @@ Sarsa algorithms also attempt to estimate the optimal Q function. They are on po
 
 Sarsa update:
 
-![](./images/Sarsa.png)
+![](./images/sarsa.png)
 
 This update is made each time the agent acts in an environment and gets an experience <S_t, A_t, R_{t+1}, S_{t+1}>
 
@@ -85,7 +85,7 @@ This update is made each time the agent acts in an environment and gets an exper
 
 Standard Sarsa algortthm
 
-![](./DeepSarsa.png)
+![](./deep_sarsa.png)
 
 Agents
 
@@ -95,7 +95,7 @@ Agents
 
 Uses the expected value of the Q function under the current policy to construct the target instead of the Q-value for the action selected.
 
-![](./images/ExpectedSarsa.png)
+![](./images/expected_sarsa.png)
 
 Agents
 
