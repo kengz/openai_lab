@@ -64,7 +64,7 @@ Parameterized by starting value for epsilon (`init_e`), min value for epsilon (`
     "param": {
       "init_e" : 1.0,
       "final_e" : 0.1,
-      "exploration_anneal_episodes": 10
+      "exploration_anneal_episodes": 100
     },
 ```
 
@@ -77,6 +77,16 @@ Parameterized by the starting value for tau (`init_tau`), min value for tau (`fi
 $$ p_a = exp(Q_a / tau) / sum_a' (Q_a' / tau)$$
 
 Tau is decayed linearly over time in the same way as in the EpsilonGreedyPolicy.
+
+```json
+"dqn": {
+    "Policy": "BoltzmannPolicy",
+    "param": {
+      "init_tau" : 1.0,
+      "final_tau" : 0.1,
+      "exploration_anneal_episodes": 10
+    },
+```
 
 ### DoubleDQNBoltzmannPolicy
 Same as the Boltzmann policy except that the Q value used for a given action is the sum of the outputs from each of the two Q-state approximators.
@@ -126,13 +136,39 @@ Crucially, the memory controls how long experiences are stored for, and which ex
 The size of the memory is unbounded and experiences are sampled random uniformly from memory.
 
 ### LinearMemoryWithForgetting
-The size of the memory is bounded. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.
+Parameterizes by `max_len` param which bounds the size of the memory. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.
+
+```json
+"dqn": {
+    "Memory": "LinearMemoryWithForgetting",
+    "param": {
+      "max_len" : 10000
+    },
+```
 
 ### LeftTailMemory
 Like linear memory with sampling via a left-tail distribution. This has the effect of drawing more from newer experiences.
 
 ### PrioritizedExperienceReplay
-Experiences are weighted by the error, a measure of how well the learning algorithm currently performs on that experience. Experiences are sampled from memory in proportion to the error. This has the effect of drawing more from experiences that the learning algorithm doesn't perform well on, i.e. the experiences from which is has most to learn. The size of the memory is bounded as in LinearMemoryWithForgetting.
+Experiences are weighted by the error, a measure of how well the learning algorithm currently performs on that experience. Experiences are sampled from memory in proportion to the p value (adjusted error value)
+
+```python
+p = (1 + e)** alpha
+``
+
+The parameter `e` > 0 is  a constant added onto the error to prevent experiences with error 0 never being sampled. `alpha` controls how spiked the distribution is. The lower `alpha` the closer to unform the distribution is. `alpha` = 0 corresponds to uniform random sampling.
+
+This has the effect of drawing more from experiences that the learning algorithm doesn't perform well on, i.e. the experiences from which is has most to learn. The size of the memory is bounded as in LinearMemoryWithForgetting.
+
+```json
+"dqn": {
+    "Memory": "PrioritizedExperienceReplay",
+    "param": {
+      "e" : 0.01,
+      "alpha": 0.6,
+      "max_len" : 10000
+    },
+```
 
 ### RankedMemory
 
