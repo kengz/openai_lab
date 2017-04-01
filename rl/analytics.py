@@ -164,11 +164,12 @@ def calc_stability(sys_vars):
     0.5 = half-ish unstable
     0 = totally unstable, cannot yield solution
     '''
-    stability_gap = sys_vars['REWARD_MEAN_LEN']
     total_r_history = sys_vars['total_rewards_history']
     if sys_vars['SOLVED_MEAN_REWARD'] is None:
+        min_rewards = min(total_r_history)
         max_rewards = max(total_r_history)
-        r_threshold = max_rewards * (0.95 ** np.sign(max_rewards))
+        rewards_gap = max_rewards - min_rewards
+        r_threshold = max_rewards - (0.10 * rewards_gap)
     else:
         r_threshold = sys_vars['SOLVED_MEAN_REWARD']
     # find index i.e. epi of first solved
@@ -176,12 +177,14 @@ def calc_stability(sys_vars):
         (idx for idx, total_r in enumerate(total_r_history)
             if total_r > r_threshold), None)
     last_epi = sys_vars['epi']
+    stable_epi_count = len([
+        total_r for total_r in total_r_history if total_r > r_threshold])
 
-    if (first_solved_epi is None) or (total_r_history[-1] < r_threshold):
+    if (first_solved_epi is None) or (last_epi == first_solved_epi):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
-        mastery_gap = max(last_epi - first_solved_epi, stability_gap)
-    stability = stability_gap / mastery_gap
+        mastery_gap = last_epi - first_solved_epi
+    stability = stable_epi_count / mastery_gap
     return stability
 
 
@@ -343,6 +346,8 @@ def plot_experiment(data_df, trial_id):
     experiment_id = parse_experiment_id(trial_id)
     hue = 'solved_ratio_of_sessions'
     data_df = data_df.sort_values(hue)
+    fitness_hue = 'fitness_score_bin'
+    data_df[fitness_hue] = pd.cut(data_df['fitness_score'], bins=5)
     X_cols = list(filter(lambda c: c.startswith('variable_'), data_df.columns))
     col_size = len(X_cols)
     row_size = len(EXPERIMENT_DATA_Y_COLS)
@@ -402,7 +407,7 @@ def plot_experiment(data_df, trial_id):
         filter(lambda x: data_df[x].dtype in numerics, X_cols))
     with sns.axes_style('white', {'axes.linewidth': 0.2}):
         g = sns.pairplot(
-            data_df, vars=numeric_X_cols, hue=hue,
+            data_df, vars=numeric_X_cols, hue=fitness_hue,
             size=3, aspect=1, plot_kws={'s': 50, 'alpha': 0.5})
         g.fig.suptitle(wrap_text(experiment_id))
         g = g.add_legend()
