@@ -1,9 +1,5 @@
 # <a name="agents"></a>Agents
 
-(section under construction)
-
-## Overview
-
 Agents are containers for reinforcement learning algorithms. They consist of a number of differnet components which are specified in the experiment_specs.
 
 - `Agent` (Learning algorithm): decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.
@@ -241,6 +237,9 @@ Parameterized by `lr` (learning rate),  `beta_1`, `beta_2`, `epsilon`, `decay`. 
 Parameterized by `lr` (learning rate),  `rho`, `epsilon`, `decay`. See [Keras](https://keras.io/optimizers/#rmsprop) for more details.
 
 ## HyperOptimizer
+
+(section under construction)
+
 Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trrying to find the optimal parameters for an agent in an environment as  these correspond to rough grained >> finer grained search
 
 1. LineSearch
@@ -248,7 +247,6 @@ Controls how to search over your hyperparameter space. We suggest using each of 
 3. RandomSearch
 
 ### LineSearch
-
 ### GridSearch
 ### RandomSearch
 
@@ -323,3 +321,5 @@ experiment_data = hopt.run()
 ```
 
 ## Preprocessor
+
+(section under construction)
