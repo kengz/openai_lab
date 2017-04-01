@@ -10,7 +10,7 @@ _An experimentation system for Reinforcement Learning using OpenAI Gym and Keras
 
 The _OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy to use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experiment and evaluation framework.
 
-This is [motivated by the problems we experienced in RL research](#motivations): the difficulty of building upon other's work, the lack of rigor in comparisons of research results, and the inertia to high level vision.
+This is [motivated by the problems we experienced in RL research](http://kengz.me/openai_lab/#motivations): the difficulty of building upon other's work, the lack of rigor in comparisons of research results, and the inertia to high level vision.
 
 The Lab aims to make RL research more efficient and to encourage experimentation, by doing three things:
 
@@ -20,6 +20,8 @@ The Lab aims to make RL research more efficient and to encourage experimentation
 
 With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory, and parameter tuning. It allows us to build agents efficiently using existing components with the implementations from research ideas. We could then test the research hypotheses systematically by running experiments.
 
+See the [Solutions](http://kengz.me/openai_lab/#solutions) to some OpenAI environments that the Lab users have produced.
+
 
 <img alt="Timelapse of OpenAI Lab" src="http://kengz.me/openai_lab/images/lab_demo_dqn.gif" />
-*Timelapse of OpenAI Lab, solving CartPole-v0.*
+_Timelapse of OpenAI Lab, solving CartPole-v0._
