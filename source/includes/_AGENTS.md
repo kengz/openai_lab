@@ -27,6 +27,7 @@ To define an `Agent` you must specify each of the components. The example below 
 Each of the components with the exception of `Agent` and `Policy` are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration however, see [our best solutions](#solutions)
 
 For the currently implemented algorithms, the following `Agents` can go with the following `Policies`.
+
 - DQN, Sarsa, ExpectedSarsa, OffPolSarsa, FreezeDQN: EpsilonGreedyPolicy, OscillatingEpsilonGreedyPolicy, TargetedEpsilonGreedyPolicy, BoltzmannPolicy
 - DoubleDQN: DoubleDQNPolicy, DoubleDQNBoltzmannPolicy
 
@@ -80,7 +81,7 @@ def add_exp(self, action, reward, next_state, terminal, error):
 
 def get_exp(self, inds):
     '''get a batch of experiences by indices
-       helper function called by rand_minibatch''
+       helper function called by rand_minibatch'''
 
 def pop(self):
     '''get the last experience (batched like get_exp()'''
