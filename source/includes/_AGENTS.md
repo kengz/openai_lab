@@ -13,15 +13,15 @@ Agents are containers for reinforcement learning algorithms. They consist of a n
 - `HyperOptimizer`: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them (e.g grid search, random search)
 - `Preprocessor`: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.
 
-To define an `Agent` you must specify each of the components. The example below is from the specification for `dqn` in `rl/spec/classic_experiment_specs.json`. If you are looking for a place to start we recommend these settings:
+To define an `Agent` you must specify each of the components. The example below is from the specification for `dqn` in `rl/spec/classic_experiment_specs.json`. The `rl/spec/*.json` files contains lots of other examples.
 
 ```json
 "Agent": "DQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
-    "PreProcessor": "NoPreProcessor",
+"HyperOptimizer": "GridSearch",
+"Memory": "LinearMemoryWithForgetting",
+"Optimizer": "AdamOptimizer",
+"Policy": "BoltzmannPolicy",
+"PreProcessor": "NoPreProcessor",
 ```
 
 Each of the components with the exception of `Agent` and `Policy` are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration, see [our best solutions](#solutions)
@@ -33,7 +33,29 @@ For the currently implemented algorithms, the following `Agents` can go with the
 
 ## Agent
 
-See [algorithms secton](#algorithms) for an explanation of currently implemented agents (learning algorithms)
+See [algorithms secton](#algorithms) for an explanation of currently implemented agents (learning algorithms). Agents always need the following parameters: `gamma` (how much to discount the future), `hidden_layers` (list of hidden layer sizes for neura network function approximators), and `hidden_layers_activation`,  (activation function for the hidden layers). The input and output layer sizes are inferred from the environment specs.
+
+```json
+"dqn": {
+    "Agent": "DQN",
+    "param": {
+      "hidden_layers": [32, 16],
+      "hidden_layers_activation": "sigmoid",
+    },
+```
+
+To make used of the random search hyperoptimizer for the network architecture, it is necessary to use the *auto-architecture* mode for building the network.  In this case set the `auto-architecture` param to true, and specific the `num_hidden_layers ` and the `first_hidden_layer_size`.
+
+```json
+"dqn": {
+    "Agent": "DQN",
+    "param": {
+      "hidden_layers_activation": "sigmoid",
+      "auto_architecture": true,
+      "num_hidden_layers": 3,
+      "first_hidden_layer_size": 512
+    },
+```
 
 ## Policy
 
@@ -141,7 +163,7 @@ The size of the memory is unbounded and experiences are sampled random uniformly
 "dqn": {
     "Memory": "LinearMemoryWithForgetting",
     "param": {
-      "max_len" : 10000        // leave blank for defaults
+      "max_len" : 10000
     },
 ```
 
@@ -203,12 +225,12 @@ Stochastic Gradient Descent. Parameterized by `lr` (learning rate), `momentum`, 
 
 ```json
  "dqn": {
-    "Optimizer": "AdamOptimizer",
+    "Optimizer": "SGDOptimizer",
     "param": {
-      "lr": 0.02,                      // leave blank for defaults
-      "momentum" : 0.9,     // leave blank for defaults
-      "decay": 0.00001,     // leave blank for defaults
-      "nesterov": true         // leave blank for defaults
+      "lr": 0.02,
+      "momentum" : 0.9
+      "decay": 0.00001
+      "nesterov": true
     },
 ```
 
@@ -226,6 +248,7 @@ Controls how to search over your hyperparameter space. We suggest using each of 
 3. RandomSearch
 
 ### LineSearch
+
 ### GridSearch
 ### RandomSearch
 
