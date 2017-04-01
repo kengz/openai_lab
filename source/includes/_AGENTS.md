@@ -1,6 +1,6 @@
 # <a name="agents"></a>Agents
 
-(This section is under construction)
+(section under construction)
 
 ## Overview
 
@@ -130,9 +130,9 @@ A policy has to have the following functions. You can create your own by inherit
 def select_action(self, state):
         '''Returns the action selected given the state'''
 
-    def update(self, sys_vars):
-        '''Update value of policy params (e.g. epsilon)
-        Called each timestep within an episode'''
+def update(self, sys_vars):
+    '''Update value of policy params (e.g. epsilon)
+    Called each timestep within an episode'''
 ```
 
 ## Memory
@@ -241,7 +241,7 @@ Parameterized by `lr` (learning rate),  `beta_1`, `beta_2`, `epsilon`, `decay`. 
 Parameterized by `lr` (learning rate),  `rho`, `epsilon`, `decay`. See [Keras](https://keras.io/optimizers/#rmsprop) for more details.
 
 ## HyperOptimizer
-Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order as correspond to rough grained >> finer grained search
+Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trrying to find the optimal parameters for an agent in an environment as  these correspond to rough grained >> finer grained search
 
 1. LineSearch
 2. GridSearch
