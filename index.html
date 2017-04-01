@@ -1592,11 +1592,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>All of the algorithms implemented so far are value-based. The policy for acting at each timestep is often a simple epsilon-greedy policy.</p>
 
-<p>With probability (1 - epsilon):
-    $$ A \leftArrow = max_a Q(S, a)$$
-With probability epsilon:
-    $$ A \leftArraow random action
-return A</p>
+<p><img src="images/e_greedy.png" alt="E greedy" /></p>
 
 <p>Alternatively, an indirect policy may use the Q-value to output a probability distribution over actions, and sample actions based on this distribution. This is the approach taken by the Boltzmann policies.</p>
 
@@ -1623,7 +1619,7 @@ return A</p>
 
 <p>Parameterized by the starting value for tau (<code class="prettyprint">init_tau</code>), min value for tau (<code class="prettyprint">final_tau</code>), and the number of epsiodes to anneal epsilon over (<code class="prettyprint">exploration_anneal_episodes</code>). At each step this policy selects actions based on the following probability distribution</p>
 
-<p>$$ p_a = exp(Q_a / tau) / sum_a&rsquo; (Q_a&rsquo; / tau)$$</p>
+<p><img src="images/boltzmann.png" alt="Boltzmann" /></p>
 
 <p>Tau is decayed linearly over time in the same way as in the EpsilonGreedyPolicy.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
