@@ -1,0 +1,103 @@
+\title{Learning Algortihm Updates}
+\author{
+        Wah Loon Keng \\
+            \and
+        Laura Graesser\\
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Learning algorithm updates for the OpenAI Lab.
+\end{abstract}
+
+\section{Q-Learning}
+
+$$ Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma ~max_a Q(S_{t+1}, a) - Q(S_t, A)] $$
+
+\subsection{Deep Q-Learning}
+
+Q update: 
+
+$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma ~max_a Q(S'€™, a) - Q(S, A)] $$
+\newline
+Translation to neural network update:
+\newline
+Learning rate: $\alpha$ \\
+Input (x vals): $(S, A)$ \\
+Network output: $Q(S, A)$ \\
+Target (y vals): $[R + \gamma ~max_a Q(S'€™, a)]$
+
+\newpage
+\subsection{Double Q-Learning}
+
+Q update (alternate between 1st and 2nd equation)
+
+$$ Q_1(S, A) \Leftarrow Q_1(S, A) + \alpha [R + \gamma Q_2(S'€™, argmax_a Q_1(S', a)) - Q1(S, A)] $$
+
+$$Q_2(S, A) \Leftarrow Q_2(S, A) + \alpha [R + \gamma Q_1(S€™', argmax_a Q_2(S'€™, a)) - Q2(S, A)] $$
+\newline
+Translation to neural network update:
+\newline
+Learning rate: $\alpha$ \\
+Input (x vals): $(S, A)$ \\
+Network output: $Q_1(S, A)$ or $Q_2(S, A)$ \\
+Target (y vals):  $[R + \gamma Q_1(S'€™, argmax_a Q_2(S'™, a))]$ or $[R + \gamma Q_2(S'€™, argmax_a Q_1(S'€™, a))]$
+
+\subsection{Deep Q-Learning with weight freezing}
+
+Q update: 
+
+$$Q_e(S, A) \Leftarrow Q_e(S, A) + \alpha [R + \gamma ~max_a Q_t(S'€™, a) - Q_e(S, A)]$$ 
+
+Periodically set $Q_t = Q_e$ (e.g. after every episode) or $Q_t = (1 - \epsilon)Q_t + \epsilon Q_e$ \\
+\newline
+Translation to neural network update:
+\newline
+Learning rate: $\alpha$ \\
+Input (x vals): $(S, A)$ \\
+Network output: $Q_e(S, A)$ \\
+Target (y vals): $[R + \gamma ~max_a Q_t(S'€™, a)]$. Update is to $Q_e$
+
+\newpage
+\section{Sarsa}
+
+Select $A_{t+1}$ in state $S_{t+1}$ using policy $Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A)]$
+
+\subsection{Sarsa}
+
+Q update (same as Q-learning): 
+
+$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma ~max_a Q(S'€™, a) - Q(S, A)] $$
+\newline
+Translation to neural network update:
+\newline
+Learning rate: $\alpha$ \\
+Input (x vals): $(S, A)$ \\
+Network output: $Q(S, A)$ \\
+Target (y vals): $[R + \gamma ~max_a Q(S', a)]$
+
+\subsection{Expected Sarsa}
+
+Q update: 
+
+$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma E_a Q(S'€™, a) - Q(S, A)] $$
+\newline
+Translation to neural network update:
+\newline
+Learning rate: $\alpha$ \\
+Input (x vals): $(S, A)$ \\
+Network output: $Q(S, A)$ \\
+Target (y vals): $[R + \gamma E_a Q(S'€™, a)]$
+
+\subsection{Off Policy Expected Sarsa}
+
+\end{document}
+

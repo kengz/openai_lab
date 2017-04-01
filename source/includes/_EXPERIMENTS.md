@@ -58,12 +58,12 @@ It consists of:
 - `experiment_name`: the key of the JSON. e.g. `dqn`
 - `problem`: name of the environment. e.g. `CartPole-v0`
 - **agent**: and its components in `rl/`, specified by the class name
-    - `Agent`: the main agent class, typically with the algorithm like `DQN, DDPG`
-    - `HyperOptimizer`: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them
-    - `Memory`: the memory module of the agent, to specify how agent control or access memory
-    - `Optimizer`: the neural network optimizer of Agent
-    - `Policy`: the externalized policy of Agent
-    - `PreProcessor`: for the environment states. Useful for Atari with images.
+    - `Agent` (Learning algorithm): decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.
+    - `Policy`: decision function for acting in an environment. Controls exploration vs. exploitation trade off(e.g. epsilon greedy, boltzmann)
+    - `Memory`: for storing experiences gained by acting in an environment. Controls how experiences are sampled for an agent to learn from. (e.g. random uniform with no forgetting, prioritized sampling with forgetting)
+    - `Optimizer`: controls how to optimize the function approximators contained within the agent (e.g. Stochatic Gradient Descent, Adam) 
+    - `HyperOptimizer`: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them (e.g grid search, random search)
+    - `Preprocessor`: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.
 - `param`: the default parameter values used (control variables)
 - `param_range`: the hyperparameter space ranges to search through by `HyperOptimimzer` (experiment variables).
 

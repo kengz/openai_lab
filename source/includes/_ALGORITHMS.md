@@ -33,7 +33,7 @@ RL problems are characterized by incomplete information. The transition probabil
 
 Q-learning algorithms attempt to estimate the optimal Q function, i.e thevalue of taking action A in state S under a specific policy. Q-learning algorithms have an implicit policy, typically \epsilon-greedy in which the action with the maximum Q value is selected with probability(1 - \epsilon) and a random action is taken with probability \epsilon. The random actions encourage exploration of the state space and help prevent algorithms from getting stuck in local minima. Q-learning algorithms are off-policy algorithms in that the policy used to evaluate the value of the action taken is different to the policy used to determine which state-action pairs are visited. It is also a temporal difference algorithm. Updates  to the Q function are based on existing estimates. The estimate in time t is updated using an estimate from time t+1. This allows Q-Learning algorithms to be online and incremental, so the agent can be trained during an episode. The update to Q_t(S, A) is as follows
 
-$$ Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma max_A Q(S_{t+1}, A) - Q(S_t, A)] $$
+![](./Q-Learning.png)
 
 For more details, please see chapter 6 of [Reinforcement Learning: An Introduction, Sutton and Barto](https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf)
 
@@ -43,16 +43,7 @@ Since the policy that is used to evaluate the target is fixed (a greedy policy t
 
 Standard Q-learning algorithm with experience replay. Online training every n experiences.
 
-Q update:
-
-$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma max_a Q(S', A) - Q(S, A)] $$
-
-Translation to neural network update:
-
-Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma max_a Q(S', A)]
+![](./images/DeepQLearning.png)
 
 Agents: 
 
@@ -63,17 +54,7 @@ Agents:
 
 Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S', the other is used to evaluate the action in state S'. Periodically the roles of each Q function are switched. Online training every n experiences.
 
-Q update(alternate between 1 and 2)
-
-1. $ Q_1(S, A) \Leftarrow Q_1(S, A) + \alpha [R + \gamma Q_2(S', argmax_A Q_1(S', A)) - Q1(S, A)] $
-2. $Q_2(S, A) \Leftarrow Q_2(S, A) + \alpha [R + \gamma Q_1(S', argmax_A Q_2(S', A)) - Q2(S, A)] $
-
-Translation to neural network update:
-
-Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q_1(S, A) or Q_2(S, A)  
-Target (y vals):  [R + \gamma Q_1(S', argmax_A Q_2(S', A))] or [R + \gamma Q_2(S', argmax_A Q_1(S', A))]
+![](./images/DoubleQLearning.png)
 
 Agents
 
@@ -84,18 +65,7 @@ Agents
 
 Deep Q-Learning algorithms tends to be unstable. To address this issue, create two Q function approximators, one for exploration, Q_e, and one for evaluating the target, Q_t. The target is a copy of the exploration network with frozen weights which lag the exploration network. These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See [David Silver's](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf) lecture slides for more details. Online training every n experiences.
 
-Q update:
-
-$$Q_e(S, A) \Leftarrow Q_e(S, A) + \alpha [R + \gamma max_A Q_t(S', A) - Q_e(S, A)]$$
-Periodically set $Q_t = Q_e$ (e.g. after every episode) or $Q_t = (1 - \epsilon)Q_t + \epsilon Q_e$
-
-Translation to neural network update:
-
-Learning rate: \alpha
-Input (x vals):  $(S, A)$
-Network output: $Q_e(S, A)$
-Target $(y vals):  [R + \gamma max_A Q_t(S', A)]$
-Update is to $Q_e$
+![](./images/FreezeDQN.png)
 
  Agents
 
@@ -107,8 +77,7 @@ Sarsa algorithms also attempt to estimate the optimal Q function. They are on po
 
 Sarsa update:
 
-Select $A_{t+1}$ in state $S_{t+1}$ using policy
-$Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A)]$
+![](./images/Sarsa.png)
 
 This update is made each time the agent acts in an environment and gets an experience <S_t, A_t, R_{t+1}, S_{t+1}>
 
@@ -116,16 +85,7 @@ This update is made each time the agent acts in an environment and gets an exper
 
 Standard Sarsa algortthm
 
-Q update (same as Q-Learning):
-
-$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma max_a Q(S', A) - Q(S, A)] $$
-
-Translation to neural network update:
-
-Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma max_a Q(S', A)]
+![](./DeepSarsa.png)
 
 Agents
 
@@ -135,16 +95,7 @@ Agents
 
 Uses the expected value of the Q function under the current policy to construct the target instead of the Q-value for the action selected.
 
-Q update (same and Q-Learning):
-
-$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma E_a Q(S', a) - Q(S, A)] $$
-
-Translation to neural network update:
-
-Learning rate: \alpha
-Input (x vals):  (S, A)
-Network output: Q(S, A)
-Target (y vals):  [R + \gamma E_a Q(S', a)]
+![](./images/ExpectedSarsa.png)
 
 Agents
 
@@ -163,7 +114,7 @@ Agents
 
 ### Policy Gradient 
 
-#### Deep Deterministic Policy Gradients:  In progress
+### Deep Deterministic Policy Gradients:  In progress
 
 
 
