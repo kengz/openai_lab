@@ -53,7 +53,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 ## Analysis Graph
 
->![](https://cloud.githubusercontent.com/assets/8209263/24389521/2e8c1b38-1350-11e7-8a84-6f47e702af62.png "Analysis graph")
+>![](https://cloud.githubusercontent.com/assets/8209263/24582680/bc9fd9ae-1702-11e7-881b-38f7f379d6ff.png "Analysis graph")
 >*The analysis graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. There're numerous dark points with solved_ratio 1, which is expected since CartPole-v0 is the simplest environment. There are clear trends cross the x-values - gamma=0.95 is unstable; 2-hidden-layer NN is unsuitable for the problem, but wider 1-hidden-layer is good; learning rate lr=0.001 is stabler, but lr=0.02 is a good balance between stability and fitness_score.*
 
 The **analysis graph** is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the *measurement metrics on the y-axis*, and the *experiment variables on the x-axis*.
@@ -87,8 +87,8 @@ Every subplot in the graph shows the distribution of all the trial points in the
 
 Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn.swarmplot.html) which allows us to see the distribution of points by spreading them horizontally to prevent overlap. However, when the x-axis has too many values (.e.g continuous x-values in random search), it will switch to scatter plot instead.
 
->![](https://cloud.githubusercontent.com/assets/8209263/24487363/0197e3e4-14dd-11e7-9523-4e8bd23c75e9.png "The acrobot random search analysis graph")
->*An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the [rand_acrobot PR](https://github.com/kengz/openai_lab/pull/94)*
+>![](https://cloud.githubusercontent.com/assets/8209263/24582554/1fbefc98-1700-11e7-85f8-b0740b25007f.png "The acrobot random search analysis graph")
+>*An example from rand_acrobot with scatterplot instead of swarmplot for gamma and lr. This is when RandomSearch is used. The example is from the [rand_acrobot-2017_03_28_082754 PR](https://github.com/kengz/openai_lab/pull/94)*
 
 **Population distribution**: more darker points implies that the many trials could solve the environment consistently. Higher ratio of dark points also means the environment is easier for the agent. If the points are closer and the distribution has smaller vertical gaps, then the *x* is a stabler value for the *y* value even when other *x'* dimensions vary. In a scatterplot, clustering of points in a random search also shows the convergence of the search.
 
@@ -99,7 +99,7 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 
 ## Correlation Graph
 
->![](https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png "Correlation graph")
+>![](https://cloud.githubusercontent.com/assets/8209263/24582681/be76f4ec-1702-11e7-9935-2491189ab1e6.png "Correlation graph")
 >*The correlation graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.*
 
 The **correlation graph** reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.
@@ -128,11 +128,11 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
 
 |best_session_epi|best_session_id|best_session_mean_rewards|best_session_stability|fitness_score|mean_rewards_per_epi_stats_mean|mean_rewards_stats_mean|mean_rewards_stats_max|epi_stats_mean|epi_stats_min|solved_ratio_of_sessions|max_total_rewards_stats_mean|trial_id|variable_gamma|variable_hidden_layers|variable_lr|
 |:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
-|114|dqn-2017_03_19_004714_t79_s2|195.59|1.0|9.487062|1.326499|195.404|195.66|154.2|114.0|1.0|200.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
-|140|dqn-2017_03_19_004714_t28_s0|196.11|1.0|9.434487|1.179311|195.564|196.11|167.2|140.0|1.0|200.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
-|153|dqn-2017_03_19_004714_t16_s2|195.48|1.0|9.279524|1.159941|195.466|195.7|168.6|153.0|1.0|200.0|dqn-2017_03_19_004714_t16|0.95|[64]|0.001|
-|157|dqn-2017_03_19_004714_t36_s4|196.07|1.0|9.242832|1.155354|195.602|196.07|169.0|157.0|1.0|200.0|dqn-2017_03_19_004714_t36|0.97|[64]|0.001|
-|149|dqn-2017_03_19_004714_t48_s3|195.63|0.970874|9.024263|1.131328|195.678|195.83|175.0|149.0|1.0|200.0|dqn-2017_03_19_004714_t48|0.99|[32]|0.001|
+|114|dqn-2017_03_19_004714_t79_s2|195.59|0.845361|9.635032|1.326499|195.404|195.66|154.2|114.0|1.0|200.0|dqn-2017_03_19_004714_t79|0.999|[64]|0.02|
+|157|dqn-2017_03_19_004714_t36_s4|196.07|1.010526|9.282276|1.155354|195.602|196.07|169.0|157.0|1.0|200.0|dqn-2017_03_19_004714_t36|0.97|[64]|0.001|
+|140|dqn-2017_03_19_004714_t28_s0|196.11|0.989474|9.178363|1.179311|195.564|196.11|167.2|140.0|1.0|200.0|dqn-2017_03_19_004714_t28|0.97|[32]|0.001|
+|123|dqn-2017_03_19_004714_t50_s0|195.16|0.96875|9.074483|1.276302|195.136|195.3|160.6|123.0|1.0|200.0|dqn-2017_03_19_004714_t50|0.99|[32]|0.01|
+|153|dqn-2017_03_19_004714_t16_s2|195.48|1.010526|8.98669|1.159941|195.466|195.7|168.6|153.0|1.0|200.0|dqn-2017_03_19_004714_t16|0.95|[64]|0.001|
 
 *`dqn-2017_03_19_004714_analysis_data.csv`, top 5 trials, from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see that among the dominating parameter values are gamma=0.999, hidden_layers=[64], lr=[0.02]. The best trial json below.*
 
@@ -161,9 +161,9 @@ The best `<trial_id>.json` will show us directly what is its `experiment_spec`, 
     "best_session_epi": 114,
     "best_session_id": "dqn-2017_03_19_004714_t79_s2",
     "best_session_mean_rewards": 195.59,
-    "best_session_stability": 1,
+    "best_session_stability": 0.8453608,
     "epi_stats_mean": 154.2,
-    "fitness_score": 9.487062,
+    "fitness_score": 9.635032,
     "max_total_rewards_stats_mean": 200,
     "mean_rewards_per_epi_stats_mean": 1.326499,
     "mean_rewards_stats_mean": 195.404,
