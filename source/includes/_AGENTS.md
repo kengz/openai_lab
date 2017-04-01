@@ -58,6 +58,16 @@ Below is a summary of the currently implemented policies. Each takes a slightly 
 ### EpsilonGreedyPolicy
 Parameterized by starting value for epsilon (`init_e`), min value for epsilon (`final_e`), and the number of epsiodes to anneal epsilon over (`exploration_anneal_episodes`). The value of epsilon is decayed linearly from start to min.
 
+```json
+"dqn": {
+    "Policy": "EpsilonGreedyPolicy",
+    "param": {
+      "init_e" : 1.0,
+      "final_e" : 0.1,
+      "exploration_anneal_episodes": 10
+    },
+```
+
 ### DoubleDQNPolicy
 When actions are not random this policy selects actions by summing the outputs from each of the two Q-state approximators before taking the max of the result. Same approach as EpsilonGreedyPolicy to decaying epsilon and same params.
 
