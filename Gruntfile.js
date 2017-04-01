@@ -76,10 +76,6 @@ module.exports = function(grunt) {
     return grunt.option('remote') ? 'xvfb-run -a -s "-screen 0 1400x900x24" --' : ''
   }
 
-  function analyzeCmd() {
-    return grunt.option('analyze') ? ' -a' : ''
-  }
-
   function bestCmd() {
     return grunt.option('best') ? '' : ' -bp'
   }
@@ -106,12 +102,12 @@ module.exports = function(grunt) {
 
   function composeCommand(experimentStr) {
     var eStr = experimentStr
-    if (grunt.option('resume')) {
+    if (grunt.option('resume') || grunt.option('analyze')) {
       eStr = resumeExperimentStr(eStr)
     }
 
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py${analyzeCmd()}${bestCmd()}${quietCmd()} -t 5 -e ${eStr}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py${bestCmd()}${quietCmd()} -t 5 -e ${eStr}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd

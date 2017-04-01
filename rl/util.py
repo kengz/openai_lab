@@ -64,11 +64,6 @@ PROBLEMS, EXPERIMENT_SPECS = import_guard_asset()
 
 # parse_args to add flag
 parser = argparse.ArgumentParser(description='Set flags for functions')
-parser.add_argument("-a", "--analyze",
-                    help="only run analyze_data",
-                    action="store_true",
-                    dest="analyze_only",
-                    default=False)
 parser.add_argument("-b", "--blind",
                     help="dont render graphics",
                     action="store_const",
