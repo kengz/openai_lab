@@ -167,8 +167,10 @@ def calc_stability(sys_vars):
     MEASUREMENT_GAP = sys_vars['REWARD_MEAN_LEN']
     total_r_history = sys_vars['total_rewards_history']
     if sys_vars['SOLVED_MEAN_REWARD'] is None:
+        min_rewards = min(total_r_history)
         max_rewards = max(total_r_history)
-        r_threshold = max_rewards * (0.95 ** np.sign(max_rewards))
+        rewards_gap = max_rewards - min_rewards
+        r_threshold = max_rewards - (0.10 * rewards_gap)
     else:
         r_threshold = sys_vars['SOLVED_MEAN_REWARD']
     # find index i.e. epi of first solved
@@ -176,12 +178,14 @@ def calc_stability(sys_vars):
         (idx for idx, total_r in enumerate(total_r_history)
             if total_r > r_threshold), None)
     last_epi = sys_vars['epi']
+    stable_epi_count = len([
+        total_r for total_r in total_r_history if total_r > r_threshold])
 
     if (first_solved_epi is None) or (total_r_history[-1] < r_threshold):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
-        mastery_gap = max(last_epi - first_solved_epi, MEASUREMENT_GAP)
-    stability = MEASUREMENT_GAP / mastery_gap
+        mastery_gap = last_epi - first_solved_epi
+    stability = stable_epi_count / mastery_gap
     return stability
 
 
