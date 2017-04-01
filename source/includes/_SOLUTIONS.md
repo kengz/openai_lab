@@ -19,10 +19,10 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |**CartPole-v1**|[11.68838](https://github.com/kengz/openai_lab/pull/80)|[14.12158](https://github.com/kengz/openai_lab/pull/82)|-|-|
 |**Acrobot-v1**|[-0.1706583](https://github.com/kengz/openai_lab/pull/94)|[-0.1755333](https://github.com/kengz/openai_lab/pull/98)|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-|
 |**MountainCar-v0**|-|-|-|-|
-|**MountainCarContinuous-v0**|-|-|-|-|
-|**Pendulum-v0**|-|-|-|-|
+|**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|-|
+|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|-|
 |**LunarLander-v2**|[2.296613](https://github.com/kengz/openai_lab/pull/84)|[2.812674](https://github.com/kengz/openai_lab/pull/87)|[3.024702](https://github.com/kengz/openai_lab/pull/96)|-|
-|**LunarLanderContinuous-v2**|-|-|-|-|
+|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|-|
 |**BipedalWalker-v2**|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|
 |**CarRacing-v0**|-|-|-|-|
@@ -76,8 +76,8 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |CartPole-v1|[14.12158](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
 |Acrobot-v1|[-0.1626845](https://github.com/kengz/openai_lab/pull/97)|-120.16|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|-|-|-|-|
-|MountainCarContinuous-v0|-|-|-|-|
-|Pendulum-v0|-|-|-|-|
+|MountainCarContinuous-v0|*n/a*|*n/a*|*n/a*|-|
+|Pendulum-v0|*n/a*|*n/a*|*n/a*|-|
 
 
 ### Box2D Environments
@@ -85,7 +85,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
 |LunarLander-v2|[3.024702](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
-|LunarLanderContinuous-v2|-|-|-|-|
+|LunarLanderContinuous-v2|*n/a*|*n/a*|*n/a*|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
 |CarRacing-v0|-|-|-|-|

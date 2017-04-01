@@ -1,6 +1,6 @@
 # <a name="experiments"></a>Experiments
 
-The experimental framework design and terminology should be familiar, since they're borrowed from experimental science. The Lab runs **experiments** and produces data for [analysis](#analysis).
+The experimental framework design and terminology should be familiar, since they're borrowed from experimental science. The Lab runs experiments and produces data for [analysis](#analysis).
 
 
 ## Definition
