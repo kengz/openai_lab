@@ -15,8 +15,6 @@ In this section, we will formalize these ideas.
 
 ## <a name="fitness"></a>Fitness Score
 
-*(new adjacent possible)*
-
 The fitness function `f` is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.
 
 The fitness function's design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the `mean rewards` metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under *strength*.
@@ -101,8 +99,6 @@ This section formalizes the generalized metrics for these, and shows that the Fi
 
 
 ### <a name="generalization"></a>Generalization
-
-*(new adjacent possible)*
 
 We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the [Fitness Matrix](#fitness-matrix).
 

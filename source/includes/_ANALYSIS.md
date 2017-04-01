@@ -58,7 +58,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 The **analysis graph** is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the *measurement metrics on the y-axis*, and the *experiment variables on the x-axis*.
 
-*(new adjacent possible)*
 
 ### The y-axis measurement metrics
 
@@ -78,9 +77,6 @@ Each data point represents a trial, with the data averaged over its sessions. Th
 - `solved_ratio_of_sessions`: how many sessions are solved out of the total sessions in a trial, 0 means none, 1 means all.
 
 The granularity of the `solved_ratio_of_sessions` depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it's the best tradeoff between granularity and computation time.
-
-
-*(new adjacent possible)*
 
 Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.
 
@@ -105,8 +101,6 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 
 >![](https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png "Correlation graph")
 >*The correlation graph from the [dqn-2017_03_19_004714](https://github.com/kengz/openai_lab/pull/73) experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.*
-
-*(new adjacent possible)*
 
 The **correlation graph** reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.
 
