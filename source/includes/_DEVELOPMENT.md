@@ -27,3 +27,9 @@ Each trial collects the data from its sessions into `trial_data`, which is saved
 ## problem
 
 simple, the split, how to add. each JSON key is?
+
+## Quick start
+
+code for running a dqn agent
+
+Walk through json file
