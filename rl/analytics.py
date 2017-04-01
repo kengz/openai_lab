@@ -164,7 +164,6 @@ def calc_stability(sys_vars):
     0.5 = half-ish unstable
     0 = totally unstable, cannot yield solution
     '''
-    MEASUREMENT_GAP = sys_vars['REWARD_MEAN_LEN']
     total_r_history = sys_vars['total_rewards_history']
     if sys_vars['SOLVED_MEAN_REWARD'] is None:
         min_rewards = min(total_r_history)
