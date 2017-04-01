@@ -33,10 +33,16 @@ Multiple experiments running in the Lab will produce standardized data analytics
 
 When you're heels down implementing an algorithm and the extra 90% side components from scratch, it's hard to organize your work from a high level. Having to worry about other irrelevant components also makes you lose focus. The Lab removes that inertia and frees us from that myopic vision.
 
-This freedom means more mental energy and time to focus on the essential components of research. It opens up new adjacent possibles and has us asking new questions. Below are a few things that we came up due to this freedom of high level vision:
+This freedom means more mental energy and time to focus on the essential components of research. It opens up new adjacent possibles and has us asking new questions.
 
-- independently discovery of RankedMemory, which is essentially the Priorized Experience Replay (PER) idea.
+
+**The New Adjacent Possibles**
+
+With those problems above resolved, the Lab opens up the new adjacent possibles and allows us to do more. Below are some:
+
+- independent discovery of RankedMemory, which is essentially the Priorized Experience Replay (PER) idea.
 - the study of hyperparameters at scale, with the [Analysis Graph](#analysis).
+- an explosion of experiments; suddenly we have the ability to test a lot of ideas quickly.
 - new high level, powerful visuals from the [analysis graphs](#analysis) to eyeball the performance and potentials of an agent.
 - auto-architecture of agent's neural net, because we wanted to study some variables of the NN architecture as hyperparameters.
 - the perspective of RL as experimental science, and experimenting as breeding agents in the environments.
