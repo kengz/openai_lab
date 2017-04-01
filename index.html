@@ -205,15 +205,13 @@
       <div class="content">
         <h1 id="openai-lab">OpenAI Lab </br> <a href="https://circleci.com/gh/kengz/openai_lab"><img src="https://circleci.com/gh/kengz/openai_lab.svg?style=shield" alt="CircleCI" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=kengz/openai_lab&amp;amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9e55f845b10b4b51b213620bfb98e4b3" alt="Codacy Badge" /></a> <a href="https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Coverage"><img src="https://api.codacy.com/project/badge/Coverage/9e55f845b10b4b51b213620bfb98e4b3" alt="Codacy Badge" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&amp;label=Fork" alt="GitHub forks" /></a> <a href="https://github.com/kengz/openai_lab"><img src="https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&amp;label=Star" alt="GitHub stars" /></a></h1>
 
-<p><strong>(DOC UNDER CONSTRUCTION)</strong></p>
+<p><em>An experimentation system for Reinforcement Learning using OpenAI Gym and Keras.</em></p>
 
-<p><em>An experimentation system for Reinforcement Learning using OpenAI and Keras.</em></p>
+<p>The <em>OpenAI Lab</em> is created to do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. It provides an easy to use interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, combined with an automated experiment and evaluation framework.</p>
 
-<p>The <em>OpenAI Lab</em> is created to do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. It provides an easy to use interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, combined with an automated experimental and analytics framework.</p>
+<p>This is <a href="#motivations">motivated by the problems we experienced in RL research</a>: the difficulty of building upon other&rsquo;s work, the lack of rigor in comparisons of research results, and the inertia to high level vision.</p>
 
-<p>While these are powerful tools, they take a lot to get running. Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched.</p>
-
-<p>To address this, the Lab does three things:</p>
+<p>The Lab aims to make RL research more efficient and to encourage experimentation, by doing three things:</p>
 
 <ol>
 <li>Handles the basic RL environment and algorithm setups.</li>
@@ -221,9 +219,9 @@
 <li>Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are logged in a standardized format so that solutions can be reproduced by anyone using the Lab.</li>
 </ol>
 
-<p>With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory (experience replay), and parameter tuning to solve the OpenAI environments. We could also test our hypotheses more reliably.</p>
+<p>With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory, and parameter tuning. It allows us to build agents efficiently using existing components with the implementations from research ideas. We could then test the research hypotheses systematically by running experiments.</p>
 
-<p>See the <a href="#solutions">Solutions</a> to some OpenAI environments that OpenAI Lab users have produced.</p>
+<p>See the <a href="#solutions">Solutions</a> to some OpenAI environments that the Lab users have produced.</p>
 
 <h3 id="run-the-lab">Run the Lab</h3>
 
@@ -716,8 +714,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>The <strong>analysis graph</strong> is the primary graph used to judge the overall experiment - how all the trials perform. It is a pair-plot of the <em>measurement metrics on the y-axis</em>, and the <em>experiment variables on the x-axis</em>.</p>
 
-<p><em>(new adjacent possible)</em></p>
-
 <h3 id="the-y-axis-measurement-metrics">The y-axis measurement metrics</h3>
 
 <ol>
@@ -736,8 +732,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 </ul>
 
 <p>The granularity of the <code class="prettyprint">solved_ratio_of_sessions</code> depends on the number of sessions ran per trial. From experience, we settle on 5 sessions per trial as it&rsquo;s the best tradeoff between granularity and computation time.</p>
-
-<p><em>(new adjacent possible)</em></p>
 
 <p>Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.</p>
 
@@ -764,8 +758,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p><img src="https://cloud.githubusercontent.com/assets/8209263/24087746/418a9b54-0cf9-11e7-8aac-f0df817def43.png" title="Correlation graph" alt="418a9b54 0cf9 11e7 8aac f0df817def43" />
 <em>The correlation graph from the <a href="https://github.com/kengz/openai_lab/pull/73">dqn-2017_03_19_004714</a> experiment. We can see smooth contours of spectrum in them, suggesting that the x-values are stable - small change in values will not be catastrophic. There are 2 darker regions in the contour; the distribution confirms that gamma=0.999 and lower lr are indeed stabler, since they have higher populations of darker points. The instability of gamma=0.95 shows clearly as 2 segments of stacked bar with huge contrast.</em></p>
 </blockquote>
-
-<p><em>(new adjacent possible)</em></p>
 
 <p>The <strong>correlation graph</strong> reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.</p>
 
@@ -1451,8 +1443,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h2 id="fitness-score"><a name="fitness"></a>Fitness Score</h2>
 
-<p><em>(new adjacent possible)</em></p>
-
 <p>The fitness function <code class="prettyprint">f</code> is the base function behind the Fitness Matrix and the fitness heatmap. It computes the fitness score for each point (trial) in a parameter space.</p>
 
 <p>The fitness function&rsquo;s design is motivated by the need to have a richer evaluation of an agent, and the ability of the Lab to provide such data. We felt that the <code class="prettyprint">mean rewards</code> metric used in the OpenAI gym evaluation is insufficient, but it is included in our design under <em>strength</em>.</p>
@@ -1542,8 +1532,6 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>This section formalizes the generalized metrics for these, and shows that the Fitness Matrix is just a max-function projection of some higher dimensional space.</p>
 
 <h3 id="generalization"><a name="generalization"></a>Generalization</h3>
-
-<p><em>(new adjacent possible)</em></p>
 
 <p>We include the formalization of evaluation metrics across the Agent space and Environment space, and present a generalization, which produces the <a href="#fitness-matrix">Fitness Matrix</a>.</p>
 
@@ -1740,6 +1728,8 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
+<p><strong>(THIS SECTION IS UNDER CONSTRUCTION)</strong></p>
+
 <p>(pending writeup)</p>
 
 <p>This is still under active development, and documentation is sparse. The main code lives inside <code class="prettyprint">rl/</code>.</p>
@@ -1857,13 +1847,17 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 
 <h2 id="motivations"><a name="motivations"></a>Motivations</h2>
 
-<p>We the authors never set out to build the OpenAI Lab with any grand vision in mind. We just wanted to test our RL ideas in the OpenAI Gym, faced many problems along the way, and their solutions became features. These opened up new adjacent possibles to do new things, and even more problems, and so on. Before we knew it, the critical components fell it place and we had something very similar to a scientific lab.</p>
+<p><em>This section is more casual, but we thought we&rsquo;d share the motivations behind the Lab.</em></p>
+
+<p>We the authors never set out to build OpenAI Lab with any grand vision in mind. We just wanted to test our RL ideas in OpenAI Gym, faced many problems along the way, and their solutions became features. These opened up new adjacent possibles to do new things, and even more problems, and so on. Before we knew it, the critical components fell it place and we had something very similar to a scientific lab.</p>
 
 <p>The problems faced by us are numerous and diverse, but there are several major categories. The first two are nicely described by WildML&rsquo;s Denny in his post <a href="http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/">Engineering Is The Bottleneck In (Deep Learning) Research</a>, which resonates strongly with a lot of people.</p>
 
-<p><strong>1. the difficulty of building upon other’s work</strong></p>
+<p><strong>1. the difficulty of building upon other&rsquo;s work</strong></p>
 
 <p>If you have tried to implement any algorithms by looking at someone elses code, chances are it&rsquo;s painful. Sometimes you just want to research a small component like a prioritized memory, but you&rsquo;d have to write 90% of the unrelated components from scratch. Simply look at the solution source codes submitted to the OpenAI Gym leaderboard; you can&rsquo;t extend them to build something much bigger.</p>
+
+<p>Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched. This is unnecessary and inefficient.</p>
 
 <p>There is no design or engineering standards for reinforcement learning, and that contributes to the major inertia in RL research. A lot of times research ideas are not difficult to come by, but implementing them is hard because there is <em>no reliable foundation to build on</em>.</p>
 
@@ -1877,7 +1871,7 @@ Target (y vals):  [R + \gamma E_a Q(S&rsquo;, a)]</p>
 
 <p>Multiple experiments running in the Lab will produce standardized data analytics and evaluation metrics. This will allow us to compare agents and environments meaningfully, and that is the point of the Lab&rsquo;s <a href="#fitness-matrix">Fitness Matrix</a>. It also inspired a <a href="#metrics">generalization of evaluation metrics</a>, which we have only discovered recently.</p>
 
-<p><strong>3. inertia to high level vision</strong></p>
+<p><strong>3. the inertia to high level vision</strong></p>
 
 <p>When you&rsquo;re heels down implementing an algorithm and the extra 90% side components from scratch, it&rsquo;s hard to organize your work from a high level. Having to worry about other irrelevant components also makes you lose focus. The Lab removes that inertia and frees us from that myopic vision.</p>
 
