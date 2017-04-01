@@ -180,7 +180,7 @@ def calc_stability(sys_vars):
     stable_epi_count = len([
         total_r for total_r in total_r_history if total_r > r_threshold])
 
-    if first_solved_epi is None:
+    if (first_solved_epi is None) or (last_epi == first_solved_epi):
         mastery_gap = np.inf
     else:  # get max if mastery_gap is smaller (faster) than needed - perfect
         mastery_gap = last_epi - first_solved_epi
