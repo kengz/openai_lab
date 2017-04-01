@@ -1,6 +1,6 @@
 # <a name="agents"></a>Agents
 
-This section is under construction
+(This section is under construction)
 
 ## Overview
 
@@ -24,7 +24,7 @@ To define an `Agent` you must specify each of the components. The example below 
     "PreProcessor": "NoPreProcessor",
 ```
 
-Each of the components with the exception of `Agent` and `Policy` are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration however, see [our best solutions](#solutions)
+Each of the components with the exception of `Agent` and `Policy` are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration, see [our best solutions](#solutions)
 
 For the currently implemented algorithms, the following `Agents` can go with the following `Policies`.
 
@@ -37,13 +37,68 @@ See [algorithms secton](#algorithms) for an explanation of currently implemented
 
 ## Policy
 
-A policy is a decision function for acting in an environment.
+A policy is a decision function for acting in an environment. Policies take as input a description of the state space and output an action for the agent to take.
+
+Depending on the algorithm  used, agents may directly approximate the policy (policy based algorithms) or have an indirect policy, that depends on the Q-value function approximation (value based algorithms). Algorithms that approximate both the policy and the Q-value function are known as actor-critic algorithms.
+
+All of the algorithms implemented so far are value-based. The policy for acting at each timestep is often a simple epsilon-greedy policy.
+
+With probability (1 - epsilon):
+    $$ A \leftArrow = max_a Q(S, a)$$
+With probability epsilon:
+    $$ A \leftArraow random action
+return A
+
+Alternatively, an indirect policy may use the Q-value to output a probability distribution over actions, and sample actions based on this distribution. This is the approach taken by the Boltzmann policies.
+
+A critical component of the policy is how is balances *exploration* vs. *exploitation*. To learn how to act well in an environment an agent must *explore* the state space.  The more random the actions an agent takes, the more it explores. However, to do well in an environment, an agent needs to take the best possible action given the state. It must *exploit* what it has learnt.
+
+Below is a summary of the currently implemented policies. Each takes a slightly different approach to balancing the exploration-exploitation problem.
+
+### EpsilonGreedyPolicy
+Parameterized by starting value for epsilon (`init_e`), min value for epsilon (`final_e`), and the number of epsiodes to anneal epsilon over (`exploration_anneal_episodes`). The value of epsilon is decayed linearly from start to min.
+
+### DoubleDQNPolicy
+When actions are not random this policy selects actions by summing the outputs from each of the two Q-state approximators before taking the max of the result. Same approach as EpsilonGreedyPolicy to decaying epsilon and same params.
+
+### Boltzmann Policy
+Parameterized by the starting value for tau (`init_tau`), min value for tau (`final_tau`), and the number of epsiodes to anneal epsilon over (`exploration_anneal_episodes`). At each step this policy selects actions based on the following probability distribution
+
+$$ p_a = exp(Q_a / tau) / sum_a' (Q_a' / tau)$$
+
+Tau is decayed linearly over time in the same way as in the EpsilonGreedyPolicy.
+
+### DoubleDQNBoltzmannPolicy
+Same as the Boltzmann policy except that the Q value used for a given action is the sum of the outputs from each of the two Q-state approximators.
+
+### TargetedEpsilonGreedyPolicy
+Same params as epsilon greedy policy. This policy swtches between active and inactive exploration cycles controlled by partial mean rewards and it distance to the target mean rewards.
+
+### DecayingEpsilonGreedyPolicy
+Same params as epsilon greedy policy. Epsilon is decayed exponentially.
+
+### OscillaitngEpsilonGreedyPolicy
+Same as epsilon greedy policy except at episode 18 epsilon is dropped to the max of 1/3 or its current value or min epsilon.
+
+### Creating your own
+
+A policy has to have the following functions. You can create your own by inheriting from Policy or one of its children.
+
+```python
+def select_action(self, state):
+        '''Returns the action selected given the state'''
+
+    def update(self, sys_vars):
+        '''Update value of policy params (e.g. epsilon)
+        Called each timestep within an episode'''
+```
 
 ## Memory
 
 The agent's memory stores experiences that an agent gains by acting within an environment. An environment is in a particular state.  Then the agent acts, and receives a reward from the environment. The agent also receives information about the next state, including a flag indicating whether the next state is the terminal state. Finally, an error measure is stored, indicating how well an agent can estimate the value of this particular transition. 
 
-This information about a single step is stored as an experience. Each experience consists 
+This information about a single step is stored as an experience. Each experience consists  of
+
 - Current state
 - Action taken
 - Reward
@@ -52,7 +107,7 @@ This information about a single step is stored as an experience. Each experience
 - Error
 
 ```python
-(state, action, nextstate, reward, error)
+(state, action, nextstate, reward, terminal, error)
 ```
 
 Crucially, the memory controls how long experiences are stored for, and which experiences are sampled from it to use as input into the learning algorithm of an agent. Below is a summary of the currently implemented memories
