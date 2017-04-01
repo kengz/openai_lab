@@ -80,7 +80,6 @@ The granularity of the `solved_ratio_of_sessions` depends on the number of sessi
 
 Multiple sessions allow us to observe the consistency of an agent. As we have noticed across the parameter space, there is a spectrum of solvability: agents who cannot solve at all, can solve occasionally, and can always solve. The agents that solves occasionally can be valuable when developing an new algorithm, and most people will throw them away - this is bad when a strong agent is hard to find in the early stage.
 
-
 ### How to read
 
 Every subplot in the graph shows the distribution of all the trial points in the pair of *y vs x* variables, with the other *x'* dimensions flattened. For each, observe the population distribution, y-positions, and trend across the x-axis.
@@ -104,13 +103,11 @@ Note that these will use [swarmplot](http://seaborn.pydata.org/generated/seaborn
 
 The **correlation graph** reveals pairwise x-value correlations that is flattened in the analysis graph. This is a pair-plot between the orderable parameter variables.
 
-
 ### How to read
 
-The diagonals simply shows the population distribution for that x-value; the diagonal plots show the contoured spectrum that tells how to best combine separate parameter values.
+The diagonals simply shows the population distribution for that x-value; the off-diagonal plots show the fitness score heatmap that tells how to best combine separate parameter values. Note that the heatmap color scheme does not represent absolute fitness, but points are colored by which `fitness_score_bin` they fall into.
 
 The points are semi-transparent, so if they overlap, their colors will stack instead of hiding the points behind.
-
 
 
 ## Data
