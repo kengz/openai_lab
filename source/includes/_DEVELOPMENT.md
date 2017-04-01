@@ -1,10 +1,9 @@
 # <a name="development"></a>Development
 
-**(THIS SECTION IS UNDER CONSTRUCTION)**
 
-(pending writeup)
+**This section is still under construction**.
 
-This is still under active development, and documentation is sparse. The main code lives inside `rl/`.
+For agent-specific development, see [Agents](#agents). This section details the general, non-agent development guideline.
 
 The design of the code is clean enough to simply infer how things work by example.
 
@@ -20,16 +19,7 @@ The design of the code is clean enough to simply infer how things work by exampl
 - `rl/experiment.py`: the main high level experiment logic
 - `rl/util.py`: Generic util
 
-Each run is an `experiment` that runs multiple `Trial`s (not restricted to the same `experiment_id` for future cross-training). Each `Trial` runs multiple (by flag `-t`) `Session`s, so an `trial` is a `sess_grid`.
-
-Each trial collects the data from its sessions into `trial_data`, which is saved to a JSON and as many plots as there are sessions. On the higher level, `experiment` analyses the aggregate `trial_data` to produce a best-sorted CSV and graphs of the variables (what's changed across experiments) vs outputs.
 
 ## problem
 
 simple, the split, how to add. each JSON key is?
-
-## Quick start
-
-code for running a dqn agent
-
-Walk through json file
