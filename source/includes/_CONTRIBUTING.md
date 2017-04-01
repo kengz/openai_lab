@@ -12,4 +12,4 @@ _Note: we are not affiliated with OpenAI; the OpenAI Lab is not tied to any orga
 - Wah Loon Keng. [twitter: @kengzwl](https://twitter.com/kengzwl)
 - Laura Graesser. [twitter: @lgraesser3](https://twitter.com/lgraesser3)
 
-*OpenAI notice us please.*
+*OpenAI we hope you find this useful!*
