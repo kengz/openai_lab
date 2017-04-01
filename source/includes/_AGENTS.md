@@ -154,7 +154,7 @@ Experiences are weighted by the error, a measure of how well the learning algori
 
 ```python
 p = (1 + e)** alpha
-``
+```
 
 The parameter `e` > 0 is  a constant added onto the error to prevent experiences with error 0 never being sampled. `alpha` controls how spiked the distribution is. The lower `alpha` the closer to unform the distribution is. `alpha` = 0 corresponds to uniform random sampling.
 
