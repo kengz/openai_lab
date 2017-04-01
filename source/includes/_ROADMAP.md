@@ -5,13 +5,17 @@ Check the latest under the [Github Projects](https://github.com/kengz/openai_lab
 
 ## <a name="motivations"></a>Motivations
 
-We the authors never set out to build the OpenAI Lab with any grand vision in mind. We just wanted to test our RL ideas in the OpenAI Gym, faced many problems along the way, and their solutions became features. These opened up new adjacent possibles to do new things, and even more problems, and so on. Before we knew it, the critical components fell it place and we had something very similar to a scientific lab.
+*This section is more casual, but we thought we'd share the motivations behind the Lab.*
+
+We the authors never set out to build OpenAI Lab with any grand vision in mind. We just wanted to test our RL ideas in OpenAI Gym, faced many problems along the way, and their solutions became features. These opened up new adjacent possibles to do new things, and even more problems, and so on. Before we knew it, the critical components fell it place and we had something very similar to a scientific lab.
 
 The problems faced by us are numerous and diverse, but there are several major categories. The first two are nicely described by WildML's Denny in his post [Engineering Is The Bottleneck In (Deep Learning) Research](http://blog.dennybritz.com/2017/01/17/engineering-is-the-bottleneck-in-deep-learning-research/), which resonates strongly with a lot of people.
 
-**1. the difficulty of building upon other’s work**
+**1. the difficulty of building upon other's work**
 
 If you have tried to implement any algorithms by looking at someone elses code, chances are it's painful. Sometimes you just want to research a small component like a prioritized memory, but you'd have to write 90% of the unrelated components from scratch. Simply look at the solution source codes submitted to the OpenAI Gym leaderboard; you can't extend them to build something much bigger.
+
+Of many implementations we saw which solve OpenAI gym environments, many had to rewrite the same basic components instead of just the new components being researched. This is unnecessary and inefficient.
 
 There is no design or engineering standards for reinforcement learning, and that contributes to the major inertia in RL research. A lot of times research ideas are not difficult to come by, but implementing them is hard because there is *no reliable foundation to build on*.
 
@@ -25,7 +29,7 @@ As the Lab became mature, we became more ambitious and try to solve more environ
 
 Multiple experiments running in the Lab will produce standardized data analytics and evaluation metrics. This will allow us to compare agents and environments meaningfully, and that is the point of the Lab's [Fitness Matrix](#fitness-matrix). It also inspired a [generalization of evaluation metrics](#metrics), which we have only discovered recently.
 
-**3. inertia to high level vision**
+**3. the inertia to high level vision**
 
 When you're heels down implementing an algorithm and the extra 90% side components from scratch, it's hard to organize your work from a high level. Having to worry about other irrelevant components also makes you lose focus. The Lab removes that inertia and frees us from that myopic vision.
 

@@ -1,5 +1,7 @@
 # <a name="development"></a>Development
 
+**(THIS SECTION IS UNDER CONSTRUCTION)**
+
 (pending writeup)
 
 This is still under active development, and documentation is sparse. The main code lives inside `rl/`.
