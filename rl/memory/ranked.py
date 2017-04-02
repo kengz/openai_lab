@@ -20,8 +20,9 @@ class HighLowMemory(LinearMemory):
     by self.epi_memory.sort(key=lambda epi_exp: epi_exp['total_rewards'])
     '''
 
-    def __init__(self, **kwargs):  # absorb generic param without breaking
-        super(HighLowMemory, self).__init__()
+    # absorb generic param without breaking
+    def __init__(self, env_spec, **kwargs):
+        super(HighLowMemory, self).__init__(env_spec)
         # use the old self.exp as buffer, remember to clear
         self.last_exp = self.exp
         self.epi_memory_high = []
@@ -172,8 +173,9 @@ class HighLowMemoryWithForgetting(HighLowMemory):
     Controlled by max_epis_in_mem param
     '''
 
-    def __init__(self, **kwargs):  # absorb generic param without breaking
-        super(HighLowMemoryWithForgetting, self).__init__()
+    # absorb generic param without breaking
+    def __init__(self, env_spec, **kwargs):
+        super(HighLowMemoryWithForgetting, self).__init__(env_spec)
         self.max_epis_in_mem = 250
         log_self(self)
 

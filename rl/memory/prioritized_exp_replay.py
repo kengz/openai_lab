@@ -12,9 +12,10 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     memory unit
     '''
 
-    def __init__(self, max_mem_len=10000, e=0.01, alpha=0.6,
+    def __init__(self, env_spec, max_mem_len=10000, e=0.01, alpha=0.6,
                  **kwargs):
-        super(PrioritizedExperienceReplay, self).__init__(max_mem_len)
+        super(PrioritizedExperienceReplay, self).__init__(
+            env_spec, max_mem_len)
         self.exp_keys.append('error')
         self.exp = {k: [] for k in self.exp_keys}  # reinit with added mem key
         # Prevents experiences with error of 0 from being replayed
