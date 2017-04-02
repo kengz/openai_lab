@@ -56,8 +56,10 @@ We find it extremely useful to have data file-sync when running the lab on a rem
 
 For auto-syncing lab `data/` we use [Grunt](http://gruntjs.com/) file watcher for automatically copying data files to Dropbox. In your dropbox, set up a shared folder `~/Dropbox/openai_lab/data` and sync to desktop.
 
+Setup the config key `data_sync_destination` in `config/{default.json, production.json}`.
+
 <aside class="notice">
-Setup the config key <code>data_sync_destination</code> in <code>config/{default.json, production.json}</code>.
+This step is optional; needed only when running production mode.
 </aside>
 
 
@@ -67,8 +69,10 @@ Experiments take a while to run, and we find it useful also to be notified autom
 
 Set up a Slack, create a new channel `#rl_monitor`, and get a [Slack bot token](https://my.slack.com/services/new/bot).
 
+Setup the config keys `NOTI_SLACK_DEST`, `NOTI_SLACK_TOK` in `config/{default.json, production.json}`.
+
 <aside class="notice">
-Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> in <code>config/{default.json, production.json}</code>.
+This step is optional; useful when running production mode.
 </aside>
 
 ![](./images/noti.png "Notifications from the lab running on our remote server beast")
