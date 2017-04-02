@@ -14,7 +14,7 @@ To learn how to analyze experiment data, refer to [Analysis](#analysis).
 A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed). See [Metric](#metrics) for the design of fitness score and generalized metrics.
 
 ||DQN|double-DQN|SARSA|double-DQN-PER|DDPG|
-|:---|:---|:---|:---|:---|
+|:---|:---|:---|:---|:---|:---|
 |**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|-|
 |**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|-|-|
 |**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|
