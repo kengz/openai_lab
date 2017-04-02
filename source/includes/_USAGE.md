@@ -127,6 +127,7 @@ The `<flag>`s are:
 - `-resume`: resume incomplete experiments from `config/history.json`
 - `-remote`: when running over SSH, supplies this to use a fake display
 - `-best`: run the finalized experiments with gym rendering and live plotting; without param selection. This uses the default `param` in `experiment_specs.json` that shall be updated to the best found.
+- `-debug`: verbose debug logging. This is for lab-level development only.
 - `-quiet`: mute all python logging in grunt. This is for lab-level development only.
 
 
