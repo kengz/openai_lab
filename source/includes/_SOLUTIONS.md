@@ -13,29 +13,29 @@ To learn how to analyze experiment data, refer to [Analysis](#analysis).
 
 A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed). See [Metric](#metrics) for the design of fitness score and generalized metrics.
 
-||DQN|double-DQN|SARSA|DDPG|
+||DQN|double-DQN|SARSA|double-DQN-PER|DDPG|
 |:---|:---|:---|:---|:---|
-|**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|
-|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|-|
-|**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|
-|**MountainCar-v0**|-|-|-|-|
-|**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|-|
-|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|-|
-|**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|
-|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|-|
-|**BipedalWalker-v2**|-|-|-|-|
-|**BipedalWalkerHardcore-v2**|-|-|-|-|
-|**CarRacing-v0**|-|-|-|-|
-|**AirRaid-v0**|-|-|-|-|
-|**Alien-v0**|-|-|-|-|
-|**Assault-v0**|-|-|-|-|
-|**Breakout-v0**|-|-|-|-|
-|**MsPacman-v0**|-|-|-|-|
-|**Pong-v0**|-|-|-|-|
-|**Qbert-v0**|-|-|-|-|
-|**SpaceInvader-v0**|-|-|-|-|
-|**FlappyBird-v0**|-|-|-|-|
-|**Snake-v0**|-|-|-|-|
+|**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|-|
+|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|-|-|
+|**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|
+|**MountainCar-v0**|-|-|-|-|-|
+|**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|
+|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|
+|**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|
+|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|-|
+|**BipedalWalker-v2**|-|-|-|-|-|
+|**BipedalWalkerHardcore-v2**|-|-|-|-|-|
+|**CarRacing-v0**|-|-|-|-|-|
+|**AirRaid-v0**|-|-|-|-|-|
+|**Alien-v0**|-|-|-|-|-|
+|**Assault-v0**|-|-|-|-|-|
+|**Breakout-v0**|-|-|-|-|-|
+|**MsPacman-v0**|-|-|-|-|-|
+|**Pong-v0**|-|-|-|-|-|
+|**Qbert-v0**|-|-|-|-|-|
+|**SpaceInvader-v0**|-|-|-|-|-|
+|**FlappyBird-v0**|-|-|-|-|-|
+|**Snake-v0**|-|-|-|-|-|
 
 
 ## Agents
@@ -44,13 +44,13 @@ The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more d
 
 _Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
 
-|algorithm|implemented?|eval score|
+|algorithm|implemented?|eval score (pending)|
 |:---|:---|:---|
 |[DQN](https://arxiv.org/abs/1312.5602)|✓|-|
 |[double-DQN](https://arxiv.org/abs/1509.06461)|✓|-|
 |[dueling-DQN](https://arxiv.org/abs/1511.06581)|-|-|
 |SARSA|✓|-|
-|[prioritized replay](https://arxiv.org/abs/1511.05952)|✓|-|
+|[PER (Prioritized Experience Replay)](https://arxiv.org/abs/1511.05952)|✓|-|
 |Q*(lambda)|-|-|
 |Retrace(lambda)|-|-|
 |[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|next|-|
