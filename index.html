@@ -956,163 +956,29 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>A matrix of the best <code class="prettyprint">fitness_score</code> of <strong>Agents</strong> v.s. <strong>Environments</strong>, sourced from the accepted <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a>. See <a href="#metrics">Metric</a> for the design of fitness score and generalized metrics.</p>
 
-<table><thead>
-<tr>
-<th style="text-align: left"></th>
-<th style="text-align: left">DQN</th>
-<th style="text-align: left">double-DQN</th>
-<th style="text-align: left">SARSA</th>
-<th style="text-align: left">DDPG</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left"><strong>CartPole-v0</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/73">9.635032</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/78">10.34826</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/91">12.98525</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CartPole-v1</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/80">13.22935</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/82">16.06697</a></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Acrobot-v1</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/94">-0.1051617</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/98">-0.1045992</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/97">-0.1127294</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCar-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MountainCarContinuous-v0</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pendulum-v0</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLander-v2</strong></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/84">2.786624</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/87">2.992104</a></td>
-<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/pull/96">3.313421</a></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>LunarLanderContinuous-v2</strong></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left"><em>n/a</em></td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalker-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>BipedalWalkerHardcore-v2</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CarRacing-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>AirRaid-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Alien-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Assault-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Breakout-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>MsPacman-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Pong-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Qbert-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SpaceInvader-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>FlappyBird-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Snake-v0</strong></td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-</tbody></table>
+<p>||DQN|double-DQN|SARSA|double-DQN-PER|DDPG|
+|:&mdash;|:&mdash;|:&mdash;|:&mdash;|:&mdash;|
+|<strong>CartPole-v0</strong>|<a href="https://github.com/kengz/openai_lab/pull/73">9.635032</a>|<a href="https://github.com/kengz/openai_lab/pull/78">10.34826</a>|<a href="https://github.com/kengz/openai_lab/pull/91">12.98525</a>|-|-|
+|<strong>CartPole-v1</strong>|<a href="https://github.com/kengz/openai_lab/pull/80">13.22935</a>|<a href="https://github.com/kengz/openai_lab/pull/82">16.06697</a>|-|-|-|
+|<strong>Acrobot-v1</strong>|<a href="https://github.com/kengz/openai_lab/pull/94">-0.1051617</a>|<a href="https://github.com/kengz/openai_lab/pull/98">-0.1045992</a>|<a href="https://github.com/kengz/openai_lab/pull/97">-0.1127294</a>|-|-|
+|<strong>MountainCar-v0</strong>|-|-|-|-|-|
+|<strong>MountainCarContinuous-v0</strong>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|-|
+|<strong>Pendulum-v0</strong>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|-|
+|<strong>LunarLander-v2</strong>|<a href="https://github.com/kengz/openai_lab/pull/84">2.786624</a>|<a href="https://github.com/kengz/openai_lab/pull/87">2.992104</a>|<a href="https://github.com/kengz/openai_lab/pull/96">3.313421</a>|-|-|
+|<strong>LunarLanderContinuous-v2</strong>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|<em>n/a</em>|-|
+|<strong>BipedalWalker-v2</strong>|-|-|-|-|-|
+|<strong>BipedalWalkerHardcore-v2</strong>|-|-|-|-|-|
+|<strong>CarRacing-v0</strong>|-|-|-|-|-|
+|<strong>AirRaid-v0</strong>|-|-|-|-|-|
+|<strong>Alien-v0</strong>|-|-|-|-|-|
+|<strong>Assault-v0</strong>|-|-|-|-|-|
+|<strong>Breakout-v0</strong>|-|-|-|-|-|
+|<strong>MsPacman-v0</strong>|-|-|-|-|-|
+|<strong>Pong-v0</strong>|-|-|-|-|-|
+|<strong>Qbert-v0</strong>|-|-|-|-|-|
+|<strong>SpaceInvader-v0</strong>|-|-|-|-|-|
+|<strong>FlappyBird-v0</strong>|-|-|-|-|-|
+|<strong>Snake-v0</strong>|-|-|-|-|-|</p>
 
 <h2 id="agents">Agents</h2>
 
@@ -1124,7 +990,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <tr>
 <th style="text-align: left">algorithm</th>
 <th style="text-align: left">implemented?</th>
-<th style="text-align: left">eval score</th>
+<th style="text-align: left">eval score (pending)</th>
 </tr>
 </thead><tbody>
 <tr>
@@ -1148,7 +1014,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">prioritized replay</a></td>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">PER (Prioritized Experience Replay)</a></td>
 <td style="text-align: left">✓</td>
 <td style="text-align: left">-</td>
 </tr>
