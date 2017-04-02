@@ -42,7 +42,7 @@
       "exploration_anneal_episodes": 10,
       "e": 0.01,
       "alpha": 0.5,
-      "mem_max_len" : 20000
+      "max_mem_len" : 20000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01, 0.02],

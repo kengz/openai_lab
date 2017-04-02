@@ -10,16 +10,16 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
-    def __init__(self, e=0.01, alpha=0.6, max_len=10000,
+    def __init__(self, e=0.01, alpha=0.6, max_mem_len=10000,
                             **kwargs):
-        super(PrioritizedExperienceReplay, self).__init__(max_len)
+        super(PrioritizedExperienceReplay, self).__init__(max_mem_len)
         # Prevents experiences with error of 0 from being replayed
         self.e = e
         # Controls how spiked the distribution is. alpha = 0 corresponds to uniform
         self.alpha = alpha
         self.curr_data_inds = None
         self.curr_tree_inds = None
-        self.prio_tree = SumTree(self.max_len)
+        self.prio_tree = SumTree(self.max_mem_len)
         self.head = 0
 
     def get_priority(self, error):
@@ -29,7 +29,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         '''
         Round robin memory updating
         '''
-        if self.size() < self.max_len:
+        if self.size() < self.max_mem_len:
             self.exp['states'].append(self.state)
             self.exp['actions'].append(self.encode_action(action))
             # self.exp['actions'].append(action)
@@ -39,7 +39,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
             self.exp['error'].append(error)
             self.state = next_state
             self.head += 1
-            if self.head >= self.max_len:
+            if self.head >= self.max_mem_len:
                 self.head = 0
         else:
             self.exp['states'][self.head] = self.state
@@ -51,7 +51,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
             self.exp['error'][self.head]  = error
             self.state = next_state
             self.head += 1
-            if self.head >= self.max_len:
+            if self.head >= self.max_mem_len:
                 self.head = 0
 
         p = self.get_priority(error)

@@ -72,14 +72,14 @@ class LinearMemoryWithForgetting(LinearMemory):
     Linear memory with uniform sampling, retaining last 50k experiences
     '''
 
-    def __init__(self, max_len=50000,
+    def __init__(self, max_mem_len=50000,
                  **kwargs):  # absorb generic param without breaking
         super(LinearMemoryWithForgetting, self).__init__()
-        self.max_len = max_len
+        self.max_mem_len = max_mem_len
 
     def trim_exp(self):
     '''The forgetting mechanism'''
-        if (self.size() > self.max_len):
+        if (self.size() > self.max_mem_len):
             for k in self.exp_keys:
                 del self.exp[k][0]
 
