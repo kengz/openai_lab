@@ -18,6 +18,7 @@ class LinearMemory(Memory):
         log_self(self)
 
     def encode_action(self, action):
+        '''encode action based on continuous/discrete before adding'''
         if self.agent.env_spec['actions'] == 'continuous':
             return action
         else:  # do one-hot encoding
@@ -78,7 +79,7 @@ class LinearMemoryWithForgetting(LinearMemory):
         self.max_mem_len = max_mem_len
 
     def trim_exp(self):
-    '''The forgetting mechanism'''
+        '''The forgetting mechanism'''
         if (self.size() > self.max_mem_len):
             for k in self.exp_keys:
                 del self.exp[k][0]

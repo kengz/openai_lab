@@ -3,6 +3,7 @@ from rl.memory.linear import LinearMemoryWithForgetting
 
 
 class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
+
     '''
     Replay memory with random sampling weighted by the absolute
     size of the value function error
@@ -10,12 +11,13 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
-    def __init__(self, e=0.01, alpha=0.6, max_mem_len=10000,
-                            **kwargs):
+
+    def __init__(self, max_mem_len=10000, e=0.01, alpha=0.6,
+                 **kwargs):
         super(PrioritizedExperienceReplay, self).__init__(max_mem_len)
         # Prevents experiences with error of 0 from being replayed
         self.e = e
-        # Controls how spiked the distribution is. alpha = 0 corresponds to uniform
+        # Controls how spiked the distribution is. alpha = 0 means uniform
         self.alpha = alpha
         self.curr_data_inds = None
         self.curr_tree_inds = None
@@ -26,33 +28,22 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         return (error + self.e) ** self.alpha
 
     def add_exp(self, action, reward, next_state, terminal, error):
-        '''
-        Round robin memory updating
-        '''
-        if self.size() < self.max_mem_len:
-            self.exp['states'].append(self.state)
-            self.exp['actions'].append(self.encode_action(action))
-            # self.exp['actions'].append(action)
-            self.exp['rewards'].append(reward)
-            self.exp['next_states'].append(next_state)
-            self.exp['terminals'].append(int(terminal))
-            self.exp['error'].append(error)
-            self.state = next_state
-            self.head += 1
-            if self.head >= self.max_mem_len:
-                self.head = 0
-        else:
+        '''Round robin memory updating'''
+        if self.size() < self.max_mem_len:  # add as usual
+            super(PrioritizedExperienceReplay, self).add_exp(
+                action, reward, next_state, terminal, error)
+        else:  # replace round robin
             self.exp['states'][self.head] = self.state
             self.exp['actions'][self.head] = self.encode_action(action)
-            # self.exp['actions'][self.head] = action
-            self.exp['rewards'][self.head]  = reward
+            self.exp['rewards'][self.head] = reward
             self.exp['next_states'][self.head] = next_state
             self.exp['terminals'][self.head] = int(terminal)
-            self.exp['error'][self.head]  = error
+            self.exp['error'][self.head] = error
             self.state = next_state
-            self.head += 1
-            if self.head >= self.max_mem_len:
-                self.head = 0
+
+        self.head += 1
+        if self.head >= self.max_mem_len:
+            self.head = 0  # reset for round robin
 
         p = self.get_priority(error)
         self.prio_tree.add(p)
@@ -93,6 +84,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
 
 
 class SumTree(object):
+
     '''
     Adapted from  https://github.com/jaara/AI-blog/blob/master/SumTree.py
     See https://jaromiru.com/2016/11/07/lets-make-a-dqn-double-learning-and-prioritized-experience-replay/
@@ -101,7 +93,7 @@ class SumTree(object):
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.tree = np.zeros( 2*capacity - 1 )
+        self.tree = np.zeros(2*capacity - 1)
         self.head = 0
 
     def _propagate(self, idx, change):
