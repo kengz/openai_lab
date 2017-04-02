@@ -56,7 +56,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
                  **kwargs):  # absorb generic param without breaking
         super(DoubleDQNBoltzmannPolicy, self).__init__(
             env_spec, init_tau, final_tau,
-            exploration_anneal_episodes, **kwargs)
+            exploration_anneal_episodes)
 
     def select_action(self, state):
         agent = self.agent

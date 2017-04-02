@@ -54,7 +54,9 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(DoubleDQNPolicy, self).__init__(env_spec)
+        super(DoubleDQNPolicy, self).__init__(
+            env_spec, init_e, final_e,
+            exploration_anneal_episodes)
 
     def select_action(self, state):
         '''epsilon-greedy method'''
@@ -82,7 +84,8 @@ class DecayingEpsilonGreedyPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(DecayingEpsilonGreedyPolicy, self).__init__(env_spec)
+        super(DecayingEpsilonGreedyPolicy, self).__init__(
+            env_spec, init_e, final_e, exploration_anneal_episodes)
         self.e_decay = 0.9997
 
     def update(self, sys_vars):

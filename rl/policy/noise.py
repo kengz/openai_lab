@@ -57,7 +57,7 @@ class GaussianWhiteNoise(AnnealedGaussian):
                  mu=0., sigma=.3, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
         super(GaussianWhiteNoise, self).__init__(
-            env_spec, mu=mu, sigma=sigma, sigma_min=sigma_min)
+            env_spec, mu, sigma, sigma_min)
 
     def sample(self):
         sample = np.random.normal(self.mu, self.current_sigma, self.size)
@@ -76,7 +76,7 @@ class OUNoise(AnnealedGaussian):
                  theta=.15, mu=0., sigma=.3, dt=1e-2, x0=None, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
         super(OUNoise, self).__init__(
-            env_spec, mu=mu, sigma=sigma, sigma_min=sigma_min,
+            env_spec, mu, sigma, sigma_min,
             **kwargs)
         self.theta = theta
         self.mu = mu
