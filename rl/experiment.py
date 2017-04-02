@@ -228,9 +228,8 @@ class Session(object):
             processed_state = agent.preprocessor.preprocess_state()
             action = agent.select_action(processed_state)
             next_state, reward, done, _info = env.step(action)
-            error = reward
             processed_exp = agent.preprocessor.preprocess_memory(
-                action, reward, next_state, done, error)
+                action, reward, next_state, done)
             if processed_exp is not None:
                 agent.memory.add_exp(*processed_exp)
 

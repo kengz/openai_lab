@@ -15,6 +15,8 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     def __init__(self, max_mem_len=10000, e=0.01, alpha=0.6,
                  **kwargs):
         super(PrioritizedExperienceReplay, self).__init__(max_mem_len)
+        self.exp_keys.append('error')
+        self.exp = {k: [] for k in self.exp_keys}  # reinit with added mem key
         # Prevents experiences with error of 0 from being replayed
         self.e = e
         # Controls how spiked the distribution is. alpha = 0 means uniform
@@ -27,11 +29,14 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     def get_priority(self, error):
         return (error + self.e) ** self.alpha
 
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def add_exp(self, action, reward, next_state, terminal):
         '''Round robin memory updating'''
+        # roughly the error between estimated Q and true q is the reward
+        error = reward
         if self.size() < self.max_mem_len:  # add as usual
             super(PrioritizedExperienceReplay, self).add_exp(
-                action, reward, next_state, terminal, error)
+                action, reward, next_state, terminal)
+            self.exp['error'].append(error)
         else:  # replace round robin
             self.exp['states'][self.head] = self.state
             self.exp['actions'][self.head] = self.encode_action(action)

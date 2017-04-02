@@ -13,7 +13,7 @@ class LinearMemory(Memory):
     def __init__(self, **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
-            'states', 'actions', 'rewards', 'next_states', 'terminals', 'error']
+            'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
         log_self(self)
 
@@ -26,7 +26,7 @@ class LinearMemory(Memory):
             action_arr[action] = 1
             return action_arr
 
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def add_exp(self, action, reward, next_state, terminal):
         '''
         after the env.step(a) that returns s', r,
         using the previously stored state for the s,
@@ -37,7 +37,6 @@ class LinearMemory(Memory):
         self.exp['rewards'].append(reward)
         self.exp['next_states'].append(next_state)
         self.exp['terminals'].append(int(terminal))
-        self.exp['error'].append(error)
         self.state = next_state
 
     def _get_exp(self, exp_name, inds):
@@ -82,12 +81,12 @@ class LinearMemoryWithForgetting(LinearMemory):
             for k in self.exp_keys:
                 del self.exp[k][0]
 
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def add_exp(self, action, reward, next_state, terminal):
         '''
         add exp as usual, but preserve only the recent episodes
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal, error)
+            action, reward, next_state, terminal)
         self.trim_exp()
 
 
