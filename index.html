@@ -235,18 +235,19 @@
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
-<p>1. Clone repo and run the setup script:</p>
+<p>1. <strong>Clone</strong> repo and run the <strong>setup</strong> script:</p>
 <pre class="highlight shell"><code>git clone https://github.com/kengz/openai_lab.git
 <span class="nb">cd </span>openai_lab
+<span class="c"># inspect before running</span>
 ./bin/setup
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed. Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a>.</p>
+<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; inspect or change it as needed before running to ensure it doesn&rsquo;t make unwanted changes to your system. Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a>.</p>
 
 <aside class="notice">
 If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
 </aside>
 
-<p>2. Keras needs a backend in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
+<p>2. Keras needs a <strong>backend file</strong> in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
   </span><span class="s2">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
@@ -259,7 +260,7 @@ We recommend Tensorflow for experimentation with multi-GPU for stability. By def
 If you wish, use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
 </aside>
 
-<p>3. <code class="prettyprint">bin/setup</code> also creates the needed config files needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
+<p>3. <code class="prettyprint">bin/setup</code> also creates the needed <strong>config files</strong> needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
 
 <ul>
 <li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
