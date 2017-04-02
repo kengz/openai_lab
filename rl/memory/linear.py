@@ -10,8 +10,9 @@ class LinearMemory(Memory):
     The replay memory used for random minibatch training
     '''
 
-    def __init__(self, **kwargs):  # absorb generic param without breaking
-        super(LinearMemory, self).__init__()
+    # absorb generic param without breaking
+    def __init__(self, env_spec, **kwargs):
+        super(LinearMemory, self).__init__(env_spec)
         self.exp_keys = [
             'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
@@ -70,9 +71,9 @@ class LinearMemoryWithForgetting(LinearMemory):
     Linear memory with uniform sampling, retaining last 50k experiences
     '''
 
-    def __init__(self, max_mem_len=50000,
+    def __init__(self, env_spec, max_mem_len=50000,
                  **kwargs):  # absorb generic param without breaking
-        super(LinearMemoryWithForgetting, self).__init__()
+        super(LinearMemoryWithForgetting, self).__init__(env_spec)
         self.max_mem_len = max_mem_len
 
     def trim_exp(self):

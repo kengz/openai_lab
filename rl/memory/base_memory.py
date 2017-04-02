@@ -4,8 +4,9 @@ class Memory(object):
     The base class of Memory, with the core methods
     '''
 
-    def __init__(self, **kwargs):  # absorb generic param without breaking
+    def __init__(self, env_spec, **kwargs):  # absorb generic param without breaking
         '''Construct externally, and set at Agent.compile()'''
+        self.env_spec = env_spec
         self.agent = None
         self.state = None
 
