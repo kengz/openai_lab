@@ -28,10 +28,10 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         self.head = 0
 
         SOLVED_MEAN_REWARD = self.env_spec['problem']['SOLVED_MEAN_REWARD']
-        if SOLVED_MEAN_REWARD < 0:
-            self.min_priority = abs(10 * SOLVED_MEAN_REWARD)
-        else:
+        if SOLVED_MEAN_REWARD > 0:
             self.min_priority = 0
+        else:
+            self.min_priority = abs(10 * SOLVED_MEAN_REWARD)
 
     def get_priority(self, error):
         # add min_priority to prevent root of negative = complex
