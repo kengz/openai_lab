@@ -25,11 +25,6 @@ class LinearMemory(Memory):
             action_arr[action] = 1
             return action_arr
 
-    def trim_exp(self, max_len=50000):
-        if (self.size() > max_len):
-            for k in self.exp_keys:
-                del self.exp[k][0]
-
     def add_exp(self, action, reward, next_state, terminal, error):
         '''
         after the env.step(a) that returns s', r,
@@ -73,14 +68,20 @@ class LinearMemory(Memory):
 
 class LinearMemoryWithForgetting(LinearMemory):
 
-    def __init__(self, max_len=50000,
-                            **kwargs):  # absorb generic param without breaking
-        super(LinearMemoryWithForgetting, self).__init__()
-        self.max_len = max_len
-
     '''
     Linear memory with uniform sampling, retaining last 50k experiences
     '''
+
+    def __init__(self, max_len=50000,
+                 **kwargs):  # absorb generic param without breaking
+        super(LinearMemoryWithForgetting, self).__init__()
+        self.max_len = max_len
+
+    def trim_exp(self):
+    '''The forgetting mechanism'''
+        if (self.size() > self.max_len):
+            for k in self.exp_keys:
+                del self.exp[k][0]
 
     def add_exp(self, action, reward, next_state, terminal, error):
         '''
@@ -88,8 +89,7 @@ class LinearMemoryWithForgetting(LinearMemory):
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
             action, reward, next_state, terminal, error)
-
-        self.trim_exp(max_len=self.max_len)
+        self.trim_exp()
 
 
 class LeftTailMemory(LinearMemory):
