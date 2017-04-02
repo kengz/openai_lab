@@ -55,9 +55,7 @@ class LinearMemory(Memory):
         return len(self.exp['rewards'])
 
     def rand_minibatch(self, size):
-        '''
-        plain random sampling
-        '''
+        '''plain random sampling'''
         memory_size = self.size()
         rand_inds = np.random.randint(memory_size, size=size)
         minibatch = self.get_exp(rand_inds)

@@ -48,12 +48,10 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         p = self.get_priority(error)
         self.prio_tree.add(p)
 
-        assert self.head == self.prio_tree.head
+        assert self.head == self.prio_tree.head, 'prio_tree head is wrong'
 
     def rand_minibatch(self, size):
-        '''
-        plain random sampling, weighted by priority
-        '''
+        '''random sampling weighted by priority'''
         self.curr_tree_inds, self.curr_data_inds = self.select_prio_inds(size)
         minibatch = self.get_exp(self.curr_data_inds)
         return minibatch
@@ -98,9 +96,7 @@ class SumTree(object):
 
     def _propagate(self, idx, change):
         parent = (idx - 1) // 2
-
         self.tree[parent] += change
-
         if parent != 0:
             self._propagate(parent, change)
 
@@ -121,16 +117,13 @@ class SumTree(object):
 
     def add(self, p):
         idx = self.head + self.capacity - 1
-
         self.update(idx, p)
-
         self.head += 1
         if self.head >= self.capacity:
             self.head = 0
 
     def update(self, idx, p):
         change = p - self.tree[idx]
-
         self.tree[idx] = p
         self._propagate(idx, change)
 
