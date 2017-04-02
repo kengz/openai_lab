@@ -282,8 +282,10 @@ If you wish, use Theano once your lab produces a final model for a single retrai
 
 <p>For auto-syncing lab <code class="prettyprint">data/</code> we use <a href="http://gruntjs.com/">Grunt</a> file watcher for automatically copying data files to Dropbox. In your dropbox, set up a shared folder <code class="prettyprint">~/Dropbox/openai_lab/data</code> and sync to desktop.</p>
 
+<p>Setup the config key <code class="prettyprint">data_sync_destination</code> in <code class="prettyprint">config/{default.json, production.json}</code>.</p>
+
 <aside class="notice">
-Setup the config key <code>data_sync_destination</code> in <code>config/{default.json, production.json}</code>.
+This step is optional; needed only when running production mode.
 </aside>
 
 <h2 id="setup-auto-notification">Setup Auto-notification</h2>
@@ -292,8 +294,10 @@ Setup the config key <code>data_sync_destination</code> in <code>config/{default
 
 <p>Set up a Slack, create a new channel <code class="prettyprint">#rl_monitor</code>, and get a <a href="https://my.slack.com/services/new/bot">Slack bot token</a>.</p>
 
+<p>Setup the config keys <code class="prettyprint">NOTI_SLACK_DEST</code>, <code class="prettyprint">NOTI_SLACK_TOK</code> in <code class="prettyprint">config/{default.json, production.json}</code>.</p>
+
 <aside class="notice">
-Setup the config keys <code>NOTI_SLACK_DEST</code>, <code>NOTI_SLACK_TOK</code> in <code>config/{default.json, production.json}</code>.
+This step is optional; useful when running production mode.
 </aside>
 
 <p><img src="images/noti.png" title="Notifications from the lab running on our remote server beast" alt="Noti" />
