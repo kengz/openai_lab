@@ -9,7 +9,7 @@ cd openai_lab
 ./bin/setup
 ```
 
-`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); inspect or change it as needed before running to ensure it doesn't make unwanted changes to your system. Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies).
+`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); **inspect or change it as needed before running to ensure it doesn't make unwanted changes to your system.** Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies).
 
 <aside class="notice">
 If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
