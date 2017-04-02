@@ -27,8 +27,15 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         self.prio_tree = SumTree(self.max_mem_len)
         self.head = 0
 
+        SOLVED_MEAN_REWARD = self.env_spec['problem']['SOLVED_MEAN_REWARD']
+        if SOLVED_MEAN_REWARD < 0:
+            self.min_priority = abs(10 * SOLVED_MEAN_REWARD)
+        else:
+            self.min_priority = 0
+
     def get_priority(self, error):
-        return (error + self.e) ** self.alpha
+        # add min_priority to prevent root of negative = complex
+        return (self.min_priority + error + self.e) ** self.alpha
 
     def add_exp(self, action, reward, next_state, terminal):
         '''Round robin memory updating'''

@@ -139,6 +139,7 @@ class Session(object):
             actions = list(range(env.action_space.n))
 
         env_spec = {
+            'problem': PROBLEMS[self.problem],
             'state_dim': state_dim,
             'state_bounds': np.transpose(
                 [env.observation_space.low, env.observation_space.high]),
