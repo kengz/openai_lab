@@ -3,6 +3,7 @@ from rl.memory.linear import LinearMemoryWithForgetting
 
 
 class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
+
     '''
     Replay memory with random sampling weighted by the absolute
     size of the value function error
@@ -10,59 +11,52 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     Adapted from https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     memory unit
     '''
-    def __init__(self, e=0.01, alpha=0.6, max_len=10000,
-                            **kwargs):
-        super(PrioritizedExperienceReplay, self).__init__(max_len)
+
+    def __init__(self, max_mem_len=10000, e=0.01, alpha=0.6,
+                 **kwargs):
+        super(PrioritizedExperienceReplay, self).__init__(max_mem_len)
+        self.exp_keys.append('error')
+        self.exp = {k: [] for k in self.exp_keys}  # reinit with added mem key
         # Prevents experiences with error of 0 from being replayed
         self.e = e
-        # Controls how spiked the distribution is. alpha = 0 corresponds to uniform
+        # Controls how spiked the distribution is. alpha = 0 means uniform
         self.alpha = alpha
         self.curr_data_inds = None
         self.curr_tree_inds = None
-        self.prio_tree = SumTree(self.max_len)
+        self.prio_tree = SumTree(self.max_mem_len)
         self.head = 0
 
     def get_priority(self, error):
         return (error + self.e) ** self.alpha
 
-    def add_exp(self, action, reward, next_state, terminal, error):
-        '''
-        Round robin memory updating
-        '''
-        if self.size() < self.max_len:
-            self.exp['states'].append(self.state)
-            self.exp['actions'].append(self.encode_action(action))
-            # self.exp['actions'].append(action)
-            self.exp['rewards'].append(reward)
-            self.exp['next_states'].append(next_state)
-            self.exp['terminals'].append(int(terminal))
+    def add_exp(self, action, reward, next_state, terminal):
+        '''Round robin memory updating'''
+        # roughly the error between estimated Q and true q is the reward
+        error = reward
+        if self.size() < self.max_mem_len:  # add as usual
+            super(PrioritizedExperienceReplay, self).add_exp(
+                action, reward, next_state, terminal)
             self.exp['error'].append(error)
-            self.state = next_state
-            self.head += 1
-            if self.head >= self.max_len:
-                self.head = 0
-        else:
+        else:  # replace round robin
             self.exp['states'][self.head] = self.state
             self.exp['actions'][self.head] = self.encode_action(action)
-            # self.exp['actions'][self.head] = action
-            self.exp['rewards'][self.head]  = reward
+            self.exp['rewards'][self.head] = reward
             self.exp['next_states'][self.head] = next_state
             self.exp['terminals'][self.head] = int(terminal)
-            self.exp['error'][self.head]  = error
+            self.exp['error'][self.head] = error
             self.state = next_state
-            self.head += 1
-            if self.head >= self.max_len:
-                self.head = 0
+
+        self.head += 1
+        if self.head >= self.max_mem_len:
+            self.head = 0  # reset for round robin
 
         p = self.get_priority(error)
         self.prio_tree.add(p)
 
-        assert self.head == self.prio_tree.head
+        assert self.head == self.prio_tree.head, 'prio_tree head is wrong'
 
     def rand_minibatch(self, size):
-        '''
-        plain random sampling, weighted by priority
-        '''
+        '''random sampling weighted by priority'''
         self.curr_tree_inds, self.curr_data_inds = self.select_prio_inds(size)
         minibatch = self.get_exp(self.curr_data_inds)
         return minibatch
@@ -93,6 +87,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
 
 
 class SumTree(object):
+
     '''
     Adapted from  https://github.com/jaara/AI-blog/blob/master/SumTree.py
     See https://jaromiru.com/2016/11/07/lets-make-a-dqn-double-learning-and-prioritized-experience-replay/
@@ -101,14 +96,12 @@ class SumTree(object):
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.tree = np.zeros( 2*capacity - 1 )
+        self.tree = np.zeros(2*capacity - 1)
         self.head = 0
 
     def _propagate(self, idx, change):
         parent = (idx - 1) // 2
-
         self.tree[parent] += change
-
         if parent != 0:
             self._propagate(parent, change)
 
@@ -129,16 +122,13 @@ class SumTree(object):
 
     def add(self, p):
         idx = self.head + self.capacity - 1
-
         self.update(idx, p)
-
         self.head += 1
         if self.head >= self.capacity:
             self.head = 0
 
     def update(self, idx, p):
         change = p - self.tree[idx]
-
         self.tree[idx] = p
         self._propagate(idx, change)
 

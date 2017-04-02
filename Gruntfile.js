@@ -80,6 +80,10 @@ module.exports = function(grunt) {
     return grunt.option('best') ? '' : ' -bp'
   }
 
+  function debugCmd() {
+    return grunt.option('debug') ? ' -d' : ''
+  }
+
   function quietCmd() {
     return grunt.option('quiet') ? ' -q' : ''
   }
@@ -107,7 +111,7 @@ module.exports = function(grunt) {
     }
 
     // override with custom command if has 'python'
-    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py${bestCmd()}${quietCmd()} -t 5 -e ${eStr}`
+    var pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py${bestCmd()}${debugCmd()}${quietCmd()} -t 5 -e ${eStr}`
     const cmd = `${remoteCmd()} ${pyCmd} | tee ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd

@@ -25,5 +25,11 @@ See the [Solutions](http://kengz.me/openai_lab/#solutions) to some OpenAI enviro
 *Ultimately, the Lab is a generalized framework for doing reinforcement learning, agnostic of OpenAI Gym and Keras. Pytorch-based implementations are on the roadmap, for example.*
 
 
-<img alt="Timelapse of OpenAI Lab" src="http://kengz.me/openai_lab/images/lab_demo_dqn.gif" />
-_Timelapse of OpenAI Lab, solving CartPole-v0._
+### Run the Lab
+
+Next, see [Installation](http://kengz.me/openai_lab/#installation) and [Usage](http://kengz.me/openai_lab/#usage).
+
+
+<div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="http://kengz.me/openai_lab/images/lab_demo_dqn.gif" /></div>
+
+*Timelapse of OpenAI Lab, solving CartPole-v0.*

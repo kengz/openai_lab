@@ -13,7 +13,7 @@ class Memory(object):
         '''reset the state of LinearMemory per episode env.reset()'''
         self.state = init_state
 
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def add_exp(self, action, reward, next_state, terminal):
         '''add an experience'''
         raise NotImplementedError()
 
@@ -36,4 +36,3 @@ class Memory(object):
     def update(self, updates):
         '''update elements of the memory as requires'''
         raise NotImplementedError()
-

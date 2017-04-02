@@ -13,11 +13,12 @@ class LinearMemory(Memory):
     def __init__(self, **kwargs):  # absorb generic param without breaking
         super(LinearMemory, self).__init__()
         self.exp_keys = [
-            'states', 'actions', 'rewards', 'next_states', 'terminals', 'error']
+            'states', 'actions', 'rewards', 'next_states', 'terminals']
         self.exp = {k: [] for k in self.exp_keys}
         log_self(self)
 
     def encode_action(self, action):
+        '''encode action based on continuous/discrete before adding'''
         if self.agent.env_spec['actions'] == 'continuous':
             return action
         else:  # do one-hot encoding
@@ -25,12 +26,7 @@ class LinearMemory(Memory):
             action_arr[action] = 1
             return action_arr
 
-    def trim_exp(self, max_len=50000):
-        if (self.size() > max_len):
-            for k in self.exp_keys:
-                del self.exp[k][0]
-
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def add_exp(self, action, reward, next_state, terminal):
         '''
         after the env.step(a) that returns s', r,
         using the previously stored state for the s,
@@ -41,7 +37,6 @@ class LinearMemory(Memory):
         self.exp['rewards'].append(reward)
         self.exp['next_states'].append(next_state)
         self.exp['terminals'].append(int(terminal))
-        self.exp['error'].append(error)
         self.state = next_state
 
     def _get_exp(self, exp_name, inds):
@@ -59,9 +54,7 @@ class LinearMemory(Memory):
         return len(self.exp['rewards'])
 
     def rand_minibatch(self, size):
-        '''
-        plain random sampling
-        '''
+        '''plain random sampling'''
         memory_size = self.size()
         rand_inds = np.random.randint(memory_size, size=size)
         minibatch = self.get_exp(rand_inds)
@@ -73,23 +66,28 @@ class LinearMemory(Memory):
 
 class LinearMemoryWithForgetting(LinearMemory):
 
-    def __init__(self, max_len=50000,
-                            **kwargs):  # absorb generic param without breaking
-        super(LinearMemoryWithForgetting, self).__init__()
-        self.max_len = max_len
-
     '''
     Linear memory with uniform sampling, retaining last 50k experiences
     '''
 
-    def add_exp(self, action, reward, next_state, terminal, error):
+    def __init__(self, max_mem_len=50000,
+                 **kwargs):  # absorb generic param without breaking
+        super(LinearMemoryWithForgetting, self).__init__()
+        self.max_mem_len = max_mem_len
+
+    def trim_exp(self):
+        '''The forgetting mechanism'''
+        if (self.size() > self.max_mem_len):
+            for k in self.exp_keys:
+                del self.exp[k][0]
+
+    def add_exp(self, action, reward, next_state, terminal):
         '''
         add exp as usual, but preserve only the recent episodes
         '''
         super(LinearMemoryWithForgetting, self).add_exp(
-            action, reward, next_state, terminal, error)
-
-        self.trim_exp(max_len=self.max_len)
+            action, reward, next_state, terminal)
+        self.trim_exp()
 
 
 class LeftTailMemory(LinearMemory):
