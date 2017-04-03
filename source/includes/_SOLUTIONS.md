@@ -65,7 +65,7 @@ _Pending: we have a generic formalization to cross-evaluate Agents using heatmap
 
 ## <a name="environments-matrix"></a>Environments Fitness Matrix
 
-A projection of the Fitness Matrix along the Problems axis. This shows the best solutions for the problems. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+A projection of the Fitness Matrix along the Environments axis. This shows the best solutions for the problems. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 
 ### Classic Environments
