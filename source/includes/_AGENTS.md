@@ -234,9 +234,7 @@ Parameterized by `lr` (learning rate),  `rho`, `epsilon`, `decay`. See [Keras](h
 
 ## HyperOptimizer
 
-(section under construction)
-
-Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trrying to find the optimal parameters for an agent in an environment as  these correspond to rough grained >> finer grained search
+Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trrying to find the optimal parameters for an agent in an environment as these correspond to rough grained >> finer grained search
 
 1. LineSearch
 2. GridSearch
@@ -337,3 +335,12 @@ Take the difference `new_states - old_states`.
 ### Atari
 
 Convert images to greyscale, downsize, crop, then stack 4 most recent states together. Useful for the Atari environments.
+
+
+## problem
+
+Problems are not part of agent, but they are part of the `experiment_spec` that gets specified with the agent.
+
+We have not added all the OpenAI gym environments AKA problems. If you get to new environments using the lab, please add them in `rl/spec/problems.json`, and it should be clear from those examples.
+
+Moreover, when adding new problems, consider the dependencies setup too, such as Mujoco. Please add these to the `bin/setup` so other users could run it.
