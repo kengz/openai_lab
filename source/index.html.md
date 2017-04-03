@@ -42,7 +42,7 @@ The Lab aims to make RL research more efficient and to encourage experimentation
 
 With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory, and parameter tuning. It allows us to build agents efficiently using existing components with the implementations from research ideas. We could then test the research hypotheses systematically by running experiments.
 
-See the [Solutions](#solutions) to some OpenAI environments that the Lab users have produced.
+**See the [Solutions](#solutions) to some OpenAI environments that the Lab users have produced.**
 
 *Ultimately, the Lab is a generalized framework for doing reinforcement learning, agnostic of OpenAI Gym and Keras. Pytorch-based implementations are on the roadmap, for example.*
 
