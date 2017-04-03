@@ -76,8 +76,8 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |CartPole-v1|[16.06697](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
 |Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|-|-|-|-|
-|MountainCarContinuous-v0|*n/a*|*n/a*|*n/a*|-|
-|Pendulum-v0|*n/a*|*n/a*|*n/a*|-|
+|MountainCarContinuous-v0|-|-|-|-|
+|Pendulum-v0|-|-|-|-|
 
 
 ### Box2D Environments
@@ -85,7 +85,7 @@ The list of accepted solutions can be seen in the [solution PRs](https://github.
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
 |LunarLander-v2|[3.313421](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
-|LunarLanderContinuous-v2|*n/a*|*n/a*|*n/a*|-|
+|LunarLanderContinuous-v2|-|-|-|-|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
 |CarRacing-v0|-|-|-|-|
