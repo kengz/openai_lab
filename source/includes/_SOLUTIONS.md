@@ -38,9 +38,9 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |**Snake-v0**|-|-|-|-|-|
 
 
-## Agents
+## <a name="agents-matrix"></a>Agents Fitness Matrix
 
-The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see [Agents](#agents)
+The overall status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see [Agents](#agents)
 
 _Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
 
@@ -63,7 +63,7 @@ _Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. 
 |[EWC (Elastic Weight Consolidation)](https://arxiv.org/abs/1612.00796)|-|-|
 
 
-## Environments
+## <a name="environments-matrix"></a>Environments Fitness Matrix
 
 The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 

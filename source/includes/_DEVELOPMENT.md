@@ -17,5 +17,5 @@ The design of the code is clean enough to simply infer how things work by existi
 - `rl/util.py`: Generic util
 
 <aside class="notice">
-As the Lab grows, we may add more development guide.
+As the Lab grows, we will add more development guide as needed.
 </aside>
