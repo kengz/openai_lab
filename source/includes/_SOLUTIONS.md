@@ -40,9 +40,9 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 
 ## <a name="agents-matrix"></a>Agents Fitness Matrix
 
-The overall status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see [Agents](#agents)
+A projection of the Fitness Matrix along the Agents axis. This shows overall status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see [Agents](#agents)
 
-_Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames._
+_Pending: we have a generic formalization to cross-evaluate Agents using heatmap statistics; see [Metrics](#metrics). This is on the roadmap._
 
 |algorithm|implemented?|eval score (pending)|
 |:---|:---|:---|
@@ -65,7 +65,7 @@ _Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. 
 
 ## <a name="environments-matrix"></a>Environments Fitness Matrix
 
-The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+A projection of the Fitness Matrix along the Problems axis. This shows the best solutions for the problems. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 
 ### Classic Environments
