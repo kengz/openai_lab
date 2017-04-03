@@ -1136,9 +1136,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 </tbody></table>
 
-<h2 id="agents">Agents</h2>
+<h2 id="agents-fitness-matrix"><a name="agents-matrix"></a>Agents Fitness Matrix</h2>
 
-<p>The status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see <a href="#agents">Agents</a></p>
+<p>The overall status of the Agents in OpenAI Lab. Feel free to invent new ones! For more detail on currently implemented Agents, see <a href="#agents">Agents</a></p>
 
 <p><em>Pending: we still need a way to cross-evaluate Agents. Refer to the NEC paper. Perhaps use Normalized human scores per episode vs Millions of Frames.</em></p>
 
@@ -1226,7 +1226,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 </tbody></table>
 
-<h2 id="environments">Environments</h2>
+<h2 id="environments-fitness-matrix"><a name="environments-matrix"></a>Environments Fitness Matrix</h2>
 
 <p>The list of accepted solutions can be seen in the <a href="https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed">solution PRs</a></p>
 
@@ -1572,9 +1572,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p><em>Most RL research is conducted within the mathematical framework of Markov decision processes (MDPs). MDPs involve a decision-making agent interacting with its environment so as to maximize the cumulative reward it receives over time. The agent perceives aspects of the environment&rsquo;s state and selects actions. The agent may estimate a value function and use it to construct better and better decision-making policies over time.</em></p>
 
-<p><em>RL algorithms are methods for solving this kind of problem, that is, problems involving sequences of decisions in which each decision affects what opportunities are available later, in which the effects need not be deterministic, and in which there are long-term goals. RL methods are intended to address the kind of learning and decision making problems that people and animals face in their normal, everyday lives</em></p>
+<p><em>RL algorithms are methods for solving this kind of problem, that is, problems involving sequences of decisions in which each decision affects what opportunities are available later, in which the effects need not be deterministic, and in which there are long-term goals. RL methods are intended to address the kind of learning and decision making problems that people and animals face in their normal, everyday lives.</em></p>
 
-<p><em>Rich Sutton</em></p>
+<p><em>- Rich Sutton</em></p>
 
 <p>For further reading on reinforcement learning see <a href="http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html">David Silver&rsquo;s lectures</a> and the book, Reinforcement Learning: An Introduction, by Sutton and Barto.</p>
 
@@ -1588,168 +1588,248 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li>Agent: encapsulates a specific algorithm. Each agent has a policy, memory, optimizer, and preprocessor</li>
 <li>Online training: agents are trained periodically during episodes</li>
 <li>Episodic training: agents are only trained after an episode has completed and before the next episode begins</li>
-<li>Policy: rule which determines how to act in a given state, e.g. choose the action A which has the highest Q-value in state S. May be deterministic or stochatic. </li>
-<li>Q function: Q(S, A), estimates the value of taking action A in state S under a specific policy. </li>
-<li>Q-vallue: Value of Q function for a particular S and A.</li>
+<li>Policy: rule which determines how to act in a given state, e.g. choose the action A which has the highest Q-value in state <code class="prettyprint">S</code>. May be deterministic or stochatic. </li>
+<li>Q function: <code class="prettyprint">Q(S, A)</code>, estimates the value of taking action <code class="prettyprint">A</code> in state <code class="prettyprint">S</code> under a specific policy. </li>
+<li>Q-vallue: Value of <code class="prettyprint">Q</code> function for a particular <code class="prettyprint">S</code> and <code class="prettyprint">A</code>.</li>
 <li>On policy: the same policy is used to act and evaluate the quality of actions.</li>
 <li>Off policy: a different policy is used to act and evaluate the quality of actions. </li>
 </ul>
 
-<h2 id="currently-implemented-algorithms">Currently implemented algorithms</h2>
+<h2 id="implemented-algorithms">Implemented Algorithms</h2>
 
-<p><strong>Q-Learning</strong></p>
+<p><em>See the overall list of agents and their implementation status under the <a href="#agents-matrix">Agents Fitness Matrix</a>. This section briefly explains the theories behind the implemented algorithms/agents.</em></p>
 
-<p>Q-learning algorithms attempt to estimate the optimal Q function, i.e thevalue of taking action A in state S under a specific policy. Q-learning algorithms have an implicit policy, typically \epsilon-greedy in which the action with the maximum Q value is selected with probability(1 - \epsilon) and a random action is taken with probability \epsilon. The random actions encourage exploration of the state space and help prevent algorithms from getting stuck in local minima. Q-learning algorithms are off-policy algorithms in that the policy used to evaluate the value of the action taken is different to the policy used to determine which state-action pairs are visited. It is also a temporal difference algorithm. Updates  to the Q function are based on existing estimates. The estimate in time t is updated using an estimate from time t+1. This allows Q-Learning algorithms to be online and incremental, so the agent can be trained during an episode. The update to Q_t(S, A) is as follows</p>
+<h3 id="q-learning"><a name="q-learning"></a>Q-Learning</h3>
+
+<p>Q-learning algorithms attempt to estimate the optimal Q function, i.e the value of taking action <code class="prettyprint">A</code> in state <code class="prettyprint">S</code> under a specific policy. Q-learning algorithms have an implicit policy, typically <code class="prettyprint">epsilon</code>-greedy in which the action with the maximum <code class="prettyprint">Q</code> value is selected with probability <code class="prettyprint">(1 - epsilon)</code> and a random action is taken with probability <code class="prettyprint">epsilon</code>. The random actions encourage exploration of the state space and help prevent algorithms from getting stuck in local minima.</p>
+
+<p>Q-learning algorithms are off-policy algorithms in that the policy used to evaluate the value of the action taken is different to the policy used to determine which state-action pairs are visited.</p>
+
+<p>It is also a temporal difference algorithm. Updates to the <code class="prettyprint">Q</code> function are based on existing estimates. The estimate in time t is updated using an estimate from time t+1. This allows Q-Learning algorithms to be online and incremental, so the agent can be trained during an episode. The update to <code class="prettyprint">Q_t(S, A)</code> is as follows</p>
 
 <p><img src="images/q_learning.png" alt="Q learning" /></p>
 
-<p>For more details, please see chapter 6 of <a href="https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf">Reinforcement Learning: An Introduction, Sutton and Barto</a></p>
+<p>For more details, please see chapter 6 of <a href="https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf">Reinforcement Learning: An Introduction, Sutton and Barto</a>.</p>
 
-<p>Since the policy that is used to evaluate the target is fixed (a greedy policy that selects the action that maximises the Q-value for a particular state) and is different to the policy used to determine which state-action pairs are being visited, it is possible to use experience replay to train an agent. This is often needed to Agents act in environments to get experiences. Experiences consist of the state, the action taken, the next state, and the reward, and are denoted as <S_t, A_t, R_{t+1}, S_{t+1}>. These experiences are stored in the agents memory. Periodically during an episode the agent is trained. During training n batches of size m are selected from memory and the Q update step is performed. This is different to Sarsa algorithms which are on-policy and agents are trained after each experience using only the most recent experience.</p>
+<p>Since the policy that is used to evaluate the target is fixed (a greedy policy that selects the action that maximises the Q-value for a particular state) and is different to the policy used to determine which state-action pairs are being visited, it is possible to use experience replay to train an agent.</p>
+
+<p>This is often needed for Agents to act in environments to get experiences. Experiences consist of the state, the action taken, the next state, and the reward, and are denoted as <code class="prettyprint">&lt;S_t, A_t, R_{t+1}, S_{t+1}&gt;</code>. These experiences are stored in the agents memory. Periodically during an episode the agent is trained. During training n batches of size m are selected from memory and the <code class="prettyprint">Q</code> update step is performed. This is different to Sarsa algorithms which are on-policy and agents are trained after each experience using only the most recent experience.</p>
 
 <p><strong>Deep Q-Learning</strong></p>
 
-<p>Standard Q-learning algorithm with experience replay. Online training every n experiences.</p>
+<p>Standard Q-learning algorithm with experience replay. Online training every <code class="prettyprint">n</code> experiences.</p>
 
 <p><img src="images/deep_q_learning.png" alt="Deep q learning" /></p>
 
 <p>Agents: </p>
 
 <ul>
-<li>DQN: function approximator - feedforward neural network</li>
-<li>ConvDQN:  function approximator - convolutional network</li>
+<li><code class="prettyprint">DQN</code>: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">ConvDQN</code>: function approximator - convolutional network</li>
 </ul>
 
 <p><strong>Double Q-Learning</strong></p>
 
-<p>Q-learning algorithm with two Q function approximators to address the maximisation bias problem, Q_1, and Q_2. One Q function is used to select the action in the next state, S&rsquo;, the other is used to evaluate the action in state S&rsquo;. Periodically the roles of each Q function are switched. Online training every n experiences.</p>
+<p>Q-learning algorithm with two <code class="prettyprint">Q</code> function approximators to address the maximisation bias problem, <code class="prettyprint">Q_1</code>, and <code class="prettyprint">Q_2</code>. One <code class="prettyprint">Q</code> function is used to select the action in the next state, <code class="prettyprint">S&#39;</code>, the other is used to evaluate the action in state <code class="prettyprint">S&#39;</code>. Periodically the roles of each <code class="prettyprint">Q</code> function are switched. Online training every <code class="prettyprint">n</code> experiences.</p>
 
 <p><img src="images/double_q_learning.png" alt="Double q learning" /></p>
 
-<p>Agents</p>
+<p>Agents:</p>
 
 <ul>
-<li>DoubleDQN: function approximator - feedforward neural network</li>
-<li>DoubleConvQN:  function approximator - convolutional network</li>
+<li><code class="prettyprint">DoubleDQN</code>: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">DoubleConvQN</code>: function approximator - convolutional network</li>
 </ul>
 
 <p><strong>Deep Q-Learning with weight freezing</strong></p>
 
-<p>Deep Q-Learning algorithms tends to be unstable. To address this issue, create two Q function approximators, one for exploration, Q_e, and one for evaluating the target, Q_t. The target is a copy of the exploration network with frozen weights which lag the exploration network. These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See <a href="http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf">David Silver&rsquo;s</a> lecture slides for more details. Online training every n experiences.</p>
+<p>Deep Q-Learning algorithms tends to be unstable. To address this issue, create two <code class="prettyprint">Q</code> function approximators, one for exploration, <code class="prettyprint">Q_e</code>, and one for evaluating the target, <code class="prettyprint">Q_t</code>. The target is a copy of the exploration network with frozen weights which lag the exploration network.</p>
+
+<p>These weights are updated periodically to match the exploration network. Freezing the target network weights help avoids oscillations in the policy, where slight changes to Q-values can lead to significant changes in the policy, and helps break correlations between the Q-network and the target. See <a href="http://www0.cs.ucl.ac.uk/staff/d.silver/web/Resources_files/deep_rl.pdf">David Silver&rsquo;s</a> lecture slides for more details. Online training every n experiences.</p>
 
 <p><img src="images/freeze_dqn.png" alt="Freeze dqn" /></p>
 
-<p>Agents</p>
+<p>Agents:</p>
 
 <ul>
-<li>FreezeDQN: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">FreezeDQN</code>: function approximator - feedforward neural network</li>
 </ul>
 
-<h3 id="sarsa">Sarsa</h3>
+<h3 id="sarsa"><a name="sarsa"></a>Sarsa</h3>
 
-<p>Sarsa algorithms also attempt to estimate the optimal Q function. They are on policy algorithms so the policy used to evaluate the target is the same as to the policy used to determine which state-action pairs are being visited. Like Q-Learning, Sarsa is a temporal difference algorithm. However, since they are on policy, it is trickier to take advantage of experience replay, requiring storage of the action in state t+1 and the Q-value for the state and action selected in t+1 in an experience. In the following implementations, updates are made after each action with the exception of off policy expected Sarsa.</p>
+<p><code class="prettyprint">Sarsa</code> algorithms also attempt to estimate the optimal <code class="prettyprint">Q</code> function. They are on policy algorithms so the policy used to evaluate the target is the same as to the policy used to determine which state-action pairs are being visited.</p>
+
+<p>Like Q-Learning, <code class="prettyprint">Sarsa</code> is a temporal difference algorithm. However, since they are on policy, it is trickier to take advantage of experience replay, requiring storage of the action in state <code class="prettyprint">t+1</code> and the Q-value for the state and action selected in <code class="prettyprint">t+1</code> in an experience. In the following implementations, updates are made after each action with the exception of off policy expected Sarsa.</p>
 
 <p>Sarsa update:</p>
 
 <p><img src="images/sarsa.png" alt="Sarsa" /></p>
 
-<p>This update is made each time the agent acts in an environment and gets an experience <S_t, A_t, R_{t+1}, S_{t+1}></p>
+<p>This update is made each time the agent acts in an environment and gets an experience <code class="prettyprint">&lt;S_t, A_t, R_{t+1}, S_{t+1}&gt;</code></p>
 
 <p><strong>Sarsa</strong></p>
 
-<p>Standard Sarsa algortthm</p>
+<p>Standard Sarsa algorithm</p>
 
 <p><img src="images/deep_sarsa.png" alt="Deep sarsa" /></p>
 
-<p>Agents</p>
+<p>Agents:</p>
 
 <ul>
-<li>DeepSarsa: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">DeepSarsa</code>: function approximator - feedforward neural network</li>
 </ul>
 
 <p><strong>Expected Sarsa</strong></p>
 
-<p>Uses the expected value of the Q function under the current policy to construct the target instead of the Q-value for the action selected.</p>
+<p>Uses the expected value of the <code class="prettyprint">Q</code> function under the current policy to construct the target instead of the Q-value for the action selected.</p>
 
 <p><img src="images/expected_sarsa.png" alt="Expected sarsa" /></p>
 
 <p>Agents</p>
 
 <ul>
-<li>DeepExpectedSarsa: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">DeepExpectedSarsa</code>: function approximator - feedforward neural network</li>
 </ul>
 
-<p><strong>Off Policy Expected Sarsa (experimental)</strong></p>
+<p><strong>Off Policy Expected Sarsa</strong></p>
 
-<p>Sarsa is typically an on policy algorithm. However, if a different policy is used to evaluate the target than the one used to explore, it becomes and off-policy algorithm.  With this set up, Q-Learning can be understood as a specific instance of Off Policy Expected Sarsa, when the policy used to evaluate the target is the greedy policy.</p>
+<p>Sarsa is typically an on policy algorithm. However, if a different policy is used to evaluate the target than the one used to explore, it becomes and off-policy algorithm. With this set up, Q-Learning can be understood as a specific instance of Off Policy Expected Sarsa, when the policy used to evaluate the target is the greedy policy.</p>
 
-<p>Q update and translation to neural network update: Same as DQN with fixed epsilon.</p>
+<p><code class="prettyprint">Q</code> update and translation to neural network update: Same as <code class="prettyprint">DQN</code> with fixed epsilon.</p>
 
-<p>Agents</p>
+<p>Agents:</p>
 
 <ul>
-<li>OffPolicySarsa: function approximator - feedforward neural network</li>
+<li><code class="prettyprint">OffPolicySarsa</code>: function approximator - feedforward neural network</li>
 </ul>
 
-<h3 id="policy-gradient">Policy Gradient</h3>
+<h3 id="policy-gradient"><a name="pg"></a>Policy Gradient</h3>
 
-<h3 id="deep-deterministic-policy-gradients-in-progress">Deep Deterministic Policy Gradients:  In progress</h3>
+<p><em>In progress</em></p>
+
+<h3 id="deep-deterministic-policy-gradient"><a name="ddpg"></a>Deep Deterministic Policy Gradient</h3>
+
+<p><em>In progress</em></p>
 
           <h1 id="agents"><a name="agents"></a>Agents</h1>
 
-<p>Agents are containers for reinforcement learning algorithms. They consist of a number of differnet components which are specified in the experiment_specs.</p>
+<p>Agents are containers for reinforcement learning algorithms. They consist of a number of different components which are specified in the <code class="prettyprint">experiment_specs</code>.</p>
 
+<blockquote>
+<p>The corresponding source code folder. When composing an agent by choosing components, look at the source code folder to see the list of available <code class="prettyprint">Classes</code> to use, and look at their <code class="prettyprint">__init__</code> method to see what parameters are available.</p>
+</blockquote>
+<pre class="highlight json"><code><span class="s2">"experiment_spec"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/spec/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/spec/problems.json"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/agent/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/policy/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/memory/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/optimizer/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/hyperoptimizer/"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rl/preprocessor/"</span><span class="p">,</span><span class="w">
+</span></code></pre>
 <ul>
-<li><code class="prettyprint">Agent</code> (Learning algorithm): decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.</li>
+<li><code class="prettyprint">problem</code>: the gym environment the agent is solving.</li>
+<li><code class="prettyprint">Agent</code> (Learning algorithm),: decision function for learning from experiences gained by acting in an environment (eg Q-Learning, Sarsa). This is also the main class for agents. All other components of an agent are contained within this class.</li>
 <li><code class="prettyprint">Policy</code>: decision function for acting in an environment. Controls exploration vs. exploitation trade off(e.g. epsilon greedy, boltzmann)</li>
 <li><code class="prettyprint">Memory</code>: for storing experiences gained by acting in an environment. Controls how experiences are sampled for an agent to learn from. (e.g. random uniform with no forgetting, prioritized sampling with forgetting)</li>
 <li><code class="prettyprint">Optimizer</code>: controls how to optimize the function approximators contained within the agent (e.g. Stochatic Gradient Descent, Adam) </li>
 <li><code class="prettyprint">HyperOptimizer</code>: hyperparameter optimization algorithms used to vary the agent parameters and run trials with them (e.g grid search, random search)</li>
-<li><code class="prettyprint">Preprocessor</code>: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.</li>
+<li><code class="prettyprint">PreProcessor</code>: controls the transformations made to state representaions before being passed as inputs to the policy and learning algorithm. (e.g. no preprocessing, concatenating current and previous state). Useful for Atari.</li>
+<li><code class="prettyprint">param</code>: the default parameters, unified for all agent components. To know what parameters are available, look into the <code class="prettyprint">__init__</code> method of the components you&rsquo;re using. We have ensured there are no conflicting keys.</li>
+<li><code class="prettyprint">param_range</code>: the parameter space specification for the HyperOptimizer to search over in an experiment with many trials.</li>
 </ul>
 
 <p>To define an <code class="prettyprint">Agent</code> you must specify each of the components. The example below is from the specification for <code class="prettyprint">dqn</code> in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code>. The <code class="prettyprint">rl/spec/*.json</code> files contains lots of other examples.</p>
-<pre class="highlight json"><code><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"HyperOptimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GridSearch"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdamOptimizer"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"PreProcessor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NoPreProcessor"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.02</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"gamma"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">0.999</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Each of the components with the exception of <code class="prettyprint">Agent</code> and <code class="prettyprint">Policy</code> are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration, see <a href="#solutions">our best solutions</a></p>
+<p>Each of the components with the exception of <code class="prettyprint">Agent</code> and <code class="prettyprint">Policy</code> are uncoupled, so can be freely switched in an out for different types of components. Different combinations of components may work better than others. We leave that up to you to experiment with. For some inspiration, see how the Lab users build <a href="#solutions">the best solutions</a>.</p>
 
 <p>For the currently implemented algorithms, the following <code class="prettyprint">Agents</code> can go with the following <code class="prettyprint">Policies</code>.</p>
 
 <ul>
-<li>DQN, Sarsa, ExpectedSarsa, OffPolSarsa, FreezeDQN: EpsilonGreedyPolicy, OscillatingEpsilonGreedyPolicy, TargetedEpsilonGreedyPolicy, BoltzmannPolicy</li>
-<li>DoubleDQN: DoubleDQNPolicy, DoubleDQNBoltzmannPolicy</li>
+<li><code class="prettyprint">DQN, Sarsa, ExpectedSarsa, OffPolSarsa, FreezeDQN: EpsilonGreedyPolicy, OscillatingEpsilonGreedyPolicy, TargetedEpsilonGreedyPolicy, BoltzmannPolicy</code></li>
+<li><code class="prettyprint">DoubleDQN: DoubleDQNPolicy, DoubleDQNBoltzmannPolicy</code></li>
 </ul>
+
+<h2 id="problem">problem</h2>
+
+<p><strong>code location:</strong> <code class="prettyprint">rl/spec/problems.json</code></p>
+
+<p>Problems are not part of agent, but they are part of the <code class="prettyprint">experiment_spec</code> that gets specified with the agent.</p>
+
+<p>We have not added all the OpenAI gym environments AKA problems. If you get to new environments using the lab, please add them in <code class="prettyprint">rl/spec/problems.json</code>, and it should be clear from those examples.</p>
+
+<p>Moreover, when adding new problems, consider the dependencies setup too, such as Mujoco. Please add these to the <code class="prettyprint">bin/setup</code> so that other users could run it.</p>
 
 <h2 id="agent">Agent</h2>
 
-<p>See <a href="#algorithms">algorithms secton</a> for an explanation of currently implemented agents (learning algorithms). Agents always need the following parameters: <code class="prettyprint">gamma</code> (how much to discount the future), <code class="prettyprint">hidden_layers</code> (list of hidden layer sizes for neura network function approximators), and <code class="prettyprint">hidden_layers_activation</code>,  (activation function for the hidden layers). The input and output layer sizes are inferred from the environment specs.</p>
+<p><strong>code location:</strong> <code class="prettyprint">rl/agent/</code></p>
+
+<p><em>See the overall list of agents and their implementation status under the <a href="#agents-matrix">Agents Fitness Matrix</a>. See <a href="#algorithms">algorithms section</a> for an explanation of the currently implemented agents (learning algorithms).</em></p>
+
+<p>The main <code class="prettyprint">Agent</code> class that will house all the other components. This is where the algorithms like <code class="prettyprint">DQN, DDQN, DDPG</code> are implemented. This class shall contain only the algorithm-specific logic; the generic components are modularized for reuse across different agents.</p>
+
+<p>Despite the multitude of parameters you can see in the contructor of the Agent classes, <code class="prettyprint">Agent</code>s always need the following:</p>
+
+<ul>
+<li><code class="prettyprint">gamma</code>: how much to discount the future</li>
+<li><code class="prettyprint">hidden_layers</code>: list of hidden layer sizes for neural network function approximators</li>
+<li><code class="prettyprint">hidden_layers_activation</code>: activation function for the hidden layers</li>
+</ul>
+
+<p>The input and output layer sizes are autoamtically inferred from the environment specs.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">],</span><span class="w">
+    </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
-<p>To make used of the random search hyperoptimizer for the network architecture, it is necessary to use the <em>auto-architecture</em> mode for building the network.  In this case set the <code class="prettyprint">auto-architecture</code> param to true, and specific the <code class="prettyprint">num_hidden_layers</code> and the <code class="prettyprint">first_hidden_layer_size</code>.</p>
+<p>For HyperOptimizer to search over the network architecture (yes this is possible), use the <em>auto-architecture</em> mode for building the network. The HyperOptimizer will search over the network depth and width (2 parameters is sufficient to construct a whole network). To do so, set the <code class="prettyprint">auto-architecture</code> param to true, and specific the <code class="prettyprint">num_hidden_layers</code> and the <code class="prettyprint">first_hidden_layer_size</code>.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"auto_architecture"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"num_hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"first_hidden_layer_size"</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"hidden_layers_activation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sigmoid"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"auto_architecture"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"num_hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"first_hidden_layer_size"</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
 <h2 id="policy">Policy</h2>
 
+<p><strong>code location:</strong> <code class="prettyprint">rl/policy/</code></p>
+
 <p>A policy is a decision function for acting in an environment. Policies take as input a description of the state space and output an action for the agent to take.</p>
 
-<p>Depending on the algorithm  used, agents may directly approximate the policy (policy based algorithms) or have an indirect policy, that depends on the Q-value function approximation (value based algorithms). Algorithms that approximate both the policy and the Q-value function are known as actor-critic algorithms.</p>
+<p>Depending on the algorithm used, agents may directly approximate the policy (policy based algorithms) or have an indirect policy, that depends on the Q-value function approximation (value based algorithms). Algorithms that approximate both the policy and the Q-value function are known as actor-critic algorithms.</p>
 
 <p>All of the algorithms implemented so far are value-based. The policy for acting at each timestep is often a simple epsilon-greedy policy.</p>
 
@@ -1757,7 +1837,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>Alternatively, an indirect policy may use the Q-value to output a probability distribution over actions, and sample actions based on this distribution. This is the approach taken by the Boltzmann policies.</p>
 
-<p>A critical component of the policy is how is balances <em>exploration</em> vs. <em>exploitation</em>. To learn how to act well in an environment an agent must <em>explore</em> the state space.  The more random the actions an agent takes, the more it explores. However, to do well in an environment, an agent needs to take the best possible action given the state. It must <em>exploit</em> what it has learnt.</p>
+<p>A critical component of the policy is how is balances <em>exploration</em> vs. <em>exploitation</em>. To learn how to act well in an environment an agent must <em>explore</em> the state space. The more random the actions an agent takes, the more it explores. However, to do well in an environment, an agent needs to take the best possible action given the state. It must <em>exploit</em> what it has learnt.</p>
 
 <p>Below is a summary of the currently implemented policies. Each takes a slightly different approach to balancing the exploration-exploitation problem.</p>
 
@@ -1765,31 +1845,31 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>Parameterized by starting value for epsilon (<code class="prettyprint">init_e</code>), min value for epsilon (<code class="prettyprint">final_e</code>), and the number of epsiodes to anneal epsilon over (<code class="prettyprint">exploration_anneal_episodes</code>). The value of epsilon is decayed linearly from start to min.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EpsilonGreedyPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"init_e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"final_e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EpsilonGreedyPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"init_e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"final_e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
 <h3 id="doubledqnpolicy">DoubleDQNPolicy</h3>
 
-<p>When actions are not random this policy selects actions by summing the outputs from each of the two Q-state approximators before taking the max of the result. Same approach as EpsilonGreedyPolicy to decaying epsilon and same params.</p>
+<p>When actions are not random this policy selects actions by summing the outputs from each of the two Q-state approximators before taking the max of the result. Same approach as <code class="prettyprint">EpsilonGreedyPolicy</code> to decaying epsilon and same params.</p>
 
-<h3 id="boltzmann-policy">Boltzmann Policy</h3>
+<h3 id="boltzmannpolicy">BoltzmannPolicy</h3>
 
 <p>Parameterized by the starting value for tau (<code class="prettyprint">init_tau</code>), min value for tau (<code class="prettyprint">final_tau</code>), and the number of epsiodes to anneal epsilon over (<code class="prettyprint">exploration_anneal_episodes</code>). At each step this policy selects actions based on the following probability distribution</p>
 
 <p><img src="images/boltzmann.png" alt="Boltzmann" /></p>
 
-<p>Tau is decayed linearly over time in the same way as in the EpsilonGreedyPolicy.</p>
+<p>Tau is decayed linearly over time in the same way as in the <code class="prettyprint">EpsilonGreedyPolicy</code>.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"init_tau"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"final_tau"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Policy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BoltzmannPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"init_tau"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"final_tau"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"exploration_anneal_episodes"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
 <h3 id="doubledqnboltzmannpolicy">DoubleDQNBoltzmannPolicy</h3>
 
@@ -1803,7 +1883,7 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <p>Same params as epsilon greedy policy. Epsilon is decayed exponentially.</p>
 
-<h3 id="oscillaitngepsilongreedypolicy">OscillaitngEpsilonGreedyPolicy</h3>
+<h3 id="oscillatingepsilongreedypolicy">OscillatingEpsilonGreedyPolicy</h3>
 
 <p>Same as epsilon greedy policy except at episode 18 epsilon is dropped to the max of 1/3 or its current value or min epsilon.</p>
 
@@ -1819,9 +1899,11 @@ When developing a new algorithm, use the session graph to immediately see how th
 </code></pre>
 <h2 id="memory">Memory</h2>
 
-<p>The agent&rsquo;s memory stores experiences that an agent gains by acting within an environment. An environment is in a particular state.  Then the agent acts, and receives a reward from the environment. The agent also receives information about the next state, including a flag indicating whether the next state is the terminal state. Finally, an error measure is stored, indicating how well an agent can estimate the value of this particular transition. </p>
+<p><strong>code location:</strong> <code class="prettyprint">rl/memory/</code></p>
 
-<p>This information about a single step is stored as an experience. Each experience consists  of</p>
+<p>The agent&rsquo;s memory stores experiences that an agent gains by acting within an environment. An environment is in a particular state. Then the agent acts, and receives a reward from the environment. The agent also receives information about the next state, including a flag indicating whether the next state is the terminal state. Finally, an error measure is stored, indicating how well an agent can estimate the value of this particular transition. </p>
+
+<p>This information about a single step is stored as an experience. Each experience consists of</p>
 
 <ul>
 <li>Current state</li>
@@ -1831,9 +1913,9 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li>Terminal</li>
 <li>Error</li>
 </ul>
-<pre class="highlight python"><code><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">nextstate</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+<pre class="highlight python"><code><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
 </code></pre>
-<p>Crucially, the memory controls how long experiences are stored for, and which experiences are sampled from it to use as input into the learning algorithm of an agent. Below is a summary of the currently implemented memories</p>
+<p>Crucially, the memory controls how long experiences are stored for, and which experiences are sampled from it to use as input into the learning algorithm of an agent. Below is a summary of the currently implemented memories.</p>
 
 <h3 id="linearmemory">LinearMemory</h3>
 
@@ -1841,12 +1923,12 @@ When developing a new algorithm, use the session graph to immediately see how th
 
 <h3 id="linearmemorywithforgetting">LinearMemoryWithForgetting</h3>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"max_len"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LinearMemoryWithForgetting"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"max_mem_len"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
-<p>Parameterizes by <code class="prettyprint">max_len</code> param which bounds the size of the memory. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.</p>
+<p>Parameterizes by <code class="prettyprint">max_mem_len</code> param which bounds the size of the memory. Once memory reaches the max size, the oldest experiences are deleted from the memory to make space for new experiences. Experiences are sampled random uniformly from memory.</p>
 
 <h3 id="lefttailmemory">LeftTailMemory</h3>
 
@@ -1857,18 +1939,20 @@ When developing a new algorithm, use the session graph to immediately see how th
 <p>Experiences are weighted by the error, a measure of how well the learning algorithm currently performs on that experience. Experiences are sampled from memory in proportion to the p value (adjusted error value)</p>
 <pre class="highlight python"><code><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span><span class="o">**</span> <span class="n">alpha</span>
 </code></pre>
-<p>The parameter <code class="prettyprint">e</code> &gt; 0 is  a constant added onto the error to prevent experiences with error 0 never being sampled. <code class="prettyprint">alpha</code> controls how spiked the distribution is. The lower <code class="prettyprint">alpha</code> the closer to unform the distribution is. <code class="prettyprint">alpha</code> = 0 corresponds to uniform random sampling.</p>
+<p>The parameter <code class="prettyprint">e &gt; 0</code> (if not positive, our implementation will bump it up) is a constant added onto the error to prevent experiences with error 0 never being sampled. <code class="prettyprint">alpha</code> controls how spiked the distribution is. The lower <code class="prettyprint">alpha</code> the closer to unform the distribution is. <code class="prettyprint">alpha = 0</code> corresponds to uniform random sampling.</p>
 <pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PrioritizedExperienceReplay"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"alpha"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.6</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"max_len"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PrioritizedExperienceReplay"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"e"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alpha"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.6</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"max_mem_len"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
 <p>This has the effect of drawing more from experiences that the learning algorithm doesn&rsquo;t perform well on, i.e. the experiences from which is has most to learn. The size of the memory is bounded as in LinearMemoryWithForgetting.</p>
 
 <h3 id="rankedmemory">RankedMemory</h3>
+
+<p>Memory sorted by the <code class="prettyprint">mean_rewards</code> of each episode. Still experimental.</p>
 
 <h3 id="creating-your-own">Creating your own</h3>
 
@@ -1891,45 +1975,54 @@ When developing a new algorithm, use the session graph to immediately see how th
 </code></pre>
 <h2 id="optimizer">Optimizer</h2>
 
+<p><strong>code location:</strong> <code class="prettyprint">rl/optimizer/</code></p>
+
 <p>Controls how to optimize the function approximators contained within the agent. For feedforward and convolutional neural networks, we suggest using Adam with the default parameters for everything except the learning rate as this is widely considered to be the best algorithm for optmizing deep neural network based function approximators. For recurrent neural networks we suggest using RMSprop.</p>
 
 <h3 id="sgd">SGD</h3>
 
-<p>Stochastic Gradient Descent. Parameterized by <code class="prettyprint">lr</code> (learning rate), <code class="prettyprint">momentum</code>, <code class="prettyprint">decay</code> and `nestorov. See <a href="https://keras.io/optimizers/#sgd">Keras</a> for more details.</p>
-<pre class="highlight json"><code><span class="w"> </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SGDOptimizer"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"momentum"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.9</span><span class="w">
-      </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.00001</span><span class="w">
-      </span><span class="s2">"nesterov"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-    </span><span class="p">},</span><span class="w">
+<p>Stochastic Gradient Descent. Parameterized by <code class="prettyprint">lr</code> (learning rate), <code class="prettyprint">momentum</code>, <code class="prettyprint">decay</code> and <code class="prettyprint">nestorov</code>. See <a href="https://keras.io/optimizers/#sgd">Keras</a> for more details.</p>
+<pre class="highlight json"><code><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="s2">"Optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SGDOptimizer"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"param"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"momentum"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.9</span><span class="w">
+    </span><span class="s2">"decay"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.00001</span><span class="w">
+    </span><span class="s2">"nesterov"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+  </span><span class="p">},</span><span class="w">
 </span></code></pre>
 <h3 id="adam">Adam</h3>
 
-<p>Parameterized by <code class="prettyprint">lr</code> (learning rate),  <code class="prettyprint">beta_1</code>, <code class="prettyprint">beta_2</code>, <code class="prettyprint">epsilon</code>, <code class="prettyprint">decay</code>. See <a href="https://keras.io/optimizers/#adam">Keras</a> for more details.</p>
+<p>Parameterized by <code class="prettyprint">lr</code> (learning rate), <code class="prettyprint">beta_1</code>, <code class="prettyprint">beta_2</code>, <code class="prettyprint">epsilon</code>, <code class="prettyprint">decay</code>. See <a href="https://keras.io/optimizers/#adam">Keras</a> for more details.</p>
 
 <h3 id="rmsprop">RMSprop</h3>
 
-<p>Parameterized by <code class="prettyprint">lr</code> (learning rate),  <code class="prettyprint">rho</code>, <code class="prettyprint">epsilon</code>, <code class="prettyprint">decay</code>. See <a href="https://keras.io/optimizers/#rmsprop">Keras</a> for more details.</p>
+<p>Parameterized by <code class="prettyprint">lr</code> (learning rate), <code class="prettyprint">rho</code>, <code class="prettyprint">epsilon</code>, <code class="prettyprint">decay</code>. See <a href="https://keras.io/optimizers/#rmsprop">Keras</a> for more details.</p>
 
-<h2 id="hyperoptimizer">HyperOptimizer</h2>
+<h2 id="hyperoptimizer"><a name="hyperoptimizer"></a>HyperOptimizer</h2>
 
-<p>(section under construction)</p>
+<p><strong>code location:</strong> <code class="prettyprint">rl/hyperoptimizer/</code></p>
 
-<p>Controls how to search over your hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trrying to find the optimal parameters for an agent in an environment as  these correspond to rough grained &gt;&gt; finer grained search</p>
-
-<ol>
-<li>LineSearch</li>
-<li>GridSearch</li>
-<li>RandomSearch</li>
-</ol>
+<p>Controls how to search over the hyperparameter space. We suggest using each of the three hyperoptimizers in the following order when trying to find the optimal parameters for an agent in an environment, to help gradually narrow down the best search space. From rough to fine granularity, <code class="prettyprint">LineSearch &gt; GridSearch &gt; RandomSearch</code>.</p>
 
 <h3 id="linesearch">LineSearch</h3>
 
+<p>Varies one parameter per trial while using default values for the rest. This is useful when trying to estimate of what value range should work for a parameter without having to search through the full space blindly.</p>
+
+<p>Given that we have built a proven base of best parameters, this is now seldom used, as we often could know the optimal parameter values to a small range.</p>
+
 <h3 id="gridsearch">GridSearch</h3>
 
+<p>Once the search space is narrowed down, it&rsquo;s time to do a systematic grid search. This takes the cartesian products of the discrete list of options, i.e. every combination, and run trials. This is the most commonly used, and could help us properly see the heatmap when we probe the search space systematically.</p>
+
 <h3 id="randomsearch">RandomSearch</h3>
+<pre class="highlight plaintext"><code>Random Search by sampling on hysphere around a search path:
+1. init x a random position in space
+2. until termination (max_eval or fitness, e.g. solved all), do:
+    2.1 sample new pos some radius away: next_x = x + r
+    2.2 if f(next_x) &gt; f(x) then set x = next_x
+</code></pre>
+<p>After GridSearch, there are usually intermediate values between the grid points that could yield slightly higher fitness score. Narrow down even further to the best search space as shown in the GridSearch heatmap, and do a random search. This is the final fine-tuning. The RandomSearch algorithm is directional and greedy.</p>
 
 <h3 id="hyperoptimizer-roadmap">HyperOptimizer Roadmap</h3>
 
@@ -1996,15 +2089,33 @@ When developing a new algorithm, use the session graph to immediately see how th
 </code></pre>
 <h2 id="preprocessor">Preprocessor</h2>
 
-<p>(section under construction)</p>
+<p><strong>code location:</strong> <code class="prettyprint">rl/preprocessor/</code></p>
+
+<p>Sometimes preprocessing the states before they are received by the agent can help to simplify the problem or make the agent strong. One example is the pixel preprocessing the removes color channels and rescales image size, in order to reduce unnecessary information overload. The other is to concat states from sequential timesteps to present richer, correlated information that is otherwise sparse.</p>
+
+<p>The change in dimensions after preprocessing is handled automatically, so you can use them without any concerns.</p>
+
+<h3 id="nopreprocessor">NoPreProcessor</h3>
+
+<p>The default that does not preprocess, but pass on the states as is.</p>
+
+<h3 id="stackstates">StackStates</h3>
+
+<p>Concat the current and the previous states. Turns out this boosts agent performance in the <code class="prettyprint">LunarLander-v2</code> environment.</p>
+
+<h3 id="diffstates">DiffStates</h3>
+
+<p>Take the difference <code class="prettyprint">new_states - old_states</code>.</p>
+
+<h3 id="atari">Atari</h3>
+
+<p>Convert images to greyscale, downsize, crop, then stack 4 most recent states together. Useful for the Atari environments.</p>
 
           <h1 id="development"><a name="development"></a>Development</h1>
 
-<p><strong>This section is still under construction</strong>.</p>
-
 <p>For agent-specific development, see <a href="#agents">Agents</a>. This section details the general, non-agent development guideline.</p>
 
-<p>The design of the code is clean enough to simply infer how things work by example.</p>
+<p>The design of the code is clean enough to simply infer how things work by existing examples. The fastest way is to develop is to dig into the source code.</p>
 
 <ul>
 <li><code class="prettyprint">data/</code>: data folders grouped per experiment, each of which contains all the graphs per trial sessions, JSON data file per trial, and csv metrics dataframe per run of multiple trials</li>
@@ -2014,15 +2125,15 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li><code class="prettyprint">rl/optimizer/</code>: RL agent NN optimizer classes</li>
 <li><code class="prettyprint">rl/policy/</code>: RL agent policy classes</li>
 <li><code class="prettyprint">rl/preprocessor/</code>: RL agent preprocessor (state and memory) classes</li>
-<li><code class="prettyprint">rl/spec/</code>: specify new problems and experiment_specs to run experiments for.</li>
+<li><code class="prettyprint">rl/spec/</code>: specify new problems and experiment_specs to run experiments for</li>
 <li><code class="prettyprint">rl/analytics.py</code>: the data analytics module for output experiment data</li>
 <li><code class="prettyprint">rl/experiment.py</code>: the main high level experiment logic</li>
 <li><code class="prettyprint">rl/util.py</code>: Generic util</li>
 </ul>
 
-<h2 id="problem">problem</h2>
-
-<p>simple, the split, how to add. each JSON key is?</p>
+<aside class="notice">
+As the Lab grows, we will add more development guide as needed.
+</aside>
 
           <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
 
