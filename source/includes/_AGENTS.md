@@ -85,7 +85,7 @@ Parameterized by starting value for epsilon (`init_e`), min value for epsilon (`
 ### DoubleDQNPolicy
 When actions are not random this policy selects actions by summing the outputs from each of the two Q-state approximators before taking the max of the result. Same approach as EpsilonGreedyPolicy to decaying epsilon and same params.
 
-### Boltzmann Policy
+### BoltzmannPolicy
 Parameterized by the starting value for tau (`init_tau`), min value for tau (`final_tau`), and the number of epsiodes to anneal epsilon over (`exploration_anneal_episodes`). At each step this policy selects actions based on the following probability distribution
 
 ![](./images/boltzmann.png)
@@ -318,4 +318,22 @@ experiment_data = hopt.run()
 
 ## Preprocessor
 
-(section under construction)
+Sometimes preprocessing the states before they are received by the agent can help to simplify the problem or make the agent strong. One example is the pixel preprocessing the removes color channels and rescales image size, in order to reduce unnecessary information overload. The other is to concat states from sequential timesteps to present richer, correlated information that is otherwise sparse.
+
+The change in dimensions after preprocessing is handled automatically, so you can use them without any concerns.
+
+### NoPreProcessor
+
+The default that does not preprocess, but pass on the states as is.
+
+### StackStates
+
+Concat the current and the previous states. Turns out this boosts agent performance in the `LunarLander-v2` environment.
+
+### DiffStates
+
+Take the difference `new_states - old_states`.
+
+### Atari
+
+Convert images to greyscale, downsize, crop, then stack 4 most recent states together. Useful for the Atari environments.
