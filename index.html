@@ -352,6 +352,8 @@ This step is optional; useful when running production mode.
 <p>The useful grunt commands are:</p>
 <pre class="highlight shell"><code><span class="c"># when developing experiments specified in default.json</span>
 grunt
+<span class="c"># developing, run single best trial without param selection</span>
+grunt -best
 
 <span class="c"># run real lab experiments specified in production.json</span>
 grunt -prod
@@ -359,6 +361,7 @@ grunt -prod
 grunt -prod -remote
 <span class="c"># resume lab (previously incomplete experiments)</span>
 grunt -prod -remote -resume
+
 
 <span class="c"># clear data/ folder and cache files</span>
 grunt clear
@@ -427,6 +430,8 @@ To monitor your system (CPU, RAM, GPU), run <code>glances</code>
 
 <span class="c"># when developing experiments specified in default.json</span>
 grunt
+<span class="c"># developing, run single best trial without param selection</span>
+grunt -best
 
 <span class="c"># run real lab experiments specified in production.json</span>
 grunt -prod
