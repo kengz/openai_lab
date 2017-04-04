@@ -1,6 +1,6 @@
 # <a name="installation"></a>Installation
 
-1\. **Clone** repo and run the **setup** script:
+**1\.** **Clone** repo and run the **setup** script:
 
 ```shell
 git clone https://github.com/kengz/openai_lab.git
@@ -9,13 +9,13 @@ cd openai_lab
 ./bin/setup
 ```
 
-`bin/setup` installs all the dependencies the same way as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); **inspect or change it as needed before running to ensure it doesn't make unwanted changes to your system.** Also make sure your dependencies are the most updated - check the [major required versions here](#dependencies).
+`bin/setup` installs all the dependencies as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); **inspect it before running to ensure it doesn't make unwanted changes to your system.** Also make sure your dependencies are up to date - check the [required versions here](#dependencies).
 
 <aside class="notice">
-If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
+If you plan on committing code and contribute to the Lab, fork this repo then clone your fork instead.
 </aside>
 
-2\. Keras needs a **backend file** in your home directory; setup `~/.keras/keras.json` using the example file in `config/keras.json`.
+**2\.** Keras needs a **backend file** in your home directory; setup `~/.keras/keras.json` using the example file in `config/keras.json`.
 
 ```json
 {
@@ -27,12 +27,11 @@ If you use OpenAI Lab for serious experimentations, fork this repo then clone yo
 ```
 
 <aside class="notice">
-We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-If you wish, use Theano once your lab produces a final model for a single retraining, since it's faster.
+We recommend Tensorflow over Theano for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
 </aside>
 
 
-3\. `bin/setup` also creates the needed **config files** needed for lab [usage](#usage). See sections below for more info.
+**3\.** `bin/setup` also creates the needed **config files** needed for lab [usage](#usage). See sections below for more info.
 
 - `config/default.json` for local development, used when `grunt` is ran without a production flag.
 - `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`.
@@ -48,6 +47,14 @@ If you wish, use Theano once your lab produces a final model for a single retrai
   ]
 }
 ```
+
+
+### Updating Lab
+
+Check the [release version here](https://github.com/kengz/openai_lab/releases).
+
+- If you cloned dierctly the Lab, update with `git pull`
+- If you forked, [setup a remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) and [update fork](https://help.github.com/articles/syncing-a-fork/).
 
 
 ## Setup Data Auto-sync
