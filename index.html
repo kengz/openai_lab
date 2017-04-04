@@ -235,19 +235,19 @@
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
-<p>1. <strong>Clone</strong> repo and run the <strong>setup</strong> script:</p>
+<p><strong>1.</strong> <strong>Clone</strong> repo and run the <strong>setup</strong> script:</p>
 <pre class="highlight shell"><code>git clone https://github.com/kengz/openai_lab.git
 <span class="nb">cd </span>openai_lab
 <span class="c"># inspect before running</span>
 ./bin/setup
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs all the dependencies the same way as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; <strong>inspect or change it as needed before running to ensure it doesn&rsquo;t make unwanted changes to your system.</strong> Also make sure your dependencies are the most updated - check the <a href="#dependencies">major required versions here</a>.</p>
+<p><code class="prettyprint">bin/setup</code> installs all the dependencies as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; <strong>inspect it before running to ensure it doesn&rsquo;t make unwanted changes to your system.</strong> Also make sure your dependencies are up to date - check the <a href="#dependencies">required versions here</a>.</p>
 
 <aside class="notice">
-If you use OpenAI Lab for serious experimentations, fork this repo then clone your fork, so you can commit code and contribute to the Lab.
+If you plan on committing code and contribute to the Lab, fork this repo then clone your fork instead.
 </aside>
 
-<p>2. Keras needs a <strong>backend file</strong> in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
+<p><strong>2.</strong> Keras needs a <strong>backend file</strong> in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
   </span><span class="s2">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
@@ -256,11 +256,10 @@ If you use OpenAI Lab for serious experimentations, fork this repo then clone yo
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <aside class="notice">
-We recommend Tensorflow for experimentation with multi-GPU for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-If you wish, use Theano once your lab produces a final model for a single retraining, since it&rsquo;s faster.
+We recommend Tensorflow over Theano for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
 </aside>
 
-<p>3. <code class="prettyprint">bin/setup</code> also creates the needed <strong>config files</strong> needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
+<p><strong>3.</strong> <code class="prettyprint">bin/setup</code> also creates the needed <strong>config files</strong> needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
 
 <ul>
 <li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
@@ -276,6 +275,15 @@ If you wish, use Theano once your lab produces a final model for a single retrai
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
+<h3 id="updating-lab">Updating Lab</h3>
+
+<p>Check the <a href="https://github.com/kengz/openai_lab/releases">release version here</a>.</p>
+
+<ul>
+<li>If you cloned dierctly the Lab, update with <code class="prettyprint">git pull</code></li>
+<li>If you forked, <a href="https://help.github.com/articles/configuring-a-remote-for-a-fork/">setup a remote</a> and <a href="https://help.github.com/articles/syncing-a-fork/">update fork</a>.</li>
+</ul>
+
 <h2 id="setup-data-auto-sync">Setup Data Auto-sync</h2>
 
 <p>We find it extremely useful to have data file-sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app, on a computer or a smartphone.</p>
