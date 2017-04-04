@@ -53,7 +53,7 @@ We recommend Tensorflow over Theano for stability. By default <code>bin/setup</c
 
 Check the [release version here](https://github.com/kengz/openai_lab/releases).
 
-- If you cloned dierctly the Lab, update with `git pull`
+- If you cloned directly the Lab, update with `git pull`
 - If you forked, [setup a remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) and [update fork](https://help.github.com/articles/syncing-a-fork/).
 
 
