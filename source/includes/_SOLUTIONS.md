@@ -16,7 +16,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 ||DQN|double-DQN|SARSA|double-DQN-PER|DDPG|
 |:---|:---|:---|:---|:---|:---|
 |**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|-|
-|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|-|-|
+|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|[18.91624](https://github.com/kengz/openai_lab/pull/107)|-|-|
 |**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|
 |**MountainCar-v0**|-|-|-|-|-|
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|
@@ -65,7 +65,7 @@ _Pending: we have a generic formalization to cross-evaluate Agents using heatmap
 
 ## <a name="environments-matrix"></a>Environments Fitness Matrix
 
-A projection of the Fitness Matrix along the Environments axis. This shows the best solutions for the problems. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
+A projection of the Fitness Matrix along the Environments axis. This shows the best solutions for the environments. The list of accepted solutions can be seen in the [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed)
 
 
 ### Classic Environments
@@ -73,7 +73,7 @@ A projection of the Fitness Matrix along the Environments axis. This shows the b
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
 |CartPole-v0|[12.98525](https://github.com/kengz/openai_lab/pull/91)|9|kengz/lgraesser|offpol_sarsa|
-|CartPole-v1|[16.06697](https://github.com/kengz/openai_lab/pull/82)|16|kengz/lgraesser|double_dqn_v1|
+|CartPole-v1|[18.91624](https://github.com/kengz/openai_lab/pull/107)|19|kengz/lgraesser|offpol_sarsa_v1|
 |Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|-|-|-|-|
 |MountainCarContinuous-v0|-|-|-|-|
