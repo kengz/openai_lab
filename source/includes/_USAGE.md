@@ -18,6 +18,8 @@ The useful grunt commands are:
 ```shell
 # when developing experiments specified in default.json
 grunt
+# developing, run single best trial without param selection
+grunt -best
 
 # run real lab experiments specified in production.json
 grunt -prod
@@ -25,6 +27,7 @@ grunt -prod
 grunt -prod -remote
 # resume lab (previously incomplete experiments)
 grunt -prod -remote -resume
+
 
 # clear data/ folder and cache files
 grunt clear
@@ -103,6 +106,8 @@ grunt <task> -<flag>
 
 # when developing experiments specified in default.json
 grunt
+# developing, run single best trial without param selection
+grunt -best
 
 # run real lab experiments specified in production.json
 grunt -prod
