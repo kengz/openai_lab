@@ -41,7 +41,7 @@ class EpsilonGreedyPolicy(Policy):
         return self.e
 
 
-class DoubleDQNPolicy(EpsilonGreedyPolicy):
+class DoubleDQNEpsilonGreedyPolicy(EpsilonGreedyPolicy):
 
     '''
     Policy to accompany double dqn agents
@@ -54,7 +54,7 @@ class DoubleDQNPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                  init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                  **kwargs):  # absorb generic param without breaking
-        super(DoubleDQNPolicy, self).__init__(
+        super(DoubleDQNEpsilonGreedyPolicy, self).__init__(
             env_spec, init_e, final_e,
             exploration_anneal_episodes)
 
