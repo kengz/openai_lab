@@ -70,7 +70,7 @@ The **analysis graph** is the primary graph used to judge the overall experiment
 4. `epi_stats_min`: the min of the termination episode of a session, i.e. the fastest solved session of a trial. The lower the better, as it would imply that the agent can solve the environment faster.
 
 
-<a name="hue"></a>### The hue metrics
+### <a name="hue"></a>The hue metrics
 
 Each data point represents a trial, with the data averaged over its sessions. The points are colored (see legend) with the hue:
 
