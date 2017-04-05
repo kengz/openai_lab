@@ -23,7 +23,7 @@ class BoltzmannPolicy(Policy):
 
     def select_action(self, state):
         agent = self.agent
-        state = np.reshape(state, (1, state.shape[0]))
+        state = np.expand_dims(state, axis=0)
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
@@ -60,7 +60,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
 
     def select_action(self, state):
         agent = self.agent
-        state = np.reshape(state, (1, state.shape[0]))
+        state = np.expand_dims(state, axis=0)
         # extract from batch predict
         Q_state1 = agent.model.predict(state)[0]
         Q_state2 = agent.model_2.predict(state)[0]
