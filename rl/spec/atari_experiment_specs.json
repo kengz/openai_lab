@@ -22,7 +22,7 @@
       "auto_architecture":  true,
       "num_hidden_layers" : 3,
       "num_initial_channels" : 8,
-      "mem_size" : 500000
+      "max_mem_len" : 500000
 
     },
     "param_range": {
@@ -41,7 +41,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "EpsilonGreedyPolicy",
+    "Policy": "BoltzmannPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
@@ -49,17 +49,17 @@
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers": [
-        [16, 8, 8, [4, 4]],
-        [32, 4, 4, [2, 2]]
+        [32, 8, 8, [4, 4]],
+        [64, 4, 4, [2, 2]],
+        [64, 3, 3, [1, 1]]
       ],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
       "epi_change_lr": 5000,
-      "mem_size" : 500000
+      "max_mem_len" : 500000
     },
     "param_range": {
-      "lr": [0.001, 0.0001],
-      "gamma": [0.97, 0.99]
+      "lr": [0.001, 0.01]
     }
   },
   "breakout_double_dqn": {
@@ -82,7 +82,7 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 5000,
       "epi_change_lr": 5000,
-      "mem_size" : 500000
+      "max_mem_len" : 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -109,7 +109,7 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 10000,
       "epi_change_lr": 10000,
-      "mem_size" : 500000
+      "max_mem_len" : 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
