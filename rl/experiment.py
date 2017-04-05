@@ -103,6 +103,8 @@ class Session(object):
         if args.max_epis >= 0:
             sys_vars['MAX_EPISODES'] = args.max_epis
         sys_vars['RENDER'] = (not args.param_selection and args.render)
+        if environ.get('CI'):
+            sys_vars['RENDER'] = False
         self.sys_vars = sys_vars
         self.reset_sys_vars()
         return self.sys_vars
