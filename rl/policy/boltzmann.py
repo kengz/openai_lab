@@ -18,18 +18,18 @@ class BoltzmannPolicy(Policy):
         self.final_tau = final_tau
         self.tau = self.init_tau
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        self.clip_val = 100000
+        self.clip_val = 500
         log_self(self)
 
     def select_action(self, state):
         agent = self.agent
-        state = np.reshape(state, (1, state.shape[0]))
+        state = np.expand_dims(state, axis=0)
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
         Q_state = Q_state - np.amax(Q_state)  # prevent overflow
-        exp_values = np.clip(
-            np.exp(Q_state / self.tau), -self.clip_val, self.clip_val)
+        exp_values = np.exp(
+            np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
@@ -60,7 +60,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
 
     def select_action(self, state):
         agent = self.agent
-        state = np.reshape(state, (1, state.shape[0]))
+        state = np.expand_dims(state, axis=0)
         # extract from batch predict
         Q_state1 = agent.model.predict(state)[0]
         Q_state2 = agent.model_2.predict(state)[0]
@@ -68,8 +68,8 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
         Q_state = Q_state - np.amax(Q_state)  # prevent overflow
-        exp_values = np.clip(
-            np.exp(Q_state / self.tau), -self.clip_val, self.clip_val)
+        exp_values = np.exp(
+            np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
