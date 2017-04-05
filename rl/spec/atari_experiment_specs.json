@@ -1,5 +1,5 @@
 {
-   "dev_conv_dqn": {
+  "dev_conv_dqn": {
     "problem": "Dev-Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
@@ -19,10 +19,10 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 3000,
       "epi_change_lr": 3000,
-      "auto_architecture":  true,
-      "num_hidden_layers" : 3,
-      "num_initial_channels" : 8,
-      "max_mem_len" : 500000
+      "auto_architecture": true,
+      "num_hidden_layers": 3,
+      "num_initial_channels": 8,
+      "max_mem_len": 500000
 
     },
     "param_range": {
@@ -41,34 +41,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
-    "PreProcessor": "Atari",
-    "param": {
-      "train_per_n_new_exp": 4,
-      "batch_size": 32,
-      "lr": 0.001,
-      "gamma": 0.99,
-      "hidden_layers": [
-        [32, 8, 8, [4, 4]],
-        [64, 4, 4, [2, 2]],
-        [64, 3, 3, [1, 1]]
-      ],
-      "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 3000,
-      "epi_change_lr": 3000,
-      "max_mem_len" : 500000
-    },
-    "param_range": {
-      "lr": [0.001, 0.01]
-    }
-  },
-  "breakout_double_dqn": {
-    "problem": "Breakout-v0",
-    "Agent": "DoubleConvDQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "DoubleDQNBoltzmannPolicy",
+    "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
@@ -82,7 +55,33 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 3000,
       "epi_change_lr": 3000,
-      "max_mem_len" : 500000
+      "max_mem_len": 500000
+    },
+    "param_range": {
+      "lr": [0.001, 0.01]
+    }
+  },
+  "breakout_double_dqn": {
+    "problem": "Breakout-v0",
+    "Agent": "DoubleConvDQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "DoubleDQNEpsilonGreedyPolicy",
+    "PreProcessor": "Atari",
+    "param": {
+      "train_per_n_new_exp": 4,
+      "batch_size": 32,
+      "lr": 0.001,
+      "gamma": 0.99,
+      "hidden_layers": [
+        [16, 8, 8, [4, 4]],
+        [32, 4, 4, [2, 2]]
+      ],
+      "hidden_layers_activation": "relu",
+      "exploration_anneal_episodes": 3000,
+      "epi_change_lr": 3000,
+      "max_mem_len": 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -109,7 +108,7 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 10000,
       "epi_change_lr": 10000,
-      "max_mem_len" : 500000
+      "max_mem_len": 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
