@@ -41,7 +41,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
+    "Policy": "EpsilonGreedyPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
