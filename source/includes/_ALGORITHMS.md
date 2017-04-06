@@ -146,8 +146,10 @@ Agents:
 
 *In progress*
 
+
 ## RL Theory Resources
 
+- [Demystifying Deep Reinforcement Learning](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/): an introductory blog post about deep reinforcement learning; a good and short first intro for new comers.
 - [Deep Reinforcement Learning](https://www.youtube.com/watch?v=PtAIh9KSnjo): 90 minute video overview by John Schulman. Assumes some knowledge of neural networks. If you are not familiar with neural networks, then start with Sutton and Barto’s book or David Silver's course
 - [Reinforcement Learning: An Introduction](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf): Classic textbook by Sutton and Barto. A good place to go next after watching John Schulman’s talk. Link is to the in progress 2nd edition. 
 - [David Silver’s Reinforcement Learning Course](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html)

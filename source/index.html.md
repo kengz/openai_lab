@@ -31,7 +31,7 @@ search: true
 
 _An experimentation system for Reinforcement Learning using OpenAI Gym, Tensorflow, and Keras._
 
-The _OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy to use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experiment and evaluation framework.
+_OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy to use interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), combined with an automated experiment and evaluation framework.
 
 This is [motivated by the problems we experienced in RL research](#motivations): the difficulty of building upon other's work, the lack of rigor in comparisons of research results, and the inertia to high level vision.
 

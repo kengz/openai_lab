@@ -7,7 +7,7 @@
 
 ## Authors
 
-_Note: we are not affiliated with OpenAI; the OpenAI Lab is not tied to any organizations._
+_Note: we are not affiliated with OpenAI; OpenAI Lab is not tied to any organizations._
 
 - Wah Loon Keng. [twitter: @kengzwl](https://twitter.com/kengzwl)
 - Laura Graesser. [twitter: @lgraesser3](https://twitter.com/lgraesser3)
