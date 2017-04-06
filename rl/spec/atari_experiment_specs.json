@@ -1,5 +1,5 @@
 {
-   "dev_conv_dqn": {
+  "dev_conv_dqn": {
     "problem": "Dev-Breakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
@@ -17,12 +17,12 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000,
-      "auto_architecture":  true,
-      "num_hidden_layers" : 3,
-      "num_initial_channels" : 8,
-      "mem_size" : 500000
+      "exploration_anneal_episodes": 3000,
+      "epi_change_lr": 3000,
+      "auto_architecture": true,
+      "num_hidden_layers": 3,
+      "num_initial_channels": 8,
+      "max_mem_len": 500000
 
     },
     "param_range": {
@@ -53,13 +53,12 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000,
-      "mem_size" : 500000
+      "exploration_anneal_episodes": 3000,
+      "epi_change_lr": 3000,
+      "max_mem_len": 500000
     },
     "param_range": {
-      "lr": [0.001, 0.0001],
-      "gamma": [0.97, 0.99]
+      "lr": [0.001, 0.01]
     }
   },
   "breakout_double_dqn": {
@@ -68,7 +67,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "EpsilonGreedyPolicy",
+    "Policy": "DoubleDQNEpsilonGreedyPolicy",
     "PreProcessor": "Atari",
     "param": {
       "train_per_n_new_exp": 4,
@@ -80,9 +79,9 @@
         [32, 4, 4, [2, 2]]
       ],
       "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 5000,
-      "epi_change_lr": 5000,
-      "mem_size" : 500000
+      "exploration_anneal_episodes": 3000,
+      "epi_change_lr": 3000,
+      "max_mem_len": 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
@@ -109,7 +108,7 @@
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 10000,
       "epi_change_lr": 10000,
-      "mem_size" : 500000
+      "max_mem_len": 500000
     },
     "param_range": {
       "lr": [0.001, 0.0001],
