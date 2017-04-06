@@ -99,7 +99,7 @@ Like Q-Learning, `Sarsa` is a temporal difference algorithm. However, since they
 
 Sarsa update:
 
-![](./images/sarsa_2.png)
+![](./images/sarsa.png)
 
 This update is made each time the agent acts in an environment and gets an experience `<S_t, A_t, R_{t+1}, S_{t+1}>`
 
@@ -107,7 +107,7 @@ This update is made each time the agent acts in an environment and gets an exper
 
 Standard Sarsa algorithm
 
-![](./images/deep_sarsa_2.png)
+![](./images/deep_sarsa.png)
 
 Agents:
 
