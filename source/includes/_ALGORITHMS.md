@@ -12,15 +12,15 @@ The currently implemented algorithms combine deep neural networks with a number 
 
 *- Rich Sutton*
 
-For further reading on reinforcement learning see [David Silver's lectures](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html) and the book, Reinforcement Learning: An Introduction, by Sutton and Barto.
+For further reading on reinforcement learning see [David Silver's lectures](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html) and the book, [Reinforcement Learning: An Introduction, by Sutton and Barto](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf).
 
 
 
 ## Why are deep neural networks useful for solving RL problems?
 
-RL problems are characterized by incomplete information. The transition probabilities from one state to another given the action taken, for all states and actions are not known. So in order to solve problems, RL algorithms involve approximating one or more unknown, typically complex, non linear functions. Deep neural networks make good candidates for these function approximators since they excel at approximating complex functions, particularly if the states are characterized by pixel level features.
+RL problems are characterized by incomplete information. The transition probabilities from one state to another given the action taken, for all states and actions are not known. Nor is the distribution of the rewards given a state and action. So in order to solve problems, RL algorithms involve approximating one or more unknown, typically complex, non linear functions. Deep neural networks make good candidates for these function approximators since they excel at approximating complex functions, particularly if the states are characterized by pixel level features.
 
-
+For further reading on neural networks see [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
 
 ## Terminology
 
@@ -50,7 +50,7 @@ It is also a temporal difference algorithm. Updates to the `Q` function are base
 
 ![](./images/q_learning.png)
 
-For more details, please see chapter 6 of [Reinforcement Learning: An Introduction, Sutton and Barto](https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf).
+For more details, please see chapter 6 of [Reinforcement Learning: An Introduction, Sutton and Barto](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf).
 
 Since the policy that is used to evaluate the target is fixed (a greedy policy that selects the action that maximises the Q-value for a particular state) and is different to the policy used to determine which state-action pairs are being visited, it is possible to use experience replay to train an agent.
 
@@ -99,7 +99,7 @@ Like Q-Learning, `Sarsa` is a temporal difference algorithm. However, since they
 
 Sarsa update:
 
-![](./images/sarsa.png)
+![](./images/sarsa_2.png)
 
 This update is made each time the agent acts in an environment and gets an experience `<S_t, A_t, R_{t+1}, S_{t+1}>`
 
@@ -107,7 +107,7 @@ This update is made each time the agent acts in an environment and gets an exper
 
 Standard Sarsa algorithm
 
-![](./deep_sarsa.png)
+![](./images/deep_sarsa_2.png)
 
 Agents:
 
@@ -128,7 +128,9 @@ Agents
 
 Sarsa is typically an on policy algorithm. However, if a different policy is used to evaluate the target than the one used to explore, it becomes and off-policy algorithm. With this set up, Q-Learning can be understood as a specific instance of Off Policy Expected Sarsa, when the policy used to evaluate the target is the greedy policy.
 
-`Q` update and translation to neural network update: Same as `DQN` with fixed epsilon.
+In off policy expected sarsa, actions are selected under the exploration policy, (annealling epsilon greedy for example).  Then the value of next state and action pair is calculated as the expected Q value under the target policy, for example epsilon greedy with some fixed value for epsilon.
+
+`Q` update and translation to neural network update: Same as `ExpectedSarsa` with fixed epsilon.
 
 Agents:
 
@@ -143,3 +145,10 @@ Agents:
 ### <a name="ddpg"></a>Deep Deterministic Policy Gradient
 
 *In progress*
+
+## RL Theory Resources
+
+- [Deep Reinforcement Learning](https://www.youtube.com/watch?v=PtAIh9KSnjo): 90 minute video overview by John Schulman. Assumes some knowledge of neural networks. If you are not familiar with neural networks, then start with Sutton and Barto’s book or David Silver's course
+- [Reinforcement Learning: An Introduction](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf): Classic textbook by Sutton and Barto. A good place to go next after watching John Schulman’s talk. Link is to the in progress 2nd edition. 
+- [David Silver’s Reinforcement Learning Course](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html)
+- [Playing Atari with Deep Reinforcement Learning, 2013](https://arxiv.org/abs/1312.5602): The famous paper from DeepMind describing a convolutional neural network Q-Learning architecture which learned to play seven different Atari games, achieving superhuman performance in three of them.
