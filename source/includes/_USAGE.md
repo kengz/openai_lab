@@ -1,6 +1,6 @@
 # <a name="usage"></a>Usage
 
-*To understand the Lab's [Framework and Demo, skip to the next section.](#framework)*
+*To understand the Lab's [Framework and Demo, skip to the next section.](#structure)*
 
 The general flow for running a production lab is:
 

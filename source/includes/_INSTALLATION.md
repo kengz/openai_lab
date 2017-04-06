@@ -57,6 +57,13 @@ Check the [release versions here](https://github.com/kengz/openai_lab/releases).
 - If you forked, [setup a remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) and [update fork](https://help.github.com/articles/syncing-a-fork/).
 
 
+### Jump to Quickstart
+
+Come back to the optional installation steps below when you need them later.
+
+Next, jump to [Quickstart](#quickstart) to run your first experiment.
+
+
 ## Setup Data Auto-sync
 
 We find it extremely useful to have data file-sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app, on a computer or a smartphone.
