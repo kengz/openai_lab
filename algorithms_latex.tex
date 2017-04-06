@@ -69,20 +69,21 @@ Target (y vals): $[R + \gamma ~max_a Q_t(S'€™, a)]$. Update is to $Q_e$
 \newpage
 \section{Sarsa}
 
-Select $A_{t+1}$ in state $S_{t+1}$ using policy $Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A)]$
+Select $A_{t+1}$ in state $S_{t+1}$ using policy. Then update the Q function as follows.
+$$Q(S_t, A_t) \Leftarrow Q(S_t, A_t) + \alpha [R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A)]$$
 
 \subsection{Sarsa}
 
-Q update (same as Q-learning): 
+Q update: (Note: A' has been selected under the current policy)
 
-$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma ~max_a Q(S'€™, a) - Q(S, A)] $$
+$$ Q(S, A) \Leftarrow Q(S, A) + \alpha [R + \gamma ~ Q(S'€™, A') - Q(S, A)] $$
 \newline
 Translation to neural network update:
 \newline
 Learning rate: $\alpha$ \\
 Input (x vals): $(S, A)$ \\
 Network output: $Q(S, A)$ \\
-Target (y vals): $[R + \gamma ~max_a Q(S', a)]$
+Target (y vals): $[R + \gamma ~ Q(S', A')]$
 
 \subsection{Expected Sarsa}
 
