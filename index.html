@@ -227,7 +227,7 @@
 
 <h3 id="run-the-lab">Run the Lab</h3>
 
-<p>Next, see <a href="#installation">Installation</a> and <a href="#usage">Usage</a>.</p>
+<p>Next, see <a href="#installation">Installation</a> and jump to <a href="quickstart">Quickstart</a>.</p>
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
@@ -283,6 +283,12 @@ We recommend Tensorflow over Theano for stability. By default <code>bin/setup</c
 <li>If you cloned directly the Lab, update with <code class="prettyprint">git pull</code></li>
 <li>If you forked, <a href="https://help.github.com/articles/configuring-a-remote-for-a-fork/">setup a remote</a> and <a href="https://help.github.com/articles/syncing-a-fork/">update fork</a>.</li>
 </ul>
+
+<h3 id="jump-to-quickstart">Jump to Quickstart</h3>
+
+<p>Come back to the optional installation steps below when you need them later.</p>
+
+<p>Next, jump to <a href="#quickstart">Quickstart</a> to run your first experiment.</p>
 
 <h2 id="setup-data-auto-sync">Setup Data Auto-sync</h2>
 
@@ -341,9 +347,55 @@ This step is optional; useful when running production mode.
 <li><a href="http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login">When login fails on Ubuntu after Nvidia installation</a></li>
 </ul>
 
+          <h1 id="quickstart"><a name="quickstart"></a>Quickstart</h1>
+
+<p>The Lab comes with experiments with the best found solutions. Run your first below.</p>
+
+<h3 id="single-trial">Single Trial</h3>
+
+<p>Run the single best trial for an experiment: <code class="prettyprint">python3 main.py -e dqn</code>.</p>
+
+<p>This is the best <a href="https://github.com/kengz/openai_lab/pull/73">found solution agent</a> of <code class="prettyprint">DQN</code> solving <code class="prettyprint">Cartpole-v0</code>. You should see the rendering and graphs (check the <code class="prettyprint">./data/</code> folder) like so:</p>
+
+<p><img src="images/lab_demo_dqn.gif" title="Timelapse of OpenAI Lab" alt="Lab demo dqn" /></p>
+
+<h3 id="experiment-with-multiple-trials">Experiment with Multiple Trials</h3>
+
+<p>Next step is to run a small experiment that searches for the best trial solutions.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Go to <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code> and modify the <code class="prettyprint">param_range</code> to run less trials. This will study the effect of varying learning rate <code class="prettyprint">lr</code> and the DQN neural net architecture <code class="prettyprint">hidden_layers</code>.</p>
+
+<p>Then, run <code class="prettyprint">python3 main.py -bp -e dqn</code>. This will take about 15 minutes (depending on your machine).</p>
+
+<p>It will produce experiment data from the trials. Refer to <a href="#analysis">Analysis</a> on how to interpret them.</p>
+
+<h3 id="next-up">Next Up</h3>
+
+<p>We recommend:</p>
+
+<ul>
+<li><a href="#solutions">Solutions</a> to see some existing solutions to start your agent from, as well as find environments/high scores to beat.</li>
+<li><a href="#agents">Agents</a> on how to create your agents from existing components, then add your own.</li>
+<li><a href="#usage">Usage</a> to continue reading the doc.</li>
+</ul>
+
           <h1 id="usage"><a name="usage"></a>Usage</h1>
 
-<p><em>To understand the Lab&rsquo;s <a href="#framework">Framework and Demo, skip to the next section.</a></em></p>
+<p><em>To understand the Lab&rsquo;s <a href="#structure">Framework and Demo, skip to the next section.</a></em></p>
 
 <p>The general flow for running a production lab is:</p>
 
