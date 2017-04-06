@@ -50,7 +50,7 @@ With OpenAI Lab, we could focus on researching the essential elements of reinfor
 
 ### Run the Lab
 
-Next, see [Installation](#installation) and jump to [Quickstart](quickstart).
+Next, see [Installation](#installation) and jump to [Quickstart](#quickstart).
 
 
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
