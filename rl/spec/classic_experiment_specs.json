@@ -80,6 +80,32 @@
       ]
     }
   },
+  "ac_dqn": {
+    "problem": "CartPole-v0",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "SoftmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.001, 0.005, 0.01, 0.02],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [16],
+        [32],
+        [64],
+        [16, 8],
+        [32, 16]
+      ]
+    }
+  },
   "rand_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
@@ -658,18 +684,18 @@
   },
   "pendulum": {
     "problem": "Pendulum-v0",
-    "Agent": "DDPG",
+    "Agent": "ActorCritic",
     "HyperOptimizer": "RandomSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "OUNoise",
+    "Policy": "BoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "max_evals": 40,
       "n_epoch": 1,
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers": [400, 300],
+      "hidden_layers": [256, 128],
       "hidden_layers_activation": "relu",
       "exploration_anneal_episodes": 500
     },
