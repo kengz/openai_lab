@@ -4,6 +4,10 @@
 - Created some stronger agents that beats the current results? Read [here to submit new solution](#solutions).
 - Wanna just talk? Hit us up on Twitter below.
 
+### Lab Contributors
+
+See the [full list of contributors here](https://github.com/kengz/openai_lab/graphs/contributors).
+
 
 ## Authors
 
