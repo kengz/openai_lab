@@ -705,16 +705,15 @@
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 400,
-      "epi_change_lr": 800
+      "exploration_anneal_episodes": 100,
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.01, 0.02],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400],
-        [800]
+        [400]
       ]
     }
   },
@@ -741,8 +740,7 @@
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400],
-        [800]
+        [400]
       ]
     }
   },
