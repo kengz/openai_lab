@@ -469,5 +469,4 @@ def run(name_id_spec, times=1, param_selection=False, **kwargs):
         trial_data = trial.run()
         experiment_data = [trial_data]
 
-    # return analyze_data(experiment_data)
-    return
+    return analyze_data(experiment_data)
