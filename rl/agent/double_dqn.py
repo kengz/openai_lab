@@ -45,9 +45,9 @@ class DoubleDQN(DQN):
         '''rotate and recompile both models'''
         if self.epi_change_lr is not None:
             self.switch_models()  # to model_2
-            self.recompile_model(sys_vars)
+            super(DoubleDQN, self).recompile_model(sys_vars)
             self.switch_models()  # back to model
-            self.recompile_model(sys_vars)
+            super(DoubleDQN, self).recompile_model(sys_vars)
         return self.model
 
     def compute_Q_states(self, minibatch):
