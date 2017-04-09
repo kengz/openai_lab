@@ -7,7 +7,7 @@ class ArgmaxPolicy(Policy):
 
     '''
     The argmax policy for actor critic agents
-    Agent takes the action with the highest 
+    Agent takes the action with the highest
     action score
     '''
 
