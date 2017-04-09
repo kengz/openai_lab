@@ -1,0 +1,57 @@
+{
+  "double_network": {
+    "type": "mutex",
+    "details": "double_network agents need policies that invokes both networks properly",
+    "head": "Agent",
+    "Agent": [
+      "DoubleDQN",
+      "DoubleConvDQN"
+    ],
+    "Policy": [
+      "DoubleDQNEpsilonGreedyPolicy",
+      "DoubleDQNBoltzmannPolicy"
+    ]
+  },
+  "discrete_action": {
+    "type": "subset",
+    "details": "discrete components cannot work in continuous action space",
+    "head": "problem",
+    "problem": [
+      "CartPole-v0",
+      "CartPole-v1",
+      "Acrobot-v1",
+      "MountainCar-v0",
+      "LunarLander-v2",
+      "AirRaid-v0",
+      "Alien-v0",
+      "Assault-v0",
+      "Breakout-v0",
+      "MsPacman-v0",
+      "Pong-v0",
+      "Qbert-v0",
+      "SpaceInvader-v0",
+      "FlappyBird-v0",
+      "Snake-v0"
+    ],
+    "Agent": [
+      "ConvDQN",
+      "DeepExpectedSarsa",
+      "DeepSarsa",
+      "DoubleConvDQN",
+      "DoubleDQN",
+      "DQN",
+      "FreezeDQN",
+      "OffPolicySarsa",
+      "QTable"
+    ],
+    "Policy": [
+      "BoltzmannPolicy",
+      "DecayingEpsilonGreedyPolicy",
+      "DoubleDQNBoltzmannPolicy",
+      "DoubleDQNEpsilonGreedyPolicy",
+      "EpsilonGreedyPolicy",
+      "OscillatingEpsilonGreedyPolicy",
+      "TargetedEpsilonGreedyPolicy"
+    ]
+  }
+}

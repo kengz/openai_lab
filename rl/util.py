@@ -14,6 +14,70 @@ from textwrap import wrap
 PARALLEL_PROCESS_NUM = mp.cpu_count()
 TIMESTAMP_REGEX = r'(\d{4}_\d{2}_\d{2}_\d{6})'
 SPEC_PATH = path.join(path.dirname(__file__), 'spec')
+COMPONENT_LOCKS = json.loads(
+    open(path.join(SPEC_PATH, 'component_locks.json')).read())
+LOCK_HEAD_REST_SIG = {
+    # signature list of [head, rest] in component lock
+    'mutex': [[0, 0], [1, 1]],
+    'subset': [[0, 0], [0, 1], [1, 1]],
+}
+
+
+def check_equal(iterator):
+    '''check if list contains all the same elements'''
+    iterator = iter(iterator)
+    try:
+        first = next(iterator)
+    except StopIteration:
+        return True
+    return all(first == rest for rest in iterator)
+
+
+def check_lock(lock_name, lock, experiment_spec):
+    '''
+    refer to rl/spec/component_locks.json
+    check a spec's component lock using binary signatures
+    e.g. head = problem (discrete)
+    rest = [Agent, Policy] (to be discrete too)
+    first check if rest all has the same signature, i.e. same set
+    then check pair [bin_head, bin_rest] in valid_lock_sig_list
+    as specified by the lock's type
+    '''
+    lock_type = lock['type']
+    valid_lock_sig_list = LOCK_HEAD_REST_SIG[lock_type]
+    lock_head = lock['head']
+    bin_head = (experiment_spec[lock_head] in lock[lock_head])
+    bin_rest_list = []
+    for k, v_list in lock.items():
+        if k in experiment_spec:
+            bin_rest_list.append(experiment_spec[k] in v_list)
+    # rest must all have the same signature
+    rest_equal = check_equal(bin_rest_list)
+    if not rest_equal:
+        raise ValueError(
+            'All components need to be of the same set, '
+            'check component lock "{}" and your spec "{}"'.format(
+                lock_name, experiment_spec['experiment_name']))
+
+    bin_rest = bin_rest_list[0]
+    lock_sig = [bin_head, bin_rest]
+    lock_valid = lock_sig in valid_lock_sig_list
+    if not lock_valid:
+        raise ValueError(
+            'Component lock violated: "{}", spec: "{}"'.format(
+                lock_name, experiment_spec['experiment_name']))
+    return lock_valid
+
+
+def check_component_locks(experiment_spec):
+    '''
+    check the spec components for all locks
+    to ensure no lock is violated
+    refer to rl/spec/component_locks.json
+    '''
+    for lock_name, lock in COMPONENT_LOCKS.items():
+        check_lock(lock_name, lock, experiment_spec)
+    return
 
 
 # import and safeguard the PROBLEMS, EXPERIMENT_SPECS with checks
@@ -42,6 +106,7 @@ def import_guard_asset():
         assert all(k in spec for k in REQUIRED_SPEC_KEYS), \
             '{} needs all REQUIRED_SPEC_KEYS'.format(experiment_name)
         EXPERIMENT_SPECS[experiment_name]['experiment_name'] = experiment_name
+        check_component_locks(spec)  # check component_locks.json
         if 'param_range' not in EXPERIMENT_SPECS[experiment_name]:
             continue
 
