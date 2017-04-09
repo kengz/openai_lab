@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, log_self
+from rl.util import logger
 
 
 class ActorCritic(DQN):
@@ -35,17 +35,17 @@ class ActorCritic(DQN):
         self.load_model = load_model
 
         super(ActorCritic, self).__init__(env_spec,
-                                                     train_per_n_new_exp,
-                                                     gamma, lr,
-                                                     epi_change_lr,
-                                                     batch_size, n_epoch, hidden_layers,
-                                                     hidden_layers_activation,
-                                                     output_layer_activation,
-                                                     auto_architecture,
-                                                     num_hidden_layers,
-                                                     first_hidden_layer_size,
-                                                     num_initial_channels,
-                                                     **kwargs)
+                                          train_per_n_new_exp,
+                                          gamma, lr,
+                                          epi_change_lr,
+                                          batch_size, n_epoch, hidden_layers,
+                                          hidden_layers_activation,
+                                          output_layer_activation,
+                                          auto_architecture,
+                                          num_hidden_layers,
+                                          first_hidden_layer_size,
+                                          num_initial_channels,
+                                          **kwargs)
 
     def build_model(self):
         self.build_actor()
@@ -66,8 +66,8 @@ class ActorCritic(DQN):
         critic = self.Sequential()
         super(ActorCritic, self).build_hidden_layers(critic)
         critic.add(self.Dense(1,
-                             init='lecun_uniform',
-                             activation=self.output_layer_activation))
+                              init='lecun_uniform',
+                              activation=self.output_layer_activation))
         logger.info("Critic summary")
         critic.summary()
         self.critic = critic
@@ -88,7 +88,7 @@ class ActorCritic(DQN):
         Compiling does not affect the model weights
         '''
         if self.epi_change_lr is not None:
-            if (sys_vars['epi'] == self.epi_change_lr and \
+            if (sys_vars['epi'] == self.epi_change_lr and
                     sys_vars['t'] == 0):
                 self.lr = self.lr / 10.0
                 self.optimizer.change_optim_param(**{'lr': self.lr})
@@ -98,14 +98,15 @@ class ActorCritic(DQN):
                 self.critic.compile(
                     loss='mse',
                     optimizer=self.optimizer.keras_optimizer)
-                logger.info('Actor and critic models recompiled with new settings: '
-                            'Learning rate: {}'.format(self.lr))
+                logger.info(
+                    'Actor and critic models recompiled with new settings: '
+                    'Learning rate: {}'.format(self.lr))
 
     def train_critic(self, minibatch):
         Q_vals = np.clip(self.critic.predict(minibatch['states']),
-                       -self.clip_val, self.clip_val)
+                         -self.clip_val, self.clip_val)
         Q_next_vals = np.clip(self.critic.predict(minibatch['next_states']),
-                            -self.clip_val, self.clip_val)
+                              -self.clip_val, self.clip_val)
         Q_targets = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * Q_next_vals.squeeze()
         Q_targets = np.expand_dims(Q_targets, axis=1)
@@ -113,19 +114,20 @@ class ActorCritic(DQN):
         actor_delta = Q_next_vals - Q_vals
         loss = self.critic.train_on_batch(minibatch['states'], Q_targets)
 
-        errors = abs(np.sum(Q_vals  - Q_targets, axis=1))
+        errors = abs(np.sum(Q_vals - Q_targets, axis=1))
         self.memory.update(errors)
         return loss, actor_delta
 
     def train_actor(self, minibatch, actor_delta):
         old_vals = self.actor.predict(minibatch['states'])
         if self.env_spec['actions'] == 'continuous':
-            A_targets = np.zeros((actor_delta.shape[0], self.env_spec['action_dim']))
+            A_targets = np.zeros(
+                (actor_delta.shape[0], self.env_spec['action_dim']))
             for j in range(A_targets.shape[1]):
-                A_targets[:,j] = actor_delta.squeeze()
+                A_targets[:, j] = actor_delta.squeeze()
         else:
             A_targets = minibatch['actions'] * actor_delta + \
-            (1 - minibatch['actions']) * old_vals
+                (1 - minibatch['actions']) * old_vals
 
         loss = self.actor.train_on_batch(minibatch['states'], A_targets)
         return loss
@@ -135,4 +137,3 @@ class ActorCritic(DQN):
         critic_loss, actor_delta = self.train_critic(minibatch)
         actor_loss = self.train_actor(minibatch, actor_delta)
         return critic_loss + actor_loss
-

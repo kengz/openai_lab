@@ -2,14 +2,15 @@ import numpy as np
 from rl.policy.base_policy import Policy
 from rl.util import log_self
 
+
 class ArgmaxPolicy(Policy):
-    
+
     '''
     The argmax policy for actor critic agents
     Agent takes the action with the highest 
     action score
     '''
-    
+
     def __init__(self, env_spec,
                  **kwargs):  # absorb generic param without breaking
         super(ArgmaxPolicy, self).__init__(env_spec)
@@ -25,6 +26,7 @@ class ArgmaxPolicy(Policy):
 
     def update(self, sys_vars):
         pass
+
 
 class SoftmaxPolicy(Policy):
 
@@ -58,6 +60,7 @@ class SoftmaxPolicy(Policy):
     def update(self, sys_vars):
         pass
 
+
 class GaussianPolicy(Policy):
 
     '''
@@ -67,9 +70,9 @@ class GaussianPolicy(Policy):
     plus some noise parameterized by the variance
     '''
 
-    def __init__(self, env_spec, 
-                           variance=1.0,
-                        **kwargs):  # absorb generic param without breaking
+    def __init__(self, env_spec,
+                 variance=1.0,
+                 **kwargs):  # absorb generic param without breaking
         super(GaussianPolicy, self).__init__()
         self.variance = variance
         log_self(self)
@@ -78,12 +81,13 @@ class GaussianPolicy(Policy):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
         a_mean = agent.actor.predict(state)[0]  # extract from batch predict
-        action = a_mean + np.random.normal(loc=0.0, 
-                                            scale=self.variance, size=a_mean.shape)
+        action = a_mean + np.random.normal(
+            loc=0.0, scale=self.variance, size=a_mean.shape)
         return action
-    
+
     def update(self, sys_vars):
         pass
+
 
 class BoundedPolicy(Policy):
 
@@ -93,9 +97,9 @@ class BoundedPolicy(Policy):
     Action bounded above and below by
     - action_bound, + action_bound
     '''
-    
+
     def __init__(self, env_spec,
-                    action_bound=1.0,
+                 action_bound=1.0,
                  **kwargs):  # absorb generic param without breaking
         super(BoundedPolicy, self).__init__(env_spec)
         self.action_bound = action_bound
