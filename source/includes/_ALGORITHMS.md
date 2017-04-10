@@ -22,6 +22,7 @@ RL problems are characterized by incomplete information. The transition probabil
 
 For further reading on neural networks see [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
 
+
 ## Terminology
 
 - Agent: encapsulates a specific algorithm. Each agent has a policy, memory, optimizer, and preprocessor
@@ -33,6 +34,36 @@ For further reading on neural networks see [Neural Networks and Deep Learning](h
 - On policy: the same policy is used to act and evaluate the quality of actions.
 - Off policy: a different policy is used to act and evaluate the quality of actions. 
 
+
+## <a name="families"></a>Families of RL Algorithms
+
+To navigate the different RL algorithms:
+
+- Model-free
+    - Value-based
+        - **DQN**
+        - **DoubleDQN**
+        - **Sarsa**
+        - **OffpolSarsa**
+
+    - Policy-based
+        - **REINFORCE**
+
+    - ActorCritic
+        - **ActorCritic** (discrete)
+        - **ActorCritic** (continuous)
+        - **DPG** - typically this is an actorCritic implementation where there's a different policy for exploration and target
+        - **DDPG** - very similar to DPG except with target networks and batch norm
+
+- Model based
+    - Value based
+        - **Dyna**
+
+    - Policy based
+        - *pending*
+
+    - ActorCritic
+        - *pending*
 
 
 ## Implemented Algorithms
