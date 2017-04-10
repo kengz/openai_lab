@@ -12,6 +12,33 @@
       "DoubleDQNEpsilonGreedyPolicy"
     ]
   },
+  "actor_critic": {
+    "type": "mutex",
+    "details": "actor critic uses custom Q computation in its policy",
+    "head": "Agent",
+    "Agent": [
+      "ActorCritic"
+    ],
+    "Policy": [
+      "ArgmaxPolicy",
+      "BoundedPolicy",
+      "GaussianPolicy",
+      "SoftmaxPolicy"
+    ]
+  },
+  "ddpg": {
+    "type": "mutex",
+    "details": "ddpg uses white-noise policy",
+    "head": "Agent",
+    "Agent": [
+      "DDPG"
+    ],
+    "Policy": [
+      "AnnealedGaussian",
+      "GaussianWhiteNoise",
+      "OUNoise"
+    ]
+  },
   "discrete_action": {
     "type": "subset",
     "details": "discrete components cannot work in continuous action space",
