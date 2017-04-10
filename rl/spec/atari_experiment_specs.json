@@ -1,6 +1,6 @@
 {
   "dev_conv_dqn": {
-    "problem": "Dev-Breakout-v0",
+    "problem": "DevBreakout-v0",
     "Agent": "ConvDQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
