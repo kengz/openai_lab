@@ -95,7 +95,7 @@
     "MAX_EPISODES": 5000,
     "REWARD_MEAN_LEN": 100
   },
-  "Dev-Breakout-v0": {
+  "DevBreakout-v0": {
     "GYM_ENV_NAME": "Breakout-v0",
     "SOLVED_MEAN_REWARD": null,
     "MAX_EPISODES": 1,

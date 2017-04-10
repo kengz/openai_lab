@@ -19,7 +19,7 @@ COMPONENT_LOCKS = json.loads(
 LOCK_HEAD_REST_SIG = {
     # signature list of [head, rest] in component lock
     'mutex': [[0, 0], [1, 1]],
-    'subset': [[0, 0], [0, 1], [1, 1]],
+    'subset': [[0, 0], [1, 0], [1, 1]],
 }
 
 
@@ -49,7 +49,7 @@ def check_lock(lock_name, lock, experiment_spec):
     bin_head = (experiment_spec[lock_head] in lock[lock_head])
     bin_rest_list = []
     for k, v_list in lock.items():
-        if k in experiment_spec:
+        if k in experiment_spec and k != lock_head:
             bin_rest_list.append(experiment_spec[k] in v_list)
     # rest must all have the same signature
     rest_equal = check_equal(bin_rest_list)
@@ -57,7 +57,7 @@ def check_lock(lock_name, lock, experiment_spec):
         raise ValueError(
             'All components need to be of the same set, '
             'check component lock "{}" and your spec "{}"'.format(
-                lock_name, experiment_spec['experiment_name']))
+                bin_rest_list, experiment_spec['experiment_name']))
 
     bin_rest = bin_rest_list[0]
     lock_sig = [bin_head, bin_rest]
