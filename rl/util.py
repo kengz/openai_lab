@@ -57,7 +57,7 @@ def check_lock(lock_name, lock, experiment_spec):
         raise ValueError(
             'All components need to be of the same set, '
             'check component lock "{}" and your spec "{}"'.format(
-                bin_rest_list, experiment_spec['experiment_name']))
+                lock_name, experiment_spec['experiment_name']))
 
     bin_rest = bin_rest_list[0]
     lock_sig = [bin_head, bin_rest]
