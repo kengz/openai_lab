@@ -73,7 +73,7 @@ class GaussianPolicy(Policy):
     def __init__(self, env_spec,
                  variance=1.0,
                  **kwargs):  # absorb generic param without breaking
-        super(GaussianPolicy, self).__init__()
+        super(GaussianPolicy, self).__init__(env_spec)
         self.variance = variance
         log_self(self)
 
