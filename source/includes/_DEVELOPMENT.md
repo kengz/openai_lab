@@ -12,6 +12,7 @@ The design of the code is clean enough to simply infer how things work by existi
 - `rl/policy/`: RL agent policy classes
 - `rl/preprocessor/`: RL agent preprocessor (state and memory) classes
 - `rl/spec/`: specify new problems and experiment_specs to run experiments for
+- `rl/spec/component_locks.json`: locks to check RL component combination in specs
 - `rl/analytics.py`: the data analytics module for output experiment data
 - `rl/experiment.py`: the main high level experiment logic
 - `rl/util.py`: Generic util
