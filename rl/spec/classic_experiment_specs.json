@@ -540,7 +540,8 @@
       "gamma": 0.999,
       "hidden_layers": [200, 100],
       "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 200
+      "exploration_anneal_episodes": 200,
+      "max_mem_len" : 50000
     },
     "param_range": {
       "lr": [0.001],
