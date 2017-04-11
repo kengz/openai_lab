@@ -1,3 +1,4 @@
+import numpy as np
 from rl.agent.dqn import DQN
 from rl.util import logger, clone_model, clone_optimizer
 

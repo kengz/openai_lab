@@ -15,8 +15,16 @@ class AnnealedGaussian(Policy):
                  mu, sigma, sigma_min,
                  **kwargs):  # absorb generic param without breaking
         super(AnnealedGaussian, self).__init__(env_spec)
-        self.size = self.env_spec['action_dim']
-        self.n_steps_annealing = self.env_spec['timestep_limit'] / 2
+        # epsilon-greedy * noise
+        self.init_e = 1.0
+        self.final_e = 0.0
+        self.e = self.init_e
+        self.exploration_anneal_episodes = 100
+
+        self.size = env_spec['action_dim']
+        self.action_bound = env_spec['action_bound_high']
+        assert env_spec['action_bound_high'] == -env_spec['action_bound_low']
+        self.n_steps_annealing = env_spec['timestep_limit'] / 2
         self.mu = mu
         self.sigma = sigma
         self.n_steps = 0
@@ -39,7 +47,8 @@ class AnnealedGaussian(Policy):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
         if self.env_spec['actions'] == 'continuous':
-            action = agent.actor.predict(state)[0] + self.sample()
+            action = agent.actor.predict(
+                state)[0] * self.action_bound + self.sample() * self.e
         else:
             Q_state = agent.actor.predict(state)[0]
             assert Q_state.ndim == 1
@@ -48,7 +57,11 @@ class AnnealedGaussian(Policy):
         return action
 
     def update(self, sys_vars):
-        pass
+        epi = sys_vars['epi']
+        rise = self.final_e - self.init_e
+        slope = rise / float(self.exploration_anneal_episodes)
+        self.e = max(slope * epi + self.init_e, self.final_e)
+        return self.e
 
 
 class GaussianWhiteNoise(AnnealedGaussian):

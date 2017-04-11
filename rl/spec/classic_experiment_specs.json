@@ -539,7 +539,7 @@
       "hidden_layers": [200, 100],
       "hidden_layers_activation": "sigmoid",
       "exploration_anneal_episodes": 200,
-      "max_mem_len" : 50000
+      "max_mem_len": 50000
     },
     "param_range": {
       "lr": [0.001],
@@ -769,6 +769,30 @@
       "hidden_layers": [
         [64],
         [128]
+      ]
+    }
+  },
+  "pendulum_ddpg": {
+    "problem": "Pendulum-v0",
+    "Agent": "DDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "GaussianWhiteNoise",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.01,
+      "gamma": 0.999,
+      "hidden_layers": [400, 300],
+      "hidden_layers_activation": "sigmoid",
+      "output_layer_activation": "tanh"
+    },
+    "param_range": {
+      "lr": [0.001, 0.01],
+      "gamma": [0.999],
+      "hidden_layers": [
+        [400],
+        [400, 300]
       ]
     }
   },
