@@ -80,52 +80,6 @@
       ]
     }
   },
-  "cartpole_ac_argmax": {
-    "problem": "CartPole-v0",
-    "Agent": "ActorCritic",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "ArgmaxPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid"
-    },
-    "param_range": {
-      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
-      "gamma": [0.95, 0.97, 0.99, 0.999],
-      "hidden_layers": [
-        [64],
-        [128]
-      ]
-    }
-  },
-  "cartpole_ac_softmax": {
-    "problem": "CartPole-v0",
-    "Agent": "ActorCritic",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "SoftmaxPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid"
-    },
-    "param_range": {
-      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
-      "gamma": [0.95, 0.97, 0.99, 0.999],
-      "hidden_layers": [
-        [64],
-        [128]
-      ]
-    }
-  },
   "rand_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
@@ -361,6 +315,52 @@
       ]
     }
   },
+  "cartpole_ac_argmax": {
+    "problem": "CartPole-v0",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "ArgmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
+  "cartpole_ac_softmax": {
+    "problem": "CartPole-v0",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "SoftmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
   "dqn_v1": {
     "problem": "CartPole-v1",
     "Agent": "DQN",
@@ -475,31 +475,6 @@
       ]
     }
   },
-  "freeze_dqn": {
-    "problem": "CartPole-v0",
-    "Agent": "FreezeDQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.001,
-      "gamma": 0.99,
-      "hidden_layers": [32],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
-    },
-    "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.95, 0.96, 0.97, 0.99],
-      "hidden_layers": [
-        [8],
-        [16],
-        [32]
-      ]
-    }
-  },
   "offpol_sarsa_v1": {
     "problem": "CartPole-v1",
     "Agent": "OffPolicySarsa",
@@ -523,6 +498,29 @@
         [64],
         [128],
         [32, 16]
+      ]
+    }
+  },
+  "cartpole_v1_ac_softmax": {
+    "problem": "CartPole-v1",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "SoftmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
+      "gamma": [0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [64],
+        [128]
       ]
     }
   },
@@ -702,6 +700,30 @@
       "exploration_anneal_episodes": [200, 400]
     }
   },
+  "acrobot_ac_softmax": {
+    "problem": "Acrobot-v1",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "SoftmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.05, 0.1],
+      "gamma": [0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [100],
+        [200],
+        [200, 100]
+      ]
+    }
+  },
   "pendulum_ac_gaussian": {
     "problem": "Pendulum-v0",
     "Agent": "ActorCritic",
@@ -711,8 +733,8 @@
     "Policy": "GaussianPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
+      "lr": 0.05,
+      "gamma": 0.999,
       "hidden_layers": [64],
       "hidden_layers_activation": "sigmoid"
     },
@@ -735,9 +757,9 @@
     "Policy": "BoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
+      "lr": 0.05,
+      "gamma": 0.999,
+      "hidden_layers": [400, 300],
       "hidden_layers_activation": "sigmoid"
     },
     "param_range": {
@@ -856,6 +878,30 @@
       "hidden_layers": [
         [200],
         [400]
+      ]
+    }
+  },
+  "mountain_ac_softmax": {
+    "problem": "MountainCar-v0",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "SoftmaxPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.05, 0.1],
+      "gamma": [0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [200],
+        [400, 200],
+        [400, 200, 100]
       ]
     }
   }
