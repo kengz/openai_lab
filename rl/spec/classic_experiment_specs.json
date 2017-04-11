@@ -80,13 +80,13 @@
       ]
     }
   },
-  "ac_dqn": {
+  "cartpole_ac_argmax": {
     "problem": "CartPole-v0",
     "Agent": "ActorCritic",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "SoftmaxPolicy",
+    "Policy": "ArgmaxPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "lr": 0.02,
@@ -95,22 +95,21 @@
       "hidden_layers_activation": "sigmoid"
     },
     "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
+      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
         [64],
-        [128],
-        [64, 32]
+        [128]
       ]
     }
   },
-   "ac_dqn_2": {
+  "cartpole_ac_softmax": {
     "problem": "CartPole-v0",
     "Agent": "ActorCritic",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "ArgmaxPolicy",
+    "Policy": "SoftmaxPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "lr": 0.02,
@@ -703,38 +702,51 @@
       "exploration_anneal_episodes": [200, 400]
     }
   },
-  "pendulum": {
+  "pendulum_ac_gaussian": {
     "problem": "Pendulum-v0",
     "Agent": "ActorCritic",
-    "HyperOptimizer": "RandomSearch",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "GaussianPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
+    },
+    "param_range": {
+      "lr": [0.005, 0.01, 0.05],
+      "gamma": [0.97, 0.99, 0.999],
+      "variance": [0.1, 0.5, 1.0],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
+  "pendulum_ac_bounded": {
+    "problem": "Pendulum-v0",
+    "Agent": "ActorCritic",
+    "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "BoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "max_evals": 40,
-      "n_epoch": 1,
-      "lr": 0.001,
+      "lr": 0.02,
       "gamma": 0.99,
-      "hidden_layers": [256, 128],
-      "hidden_layers_activation": "relu",
-      "exploration_anneal_episodes": 500
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid"
     },
     "param_range": {
-      "lr": {
-        "min": 0.0005,
-        "max": 0.05
-      },
-      "gamma": {
-        "min": 0.90,
-        "max": 0.9999
-      },
+      "lr": [0.005, 0.01, 0.02, 0.05, 0.1],
+      "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
-        [400],
-        [200, 100],
-        [400, 300]
-      ],
-      "exploration_anneal_episodes": [200, 400, 600]
+        [64],
+        [128]
+      ]
     }
   },
   "mountain_dqn": {
@@ -752,16 +764,15 @@
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 400,
-      "epi_change_lr": 800
+      "exploration_anneal_episodes": 50,
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.01, 0.02],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400],
-        [800]
+        [400]
       ]
     }
   },
@@ -780,16 +791,15 @@
       "hidden_layers": [200],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 400,
-      "epi_change_lr": 800
+      "exploration_anneal_episodes": 50,
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.01, 0.02],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400],
-        [800]
+        [400]
       ]
     }
   },
@@ -837,16 +847,15 @@
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 400,
-      "epi_change_lr": 800
+      "exploration_anneal_episodes": 50,
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.01, 0.02],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400],
-        [800]
+        [400]
       ]
     }
   }

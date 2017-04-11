@@ -31,6 +31,25 @@ class DoubleDQN(DQN):
             optimizer=self.optimizer.keras_optimizer_2)
         logger.info("Models 1 and 2 compiled")
 
+    def switch_models(self):
+         # Switch model 1 and model 2, also the optimizers
+        temp = self.model
+        self.model = self.model_2
+        self.model_2 = temp
+
+        temp_optimizer = self.optimizer.keras_optimizer
+        self.optimizer.keras_optimizer = self.optimizer.keras_optimizer_2
+        self.optimizer.keras_optimizer_2 = temp_optimizer
+
+    def recompile_model(self, sys_vars):
+        '''rotate and recompile both models'''
+        if self.epi_change_lr is not None:
+            self.switch_models()  # to model_2
+            super(DoubleDQN, self).recompile_model(sys_vars)
+            self.switch_models()  # back to model
+            super(DoubleDQN, self).recompile_model(sys_vars)
+        return self.model
+
     def compute_Q_states(self, minibatch):
         (Q_states, Q_next_states_select, _max) = super(
             DoubleDQN, self).compute_Q_states(minibatch)
@@ -44,16 +63,6 @@ class DoubleDQN(DQN):
         Q_next_states_max = Q_next_states[rows, Q_next_states_max_ind]
 
         return (Q_states, Q_next_states, Q_next_states_max)
-
-    def switch_models(self):
-         # Switch model 1 and model 2, also the optimizers
-        temp = self.model
-        self.model = self.model_2
-        self.model_2 = temp
-
-        temp_optimizer = self.optimizer.keras_optimizer
-        self.optimizer.keras_optimizer = self.optimizer.keras_optimizer_2
-        self.optimizer.keras_optimizer_2 = temp_optimizer
 
     def train_an_epoch(self):
         self.switch_models()

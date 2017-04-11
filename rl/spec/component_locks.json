@@ -1,0 +1,117 @@
+{
+  "double_network": {
+    "type": "mutex",
+    "details": "double_network agents need policies that invokes both networks properly",
+    "head": "Agent",
+    "Agent": [
+      "DoubleConvDQN",
+      "DoubleDQN"
+    ],
+    "Policy": [
+      "DoubleDQNBoltzmannPolicy",
+      "DoubleDQNEpsilonGreedyPolicy"
+    ]
+  },
+  "ddpg": {
+    "type": "mutex",
+    "details": "ddpg uses white-noise policy",
+    "head": "Agent",
+    "Agent": [
+      "DDPG"
+    ],
+    "Policy": [
+      "AnnealedGaussian",
+      "GaussianWhiteNoise",
+      "OUNoise"
+    ]
+  },
+  "actor_critic": {
+    "type": "mutex",
+    "details": "actor critic uses custom Q computation in its policy",
+    "head": "Agent",
+    "Agent": [
+      "ActorCritic"
+    ],
+    "Policy": [
+      "ArgmaxPolicy",
+      "BoundedPolicy",
+      "GaussianPolicy",
+      "SoftmaxPolicy"
+    ]
+  },
+  "actor_critic_discrete": {
+    "type": "subset",
+    "details": "actor critic discrete components cannot work in continuous action space",
+    "head": "problem",
+    "problem": [
+      "Acrobot-v1",
+      "AirRaid-v0",
+      "Alien-v0",
+      "Assault-v0",
+      "Breakout-v0",
+      "CartPole-v0",
+      "CartPole-v1",
+      "DevBreakout-v0",
+      "DevCartPole-v0",
+      "FlappyBird-v0",
+      "LunarLander-v2",
+      "MountainCar-v0",
+      "MsPacman-v0",
+      "Pong-v0",
+      "Qbert-v0",
+      "Snake-v0",
+      "SpaceInvader-v0",
+      "TestPassCartPole-v0"
+    ],
+    "Policy": [
+      "ArgmaxPolicy",
+      "SoftmaxPolicy"
+    ]
+  },
+  "discrete_action": {
+    "type": "subset",
+    "details": "discrete components cannot work in continuous action space",
+    "head": "problem",
+    "problem": [
+      "Acrobot-v1",
+      "AirRaid-v0",
+      "Alien-v0",
+      "Assault-v0",
+      "Breakout-v0",
+      "CartPole-v0",
+      "CartPole-v1",
+      "DevBreakout-v0",
+      "DevCartPole-v0",
+      "FlappyBird-v0",
+      "LunarLander-v2",
+      "MountainCar-v0",
+      "MsPacman-v0",
+      "Pong-v0",
+      "Qbert-v0",
+      "Snake-v0",
+      "SpaceInvader-v0",
+      "TestPassCartPole-v0"
+    ],
+    "Agent": [
+      "ConvDQN",
+      "DeepExpectedSarsa",
+      "DeepSarsa",
+      "DoubleConvDQN",
+      "DoubleDQN",
+      "DQN",
+      "Dummy",
+      "FreezeDQN",
+      "OffPolicySarsa",
+      "QTable"
+    ],
+    "Policy": [
+      "BoltzmannPolicy",
+      "DecayingEpsilonGreedyPolicy",
+      "DoubleDQNBoltzmannPolicy",
+      "DoubleDQNEpsilonGreedyPolicy",
+      "EpsilonGreedyPolicy",
+      "OscillatingEpsilonGreedyPolicy",
+      "TargetedEpsilonGreedyPolicy"
+    ]
+  }
+}
