@@ -99,17 +99,16 @@ class BoundedPolicy(Policy):
     '''
 
     def __init__(self, env_spec,
-                 action_bound=1.0,
                  **kwargs):  # absorb generic param without breaking
         super(BoundedPolicy, self).__init__(env_spec)
-        self.action_bound = action_bound
+        self.action_bound = env_spec['action_bound_high']
+        assert env_spec['action_bound_high'] == -env_spec['action_bound_low']
         log_self(self)
 
     def select_action(self, state):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
         A_score = agent.actor.predict(state)[0]  # extract from batch predict
-        assert A_score.ndim == 1
         action = np.tanh(A_score) * self.action_bound
         return action
 
