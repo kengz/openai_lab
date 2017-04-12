@@ -8,21 +8,21 @@ set -e
 trap "exit" INT
 
 
-echo "
+read -p "
 ================================================
 
 Welcome to the OpenAI Lab setup script;
-please run this as sudo,
-or inspect bin/setup_ubuntu or bin/setup_macOS and run the lines manually.
+This will invoke sudo; alternatively,
+inspect bin/setup_ubuntu or bin/setup_macOS and run the lines manually.
+
+Press enter to continue, Ctrl+c to quit:
 
 ================================================
 "
 
-
 # copy keys file if not already exist
 BIN_DIR=`pwd`/bin
 $BIN_DIR/copy-config
-
 
 # determine if is Mac OSX, or Linux; then run accordingly
 if [ $(uname) == "Darwin" ];
@@ -34,3 +34,28 @@ else (
   $BIN_DIR/setup_ubuntu;
   );
 fi
+
+
+echo "
+================================================
+
+Setup done.
+Running basic installation checks.
+
+================================================
+"
+
+# post-installation checks
+python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__version__)"
+python3 -c "import theano; print('theano version:'); print(theano.__version__)"
+python3 -c "import gym; gym.make('LunarLander-v2')"
+python3 -c "import gym; gym.make('SpaceInvaders-v0')"
+
+
+echo "
+================================================
+
+Installation complete.
+
+================================================
+"

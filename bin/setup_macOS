@@ -19,11 +19,18 @@ else
 fi
 
 # system dependencies for full openai gym
-brew install cmake boost boost-python sdl2 swig wget
+hb_list=(cmake boost boost-python sdl2 swig wget)
+for item in "${hb_list[@]}"; do
+  brew info "${item}" | grep --quiet 'Not installed' && brew install "${item}"
+done
 
 # install noti for auto-notification
-curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz
-sudo mv noti /usr/local/bin/
+if which noti >/dev/null; then
+  echo "Noti is already installed"
+else
+  curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz
+  sudo mv noti /usr/local/bin/
+fi
 
 # install nodejs (for npm and file watcher)
 if which node >/dev/null; then
@@ -31,8 +38,13 @@ if which node >/dev/null; then
 else
   brew install node
 fi
-npm install
-sudo npm i -g grunt-cli
+# install npm modules
+if [ -d ./node_modules ]; then
+  echo "Npm modules already installed"
+else
+  npm install
+  sudo npm i -g grunt-cli
+fi
 
 # install python3
 if which python3 >/dev/null; then
@@ -43,18 +55,3 @@ fi
 
 # install python dependencies
 sudo python3 -m pip install -r requirements.txt
-
-echo "
-================================================
-
-Setup done.
-Running basic installation checks.
-
-================================================
-"
-
-# post-installation checks
-python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__version__)"
-python3 -c "import theano; print('theano version:'); print(theano.__version__)"
-python3 -c "import gym; gym.make('LunarLander-v2')"
-python3 -c "import gym; gym.make('SpaceInvaders-v0')"
