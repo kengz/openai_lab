@@ -1,5 +1,7 @@
 #!/bin/bash
 # This script runs the same sequence as the CircleCI build
+# Run this as:
+# bin/setup
 
 # Fail on the first error; killable by SIGINT
 set -e
