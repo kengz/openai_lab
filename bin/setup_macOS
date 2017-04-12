@@ -12,12 +12,6 @@ else
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-if which clang >/dev/null; then
-  echo "clang is already installed"
-else
-  brew install --with-clang llvm
-fi
-
 # system dependencies for full openai gym
 hb_list=(cmake boost boost-python sdl2 swig wget)
 for item in "${hb_list[@]}"; do

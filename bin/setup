@@ -3,6 +3,7 @@
 # Run this as:
 # bin/setup
 
+
 # Fail on the first error; killable by SIGINT
 set -e
 trap "exit" INT
@@ -47,7 +48,6 @@ Running basic installation checks.
 
 # post-installation checks
 python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__version__)"
-python3 -c "import theano; print('theano version:'); print(theano.__version__)"
 python3 -c "import gym; gym.make('LunarLander-v2')"
 python3 -c "import gym; gym.make('SpaceInvaders-v0')"
 
