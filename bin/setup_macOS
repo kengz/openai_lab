@@ -1,0 +1,60 @@
+#!/bin/bash
+# This script sets up OpenAI Lab for macOS
+
+# Fail on the first error; killable by SIGINT
+set -e
+trap "exit" INT
+
+# install system dependencies
+if which brew >/dev/null; then
+  echo "Brew is already installed"
+else
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+if which clang >/dev/null; then
+  echo "clang is already installed"
+else
+  brew install --with-clang llvm
+fi
+
+# system dependencies for full openai gym
+brew install cmake boost boost-python sdl2 swig wget
+
+# install noti for auto-notification
+curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz
+sudo mv noti /usr/local/bin/
+
+# install nodejs (for npm and file watcher)
+if which node >/dev/null; then
+  echo "Nodejs is already installed"
+else
+  brew install node
+fi
+npm install
+sudo npm i -g grunt-cli
+
+# install python3
+if which python3 >/dev/null; then
+  echo "Python3 is already installed"
+else
+  brew install python3
+fi
+
+# install python dependencies
+sudo python3 -m pip install -r requirements.txt
+
+echo "
+================================================
+
+Setup done.
+Running basic installation checks.
+
+================================================
+"
+
+# post-installation checks
+python3 -c "import tensorflow; print('tensorflow version:'); print(tensorflow.__version__)"
+python3 -c "import theano; print('theano version:'); print(theano.__version__)"
+python3 -c "import gym; gym.make('LunarLander-v2')"
+python3 -c "import gym; gym.make('SpaceInvaders-v0')"
