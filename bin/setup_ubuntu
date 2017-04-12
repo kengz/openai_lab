@@ -31,8 +31,7 @@ fi
 if [ -d ./node_modules ]; then
   echo "Npm modules already installed"
 else
-  npm install
-  sudo npm i -g grunt-cli
+  npm install; sudo npm i -g grunt-cli
 fi
 
 # install python3
