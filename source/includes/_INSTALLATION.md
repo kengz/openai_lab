@@ -27,9 +27,9 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 brew install cmake boost boost-python sdl2 swig wget
 # noti
 (curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz); sudo mv noti /usr/local/bin/
-# Node >= v7.0 and dependencies
+# Node >= v7.0
 brew install node
-# Python >= v3.0 and dependencies
+# Python >= v3.0
 brew install python3
 
 ### Linux Ubuntu System Dependencies
@@ -39,53 +39,26 @@ sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git
 sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 # noti
 (curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.linux-amd64.tar.gz | tar -xz); sudo mv noti /usr/local/bin/
-# Node >= v7.0 and dependencies
+# Node >= v7.0
 (curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -); sudo apt-get install -y nodejs
-# Python >= v3.0 and dependencies
+# Python >= v3.0
 sudo apt-get -y install python3-dev python3-pip python3-setuptools
 
 ### Project Dependencies
 npm install; sudo npm i -g grunt-cli
-# with pip/virtualenv
+# option 1: pip/virtualenv
 sudo pip3 install -r requirements.txt
-# with conda
+# option 2: conda
 while read requirement; do conda install --yes $requirement; done < requirements.txt
 ```
 
 
 **3\.** **setup config files**
 
-Create the config files from template: `./bin/copy-config`
-
-
-**2\.** Keras needs a **backend file** in your home directory; setup `~/.keras/keras.json` using the example file in `config/keras.json`.
-
-```json
-{
-  "epsilon": 1e-07,
-  "image_dim_ordering": "tf",
-  "floatx": "float32",
-  "backend": "tensorflow"
-}
-```
-
-
-**3\.** `bin/setup` also creates the needed **config files** needed for lab [usage](#usage). See sections below for more info.
+Run `./bin/copy-config`. This will create the config files from template, needed for lab [usage](#usage):
 
 - `config/default.json` for local development, used when `grunt` is ran without a production flag.
 - `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`.
-
-```json
-{
-  "data_sync_destination": "~/Dropbox/openai_lab/data",
-  "NOTI_SLACK_DEST": "#rl-monitor",
-  "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
-  "experiments": [
-    "dev_dqn",
-    "dqn"
-  ]
-}
-```
 
 
 ### Updating Lab
@@ -133,6 +106,19 @@ _Notifications from the lab running on our remote server beast._
 
 
 ## Setup Experiments
+
+
+```json
+{
+  "data_sync_destination": "~/Dropbox/openai_lab/data",
+  "NOTI_SLACK_DEST": "#rl-monitor",
+  "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
+  "experiments": [
+    "dev_dqn",
+    "dqn"
+  ]
+}
+```
 
 There are many existing experiments specified in `rl/spec/*_experiment_specs.json`, and you can add more. Pick the `experiment_name`s (e.g. `"dqn", "lunar_dqn"`), specify in `config/default.json` or `config/production.json`. Then check [usage](#usage) to run the lab.
 

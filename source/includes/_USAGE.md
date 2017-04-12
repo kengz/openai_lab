@@ -9,9 +9,25 @@ The general flow for running a production lab is:
 3. Run the lab, e.g. `grunt -prod -resume`
 
 
+Grunt will read off the JSON file in `config/`, which looks like:
+
+```json
+{
+  "data_sync_destination": "~/Dropbox/openai_lab/data",
+  "NOTI_SLACK_DEST": "#rl-monitor",
+  "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
+  "experiments": [
+    "dev_dqn",
+    "dqn"
+  ]
+}
+```
+
+
 ## Commands
 
 We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command (harder to use), logged to stdout as `>> Composed command: python3 main.py ...`
+
 
 The useful grunt commands are:
 
