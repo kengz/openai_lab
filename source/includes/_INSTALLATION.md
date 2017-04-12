@@ -1,19 +1,62 @@
 # <a name="installation"></a>Installation
 
-**1\.** **Clone** repo and run the **setup** script:
+**1\.** **clone the repo**
+
+`git clone https://github.com/kengz/openai_lab.git`
+
+*If you plan to commit code, fork this repo then clone it instead.*
+
+
+**2\.** **install dependencies**
+
+Run the following commands to install:
+
+- the system dependencies depending on your OS
+- the project dependencies
+
+*For quick repeated setup on remote servers, instead of these commands, run the equivalent setup script: `./bin/setup`*
 
 ```shell
-git clone https://github.com/kengz/openai_lab.git
-cd openai_lab
-# inspect before running
-./bin/setup
+# cd into project directory
+cd openai_lab/
+
+### MacOS System Dependencies
+# Homebrew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# OpenAI Gym dependencies
+brew install cmake boost boost-python sdl2 swig wget
+# noti
+(curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz); sudo mv noti /usr/local/bin/
+# Node >= v7.0 and dependencies
+brew install node
+# Python >= v3.0 and dependencies
+brew install python3
+
+### Linux Ubuntu System Dependencies
+sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
+sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git
+# OpenAI Gym dependencies
+sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
+# noti
+(curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.linux-amd64.tar.gz | tar -xz); sudo mv noti /usr/local/bin/
+# Node >= v7.0 and dependencies
+(curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -); sudo apt-get install -y nodejs
+# Python >= v3.0 and dependencies
+sudo apt-get -y install python3-dev python3-pip python3-setuptools
+
+### Project Dependencies
+npm install; sudo npm i -g grunt-cli
+# with pip/virtualenv
+sudo pip3 install -r requirements.txt
+# with conda
+while read requirement; do conda install --yes $requirement; done < requirements.txt
 ```
 
-`bin/setup` installs all the dependencies as our servers and [CircleCI builds](https://circleci.com/gh/kengz/openai_lab); **inspect it before running to ensure it doesn't make unwanted changes to your system.** Also make sure your dependencies are up to date - check the [required versions here](#dependencies).
 
-<aside class="notice">
-If you plan on committing code and contribute to the Lab, fork this repo then clone your fork instead.
-</aside>
+**3\.** **setup config files**
+
+Create the config files from template: `./bin/copy-config`
+
 
 **2\.** Keras needs a **backend file** in your home directory; setup `~/.keras/keras.json` using the example file in `config/keras.json`.
 
@@ -25,10 +68,6 @@ If you plan on committing code and contribute to the Lab, fork this repo then cl
   "backend": "tensorflow"
 }
 ```
-
-<aside class="notice">
-We recommend Tensorflow over Theano for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-</aside>
 
 
 **3\.** `bin/setup` also creates the needed **config files** needed for lab [usage](#usage). See sections below for more info.
@@ -96,18 +135,6 @@ _Notifications from the lab running on our remote server beast._
 ## Setup Experiments
 
 There are many existing experiments specified in `rl/spec/*_experiment_specs.json`, and you can add more. Pick the `experiment_name`s (e.g. `"dqn", "lunar_dqn"`), specify in `config/default.json` or `config/production.json`. Then check [usage](#usage) to run the lab.
-
-
-## <a name="dependencies"></a>Dependencies
-
-There is more than a dozen of dependencies. For the full list, inspect `bin/setup`. Here are some major ones and their minimal required versions. If Lab fails to run, check these first:
-
-- `python3 >= 3.4`
-- `node >= 7.0`
-- `tensorflow >= 1.0` or `tensorflow-gpu >= 1.0`
-- `theano == 0.8.2`
-- `keras >= 1.2`
-- `gym[all] >= 0.7`
 
 
 ## Hardware
