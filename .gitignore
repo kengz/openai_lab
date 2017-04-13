@@ -35,6 +35,8 @@ htmlcov/
 venv/
 ENV/
 .env/
+openai_lab/
+src/
 
 node_modules/
 
