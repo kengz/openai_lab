@@ -1,4 +1,27 @@
 {
+  "quickstart_dqn": {
+    "problem": "CartPole-v0",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 10
+    },
+    "param_range": {
+      "lr": [0.001, 0.01],
+      "hidden_layers": [
+        [32],
+        [64]
+      ]
+    }
+  },
   "dqn_epsilon": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
