@@ -53,7 +53,7 @@ pip install -r requirements.txt
 virtualenv openai_lab
 source openai_lab/bin/activate
 pip install -r requirements.txt
-# option 2: conda
+# option 3: conda
 conda env create -f environment.yml
 source activate openai_lab
 ```
