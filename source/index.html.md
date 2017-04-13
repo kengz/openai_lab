@@ -12,7 +12,6 @@ toc_footers:
 
 includes:
   - INSTALLATION
-  - QUICKSTART
   - USAGE
   - EXPERIMENTS
   - ANALYSIS

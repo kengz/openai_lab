@@ -17,8 +17,8 @@ Grunt will read off the JSON file in `config/`, which looks like:
   "NOTI_SLACK_DEST": "#rl-monitor",
   "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
   "experiments": [
-    "dev_dqn",
-    "dqn"
+    "dqn",
+    "lunar_dqn"
   ]
 }
 ```

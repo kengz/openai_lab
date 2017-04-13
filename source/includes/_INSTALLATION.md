@@ -44,12 +44,18 @@ sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev p
 # Python >= v3.0
 sudo apt-get -y install python3-dev python3-pip python3-setuptools
 
+
 ### Project Dependencies
 npm install; sudo npm i -g grunt-cli
-# option 1: pip/virtualenv
-sudo pip3 install -r requirements.txt
+# option 1: pip (ensure it is python3)
+pip install -r requirements.txt
+# option 2: virtualenv
+virtualenv openai_lab
+source openai_lab/bin/activate
+pip install -r requirements.txt
 # option 2: conda
-while read requirement; do conda install --yes $requirement; done < requirements.txt
+conda env create -f environment.yml
+source activate openai_lab
 ```
 
 
@@ -61,19 +67,94 @@ Run `./bin/copy-config`. This will create the config files from template, needed
 - `config/production.json` for production lab run when `grunt -prod` is ran with the production flag `-prod`.
 
 
-### Updating Lab
+## <a name="quickstart"></a>Quickstart
 
-Check the [release versions here](https://github.com/kengz/openai_lab/releases).
+The Lab comes with experiments with the best found solutions. Activate your installed environment and run your first below.
+
+
+### Single Trial
+
+Run the single best trial for an experiment using lab command: `grunt -best`
+
+Alternatively, the plain python command invoked above is: `python3 main.py -e quickstart_dqn`
+
+Then check your `./data/` folder for graphs and data files.
+
+The grunt command is recommended as it's easier to schedule and run multiple experiments with. It sources from `config/default.json`, which should now have `quickstart_dqn`; more can be added.
+
+```json
+{
+  "data_sync_destination": "~/Dropbox/openai_lab/data",
+  "NOTI_SLACK_DEST": "#rl-monitor",
+  "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
+  "experiments": [
+    "quickstart_dqn"
+  ]
+}
+```
+
+This trial is the best [found solution agent](https://github.com/kengz/openai_lab/pull/73) of `DQN` solving `Cartpole-v0`. You should see the Lab running like so:
+
+![](./images/lab_demo_dqn.gif "Timelapse of OpenAI Lab")
+
+
+### Experiment with Multiple Trials
+
+Next step is to run a small experiment that searches for the best trial solutions.
+
+```json
+{
+  "quickstart_dqn": {
+    "problem": "CartPole-v0",
+    "Agent": "DQN",
+    ...
+    "param_range": {
+      "lr": [0.001, 0.01],
+      "hidden_layers": [
+        [32],
+        [64]
+      ]
+    }
+  }
+}
+```
+
+This is under under `quickstart_dqn` in `rl/spec/classic_experiment_specs.json`. The experiment studies the effect of varying learning rate `lr` and the DQN neural net architecture `hidden_layers`. If you like, change the `param_range` to try more values.
+
+Then, run: `grunt`
+
+Alternatively the plain python command is: `python3 main.py -bp -e dqn`
+
+Then check your `./data/` folder for graphs and data files.
+
+The experiment will take about 15 minutes (depending on your machine). It will produce experiment data from the trials. Refer to [Analysis](#analysis) on how to interpret them.
+
+
+### Next Up
+
+We recommend:
+
+- Continue reading below for the optional installation steps.
+- [Solutions](#solutions) to see some existing solutions to start your agent from, as well as find environments/high scores to beat.
+- [Agents](#agents) on how to create your agents from existing components, then add your own.
+- [Usage](#usage) to continue reading the doc.
+
+
+## Updating Lab
+
+Check the Lab's latest [release versions here](https://github.com/kengz/openai_lab/releases).
 
 - If you cloned directly the Lab, update with `git pull`
-- If you forked, [setup a remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) and [update fork](https://help.github.com/articles/syncing-a-fork/).
+- If you forked, [setup a remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) and [update fork](https://help.github.com/articles/syncing-a-fork/)
 
+```shell
+# update direct clone
+git pull
 
-### Jump to Quickstart
-
-Come back to the optional installation steps below when you need them later.
-
-Next, jump to [Quickstart](#quickstart) to run your first experiment.
+# update fork
+git fetch upstream
+git merge upstream/master
+```
 
 
 ## Setup Data Auto-sync
@@ -103,24 +184,6 @@ This step is optional; useful when running production mode.
 
 ![](./images/noti.png "Notifications from the lab running on our remote server beast")
 _Notifications from the lab running on our remote server beast._
-
-
-## Setup Experiments
-
-
-```json
-{
-  "data_sync_destination": "~/Dropbox/openai_lab/data",
-  "NOTI_SLACK_DEST": "#rl-monitor",
-  "NOTI_SLACK_TOK": "GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot",
-  "experiments": [
-    "dev_dqn",
-    "dqn"
-  ]
-}
-```
-
-There are many existing experiments specified in `rl/spec/*_experiment_specs.json`, and you can add more. Pick the `experiment_name`s (e.g. `"dqn", "lunar_dqn"`), specify in `config/default.json` or `config/production.json`. Then check [usage](#usage) to run the lab.
 
 
 ## Hardware
