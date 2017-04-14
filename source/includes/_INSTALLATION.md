@@ -34,7 +34,7 @@ brew install python3
 
 ### Linux Ubuntu System Dependencies
 sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update
-sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git
+sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git python3-tk tk-dev
 # OpenAI Gym dependencies
 sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 # noti
@@ -46,13 +46,14 @@ sudo apt-get -y install python3-dev python3-pip python3-setuptools
 
 
 ### Project Dependencies
+./bin/copy-config
 npm install; sudo npm i -g grunt-cli
 # option 1: pip (ensure it is python3)
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 # option 2: virtualenv
 virtualenv openai_lab
 source openai_lab/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 # option 3: conda
 conda env create -f environment.yml
 source activate openai_lab
