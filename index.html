@@ -235,61 +235,156 @@
 
           <h1 id="installation"><a name="installation"></a>Installation</h1>
 
-<p><strong>1.</strong> <strong>Clone</strong> repo and run the <strong>setup</strong> script:</p>
-<pre class="highlight shell"><code>git clone https://github.com/kengz/openai_lab.git
-<span class="nb">cd </span>openai_lab
-<span class="c"># inspect before running</span>
-./bin/setup
+<p><strong>1.</strong> <strong>clone the repo</strong></p>
+
+<p><code class="prettyprint">git clone https://github.com/kengz/openai_lab.git</code></p>
+
+<p><em>If you plan to commit code, fork this repo then clone it instead.</em></p>
+
+<p><strong>2.</strong> <strong>install dependencies</strong></p>
+
+<p>Run the following commands to install:</p>
+
+<ul>
+<li>the system dependencies depending on your OS</li>
+<li>the project dependencies</li>
+</ul>
+
+<p><em>For quick repeated setup on remote servers, instead of these commands, run the equivalent setup script: <code class="prettyprint">./bin/setup</code></em></p>
+<pre class="highlight shell"><code><span class="c"># cd into project directory</span>
+<span class="nb">cd </span>openai_lab/
+
+<span class="c">### MacOS System Dependencies</span>
+<span class="c"># Homebrew</span>
+ruby -e <span class="s2">"</span><span class="k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install<span class="k">)</span><span class="s2">"</span>
+<span class="c"># OpenAI Gym dependencies</span>
+brew install cmake boost boost-python sdl2 swig wget
+<span class="c"># noti</span>
+<span class="o">(</span>curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz<span class="o">)</span>; sudo mv noti /usr/local/bin/
+<span class="c"># Node &gt;= v7.0</span>
+brew install node
+<span class="c"># Python &gt;= v3.0</span>
+brew install python3
+
+<span class="c">### Linux Ubuntu System Dependencies</span>
+sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test <span class="o">&amp;&amp;</span> sudo apt-get update
+sudo apt-get install -y gcc-4.9 g++-4.9 libhdf5-dev libopenblas-dev git python3-tk tk-dev
+<span class="c"># OpenAI Gym dependencies</span>
+sudo apt-get install -y cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
+<span class="c"># noti</span>
+<span class="o">(</span>curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.linux-amd64.tar.gz | tar -xz<span class="o">)</span>; sudo mv noti /usr/local/bin/
+<span class="c"># Node &gt;= v7.0</span>
+<span class="o">(</span>curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -<span class="o">)</span>; sudo apt-get install -y nodejs
+<span class="c"># Python &gt;= v3.0</span>
+sudo apt-get -y install python3-dev python3-pip python3-setuptools
+
+
+<span class="c">### Project Dependencies</span>
+./bin/copy-config
+npm install; sudo npm i -g grunt-cli
+<span class="c"># option 1: pip (ensure it is python3)</span>
+pip3 install -r requirements.txt
+<span class="c"># option 2: virtualenv</span>
+virtualenv .env
+<span class="nb">source</span> .env/bin/activate
+pip3 install -r requirements.txt
+<span class="c"># option 3: conda</span>
+conda env create -f environment.yml
+<span class="nb">source </span>activate openai_lab
 </code></pre>
-<p><code class="prettyprint">bin/setup</code> installs all the dependencies as our servers and <a href="https://circleci.com/gh/kengz/openai_lab">CircleCI builds</a>; <strong>inspect it before running to ensure it doesn&rsquo;t make unwanted changes to your system.</strong> Also make sure your dependencies are up to date - check the <a href="#dependencies">required versions here</a>.</p>
+<p><strong>3.</strong> <strong>setup config files</strong></p>
 
-<aside class="notice">
-If you plan on committing code and contribute to the Lab, fork this repo then clone your fork instead.
-</aside>
-
-<p><strong>2.</strong> Keras needs a <strong>backend file</strong> in your home directory; setup <code class="prettyprint">~/.keras/keras.json</code> using the example file in <code class="prettyprint">config/keras.json</code>.</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"epsilon"</span><span class="p">:</span><span class="w"> </span><span class="mi">1e-07</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"image_dim_ordering"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tf"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"floatx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float32"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"backend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tensorflow"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<aside class="notice">
-We recommend Tensorflow over Theano for stability. By default <code>bin/setup</code> will install <code>tensorflow</code> for MacOS and <code>tensorflow-gpu</code> for Linux.
-</aside>
-
-<p><strong>3.</strong> <code class="prettyprint">bin/setup</code> also creates the needed <strong>config files</strong> needed for lab <a href="#usage">usage</a>. See sections below for more info.</p>
+<p>Run <code class="prettyprint">./bin/copy-config</code>. This will create the config files from template, needed for lab <a href="#usage">usage</a>:</p>
 
 <ul>
 <li><code class="prettyprint">config/default.json</code> for local development, used when <code class="prettyprint">grunt</code> is ran without a production flag.</li>
 <li><code class="prettyprint">config/production.json</code> for production lab run when <code class="prettyprint">grunt -prod</code> is ran with the production flag <code class="prettyprint">-prod</code>.</li>
 </ul>
+
+<h2 id="quickstart"><a name="quickstart"></a>Quickstart</h2>
+
+<p>The Lab comes with experiments with the best found solutions. Run your first below.</p>
+
+<h3 id="single-trial">Single Trial</h3>
+
+<p>Run the single best trial for an experiment using lab command: <code class="prettyprint">grunt -best</code></p>
+
+<p>Alternatively, the plain python command invoked above is: <code class="prettyprint">python3 main.py -e quickstart_dqn</code></p>
+
+<aside class="notice">
+Remember to activate virtualenv/conda when using plain python commands.
+</aside>
+
+<p>Then check your <code class="prettyprint">./data/</code> folder for graphs and data files.</p>
+
+<p>The grunt command is recommended as it&rsquo;s easier to schedule and run multiple experiments with. It sources from <code class="prettyprint">config/default.json</code>, which should now have <code class="prettyprint">quickstart_dqn</code>; more can be added.</p>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"NOTI_SLACK_DEST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#rl-monitor"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"NOTI_SLACK_TOK"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"experiments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="s2">"dev_dqn"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"dqn"</span><span class="w">
+    </span><span class="s2">"quickstart_dqn"</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<h3 id="updating-lab">Updating Lab</h3>
+<p>This trial is the best <a href="https://github.com/kengz/openai_lab/pull/73">found solution agent</a> of <code class="prettyprint">DQN</code> solving <code class="prettyprint">Cartpole-v0</code>. You should see the Lab running like so:</p>
 
-<p>Check the <a href="https://github.com/kengz/openai_lab/releases">release versions here</a>.</p>
+<p><img src="images/lab_demo_dqn.gif" title="Timelapse of OpenAI Lab" alt="Lab demo dqn" /></p>
+
+<h3 id="experiment-with-multiple-trials">Experiment with Multiple Trials</h3>
+
+<p>Next step is to run a small experiment that searches for the best trial solutions.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"quickstart_dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">],</span><span class="w">
+      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="mi">64</span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This is under under <code class="prettyprint">quickstart_dqn</code> in <code class="prettyprint">rl/spec/classic_experiment_specs.json</code>. The experiment studies the effect of varying learning rate <code class="prettyprint">lr</code> and the DQN neural net architecture <code class="prettyprint">hidden_layers</code>. If you like, change the <code class="prettyprint">param_range</code> to try more values.</p>
+
+<p>Then, run: <code class="prettyprint">grunt</code></p>
+
+<p>Alternatively the plain python command is: <code class="prettyprint">python3 main.py -bp -e dqn</code></p>
+
+<p>Then check your <code class="prettyprint">./data/</code> folder for graphs and data files.</p>
+
+<p>The experiment will take about 15 minutes (depending on your machine). It will produce experiment data from the trials. Refer to <a href="#analysis">Analysis</a> on how to interpret them.</p>
+
+<h3 id="next-up">Next Up</h3>
+
+<p>We recommend:</p>
+
+<ul>
+<li>Continue reading below for the optional installation steps.</li>
+<li><a href="#solutions">Solutions</a> to see some existing solutions to start your agent from, as well as find environments/high scores to beat.</li>
+<li><a href="#agents">Agents</a> on how to create your agents from existing components, then add your own.</li>
+<li><a href="#usage">Usage</a> to continue reading the doc.</li>
+</ul>
+
+<h2 id="updating-lab">Updating Lab</h2>
+
+<p>Check the Lab&rsquo;s latest <a href="https://github.com/kengz/openai_lab/releases">release versions here</a>.</p>
 
 <ul>
 <li>If you cloned directly the Lab, update with <code class="prettyprint">git pull</code></li>
-<li>If you forked, <a href="https://help.github.com/articles/configuring-a-remote-for-a-fork/">setup a remote</a> and <a href="https://help.github.com/articles/syncing-a-fork/">update fork</a>.</li>
+<li>If you forked, <a href="https://help.github.com/articles/configuring-a-remote-for-a-fork/">setup a remote</a> and <a href="https://help.github.com/articles/syncing-a-fork/">update fork</a></li>
 </ul>
+<pre class="highlight shell"><code><span class="c"># update direct clone</span>
+git pull
 
-<h3 id="jump-to-quickstart">Jump to Quickstart</h3>
-
-<p>Come back to the optional installation steps below when you need them later.</p>
-
-<p>Next, jump to <a href="#quickstart">Quickstart</a> to run your first experiment.</p>
-
+<span class="c"># update fork</span>
+git fetch upstream
+git merge upstream/master
+</code></pre>
 <h2 id="setup-data-auto-sync">Setup Data Auto-sync</h2>
 
 <p>We find it extremely useful to have data file-sync when running the lab on a remote server. This allows us to have a live view of the experiment graphs and data on our Dropbox app, on a computer or a smartphone.</p>
@@ -317,23 +412,6 @@ This step is optional; useful when running production mode.
 <p><img src="images/noti.png" title="Notifications from the lab running on our remote server beast" alt="Noti" />
 <em>Notifications from the lab running on our remote server beast.</em></p>
 
-<h2 id="setup-experiments">Setup Experiments</h2>
-
-<p>There are many existing experiments specified in <code class="prettyprint">rl/spec/*_experiment_specs.json</code>, and you can add more. Pick the <code class="prettyprint">experiment_name</code>s (e.g. <code class="prettyprint">&quot;dqn&quot;, &quot;lunar_dqn&quot;</code>), specify in <code class="prettyprint">config/default.json</code> or <code class="prettyprint">config/production.json</code>. Then check <a href="#usage">usage</a> to run the lab.</p>
-
-<h2 id="dependencies"><a name="dependencies"></a>Dependencies</h2>
-
-<p>There is more than a dozen of dependencies. For the full list, inspect <code class="prettyprint">bin/setup</code>. Here are some major ones and their minimal required versions. If Lab fails to run, check these first:</p>
-
-<ul>
-<li><code class="prettyprint">python3 &gt;= 3.4</code></li>
-<li><code class="prettyprint">node &gt;= 7.0</code></li>
-<li><code class="prettyprint">tensorflow &gt;= 1.0</code> or <code class="prettyprint">tensorflow-gpu &gt;= 1.0</code></li>
-<li><code class="prettyprint">theano == 0.8.2</code></li>
-<li><code class="prettyprint">keras &gt;= 1.2</code></li>
-<li><code class="prettyprint">gym[all] &gt;= 0.7</code></li>
-</ul>
-
 <h2 id="hardware">Hardware</h2>
 
 <p>For setting up your own hardware, especially with a GPU, googling will help more than we could. Also, setup is usually non-trivial since there&rsquo;re so many moving parts. Here&rsquo;s the recommended references:</p>
@@ -345,52 +423,6 @@ This step is optional; useful when running production mode.
 <li><a href="https://github.com/openai/gym/issues/366">Major OpenAI issue with SSH with xvfb failing with NVIDIA Driver due to opengl files</a></li>
 <li><a href="http://askubuntu.com/questions/149206/how-to-install-nvidia-run">NVIDIA cannot install due to X server running</a></li>
 <li><a href="http://askubuntu.com/questions/759641/cant-get-nvidia-drivers-working-with-16-04-logs-out-right-after-login">When login fails on Ubuntu after Nvidia installation</a></li>
-</ul>
-
-          <h1 id="quickstart"><a name="quickstart"></a>Quickstart</h1>
-
-<p>The Lab comes with experiments with the best found solutions. Run your first below.</p>
-
-<h3 id="single-trial">Single Trial</h3>
-
-<p>Run the single best trial for an experiment: <code class="prettyprint">python3 main.py -e dqn</code>.</p>
-
-<p>This is the best <a href="https://github.com/kengz/openai_lab/pull/73">found solution agent</a> of <code class="prettyprint">DQN</code> solving <code class="prettyprint">Cartpole-v0</code>. You should see the rendering and graphs (check the <code class="prettyprint">./data/</code> folder) like so:</p>
-
-<p><img src="images/lab_demo_dqn.gif" title="Timelapse of OpenAI Lab" alt="Lab demo dqn" /></p>
-
-<h3 id="experiment-with-multiple-trials">Experiment with Multiple Trials</h3>
-
-<p>Next step is to run a small experiment that searches for the best trial solutions.</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"dqn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"problem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CartPole-v0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"Agent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DQN"</span><span class="p">,</span><span class="w">
-    </span><span class="err">...</span><span class="w">
-    </span><span class="s2">"param_range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"lr"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">],</span><span class="w">
-      </span><span class="s2">"hidden_layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">[</span><span class="mi">32</span><span class="p">],</span><span class="w">
-        </span><span class="p">[</span><span class="mi">64</span><span class="p">]</span><span class="w">
-      </span><span class="p">]</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>Go to <code class="prettyprint">rl/spec/classic_experiment_specs.json</code> under <code class="prettyprint">dqn</code> and modify the <code class="prettyprint">param_range</code> to run less trials. This will study the effect of varying learning rate <code class="prettyprint">lr</code> and the DQN neural net architecture <code class="prettyprint">hidden_layers</code>.</p>
-
-<p>Then, run <code class="prettyprint">python3 main.py -bp -e dqn</code>. This will take about 15 minutes (depending on your machine).</p>
-
-<p>It will produce experiment data from the trials. Refer to <a href="#analysis">Analysis</a> on how to interpret them.</p>
-
-<h3 id="next-up">Next Up</h3>
-
-<p>We recommend:</p>
-
-<ul>
-<li><a href="#solutions">Solutions</a> to see some existing solutions to start your agent from, as well as find environments/high scores to beat.</li>
-<li><a href="#agents">Agents</a> on how to create your agents from existing components, then add your own.</li>
-<li><a href="#usage">Usage</a> to continue reading the doc.</li>
 </ul>
 
           <h1 id="usage"><a name="usage"></a>Usage</h1>
@@ -405,9 +437,20 @@ This step is optional; useful when running production mode.
 <li>Run the lab, e.g. <code class="prettyprint">grunt -prod -resume</code></li>
 </ol>
 
+<p>Grunt will read off the JSON file in <code class="prettyprint">config/</code>, which looks like:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"data_sync_destination"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/Dropbox/openai_lab/data"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"NOTI_SLACK_DEST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#rl-monitor"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"NOTI_SLACK_TOK"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET_SLACK_BOT_TOKEN_FROM_https://my.slack.com/services/new/bot"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"experiments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"dqn"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"lunar_dqn"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 <h2 id="commands">Commands</h2>
 
-<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command (harder to use), logged to stdout as <code class="prettyprint">&gt;&gt; Composed command: python3 main.py ...</code></p>
+<p>We use <a href="http://gruntjs.com/">Grunt</a> to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally <code class="prettyprint">grunt</code> runs the <code class="prettyprint">python</code> command (harder to use), logged to stdout as <code class="prettyprint">&gt;&gt; Composed command: ... python3 main.py -bp -t 5 -e dev_dqn | tee ./data/terminal.log;</code></p>
 
 <p>The useful grunt commands are:</p>
 <pre class="highlight shell"><code><span class="c"># when developing experiments specified in default.json</span>
@@ -524,6 +567,10 @@ grunt clear
 <h2 id="python-command-reference"><a name="python-cmd"></a>Python Command Reference</h2>
 
 <p>The Python command is invoked inside <code class="prettyprint">Gruntfile.js</code> under the <code class="prettyprint">composeCommand</code> function. Change it if you need to.</p>
+
+<aside class="notice">
+Remember to activate virtualenv/conda when using plain python commands.
+</aside>
 
 <p>The basic python command pattern is:</p>
 <pre class="highlight shell"><code>python3 main.py -&lt;flag&gt;
