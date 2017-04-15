@@ -26,7 +26,7 @@ Grunt will read off the JSON file in `config/`, which looks like:
 
 ## Commands
 
-We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command (harder to use), logged to stdout as `>> Composed command: python3 main.py ...`
+We use [Grunt](http://gruntjs.com/) to run the lab - set up experiments, pause/resume lab, run analyses, sync data, notify on completion. Internally `grunt` runs the `python` command (harder to use), logged to stdout as `>> Composed command: ... python3 main.py -bp -t 5 -e dev_dqn | tee ./data/terminal.log;`
 
 
 The useful grunt commands are:
@@ -155,6 +155,10 @@ The `<flag>`s are:
 ## <a name="python-cmd"></a>Python Command Reference
 
 The Python command is invoked inside `Gruntfile.js` under the `composeCommand` function. Change it if you need to.
+
+<aside class="notice">
+Remember to activate virtualenv/conda when using plain python commands.
+</aside>
 
 The basic python command pattern is:
 

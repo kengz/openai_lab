@@ -51,8 +51,8 @@ npm install; sudo npm i -g grunt-cli
 # option 1: pip (ensure it is python3)
 pip3 install -r requirements.txt
 # option 2: virtualenv
-virtualenv openai_lab
-source openai_lab/bin/activate
+virtualenv .env
+source .env/bin/activate
 pip3 install -r requirements.txt
 # option 3: conda
 conda env create -f environment.yml
@@ -70,7 +70,7 @@ Run `./bin/copy-config`. This will create the config files from template, needed
 
 ## <a name="quickstart"></a>Quickstart
 
-The Lab comes with experiments with the best found solutions. Activate your installed environment and run your first below.
+The Lab comes with experiments with the best found solutions. Run your first below.
 
 
 ### Single Trial
@@ -78,6 +78,10 @@ The Lab comes with experiments with the best found solutions. Activate your inst
 Run the single best trial for an experiment using lab command: `grunt -best`
 
 Alternatively, the plain python command invoked above is: `python3 main.py -e quickstart_dqn`
+
+<aside class="notice">
+Remember to activate virtualenv/conda when using plain python commands.
+</aside>
 
 Then check your `./data/` folder for graphs and data files.
 
