@@ -110,11 +110,11 @@ module.exports = function(grunt) {
       eStr = resumeExperimentStr(eStr)
     }
 
-    const envCmd = 'if (conda env list | grep --quiet "openai_lab"); then echo "activating conda"; source activate openai_lab; elif [ -d ./.env ]; then echo "activating virtualenv"; source .env/bin/activate; else echo "using system python"; fi;'
+    const envCmd = "if (conda env list | grep --quiet 'openai_lab'); then echo 'activating conda'; source activate openai_lab; elif [ -d ./.env ]; then echo 'activating virtualenv'; source .env/bin/activate; else echo 'using system python'; fi; "
 
     // override with custom command if has 'python'
     const pyCmd = _.includes(eStr, 'python') ? eStr : `python3 main.py${bestCmd()}${debugCmd()}${quietCmd()} -t 5 -e ${eStr}`
-    const cmd = `${remoteCmd()} ${envCmd} ${pyCmd} | tee ./data/terminal.log; ${notiCmd(eStr)}`
+    const cmd = `${envCmd}${remoteCmd()} ${pyCmd} | tee ./data/terminal.log; ${notiCmd(eStr)}`
     grunt.log.ok(`Composed command: ${cmd}`)
     return cmd
   }
