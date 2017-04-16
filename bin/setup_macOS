@@ -1,0 +1,50 @@
+#!/bin/bash
+# This script sets up OpenAI Lab for macOS
+
+# Fail on the first error; killable by SIGINT
+set -e
+trap "exit" INT
+
+# install system dependencies
+if which brew >/dev/null; then
+  echo "Brew is already installed"
+else
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+# system dependencies for full openai gym
+hb_list=(cmake boost boost-python sdl2 swig wget)
+for item in "${hb_list[@]}"; do
+  brew info "${item}" | grep --quiet 'Not installed' && brew install "${item}"
+done
+
+# install noti for auto-notification
+if which noti >/dev/null; then
+  echo "Noti is already installed"
+else
+  curl -L https://github.com/variadico/noti/releases/download/v2.5.0/noti2.5.0.darwin-amd64.tar.gz | tar -xz
+  sudo mv noti /usr/local/bin/
+fi
+
+# install nodejs (for npm and file watcher)
+if which node >/dev/null; then
+  echo "Nodejs is already installed"
+else
+  brew install node
+fi
+# install npm modules
+if [ -d ./node_modules ]; then
+  echo "Npm modules already installed"
+else
+  npm install; sudo npm i -g grunt-cli
+fi
+
+# install python3
+if which python3 >/dev/null; then
+  echo "Python3 is already installed"
+else
+  brew install python3
+fi
+
+# install python dependencies
+sudo python3 -m pip install -r requirements.txt
