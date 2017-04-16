@@ -117,21 +117,30 @@ class ActorNetwork(object):
 
     def train(self, inputs, a_gradient):
         self.sess.run(self.optimize, feed_dict={
-            self.inputs: np.reshape(inputs, (len(inputs), 1)),
-            # self.inputs: inputs,
+            self.inputs: inputs,
             self.action_gradient: a_gradient
         })
 
     def predict(self, inputs):
+        # print('inputs')
+        # print('inputs')
+        # print('inputs')
+        # print('inputs')
+        # print(inputs.shape)
+        # print(inputs)
         return self.sess.run(self.scaled_out, feed_dict={
-            self.inputs: np.reshape(inputs, (len(inputs), 1))
-            # self.inputs: inputs
+            self.inputs: inputs
         })
 
     def predict_target(self, inputs):
+        print('inputs')
+        print('inputs')
+        print('inputs')
+        print('inputs')
+        print(inputs.shape)
+        print(inputs)
         return self.sess.run(self.target_scaled_out, feed_dict={
-            self.target_inputs: np.reshape(inputs, (len(inputs), 1))
-            # self.target_inputs: inputs
+            self.target_inputs: inputs
         })
 
     def update_target_network(self):
@@ -205,37 +214,35 @@ class CriticNetwork(object):
         return inputs, action, out
 
     def train(self, inputs, action, predicted_q_value):
+        print('train shapes')
+        print('train shapes')
+        print('train shapes')
+        print(inputs.shape)
+        print(action.shape)
+        print(predicted_q_value.shape)
+        print(predicted_q_value)
         return self.sess.run([self.out, self.optimize], feed_dict={
-            self.inputs: np.reshape(inputs, (len(inputs), 1)),
-            self.action: np.reshape(action, (len(inputs), 1)),
-            self.predicted_q_value: np.reshape(predicted_q_value, (len(inputs), 1)),
-            # self.inputs: inputs,
-            # self.action: action,
-            # self.predicted_q_value: predicted_q_value
+            self.inputs: inputs,
+            self.action: np.reshape(action, (-1, self.a_dim)),
+            self.predicted_q_value: np.reshape(predicted_q_value[0], (-1, 1))
         })
 
     def predict(self, inputs, action):
         return self.sess.run(self.out, feed_dict={
-            self.inputs: np.reshape(inputs, (len(inputs), 1)),
-            self.action: np.reshape(action, (len(inputs), 1)),
-            # self.inputs: inputs,
-            # self.action: action
+            self.inputs: inputs,
+            self.action: np.reshape(action, (-1, self.a_dim))
         })
 
     def predict_target(self, inputs, action):
         return self.sess.run(self.target_out, feed_dict={
-            self.target_inputs: np.reshape(inputs, (len(inputs), 1)),
-            self.target_action: np.reshape(action, (len(inputs), 1)),
-            # self.target_inputs: inputs,
-            # self.target_action: action
+            self.target_inputs: inputs,
+            self.target_action: np.reshape(action, (-1, self.a_dim))
         })
 
-    def action_gradients(self, inputs, actions):
+    def action_gradients(self, inputs, action):
         return self.sess.run(self.action_grads, feed_dict={
-            self.inputs: np.reshape(inputs, (len(inputs), 1)),
-            self.action: np.reshape(action, (len(inputs), 1)),
-            # self.inputs: inputs,
-            # self.action: actions
+            self.inputs: inputs,
+            self.action: np.reshape(action, (-1, self.a_dim))
         })
 
     def update_target_network(self):
@@ -263,6 +270,7 @@ class PermamiDDPG(Agent):
         self.epi = 0
         self.n_epoch = 1
         self.batch_size = 64
+        self.gamma = 0.99
 
         # self.TAU = 0.001  # for target network updates
         super(PermamiDDPG, self).__init__(*args, **kwargs)
@@ -274,6 +282,8 @@ class PermamiDDPG(Agent):
         state_dim = self.env_spec['state_dim']
         action_dim = self.env_spec['action_dim']
         action_bound = self.env_spec['action_bound_high']
+        self.s_dim = state_dim
+        self.a_dim = action_dim
         self.actor = ActorNetwork(self.sess, state_dim, action_dim, action_bound,
                              ACTOR_LEARNING_RATE, TAU)
         self.critic = CriticNetwork(self.sess, state_dim, action_dim,
@@ -284,7 +294,7 @@ class PermamiDDPG(Agent):
 
     def select_action(self, state):
         i = self.epi
-        action = self.actor.predict(np.reshape(state, (1, 3))) + (1. / (1. + i))
+        action = self.actor.predict(np.reshape(state, (-1, self.s_dim))) + (1. / (1. + i))
         return action
 
     def update(self, sys_vars):
@@ -300,9 +310,10 @@ class PermamiDDPG(Agent):
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-
+        s2_batch = np.reshape(minibatch['next_states'], (-1, self.s_dim))
         target_q = self.critic.predict_target(
-                    minibatch['next_states'], self.actor.predict_target(minibatch['next_states']))
+                    s2_batch, 
+                    self.actor.predict_target(s2_batch))
 
         y_i = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * target_q
@@ -313,7 +324,7 @@ class PermamiDDPG(Agent):
                     y_i)
                     # np.reshape(y_i, (self.batch_size, 1)))
         
-        ep_ave_max_q += np.amax(predicted_q_value)
+        # ep_ave_max_q += np.amax(predicted_q_value)
 
 
         # Update the actor policy using the sampled gradient
@@ -343,7 +354,7 @@ class PermamiDDPG(Agent):
         loss_total = 0
         for _epoch in range(self.n_epoch):
             loss = self.train_an_epoch()
-            loss_total += loss
+            # loss_total += loss
         avg_loss = loss_total / self.n_epoch
         sys_vars['loss'].append(avg_loss)
         return avg_loss
