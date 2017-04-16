@@ -801,13 +801,13 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "GaussianWhiteNoise",
+    "Policy": "DDPGBoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "lr": 0.01,
       "gamma": 0.999,
-      "hidden_layers": [400, 300],
-      "hidden_layers_activation": "sigmoid",
+      "hidden_layers": [200],
+      "hidden_layers_activation": "relu",
       "output_layer_activation": "tanh"
     },
     "param_range": {
