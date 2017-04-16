@@ -133,12 +133,12 @@ class ActorNetwork(object):
         })
 
     def predict_target(self, inputs):
-        print('inputs')
-        print('inputs')
-        print('inputs')
-        print('inputs')
-        print(inputs.shape)
-        print(inputs)
+        # print('inputs')
+        # print('inputs')
+        # print('inputs')
+        # print('inputs')
+        # print(inputs.shape)
+        # print(inputs)
         return self.sess.run(self.target_scaled_out, feed_dict={
             self.target_inputs: inputs
         })
@@ -214,13 +214,13 @@ class CriticNetwork(object):
         return inputs, action, out
 
     def train(self, inputs, action, predicted_q_value):
-        print('train shapes')
-        print('train shapes')
-        print('train shapes')
-        print(inputs.shape)
-        print(action.shape)
-        print(predicted_q_value.shape)
-        print(predicted_q_value)
+        # print('train shapes')
+        # print('train shapes')
+        # print('train shapes')
+        # print(inputs.shape)
+        # print(action.shape)
+        # print(predicted_q_value.shape)
+        # print(predicted_q_value)
         return self.sess.run([self.out, self.optimize], feed_dict={
             self.inputs: inputs,
             self.action: np.reshape(action, (-1, self.a_dim)),
@@ -295,11 +295,11 @@ class PermamiDDPG(Agent):
     def select_action(self, state):
         i = self.epi
         action = self.actor.predict(np.reshape(state, (-1, self.s_dim))) + (1. / (1. + i))
-        print('action shape')
-        print('action shape')
-        print('action shape')
-        print(action)
-        print(action.shape)
+        # print('action shape')
+        # print('action shape')
+        # print('action shape')
+        # print(action)
+        # print(action.shape)
         return action[0]
 
     def update(self, sys_vars):
