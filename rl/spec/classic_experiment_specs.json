@@ -819,6 +819,30 @@
       ]
     }
   },
+  "pendulum_permami_ddpg": {
+    "problem": "Pendulum-v0",
+    "Agent": "PermamiDDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "DDPGBoundedPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.01,
+      "gamma": 0.999,
+      "hidden_layers": [200],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh"
+    },
+    "param_range": {
+      "lr": [0.001, 0.01],
+      "gamma": [0.999],
+      "hidden_layers": [
+        [400],
+        [400, 300]
+      ]
+    }
+  },
   "mountain_dqn": {
     "problem": "MountainCar-v0",
     "Agent": "DQN",

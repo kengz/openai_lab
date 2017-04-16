@@ -295,7 +295,12 @@ class PermamiDDPG(Agent):
     def select_action(self, state):
         i = self.epi
         action = self.actor.predict(np.reshape(state, (-1, self.s_dim))) + (1. / (1. + i))
-        return action
+        print('action shape')
+        print('action shape')
+        print('action shape')
+        print(action)
+        print(action.shape)
+        return action[0]
 
     def update(self, sys_vars):
         self.epi = sys_vars['epi']
