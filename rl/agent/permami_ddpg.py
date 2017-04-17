@@ -59,6 +59,7 @@ class ActorNetwork(object):
     """
     Input to the network is the state, output is the action
     under a deterministic policy.
+
     The output layer activation is a tanh to keep the action
     between -2 and 2
     """
@@ -122,23 +123,11 @@ class ActorNetwork(object):
         })
 
     def predict(self, inputs):
-        # print('inputs')
-        # print('inputs')
-        # print('inputs')
-        # print('inputs')
-        # print(inputs.shape)
-        # print(inputs)
         return self.sess.run(self.scaled_out, feed_dict={
             self.inputs: inputs
         })
 
     def predict_target(self, inputs):
-        # print('inputs')
-        # print('inputs')
-        # print('inputs')
-        # print('inputs')
-        # print(inputs.shape)
-        # print(inputs)
         return self.sess.run(self.target_scaled_out, feed_dict={
             self.target_inputs: inputs
         })
@@ -154,6 +143,7 @@ class CriticNetwork(object):
     """
     Input to the network is the state and action, output is Q(s,a).
     The action must be obtained from the output of the Actor network.
+
     """
 
     def __init__(self, sess, state_dim, action_dim, learning_rate, tau, num_actor_vars):
@@ -214,35 +204,28 @@ class CriticNetwork(object):
         return inputs, action, out
 
     def train(self, inputs, action, predicted_q_value):
-        # print('train shapes')
-        # print('train shapes')
-        # print('train shapes')
-        # print(inputs.shape)
-        # print(action.shape)
-        # print(predicted_q_value.shape)
-        # print(predicted_q_value)
         return self.sess.run([self.out, self.optimize], feed_dict={
             self.inputs: inputs,
-            self.action: np.reshape(action, (-1, self.a_dim)),
-            self.predicted_q_value: np.reshape(predicted_q_value[0], (-1, 1))
+            self.action: action,
+            self.predicted_q_value: predicted_q_value
         })
 
     def predict(self, inputs, action):
         return self.sess.run(self.out, feed_dict={
             self.inputs: inputs,
-            self.action: np.reshape(action, (-1, self.a_dim))
+            self.action: action
         })
 
     def predict_target(self, inputs, action):
         return self.sess.run(self.target_out, feed_dict={
             self.target_inputs: inputs,
-            self.target_action: np.reshape(action, (-1, self.a_dim))
+            self.target_action: action
         })
 
-    def action_gradients(self, inputs, action):
+    def action_gradients(self, inputs, actions):
         return self.sess.run(self.action_grads, feed_dict={
             self.inputs: inputs,
-            self.action: np.reshape(action, (-1, self.a_dim))
+            self.action: actions
         })
 
     def update_target_network(self):
@@ -310,32 +293,38 @@ class PermamiDDPG(Agent):
         return
 
     def to_train(self, sys_vars):
-        # return sys_vars['t'] > MINIBATCH_SIZE
-        return True
+        return self.memory.size() > MINIBATCH_SIZE
+        # return True
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
+        s_batch = np.reshape(minibatch['states'], (-1, self.s_dim))
+        a_batch = np.reshape(minibatch['actions'], (-1, self.a_dim))
         s2_batch = np.reshape(minibatch['next_states'], (-1, self.s_dim))
+
         target_q = self.critic.predict_target(
                     s2_batch, 
                     self.actor.predict_target(s2_batch))
 
         y_i = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * target_q
+            (1 - minibatch['terminals']) * np.reshape(target_q, (-1))
+        y_i = np.reshape(y_i, (-1, 1))
 
         predicted_q_value, _ = self.critic.train(
-                    minibatch['states'],
-                    minibatch['actions'],
-                    y_i)
-                    # np.reshape(y_i, (self.batch_size, 1)))
+            s_batch, a_batch, y_i)
+                    # minibatch['states'],
+                    # minibatch['actions'],
+                    # y_i)
+                    # # np.reshape(y_i, (self.batch_size, 1)))
         
-        # ep_ave_max_q += np.amax(predicted_q_value)
+        ep_ave_max_q = np.amax(predicted_q_value)
+        print('epi: ' + self.epi + '   Q_max: '+str(ep_ave_max_q))
 
 
         # Update the actor policy using the sampled gradient
-        a_outs = self.actor.predict(minibatch['states'])
-        grads = self.critic.action_gradients(minibatch['states'], a_outs)
-        actor_loss = self.actor.train(minibatch['states'], grads[0])
+        a_outs = self.actor.predict(s_batch)
+        grads = self.critic.action_gradients(s_batch, a_outs)
+        self.actor.train(s_batch, grads[0])
         # return actor_loss
         return
 
