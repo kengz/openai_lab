@@ -317,8 +317,8 @@ class PermamiDDPG(Agent):
                     # y_i)
                     # # np.reshape(y_i, (self.batch_size, 1)))
         
-        ep_ave_max_q = np.amax(predicted_q_value)
-        print('epi: ' + self.epi + '   Q_max: '+str(ep_ave_max_q))
+        # ep_ave_max_q = np.amax(predicted_q_value)
+        # print('epi: ' + str(self.epi) + '   Q_max: '+str(ep_ave_max_q))
 
 
         # Update the actor policy using the sampled gradient
