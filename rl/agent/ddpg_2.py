@@ -90,7 +90,7 @@ class Critic(DQN):
     the action is from Actor
     '''
 
-    def __init__(self, *args, tau=0.001, **kwargs):
+    def __init__(self, *args, tau=0.001, critic_lr=0.001, **kwargs):
         from keras.layers import Dense, Merge
         from keras import backend as K
         self.Merge = Merge
@@ -98,6 +98,7 @@ class Critic(DQN):
         self.tf = self.K.tf
         self.sess = self.K.get_session()
         self.tau = tau
+        self.critic_lr = critic_lr  # suggestion: 10 x actor_lr
         super(Critic, self).__init__(*args, **kwargs)
 
     def build_critic_models(self):
@@ -164,7 +165,7 @@ class Critic(DQN):
         self.y = self.tf.placeholder(self.tf.float32, [None, 1])
         self.loss = self.tf.losses.mean_squared_error(self.y, self.out)
         self.optimize = self.tf.train.AdamOptimizer(
-            self.lr).minimize(self.loss)
+            self.critic_lr).minimize(self.loss)
 
         self.action_gradient = self.tf.gradients(self.out, self.critic_actions)
         return self.model
