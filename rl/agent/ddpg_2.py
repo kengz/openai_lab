@@ -77,7 +77,7 @@ class Actor(DQN):
         })
 
     def train(self, states, critic_action_gradient):
-        self.sess.run(self.optimize, feed_dict={
+        return self.sess.run(self.optimize, feed_dict={
             self.actor_states: states,
             self.action_gradient: critic_action_gradient
         })
@@ -138,9 +138,6 @@ class Critic(DQN):
         logger.info("Model built")
         return self.model
 
-    def mean_squared_error(self, y_true, y_pred):
-        return self.K.mean(self.K.square(y_pred - y_true), axis=-1)
-
     def build_model(self):
         self.model = self.build_critic_models()
         self.target_model = clone_model(self.model)
@@ -166,7 +163,7 @@ class Critic(DQN):
 
         # custom loss and optimization Op
         self.y = self.tf.placeholder(self.tf.float32, [None, 1])
-        self.loss = self.mean_squared_error(self.y, self.out)
+        self.loss = self.tf.losses.mean_squared_error(self.y, self.out)
         self.optimize = self.tf.train.AdamOptimizer(
             self.lr).minimize(self.loss)
 
@@ -195,7 +192,7 @@ class Critic(DQN):
         })
 
     def train(self, states, actions, y):
-        return self.sess.run([self.out, self.optimize], feed_dict={
+        return self.sess.run([self.out, self.optimize, self.loss], feed_dict={
             self.critic_states: states,
             self.critic_actions: actions,
             self.y: y
@@ -238,8 +235,8 @@ class DDPG2(Agent):
         # TODO externalize to policy
         i = self.epi
         # TODO can we use expand dims?
-        action = self.actor.predict(np.reshape(
-            state, (-1, self.env_spec['state_dim']))) + (1. / (1. + i))
+        action = self.actor.predict(
+            np.expand_dims(state, axis=0)) + (1. / (1. + i))
         return action[0]
 
     def update(self, sys_vars):
@@ -258,13 +255,14 @@ class DDPG2(Agent):
         mu_prime = self.actor.target_predict(minibatch['next_states'])
         q_prime = self.critic.target_predict(
             minibatch['next_states'], mu_prime)
-        # TODO double check reshape, justify
+        # reshape for element-wise multiplication
+        # to feed into network, y shape needs to be (?, 1)
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * np.reshape(q_prime, (-1))
         y = np.reshape(y, (-1, 1))
 
         # TODO want this to be loss
-        predicted_q_value, _ = self.critic.train(
+        predicted_q_value, _, critic_loss = self.critic.train(
             minibatch['states'], minibatch['actions'], y)
 
         # train actor
@@ -272,10 +270,10 @@ class DDPG2(Agent):
         actions = self.actor.predict(minibatch['states'])
         critic_action_gradient = self.critic.get_action_gradient(
             minibatch['states'], actions)
-        # TODO rename all function args consistently
         # TODO want this to be loss too
         actor_loss = self.actor.train(
             minibatch['states'], critic_action_gradient)
+
         # return actor_loss
         # loss = critic_loss + actor_loss
         return
