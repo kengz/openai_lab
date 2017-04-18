@@ -805,55 +805,6 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "batch_size": 64,
-      "lr": 0.001,
-      "gamma": 0.999,
-      "hidden_layers": [400, 300],
-      "hidden_layers_activation": "relu",
-      "output_layer_activation": "tanh"
-    },
-    "param_range": {
-      "lr": [0.001, 0.01],
-      "gamma": [0.999],
-      "hidden_layers": [
-        [400],
-        [400, 300]
-      ]
-    }
-  },
-  "pendulum_permami_ddpg": {
-    "problem": "Pendulum-v0",
-    "Agent": "PermamiDDPG",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "LinearNoisePolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.01,
-      "gamma": 0.999,
-      "hidden_layers": [200],
-      "hidden_layers_activation": "relu",
-      "output_layer_activation": "tanh"
-    },
-    "param_range": {
-      "lr": [0.001, 0.01],
-      "gamma": [0.999],
-      "hidden_layers": [
-        [400],
-        [400, 300]
-      ]
-    }
-  },
-  "pendulum_ddpg2": {
-    "problem": "Pendulum-v0",
-    "Agent": "DDPG2",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "LinearNoisePolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "batch_size": 64,
       "n_epoch": 1,
       "tau": 0.001,
       "lr": 0.0001,
@@ -865,8 +816,10 @@
       "output_layer_activation": "tanh"
     },
     "param_range": {
-      "lr": [0.001, 0.01],
-      "gamma": [0.999],
+      "tau": [0.001, 0.005, 0.01],
+      "lr": [0.0001, 0.001, 0.01],
+      "critic_lr": [0.001, 0.01],
+      "gamma": [0.97, 0.99, 0.999],
       "hidden_layers": [
         [400],
         [400, 300]

@@ -17,9 +17,7 @@
     "details": "ddpg uses white-noise policy",
     "head": "Agent",
     "Agent": [
-      "DDPG",
-      "DDPG2",
-      "PermamiDDPG"
+      "DDPG"
     ],
     "Policy": [
       "GaussianWhiteNoise",
