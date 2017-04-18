@@ -199,7 +199,7 @@ class Critic(DQN):
         })
 
 
-class DDPG2(DQN):
+class DDPG(DQN):
 
     '''
     DDPG Algorithm, from https://arxiv.org/abs/1509.02971
@@ -215,7 +215,7 @@ class DDPG2(DQN):
         self.actor = Actor(*args, **kwargs)
         self.critic = Critic(*args, **kwargs)
         self.sess.run(self.K.tf.global_variables_initializer())
-        super(DDPG2, self).__init__(*args, **kwargs)
+        super(DDPG, self).__init__(*args, **kwargs)
 
     def build_model(self):
         pass
