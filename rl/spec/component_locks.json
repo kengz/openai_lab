@@ -22,10 +22,10 @@
       "PermamiDDPG"
     ],
     "Policy": [
-      "AnnealedGaussian",
       "DDPGBoundedPolicy",
       "GaussianWhiteNoise",
       "LinearNoisePolicy",
+      "NoNoisePolicy",
       "OUNoise"
     ]
   },

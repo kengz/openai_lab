@@ -3,19 +3,20 @@ from rl.util import logger, log_self
 from rl.policy.base_policy import Policy
 
 
-class NoisePolicy(Policy):
+class NoNoisePolicy(Policy):
 
     '''
     The base class for noise policy for DDPG
+    default is no noise
     '''
 
     def __init__(self, env_spec,
                  **kwargs):  # absorb generic param without breaking
-        super(NoisePolicy, self).__init__(env_spec)
+        super(NoNoisePolicy, self).__init__(env_spec)
         log_self(self)
 
     def sample(self):
-        '''implement noise here'''
+        '''implement noise here, default is none'''
         return 0
 
     def select_action(self, state):
@@ -33,7 +34,7 @@ class NoisePolicy(Policy):
         pass
 
 
-class LinearNoisePolicy(NoisePolicy):
+class LinearNoisePolicy(NoNoisePolicy):
 
     '''
     policy with linearly decaying noise (1. / (1. + self.epi))
@@ -58,7 +59,7 @@ class LinearNoisePolicy(NoisePolicy):
             self.n_step = sys_vars['epi']
 
 
-# class DDPGBoundedPolicy(NoisePolicy):
+# class DDPGBoundedPolicy(NoNoisePolicy):
 
 #     '''
 #     The bounded policy for actor critic agents

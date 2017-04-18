@@ -130,7 +130,7 @@ class Critic(DQN):
 
         model.add(self.Dense(1,
                              init='lecun_uniform',
-                             activation='linear'))
+                             activation='linear'))  # fixed
         logger.info('Critic model summary')
         model.summary()
         self.model = model
