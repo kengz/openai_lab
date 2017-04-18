@@ -1,5 +1,4 @@
 import numpy as np
-from rl.agent.base_agent import Agent
 from rl.agent.dqn import DQN
 from rl.util import logger, clone_model, clone_optimizer
 
@@ -11,12 +10,12 @@ class Actor(DQN):
     very similar to DQN
     '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, tau=0.001, **kwargs):
         from keras import backend as K
         self.K = K
         self.tf = self.K.tf
         self.sess = self.K.get_session()
-        self.tau = 0.001
+        self.tau = tau
         super(Actor, self).__init__(*args, **kwargs)
 
     def build_model(self):
@@ -91,14 +90,14 @@ class Critic(DQN):
     the action is from Actor
     '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, tau=0.001, **kwargs):
         from keras.layers import Dense, Merge
         from keras import backend as K
         self.Merge = Merge
         self.K = K
         self.tf = self.K.tf
         self.sess = self.K.get_session()
-        self.tau = 0.001
+        self.tau = tau
         super(Critic, self).__init__(*args, **kwargs)
 
     def build_critic_models(self):
@@ -199,7 +198,7 @@ class Critic(DQN):
         })
 
 
-class DDPG2(Agent):
+class DDPG2(DQN):
 
     '''
     DDPG Algorithm, from https://arxiv.org/abs/1509.02971
@@ -212,23 +211,21 @@ class DDPG2(Agent):
         from keras import backend as K
         self.K = K
         self.sess = self.K.get_session()
-
-        # TODO absorb properly
-        self.epi = 0
-        self.n_epoch = 1
-        self.batch_size = 64
-        self.gamma = 0.99
-
-        super(DDPG2, self).__init__(*args, **kwargs)
-        self.build_model(*args, **kwargs)
-        self.sess.run(self.K.tf.global_variables_initializer())
-
-    def build_model(self, *args, **kwargs):
-        # TODO prolly wanna unify self.tf
         self.actor = Actor(*args, **kwargs)
         self.critic = Critic(*args, **kwargs)
+        self.sess.run(self.K.tf.global_variables_initializer())
+        super(DDPG2, self).__init__(*args, **kwargs)
+
+        # TODO remove
+        self.epi = 0
+
+    def build_model(self):
+        pass
 
     def compile_model(self):
+        pass
+
+    def recompile_model(self):
         pass
 
     def select_action(self, state):
@@ -237,15 +234,16 @@ class DDPG2(Agent):
         action = self.actor.predict(
             np.expand_dims(state, axis=0)) + (1. / (1. + i))
         return action[0]
+        # return self.policy.select_action(state)
 
     def update(self, sys_vars):
+        # TODO shd be in policy
         self.epi = sys_vars['epi']
         # Update target networks
         self.actor.update()
         self.critic.update()
-
-    def to_train(self, sys_vars):
-        return self.memory.size() > self.batch_size
+        self.policy.update(sys_vars)
+        self.update_n_epoch(sys_vars)
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
@@ -274,12 +272,3 @@ class DDPG2(Agent):
 
         loss = critic_loss
         return loss
-
-    def train(self, sys_vars):
-        loss_total = 0
-        for _epoch in range(self.n_epoch):
-            loss = self.train_an_epoch()
-            loss_total += loss
-        avg_loss = loss_total / self.n_epoch
-        sys_vars['loss'].append(avg_loss)
-        return avg_loss
