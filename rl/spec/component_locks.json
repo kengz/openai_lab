@@ -22,7 +22,6 @@
       "PermamiDDPG"
     ],
     "Policy": [
-      "DDPGBoundedPolicy",
       "GaussianWhiteNoise",
       "LinearNoisePolicy",
       "NoNoisePolicy",

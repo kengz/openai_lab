@@ -59,37 +59,6 @@ class LinearNoisePolicy(NoNoisePolicy):
             self.n_step = sys_vars['epi']
 
 
-# class DDPGBoundedPolicy(NoNoisePolicy):
-
-#     '''
-#     The bounded policy for actor critic agents
-#     and continous, bounded policy spaces
-#     Action bounded above and below by
-#     - action_bound, + action_bound
-#     '''
-
-#     def __init__(self, env_spec,
-#                  **kwargs):  # absorb generic param without breaking
-#         super(DDPGBoundedPolicy, self).__init__(env_spec)
-#         self.action_bound = env_spec['action_bound_high']
-#         assert env_spec['action_bound_high'] == -env_spec['action_bound_low']
-#         log_self(self)
-
-#     def sample(self):
-#         return 0
-
-#     def select_action(self, state):
-#         agent = self.agent
-#         state = np.expand_dims(state, axis=0)
-#         A_score = agent.actor.predict(state)[0]  # extract from batch predict
-#         # action = np.tanh(A_score) * self.action_bound
-#         action = A_score * self.action_bound
-#         return action
-
-#     def update(self, sys_vars):
-#         pass
-
-
 class AnnealedGaussian(LinearNoisePolicy):
 
     '''
