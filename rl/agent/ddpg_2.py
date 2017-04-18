@@ -234,7 +234,6 @@ class DDPG2(Agent):
     def select_action(self, state):
         # TODO externalize to policy
         i = self.epi
-        # TODO can we use expand dims?
         action = self.actor.predict(
             np.expand_dims(state, axis=0)) + (1. / (1. + i))
         return action[0]
@@ -261,8 +260,7 @@ class DDPG2(Agent):
             (1 - minibatch['terminals']) * np.reshape(q_prime, (-1))
         y = np.reshape(y, (-1, 1))
 
-        # TODO want this to be loss
-        predicted_q_value, _, critic_loss = self.critic.train(
+        _, _, critic_loss = self.critic.train(
             minibatch['states'], minibatch['actions'], y)
 
         # train actor
@@ -270,19 +268,18 @@ class DDPG2(Agent):
         actions = self.actor.predict(minibatch['states'])
         critic_action_gradient = self.critic.get_action_gradient(
             minibatch['states'], actions)
-        # TODO want this to be loss too
-        actor_loss = self.actor.train(
+        # currently cant be gotten
+        _actor_loss = self.actor.train(
             minibatch['states'], critic_action_gradient)
 
-        # return actor_loss
-        # loss = critic_loss + actor_loss
-        return
+        loss = critic_loss
+        return loss
 
     def train(self, sys_vars):
         loss_total = 0
         for _epoch in range(self.n_epoch):
             loss = self.train_an_epoch()
-            # loss_total += loss
+            loss_total += loss
         avg_loss = loss_total / self.n_epoch
         sys_vars['loss'].append(avg_loss)
         return avg_loss
