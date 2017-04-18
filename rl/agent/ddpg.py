@@ -1,6 +1,6 @@
 import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, clone_model, clone_optimizer
+from rl.util import logger, clone_model
 
 
 class Actor(DQN):
@@ -62,7 +62,7 @@ class Actor(DQN):
     def recompile_model(self, sys_vars):
         pass
 
-    def update(self):
+    def update(self, sys_vars):
         self.sess.run(self.update_target_network_op)
 
     def predict(self, states):
@@ -75,7 +75,7 @@ class Actor(DQN):
             self.target_actor_states: next_states
         })
 
-    def train(self, states, critic_action_gradient):
+    def train_tf(self, states, critic_action_gradient):
         return self.sess.run(self.optimize, feed_dict={
             self.actor_states: states,
             self.action_gradient: critic_action_gradient
@@ -93,6 +93,7 @@ class Critic(DQN):
     def __init__(self, *args, tau=0.001, critic_lr=0.001, **kwargs):
         from keras.layers import Dense, Merge
         from keras import backend as K
+        self.Dense = Dense
         self.Merge = Merge
         self.K = K
         self.tf = self.K.tf
@@ -170,7 +171,7 @@ class Critic(DQN):
         self.action_gradient = self.tf.gradients(self.out, self.critic_actions)
         return self.model
 
-    def update(self):
+    def update(self, sys_vars):
         self.sess.run(self.update_target_network_op)
 
     def get_action_gradient(self, states, actions):
@@ -191,7 +192,7 @@ class Critic(DQN):
             self.target_critic_actions: mu_prime
         })
 
-    def train(self, states, actions, y):
+    def train_tf(self, states, actions, y):
         return self.sess.run([self.out, self.optimize, self.loss], feed_dict={
             self.critic_states: states,
             self.critic_actions: actions,
@@ -223,7 +224,7 @@ class DDPG(DQN):
     def compile_model(self):
         pass
 
-    def recompile_model(self):
+    def recompile_model(self, sys_vars):
         pass
 
     def select_action(self, state):
@@ -231,8 +232,8 @@ class DDPG(DQN):
 
     def update(self, sys_vars):
         # Update target networks
-        self.actor.update()
-        self.critic.update()
+        self.actor.update(sys_vars)
+        self.critic.update(sys_vars)
         self.policy.update(sys_vars)
         self.update_n_epoch(sys_vars)
 
@@ -249,7 +250,7 @@ class DDPG(DQN):
             (1 - minibatch['terminals']) * np.reshape(q_prime, (-1))
         y = np.reshape(y, (-1, 1))
 
-        _, _, critic_loss = self.critic.train(
+        _, _, critic_loss = self.critic.train_tf(
             minibatch['states'], minibatch['actions'], y)
 
         # train actor
@@ -258,7 +259,7 @@ class DDPG(DQN):
         critic_action_gradient = self.critic.get_action_gradient(
             minibatch['states'], actions)
         # currently cant be gotten
-        _actor_loss = self.actor.train(
+        _actorloss = self.actor.train_tf(
             minibatch['states'], critic_action_gradient)
 
         loss = critic_loss

@@ -1,5 +1,5 @@
 import numpy as np
-from rl.util import logger, log_self
+from rl.util import log_self
 from rl.policy.base_policy import Policy
 
 
@@ -17,6 +17,7 @@ class NoNoisePolicy(Policy):
 
     def sample(self):
         '''implement noise here, default is none'''
+        assert 'actions' in self.env_spec
         return 0
 
     def select_action(self, state):
