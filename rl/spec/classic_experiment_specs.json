@@ -853,6 +853,9 @@
     "Policy": "DDPGBoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
+      "batch_size": 64,
+      "n_epoch": 1,
+      "tau": 0.001,
       "lr": 0.001,
       "gamma": 0.999,
       "hidden_layers": [400, 300],
