@@ -18,6 +18,7 @@
     "head": "Agent",
     "Agent": [
       "DDPG",
+      "DDPG2",
       "PermamiDDPG"
     ],
     "Policy": [

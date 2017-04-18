@@ -804,9 +804,10 @@
     "Policy": "DDPGBoundedPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.01,
+      "batch_size": 64,
+      "lr": 0.001,
       "gamma": 0.999,
-      "hidden_layers": [200],
+      "hidden_layers": [400, 300],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "tanh"
     },
@@ -831,6 +832,30 @@
       "lr": 0.01,
       "gamma": 0.999,
       "hidden_layers": [200],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh"
+    },
+    "param_range": {
+      "lr": [0.001, 0.01],
+      "gamma": [0.999],
+      "hidden_layers": [
+        [400],
+        [400, 300]
+      ]
+    }
+  },
+  "pendulum_ddpg2": {
+    "problem": "Pendulum-v0",
+    "Agent": "DDPG2",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "DDPGBoundedPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "lr": 0.001,
+      "gamma": 0.999,
+      "hidden_layers": [400, 300],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "tanh"
     },

@@ -81,10 +81,12 @@ class ActorNetwork(DQN):
 
         self.actor_state = self.model.inputs[0]
         self.out = self.model.output
+        self.scaled_out = self.tf.multiply(self.out, self.env_spec['action_bound_high'])
         self.network_params = self.model.trainable_weights
 
         self.target_actor_state = self.target_model.inputs[0]
         self.target_out = self.target_model.output
+        self.target_scaled_out = self.tf.multiply(self.target_out, self.env_spec['action_bound_high'])
         self.target_network_params = self.target_model.trainable_weights
 
         # Op for updating target network
@@ -101,7 +103,7 @@ class ActorNetwork(DQN):
         # final gradients op for actor network
         # TODO need to scale out
         self.actor_gradients = self.tf.gradients(
-            self.out, self.network_params, -self.action_gradient)
+            self.scaled_out, self.network_params, -self.action_gradient)
 
         # Optimization Op
         self.optimize = self.tf.train.AdamOptimizer(self.lr).apply_gradients(
@@ -124,12 +126,12 @@ class ActorNetwork(DQN):
         })
 
     def predict(self, inputs):
-        return self.sess.run(self.out, feed_dict={
+        return self.sess.run(self.scaled_out, feed_dict={
             self.actor_state: inputs
         })
 
     def predict_target(self, inputs):
-        return self.sess.run(self.target_out, feed_dict={
+        return self.sess.run(self.target_scaled_out, feed_dict={
             self.target_actor_state: inputs
         })
 
@@ -180,7 +182,7 @@ class CriticNetwork(DQN):
 
         model.add(self.Dense(1,
                              init='lecun_uniform',
-                             activation=self.output_layer_activation))
+                             activation='linear'))
         logger.info('Critic model summary')
         model.summary()
         self.model = model
@@ -311,9 +313,12 @@ class DDPG2(Agent):
 
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        s_batch = np.reshape(minibatch['states'], (-1, self.env_spec['state_dim']))
-        a_batch = np.reshape(minibatch['actions'], (-1, self.env_spec['action_dim']))
-        s2_batch = np.reshape(minibatch['next_states'], (-1, self.env_spec['state_dim']))
+        s_batch = minibatch['states']
+        a_batch = minibatch['actions']
+        s2_batch = minibatch['next_states']
+        # s_batch = np.reshape(minibatch['states'], (-1, self.env_spec['state_dim']))
+        # a_batch = np.reshape(minibatch['actions'], (-1, self.env_spec['action_dim']))
+        # s2_batch = np.reshape(minibatch['next_states'], (-1, self.env_spec['state_dim']))
 
         target_q = self.critic.predict_target(
             s2_batch,
