@@ -3,6 +3,30 @@ from rl.util import logger, log_self
 from rl.policy.base_policy import Policy
 
 
+class DDPGLinearNoisePolicy(Policy):
+
+    '''
+    policy with linearly decaying noise (1. / (1. + self.epi))
+    TODO absorb under noise too
+    '''
+
+    def __init__(self, env_spec,
+                 **kwargs):  # absorb generic param without breaking
+        super(DDPGLinearNoisePolicy, self).__init__(env_spec)
+        self.epi = 0  # init
+        log_self(self)
+
+    def select_action(self, state):
+        # TODO externalize to policy
+        # TODO also try to externalize bounded
+        action = self.agent.actor.predict(
+            np.expand_dims(state, axis=0)) + (1. / (1. + self.epi))
+        return action[0]
+
+    def update(self, sys_vars):
+        self.epi = sys_vars['epi'] + 1
+
+
 class DDPGBoundedPolicy(Policy):
 
     '''

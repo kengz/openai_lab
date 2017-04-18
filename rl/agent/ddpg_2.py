@@ -216,9 +216,6 @@ class DDPG2(DQN):
         self.sess.run(self.K.tf.global_variables_initializer())
         super(DDPG2, self).__init__(*args, **kwargs)
 
-        # TODO remove
-        self.epi = 0
-
     def build_model(self):
         pass
 
@@ -229,16 +226,9 @@ class DDPG2(DQN):
         pass
 
     def select_action(self, state):
-        # TODO externalize to policy
-        i = self.epi
-        action = self.actor.predict(
-            np.expand_dims(state, axis=0)) + (1. / (1. + i))
-        return action[0]
-        # return self.policy.select_action(state)
+        return self.policy.select_action(state)
 
     def update(self, sys_vars):
-        # TODO shd be in policy
-        self.epi = sys_vars['epi']
         # Update target networks
         self.actor.update()
         self.critic.update()

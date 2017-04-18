@@ -25,7 +25,8 @@
       "AnnealedGaussian",
       "GaussianWhiteNoise",
       "OUNoise",
-      "DDPGBoundedPolicy"
+      "DDPGBoundedPolicy",
+      "DDPGLinearNoisePolicy"
     ]
   },
   "actor_critic": {

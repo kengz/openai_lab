@@ -850,7 +850,7 @@
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "DDPGBoundedPolicy",
+    "Policy": "DDPGLinearNoisePolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "batch_size": 64,
