@@ -8,8 +8,10 @@ from rl.util import *
 
 warnings.filterwarnings("ignore", module="matplotlib")
 
-MPL_BACKEND = 'agg' if (
-    environ.get('CI') or platform.system() == 'Darwin') else 'TkAgg'
+if platform.system() == 'Darwin':
+    MPL_BACKEND = 'agg' if args.param_selection else 'macosx'
+else:
+    MPL_BACKEND = 'TkAgg'
 
 STATS_COLS = [
     'best_session_epi',
