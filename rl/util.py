@@ -23,6 +23,65 @@ LOCK_HEAD_REST_SIG = {
 }
 
 
+# parse_args to add flag
+parser = argparse.ArgumentParser(description='Set flags for functions')
+parser.add_argument("-b", "--blind",
+                    help="dont render graphics",
+                    action="store_const",
+                    dest="render",
+                    const=False,
+                    default=True)
+parser.add_argument("-d", "--debug",
+                    help="activate debug log",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.DEBUG,
+                    default=logging.INFO)
+parser.add_argument("-e", "--experiment",
+                    help="specify experiment to run",
+                    action="store",
+                    type=str,
+                    nargs='?',
+                    dest="experiment",
+                    default="dev_dqn")
+parser.add_argument("-p", "--param_selection",
+                    help="run parameter selection if present",
+                    action="store_true",
+                    dest="param_selection",
+                    default=False)
+parser.add_argument("-q", "--quiet",
+                    help="change log to warning level",
+                    action="store_const",
+                    dest="loglevel",
+                    const=logging.WARNING,
+                    default=logging.INFO)
+parser.add_argument("-t", "--times",
+                    help="number of times session is run",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="times",
+                    default=1)
+parser.add_argument("-x", "--max_episodes",
+                    help="manually set environment max episodes",
+                    action="store",
+                    nargs='?',
+                    type=int,
+                    dest="max_epis",
+                    default=-1)
+args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
+
+# Goddam python logger
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(
+    logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
+logger.setLevel(args.loglevel)
+logger.addHandler(handler)
+logger.propagate = False
+environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # mute tf warnings on optimized setup
+
+
 def check_equal(iterator):
     '''check if list contains all the same elements'''
     iterator = iter(iterator)
@@ -54,7 +113,7 @@ def check_lock(lock_name, lock, experiment_spec):
     # rest must all have the same signature
     rest_equal = check_equal(bin_rest_list)
     if not rest_equal:
-        raise ValueError(
+        logger.warn(
             'All components need to be of the same set, '
             'check component lock "{}" and your spec "{}"'.format(
                 lock_name, experiment_spec['experiment_name']))
@@ -63,7 +122,7 @@ def check_lock(lock_name, lock, experiment_spec):
     lock_sig = [bin_head, bin_rest]
     lock_valid = lock_sig in valid_lock_sig_list
     if not lock_valid:
-        raise ValueError(
+        logger.warn(
             'Component lock violated: "{}", spec: "{}"'.format(
                 lock_name, experiment_spec['experiment_name']))
     return lock_valid
@@ -125,65 +184,6 @@ def import_guard_asset():
     return PROBLEMS, EXPERIMENT_SPECS
 
 PROBLEMS, EXPERIMENT_SPECS = import_guard_asset()
-
-
-# parse_args to add flag
-parser = argparse.ArgumentParser(description='Set flags for functions')
-parser.add_argument("-b", "--blind",
-                    help="dont render graphics",
-                    action="store_const",
-                    dest="render",
-                    const=False,
-                    default=True)
-parser.add_argument("-d", "--debug",
-                    help="activate debug log",
-                    action="store_const",
-                    dest="loglevel",
-                    const=logging.DEBUG,
-                    default=logging.INFO)
-parser.add_argument("-e", "--experiment",
-                    help="specify experiment to run",
-                    action="store",
-                    type=str,
-                    nargs='?',
-                    dest="experiment",
-                    default="dev_dqn")
-parser.add_argument("-p", "--param_selection",
-                    help="run parameter selection if present",
-                    action="store_true",
-                    dest="param_selection",
-                    default=False)
-parser.add_argument("-q", "--quiet",
-                    help="change log to warning level",
-                    action="store_const",
-                    dest="loglevel",
-                    const=logging.WARNING,
-                    default=logging.INFO)
-parser.add_argument("-t", "--times",
-                    help="number of times session is run",
-                    action="store",
-                    nargs='?',
-                    type=int,
-                    dest="times",
-                    default=1)
-parser.add_argument("-x", "--max_episodes",
-                    help="manually set environment max episodes",
-                    action="store",
-                    nargs='?',
-                    type=int,
-                    dest="max_epis",
-                    default=-1)
-args = parser.parse_args([]) if environ.get('CI') else parser.parse_args()
-
-# Goddam python logger
-logger = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(
-    logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s'))
-logger.setLevel(args.loglevel)
-logger.addHandler(handler)
-logger.propagate = False
-environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # mute tf warnings on optimized setup
 
 
 def log_self(subject):
