@@ -533,9 +533,9 @@
     "Policy": "SoftmaxPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
+      "lr": 0.05,
+      "gamma": 0.999,
+      "hidden_layers": [128],
       "hidden_layers_activation": "sigmoid"
     },
     "param_range": {
