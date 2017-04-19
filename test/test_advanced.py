@@ -51,3 +51,13 @@ class AdvancedTest(unittest.TestCase):
     def test_breakout_double_dqn(cls):
         data_df = run('breakout_double_dqn')
         assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
+    def test_cartpole_ac_argmax(cls):
+        data_df = run('cartpole_ac_argmax')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
+    def test_pendulum_ddpg(cls):
+        data_df = run('pendulum_ddpg')
+        assert isinstance(data_df, pd.DataFrame)
