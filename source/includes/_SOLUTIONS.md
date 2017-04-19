@@ -16,7 +16,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 ||DQN|DoubleDQN|Sarsa|OffPolicySarsa|DoubleDQN-PER|ActorCritic|DPG|DDPG|
 |:---|:---|:---|:---|:---|:---|:---|:---|:---|
 |**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|-|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|[13.90989](https://github.com/kengz/openai_lab/pull/123)|-|-|
-|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|[18.91624](https://github.com/kengz/openai_lab/pull/107)|-|-|-|-|
+|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|[18.91624](https://github.com/kengz/openai_lab/pull/107)|-|[30.57067](https://github.com/kengz/openai_lab/pull/124)|-|-|
 |**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|-|-|
 |**MountainCar-v0**|-|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|-|-|-|-|-|-|
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
@@ -75,8 +75,8 @@ A projection of the Fitness Matrix along the Environments axis. This shows the b
 
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
-|CartPole-v0|[13.90989](https://github.com/kengz/openai_lab/pull/123)|3|kengz/lgraesser|offpol_sarsa|
-|CartPole-v1|[18.91624](https://github.com/kengz/openai_lab/pull/107)|19|kengz/lgraesser|offpol_sarsa_v1|
+|CartPole-v0|[13.90989](https://github.com/kengz/openai_lab/pull/123)|3|kengz/lgraesser|cartpole_ac_softmax|
+|CartPole-v1|[30.57067](https://github.com/kengz/openai_lab/pull/124)|3|kengz/lgraesser|cartpole_v1_ac_softmax|
 |Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|970|kengz/lgraesser|mountain_double_dqn|
 |MountainCarContinuous-v0|-|-|-|-|
