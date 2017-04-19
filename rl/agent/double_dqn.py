@@ -41,14 +41,15 @@ class DoubleDQN(DQN):
         self.optimizer.keras_optimizer = self.optimizer.keras_optimizer_2
         self.optimizer.keras_optimizer_2 = temp_optimizer
 
-    def recompile_model(self, sys_vars):
-        '''rotate and recompile both models'''
-        if self.epi_change_lr is not None:
-            self.switch_models()  # to model_2
-            super(DoubleDQN, self).recompile_model(sys_vars)
-            self.switch_models()  # back to model
-            super(DoubleDQN, self).recompile_model(sys_vars)
-        return self.model
+    # def recompile_model(self, sys_vars):
+    #     '''rotate and recompile both models'''
+    #     # TODO fix this, double recompile breaks solving power
+    #     if self.epi_change_lr is not None:
+    #         self.switch_models()  # to model_2
+    #         super(DoubleDQN, self).recompile_model(sys_vars)
+    #         self.switch_models()  # back to model
+    #         super(DoubleDQN, self).recompile_model(sys_vars)
+    #     return self.model
 
     def compute_Q_states(self, minibatch):
         (Q_states, Q_next_states_select, _max) = super(
