@@ -20,10 +20,10 @@
       "DDPG"
     ],
     "Policy": [
-      "GaussianWhiteNoise",
+      "GaussianWhiteNoisePolicy",
       "LinearNoisePolicy",
       "NoNoisePolicy",
-      "OUNoise"
+      "OUNoisePolicy"
     ]
   },
   "actor_critic": {

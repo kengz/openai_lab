@@ -120,30 +120,5 @@
       "gamma": [0.97, 0.99],
       "lr": [0.01, 0.1]
     }
-  },
-  "dev": {
-    "problem": "CartPole-v0",
-    "Agent": "DDPG",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "OUNoise",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.01,
-      "decay": 0.0,
-      "gamma": 0.99,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid",
-      "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 10,
-      "auto_architecture": false,
-      "num_hidden_layers": 3,
-      "first_hidden_layer_size": 512
-    },
-    "param_range": {
-      "gamma": [0.97, 0.99],
-      "lr": [0.01, 0.1]
-    }
   }
 }

@@ -60,7 +60,7 @@ class LinearNoisePolicy(NoNoisePolicy):
             self.n_step = sys_vars['epi']
 
 
-class AnnealedGaussian(LinearNoisePolicy):
+class AnnealedGaussianPolicy(LinearNoisePolicy):
 
     '''
     Base class of random noise policy for DDPG
@@ -71,7 +71,7 @@ class AnnealedGaussian(LinearNoisePolicy):
     def __init__(self, env_spec, exploration_anneal_episodes,
                  mu, sigma, sigma_min,
                  **kwargs):  # absorb generic param without breaking
-        super(AnnealedGaussian, self).__init__(
+        super(AnnealedGaussianPolicy, self).__init__(
             env_spec, exploration_anneal_episodes)
         self.size = env_spec['action_dim']
         self.mu = mu
@@ -92,12 +92,12 @@ class AnnealedGaussian(LinearNoisePolicy):
         return sigma
 
 
-class GaussianWhiteNoise(AnnealedGaussian):
+class GaussianWhiteNoisePolicy(AnnealedGaussianPolicy):
 
     def __init__(self, env_spec, exploration_anneal_episodes=20,
                  mu=0., sigma=.3, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
-        super(GaussianWhiteNoise, self).__init__(
+        super(GaussianWhiteNoisePolicy, self).__init__(
             env_spec, exploration_anneal_episodes,
             mu, sigma, sigma_min)
 
@@ -106,7 +106,7 @@ class GaussianWhiteNoise(AnnealedGaussian):
         return sample
 
 
-class OUNoise(AnnealedGaussian):
+class OUNoisePolicy(AnnealedGaussianPolicy):
 
     '''
     Based on
@@ -116,7 +116,7 @@ class OUNoise(AnnealedGaussian):
     def __init__(self, env_spec, exploration_anneal_episodes=20,
                  theta=.15, mu=0., sigma=.3, dt=1e-2, x0=None, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
-        super(OUNoise, self).__init__(
+        super(OUNoisePolicy, self).__init__(
             env_spec, exploration_anneal_episodes,
             mu, sigma, sigma_min,
             **kwargs)
