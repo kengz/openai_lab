@@ -20,7 +20,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|-|-|
 |**MountainCar-v0**|-|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|-|-|-|-|-|-|
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
-|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
+|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|
 |**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|-|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|-|-|
 |**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
 |**BipedalWalker-v2**|-|-|-|-|-|-|-|-|
@@ -58,7 +58,7 @@ _Pending: we have a generic formalization to cross-evaluate Agents using heatmap
 |ActorCritic|✓|-|
 |[PG (Policy Gradient)](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)|in-progress|-|
 |[DPG (Deterministic Policy Gradient aka actor-critic)](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|in-progress|-|
-|[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|in-progress|-|
+|[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|✓|-|
 |[A3C (asynchronous advantage actor-critic)](https://arxiv.org/pdf/1602.01783.pdf)|-|-|
 |Dyna|next|-|
 |[TRPO](https://arxiv.org/abs/1502.05477)|-|-|
@@ -80,7 +80,7 @@ A projection of the Fitness Matrix along the Environments axis. This shows the b
 |Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|970|kengz/lgraesser|mountain_double_dqn|
 |MountainCarContinuous-v0|-|-|-|-|
-|Pendulum-v0|-|-|-|-|
+|Pendulum-v0|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|-150.8091|kengz/lgraesser|pendulum_ddpg|
 
 
 ### Box2D Environments
