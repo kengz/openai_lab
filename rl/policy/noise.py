@@ -1,39 +1,24 @@
 import numpy as np
-from rl.util import logger
+from rl.util import log_self
 from rl.policy.base_policy import Policy
 
 
-class AnnealedGaussian(Policy):
+class NoNoisePolicy(Policy):
 
     '''
-    Noise policy, mainly for DDPG.
-    Original inspiration from
-    https://github.com/matthiasplappert/keras-rl/blob/master/rl/random.py
+    The base class for noise policy for DDPG
+    default is no noise
     '''
 
     def __init__(self, env_spec,
-                 mu, sigma, sigma_min,
                  **kwargs):  # absorb generic param without breaking
-        super(AnnealedGaussian, self).__init__(env_spec)
-        self.size = self.env_spec['action_dim']
-        self.n_steps_annealing = self.env_spec['timestep_limit'] / 2
-        self.mu = mu
-        self.sigma = sigma
-        self.n_steps = 0
+        super(NoNoisePolicy, self).__init__(env_spec)
+        log_self(self)
 
-        if sigma_min is not None:
-            self.m = -float(sigma - sigma_min) / float(self.n_steps_annealing)
-            self.c = sigma
-            self.sigma_min = sigma_min
-        else:
-            self.m = 0.
-            self.c = sigma
-            self.sigma_min = sigma
-
-    @property
-    def current_sigma(self):
-        sigma = max(self.sigma_min, self.m * float(self.n_steps) + self.c)
-        return sigma
+    def sample(self):
+        '''implement noise here, default is none'''
+        assert 'actions' in self.env_spec
+        return 0
 
     def select_action(self, state):
         agent = self.agent
@@ -44,39 +29,96 @@ class AnnealedGaussian(Policy):
             Q_state = agent.actor.predict(state)[0]
             assert Q_state.ndim == 1
             action = np.argmax(Q_state)
-            logger.info(str(Q_state)+' '+str(action))
         return action
 
     def update(self, sys_vars):
         pass
 
 
-class GaussianWhiteNoise(AnnealedGaussian):
+class LinearNoisePolicy(NoNoisePolicy):
 
-    def __init__(self, env_spec,
+    '''
+    policy with linearly decaying noise (1. / (1. + self.epi))
+    '''
+
+    def __init__(self, env_spec, exploration_anneal_episodes=20,
+                 **kwargs):  # absorb generic param without breaking
+        super(LinearNoisePolicy, self).__init__(env_spec)
+        self.exploration_anneal_episodes = exploration_anneal_episodes
+        self.n_step = 0  # init
+        log_self(self)
+
+    def sample(self):
+        noise = (1. / (1. + self.n_step))
+        return noise
+
+    def update(self, sys_vars):
+        epi = sys_vars['epi']
+        if epi >= self.exploration_anneal_episodes:
+            self.n_step = np.inf  # noise divide to zero
+        else:
+            self.n_step = sys_vars['epi']
+
+
+class AnnealedGaussianPolicy(LinearNoisePolicy):
+
+    '''
+    Base class of random noise policy for DDPG
+    Adopted from
+    https://github.com/matthiasplappert/keras-rl/blob/master/rl/random.py
+    '''
+
+    def __init__(self, env_spec, exploration_anneal_episodes,
+                 mu, sigma, sigma_min,
+                 **kwargs):  # absorb generic param without breaking
+        super(AnnealedGaussianPolicy, self).__init__(
+            env_spec, exploration_anneal_episodes)
+        self.size = env_spec['action_dim']
+        self.mu = mu
+        self.sigma = sigma
+
+        if sigma_min is not None:
+            self.m = -(sigma - sigma_min) / self.exploration_anneal_episodes
+            self.c = sigma
+            self.sigma_min = sigma_min
+        else:
+            self.m = 0.
+            self.c = sigma
+            self.sigma_min = sigma
+
+    @property
+    def current_sigma(self):
+        sigma = max(self.sigma_min, self.m * self.n_step + self.c)
+        return sigma
+
+
+class GaussianWhiteNoisePolicy(AnnealedGaussianPolicy):
+
+    def __init__(self, env_spec, exploration_anneal_episodes=20,
                  mu=0., sigma=.3, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
-        super(GaussianWhiteNoise, self).__init__(
-            env_spec, mu, sigma, sigma_min)
+        super(GaussianWhiteNoisePolicy, self).__init__(
+            env_spec, exploration_anneal_episodes,
+            mu, sigma, sigma_min)
 
     def sample(self):
         sample = np.random.normal(self.mu, self.current_sigma, self.size)
-        self.n_steps += 1
         return sample
 
 
-class OUNoise(AnnealedGaussian):
+class OUNoisePolicy(AnnealedGaussianPolicy):
 
     '''
     Based on
     http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
     '''
 
-    def __init__(self, env_spec,
+    def __init__(self, env_spec, exploration_anneal_episodes=20,
                  theta=.15, mu=0., sigma=.3, dt=1e-2, x0=None, sigma_min=None,
                  **kwargs):  # absorb generic param without breaking
-        super(OUNoise, self).__init__(
-            env_spec, mu, sigma, sigma_min,
+        super(OUNoisePolicy, self).__init__(
+            env_spec, exploration_anneal_episodes,
+            mu, sigma, sigma_min,
             **kwargs)
         self.theta = theta
         self.mu = mu
@@ -92,5 +134,4 @@ class OUNoise(AnnealedGaussian):
             (self.mu - self.x_prev) * self.dt + self.current_sigma * \
             np.sqrt(self.dt) * np.random.normal(size=self.size)
         self.x_prev = x
-        self.n_steps += 1
         return x

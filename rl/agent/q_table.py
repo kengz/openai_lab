@@ -71,7 +71,9 @@ class QTable(Agent):
 
     def pixelate_state_space(self, resolution=10):
         '''chunk up the state space hypercube to specified resolution'''
-        state_bounds = self.env_spec['state_bounds']
+        state_bounds = np.transpose(
+            [self.env_spec['state_bound_low'],
+             self.env_spec['state_bound_high']])
         self.state_pixels = [np.linspace(*sb, num=resolution+1)
                              for sb in state_bounds]
         return self.state_pixels

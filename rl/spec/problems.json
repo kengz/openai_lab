@@ -44,7 +44,7 @@
   "Pendulum-v0": {
     "GYM_ENV_NAME": "Pendulum-v0",
     "SOLVED_MEAN_REWARD": null,
-    "MAX_EPISODES": 1000,
+    "MAX_EPISODES": 300,
     "REWARD_MEAN_LEN": 100
   },
   "LunarLander-v2": {

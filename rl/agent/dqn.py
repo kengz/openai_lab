@@ -193,7 +193,7 @@ class DQN(Agent):
 
         loss = self.model.train_on_batch(minibatch['states'], Q_targets)
 
-        errors = abs(np.sum(Q_states  - Q_targets, axis=1))
+        errors = abs(np.sum(Q_states - Q_targets, axis=1))
         self.memory.update(errors)
         return loss
 

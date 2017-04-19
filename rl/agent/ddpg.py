@@ -1,54 +1,106 @@
+import numpy as np
 from rl.agent.dqn import DQN
-from rl.util import logger, clone_model, clone_optimizer
+from rl.util import logger, clone_model
 
 
-class DDPG(DQN):
+class Actor(DQN):
+    '''
+    Actor of DDPG, with its network and target network
+    input is states, output is action
+    very similar to DQN
+    '''
+
+    def __init__(self, *args, tau=0.001, **kwargs):
+        from keras import backend as K
+        self.K = K
+        self.tf = self.K.tf
+        self.sess = self.K.get_session()
+        self.tau = tau
+        super(Actor, self).__init__(*args, **kwargs)
+
+    def build_model(self):
+        self.model = super(Actor, self).build_model()
+        self.target_model = clone_model(self.model)
+
+        self.actor_states = self.model.inputs[0]
+        self.out = self.model.output
+        self.scaled_out = self.tf.multiply(
+            self.out, self.env_spec['action_bound_high'])
+        self.network_params = self.model.trainable_weights
+
+        self.target_actor_states = self.target_model.inputs[0]
+        self.target_out = self.target_model.output
+        self.target_scaled_out = self.tf.multiply(
+            self.target_out, self.env_spec['action_bound_high'])
+        self.target_network_params = self.target_model.trainable_weights
+
+        # Op for updating target network
+        self.update_target_network_op = []
+        for i, t_w in enumerate(self.target_network_params):
+            op = t_w.assign(
+                self.tf.multiply(
+                    self.tau, self.network_params[i]
+                ) + self.tf.multiply(1. - self.tau, t_w))
+            self.update_target_network_op.append(op)
+
+        # will be fed as self.action_gradient: critic_grads
+        self.action_gradient = self.tf.placeholder(
+            self.tf.float32, [None, self.env_spec['action_dim']])
+
+        # actor model gradient op, to be fed from critic
+        self.actor_gradients = self.tf.gradients(
+            self.scaled_out, self.network_params, -self.action_gradient)
+
+        # Optimization op
+        self.optimize = self.tf.train.AdamOptimizer(self.lr).apply_gradients(
+            zip(self.actor_gradients, self.network_params))
+        return self.model
+
+    def compile_model(self):
+        pass
+
+    def recompile_model(self, sys_vars):
+        pass
+
+    def update(self, sys_vars):
+        self.sess.run(self.update_target_network_op)
+
+    def predict(self, states):
+        return self.sess.run(self.scaled_out, feed_dict={
+            self.actor_states: states
+        })
+
+    def target_predict(self, next_states):
+        return self.sess.run(self.target_scaled_out, feed_dict={
+            self.target_actor_states: next_states
+        })
+
+    def train_tf(self, states, critic_action_gradient):
+        return self.sess.run(self.optimize, feed_dict={
+            self.actor_states: states,
+            self.action_gradient: critic_action_gradient
+        })
+
+
+class Critic(DQN):
 
     '''
-    The DDPG agent (algo), from https://arxiv.org/abs/1509.02971
-    reference: https://yanpanlau.github.io/2016/10/11/Torcs-Keras.html
-    https://github.com/matthiasplappert/keras-rl
+    Critic of DDPG, with its network and target network
+    input is states and actions, output is Q value
+    the action is from Actor
     '''
 
-    def __init__(self, *args, **kwargs):
-        # import only when needed to contain side-effects
+    def __init__(self, *args, tau=0.001, critic_lr=0.001, **kwargs):
         from keras.layers import Dense, Merge
-        from keras.models import Sequential
         from keras import backend as K
         self.Dense = Dense
         self.Merge = Merge
-        self.Sequential = Sequential
         self.K = K
-
-        self.TAU = 0.001  # for target network updates
-        super(DDPG, self).__init__(*args, **kwargs)
-
-    def compile(self, memory, optimizer, policy, preprocessor):
-        # override to make 4 optimizers
-        self.optimizer = optimizer
-        # clone for actor, critic networks
-        self.optimizer.actor_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.target_actor_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.critic_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        self.optimizer.target_critic_keras_optimizer = clone_optimizer(
-            self.optimizer.keras_optimizer)
-        del self.optimizer.keras_optimizer
-
-        super(DDPG, self).compile(memory, self.optimizer, policy, preprocessor)
-
-    def build_actor_models(self):
-        model = self.Sequential()
-        self.build_hidden_layers(model)
-        model.add(self.Dense(self.env_spec['action_dim'],
-                             init='lecun_uniform',
-                             activation=self.output_layer_activation))
-        logger.info('Actor model summary')
-        model.summary()
-        self.actor = model
-        self.target_actor = clone_model(self.actor)
+        self.tf = self.K.tf
+        self.sess = self.K.get_session()
+        self.tau = tau
+        self.critic_lr = critic_lr  # suggestion: 10 x actor_lr
+        super(Critic, self).__init__(*args, **kwargs)
 
     def build_critic_models(self):
         state_branch = self.Sequential()
@@ -79,108 +131,136 @@ class DDPG(DQN):
 
         model.add(self.Dense(1,
                              init='lecun_uniform',
-                             activation=self.output_layer_activation))
+                             activation='linear'))  # fixed
         logger.info('Critic model summary')
         model.summary()
-        self.critic = model
-        self.target_critic = clone_model(self.critic)
+        self.model = model
+
+        logger.info("Model built")
+        return self.model
 
     def build_model(self):
-        self.build_actor_models()
-        self.build_critic_models()
+        self.model = self.build_critic_models()
+        self.target_model = clone_model(self.model)
 
-    def custom_critic_loss(self, y_true, y_pred):
-        return self.K.mean(self.K.square(y_true - y_pred))
+        self.critic_states = self.model.inputs[0]
+        self.critic_actions = self.model.inputs[1]
+        self.out = self.model.output
+        self.network_params = self.model.trainable_weights
 
-    def compile_model(self):
-        self.actor_state = self.actor.inputs[0]
-        self.action_gradient = self.K.placeholder(
-            shape=(None, self.env_spec['action_dim']))
-        self.actor_grads = self.K.tf.gradients(
-            self.actor.output, self.actor.trainable_weights,
-            -self.action_gradient)
-        self.actor_optimize = self.K.tf.train.AdamOptimizer(
-            self.lr).apply_gradients(
-            zip(self.actor_grads, self.actor.trainable_weights))
+        self.target_critic_states = self.target_model.inputs[0]
+        self.target_critic_actions = self.target_model.inputs[1]
+        self.target_out = self.target_model.output
+        self.target_network_params = self.target_model.trainable_weights
 
-        self.critic_state = self.critic.inputs[0]
-        self.critic_action = self.critic.inputs[1]
-        self.critic_action_grads = self.K.tf.gradients(
-            self.critic.output, self.critic_action)
+        # Op for updating target network
+        self.update_target_network_op = []
+        for i, t_w in enumerate(self.target_network_params):
+            op = t_w.assign(
+                self.tf.multiply(
+                    self.tau, self.network_params[i]
+                ) + self.tf.multiply(1. - self.tau, t_w))
+            self.update_target_network_op.append(op)
 
-        # self.actor.compile(
-        #     loss='mse',
-        #     optimizer=self.optimizer.actor_keras_optimizer)
-        self.target_actor.compile(
-            loss='mse',
-            optimizer=self.optimizer.target_actor_keras_optimizer)
-        logger.info("Actor Models compiled")
+        # custom loss and optimization Op
+        self.y = self.tf.placeholder(self.tf.float32, [None, 1])
+        self.loss = self.tf.losses.mean_squared_error(self.y, self.out)
+        self.optimize = self.tf.train.AdamOptimizer(
+            self.critic_lr).minimize(self.loss)
 
-        self.critic.compile(
-            loss=self.custom_critic_loss,
-            optimizer=self.optimizer.critic_keras_optimizer)
-        self.target_critic.compile(
-            loss='mse',
-            optimizer=self.optimizer.target_critic_keras_optimizer)
-        logger.info("Critic Models compiled")
+        self.action_gradient = self.tf.gradients(self.out, self.critic_actions)
+        return self.model
 
     def update(self, sys_vars):
-        '''Agent update apart from training the Q function'''
+        self.sess.run(self.update_target_network_op)
+
+    def get_action_gradient(self, states, actions):
+        return self.sess.run(self.action_gradient, feed_dict={
+            self.critic_states: states,
+            self.critic_actions: actions
+        })[0]
+
+    # def predict(self, inputs, action):
+    #     return self.sess.run(self.out, feed_dict={
+    #         self.critic_states: inputs,
+    #         self.critic_actions: action
+    #     })
+
+    def target_predict(self, next_states, mu_prime):
+        return self.sess.run(self.target_out, feed_dict={
+            self.target_critic_states: next_states,
+            self.target_critic_actions: mu_prime
+        })
+
+    def train_tf(self, states, actions, y):
+        return self.sess.run([self.out, self.optimize, self.loss], feed_dict={
+            self.critic_states: states,
+            self.critic_actions: actions,
+            self.y: y
+        })
+
+
+class DDPG(DQN):
+
+    '''
+    DDPG Algorithm, from https://arxiv.org/abs/1509.02971
+    has Actor, Critic, and each has its own target network
+    Implementation referred from https://github.com/pemami4911/deep-rl
+    '''
+
+    def __init__(self, *args, **kwargs):
+        # import only when needed to contain side-effects
+        from keras import backend as K
+        self.K = K
+        self.sess = self.K.get_session()
+        self.actor = Actor(*args, **kwargs)
+        self.critic = Critic(*args, **kwargs)
+        self.sess.run(self.K.tf.global_variables_initializer())
+        super(DDPG, self).__init__(*args, **kwargs)
+
+    def build_model(self):
+        pass
+
+    def compile_model(self):
+        pass
+
+    def recompile_model(self, sys_vars):
+        pass
+
+    def select_action(self, state):
+        return self.policy.select_action(state)
+
+    def update(self, sys_vars):
+        # Update target networks
+        self.actor.update(sys_vars)
+        self.critic.update(sys_vars)
         self.policy.update(sys_vars)
         self.update_n_epoch(sys_vars)
 
-    def train_critic(self, minibatch):
-        '''update critic network using K-mean loss'''
-        mu_prime = self.target_actor.predict(minibatch['next_states'])
-        Q_prime = self.target_critic.predict(
-            [minibatch['next_states'], mu_prime])
-        y = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * Q_prime
-        critic_loss = self.critic.train_on_batch(
-            [minibatch['states'], minibatch['actions']], y)
-        errors = abs(np.sum(Q_prime - y, axis=1))
-        self.memory.update(errors)
-        return critic_loss
-
-    def train_actor(self, minibatch):
-        '''update actor network using sampled gradient'''
-        actions = self.actor.predict(minibatch['states'])
-        # critic_grads = critic.gradients(minibatch['states'], actions)
-        critic_grads = self.K.get_session().run(
-            self.critic_action_grads, feed_dict={
-                self.critic_state: minibatch['states'],
-                self.critic_action: actions
-            })[0]
-
-        # actor.train(minibatch['states'], critic_grads)
-        self.K.get_session().run(self.actor_optimize, feed_dict={
-            self.actor_state: minibatch['states'],
-            self.action_gradient: critic_grads
-        })
-        actor_loss = 0
-        return actor_loss
-
-    def train_target_networks(self):
-        '''update both target networks'''
-        actor_weights = self.actor.get_weights()
-        target_actor_weights = self.target_actor.get_weights()
-        for i, _w in enumerate(actor_weights):
-            target_actor_weights[i] = self.TAU * actor_weights[i] + (
-                1 - self.TAU) * target_actor_weights[i]
-        self.target_actor.set_weights(target_actor_weights)
-
-        critic_weights = self.critic.get_weights()
-        target_critic_weights = self.target_critic.get_weights()
-        for i, _w in enumerate(critic_weights):
-            target_critic_weights[i] = self.TAU * critic_weights[i] + (
-                1 - self.TAU) * target_critic_weights[i]
-        self.target_critic.set_weights(target_critic_weights)
-
     def train_an_epoch(self):
         minibatch = self.memory.rand_minibatch(self.batch_size)
-        critic_loss = self.train_critic(minibatch)
-        actor_loss = self.train_actor(minibatch)
-        self.train_target_networks()
 
-        loss = critic_loss + actor_loss
+        # train critic
+        mu_prime = self.actor.target_predict(minibatch['next_states'])
+        q_prime = self.critic.target_predict(
+            minibatch['next_states'], mu_prime)
+        # reshape for element-wise multiplication
+        # to feed into network, y shape needs to be (?, 1)
+        y = minibatch['rewards'] + self.gamma * \
+            (1 - minibatch['terminals']) * np.reshape(q_prime, (-1))
+        y = np.reshape(y, (-1, 1))
+
+        _, _, critic_loss = self.critic.train_tf(
+            minibatch['states'], minibatch['actions'], y)
+
+        # train actor
+        # Update the actor policy using the sampled gradient
+        actions = self.actor.predict(minibatch['states'])
+        critic_action_gradient = self.critic.get_action_gradient(
+            minibatch['states'], actions)
+        # currently cant be gotten
+        _actorloss = self.actor.train_tf(
+            minibatch['states'], critic_action_gradient)
+
+        loss = critic_loss
         return loss
