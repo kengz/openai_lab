@@ -44,24 +44,23 @@ A projection of the Fitness Matrix along the Agents axis. This shows overall sta
 
 _Pending: we have a generic formalization to cross-evaluate Agents using heatmap statistics; see [Metrics](#metrics). This is on the roadmap._
 
-|algorithm|implemented?|eval score (pending)|
+|algorithm|implementation|eval score (pending)|
 |:---|:---|:---|
-|[DQN](https://arxiv.org/abs/1312.5602)|✓|-|
-|[DoubleDQN](https://arxiv.org/abs/1509.06461)|✓|-|
-|[DuelingDQN](https://arxiv.org/abs/1511.06581)|-|-|
-|Sarsa|✓|-|
-|OffPolicySarsa|✓|-|
-|[PER (Prioritized Experience Replay)](https://arxiv.org/abs/1511.05952)|✓|-|
-|Q*(lambda)|-|-|
-|Retrace(lambda)|-|-|
-|[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|-|-|
-|ActorCritic|✓|-|
-|[PG (Policy Gradient)](https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf)|in-progress|-|
-|[DPG (Deterministic Policy Gradient aka actor-critic)](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|in-progress|-|
-|[DDPG (Deep-DPG, aka actor-critic with target networks)](https://arxiv.org/abs/1509.02971)|✓|-|
+|[DQN](https://arxiv.org/abs/1312.5602)|[DQN](https://github.com/kengz/openai_lab/blob/master/rl/agent/dqn.py)|-|
+|[Double DQN](https://arxiv.org/abs/1509.06461)|[DoubleDQN](https://github.com/kengz/openai_lab/blob/master/rl/agent/double_dqn.py)|-|
+|[Dueling DQN](https://arxiv.org/abs/1511.06581)|-|-|
+|Sarsa|[DeepSarsa](https://github.com/kengz/openai_lab/blob/master/rl/agent/deep_sarsa.py)|-|
+|Off-Policy Sarsa|[OffPolicySarsa](https://github.com/kengz/openai_lab/blob/master/rl/agent/offpol_sarsa.py)|-|
+|[PER (Prioritized Experience Replay)](https://arxiv.org/abs/1511.05952)|[PrioritizedExperienceReplay](https://github.com/kengz/openai_lab/blob/master/rl/memory/prioritized_exp_replay.py)|-|
+|[CEM (Cross Entropy Method)](https://en.wikipedia.org/wiki/Cross-entropy_method)|next|-|
+|[REINFORCE](http://incompleteideas.net/sutton/williams-92.pdf)|-|-|
+|[DPG (Deterministic Policy Gradient) off-policy actor-critic](http://jmlr.org/proceedings/papers/v32/silver14.pdf)|[ActorCritic](https://github.com/kengz/openai_lab/blob/master/rl/agent/actor_critic.py)|-|
+|[DDPG (Deep-DPG) actor-critic with target networks](https://arxiv.org/abs/1509.02971)|[DDPG](https://github.com/kengz/openai_lab/blob/master/rl/agent/ddpg.py)|-|
 |[A3C (asynchronous advantage actor-critic)](https://arxiv.org/pdf/1602.01783.pdf)|-|-|
 |Dyna|next|-|
 |[TRPO](https://arxiv.org/abs/1502.05477)|-|-|
+|Q*(lambda)|-|-|
+|Retrace(lambda)|-|-|
 |[Neural Episodic Control (NEC)](https://arxiv.org/abs/1703.01988)|-|-|
 |[EWC (Elastic Weight Consolidation)](https://arxiv.org/abs/1612.00796)|-|-|
 

@@ -50,10 +50,8 @@ To navigate the different RL algorithms:
         - **REINFORCE**
 
     - ActorCritic
-        - **ActorCritic** (discrete)
-        - **ActorCritic** (continuous)
-        - **DPG** - typically this is an actorCritic implementation where there's a different policy for exploration and target
-        - **DDPG** - very similar to DPG except with target networks and batch norm
+        - **DPG** - typically implemented with ActorCritic, there's a different policy for exploration and target
+        - **DDPG** - very similar to DPG except with target networks and batch normalization
 
 - Model based
     - Value based
