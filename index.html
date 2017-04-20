@@ -207,23 +207,119 @@
 
 <p><em>An experimentation system for Reinforcement Learning using OpenAI Gym, Tensorflow, and Keras.</em></p>
 
-<p><em>OpenAI Lab</em> is created to do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. It provides an easy to use interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, combined with an automated experiment and evaluation framework.</p>
+<p><em>OpenAI Lab</em> is created to do Reinforcement Learning (RL) like science - <em>theorize, experiment</em>. It provides an easy interface to <a href="https://gym.openai.com/">OpenAI Gym</a> and <a href="https://keras.io/">Keras</a>, with an automated experiment and evaluation framework.</p>
 
-<p>This is <a href="#motivations">motivated by the problems we experienced in RL research</a>: the difficulty of building upon other&rsquo;s work, the lack of rigor in comparisons of research results, and the inertia to high level vision.</p>
+<p>This is <a href="#motivations">motivated by the problems we faced in RL research</a>: <em>the difficulty of building upon other&rsquo;s work, the lack of rigor in comparisons of research results, and the inertia to high level vision.</em></p>
 
 <p>The Lab aims to make RL research more efficient and to encourage experimentation, by doing three things:</p>
 
 <ol>
 <li>Handles the basic RL environment and algorithm setups.</li>
 <li>Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.</li>
-<li>Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are logged in a standardized format so that solutions can be reproduced by anyone using the Lab.</li>
+<li>Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are stored in standardized format for reproducibility and comparisons.</li>
 </ol>
 
 <p>With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory, and parameter tuning. It allows us to build agents efficiently using existing components with the implementations from research ideas. We could then test the research hypotheses systematically by running experiments.</p>
 
-<p><strong>See the <a href="#solutions">Solutions</a> to some OpenAI environments that the Lab users have produced.</strong></p>
-
 <p><em>Ultimately, the Lab is a generalized framework for doing reinforcement learning, agnostic of OpenAI Gym and Keras. Pytorch-based implementations are on the roadmap, for example.</em></p>
+
+<h3 id="implemented-algorithms">Implemented Algorithms</h3>
+
+<p>See the <strong><a href="#fitness-matrix">Fitness Matrix</a></strong> for the results of these algorithms below in the OpenAI gym environments.</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">algorithm</th>
+<th style="text-align: left">implementation</th>
+<th style="text-align: left">eval score (pending)</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/dqn.py">DQN</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">Double DQN</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/double_dqn.py">DoubleDQN</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">Dueling DQN</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Sarsa</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/deep_sarsa.py">DeepSarsa</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Off-Policy Sarsa</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/offpol_sarsa.py">OffPolicySarsa</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">PER (Prioritized Experience Replay)</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/memory/prioritized_exp_replay.py">PrioritizedExperienceReplay</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://incompleteideas.net/sutton/williams-92.pdf">REINFORCE</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient) off-policy actor-critic</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/actor_critic.py">ActorCritic</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG) actor-critic with target networks</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/ddpg.py">DDPG</a></td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/pdf/1602.01783.pdf">A3C (asynchronous advantage actor-critic)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Dyna</td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Q*(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Retrace(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1703.01988">Neural Episodic Control (NEC)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1612.00796">EWC (Elastic Weight Consolidation)</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+</tbody></table>
 
 <h3 id="run-the-lab">Run the Lab</h3>
 
@@ -1323,73 +1419,58 @@ When developing a new algorithm, use the session graph to immediately see how th
 <table><thead>
 <tr>
 <th style="text-align: left">algorithm</th>
-<th style="text-align: left">implemented?</th>
+<th style="text-align: left">implementation</th>
 <th style="text-align: left">eval score (pending)</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><a href="https://arxiv.org/abs/1312.5602">DQN</a></td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/dqn.py">DQN</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">DoubleDQN</a></td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.06461">Double DQN</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/double_dqn.py">DoubleDQN</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">DuelingDQN</a></td>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1511.06581">Dueling DQN</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
 <td style="text-align: left">Sarsa</td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/deep_sarsa.py">DeepSarsa</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left">OffPolicySarsa</td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left">Off-Policy Sarsa</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/offpol_sarsa.py">OffPolicySarsa</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://arxiv.org/abs/1511.05952">PER (Prioritized Experience Replay)</a></td>
-<td style="text-align: left">✓</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Q*(lambda)</td>
-<td style="text-align: left">-</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left">Retrace(lambda)</td>
-<td style="text-align: left">-</td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/memory/prioritized_exp_replay.py">PrioritizedExperienceReplay</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://en.wikipedia.org/wiki/Cross-entropy_method">CEM (Cross Entropy Method)</a></td>
+<td style="text-align: left">next</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left"><a href="http://incompleteideas.net/sutton/williams-92.pdf">REINFORCE</a></td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left">ActorCritic</td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient) off-policy actor-critic</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/actor_critic.py">ActorCritic</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
-<td style="text-align: left"><a href="https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf">PG (Policy Gradient)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="http://jmlr.org/proceedings/papers/v32/silver14.pdf">DPG (Deterministic Policy Gradient aka actor-critic)</a></td>
-<td style="text-align: left">in-progress</td>
-<td style="text-align: left">-</td>
-</tr>
-<tr>
-<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG, aka actor-critic with target networks)</a></td>
-<td style="text-align: left">✓</td>
+<td style="text-align: left"><a href="https://arxiv.org/abs/1509.02971">DDPG (Deep-DPG) actor-critic with target networks</a></td>
+<td style="text-align: left"><a href="https://github.com/kengz/openai_lab/blob/master/rl/agent/ddpg.py">DDPG</a></td>
 <td style="text-align: left">-</td>
 </tr>
 <tr>
@@ -1404,6 +1485,16 @@ When developing a new algorithm, use the session graph to immediately see how th
 </tr>
 <tr>
 <td style="text-align: left"><a href="https://arxiv.org/abs/1502.05477">TRPO</a></td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Q*(lambda)</td>
+<td style="text-align: left">-</td>
+<td style="text-align: left">-</td>
+</tr>
+<tr>
+<td style="text-align: left">Retrace(lambda)</td>
 <td style="text-align: left">-</td>
 <td style="text-align: left">-</td>
 </tr>
@@ -1814,10 +1905,8 @@ When developing a new algorithm, use the session graph to immediately see how th
 <li>ActorCritic
 
 <ul>
-<li><strong>ActorCritic</strong> (discrete)</li>
-<li><strong>ActorCritic</strong> (continuous)</li>
-<li><strong>DPG</strong> - typically this is an actorCritic implementation where there&rsquo;s a different policy for exploration and target</li>
-<li><strong>DDPG</strong> - very similar to DPG except with target networks and batch norm</li>
+<li><strong>DPG</strong> - typically implemented with ActorCritic, there&rsquo;s a different policy for exploration and target</li>
+<li><strong>DDPG</strong> - very similar to DPG except with target networks and batch normalization</li>
 </ul></li>
 </ul></li>
 <li><p>Model based</p>
