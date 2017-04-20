@@ -1,4 +1,4 @@
-# <a name="agents"></a>Agents
+# <a name="agents"></a>Agents (Code)
 
 Agents are containers for reinforcement learning algorithms. They consist of a number of different components which are specified in the `experiment_specs`.
 

@@ -1,4 +1,4 @@
-# <a name="algorithms"></a>Algorithms
+# <a name="algorithms"></a>Algorithms (Theory)
 
 The currently implemented algorithms combine deep neural networks with a number of classic reinforcement learning algorithms. These are just a starting point. Please invent your own! 
 
