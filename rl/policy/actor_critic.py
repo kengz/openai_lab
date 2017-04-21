@@ -1,6 +1,32 @@
 import numpy as np
+from rl.policy.base_policy import Policy
 from rl.policy.epsilon_greedy import EpsilonGreedyPolicy
 from rl.util import log_self
+
+
+class ArgmaxPolicy(Policy):
+
+    '''
+    The argmax policy for actor critic agents
+    Agent takes the action with the highest
+    action score
+    '''
+
+    def __init__(self, env_spec,
+                 **kwargs):  # absorb generic param without breaking
+        super(ArgmaxPolicy, self).__init__(env_spec)
+        log_self(self)
+
+    def select_action(self, state):
+        agent = self.agent
+        state = np.expand_dims(state, axis=0)
+        A_score = agent.actor.predict(state)[0]  # extract from batch predict
+        assert A_score.ndim == 1
+        action = np.argmax(A_score)
+        return action
+
+    def update(self, sys_vars):
+        pass
 
 
 class DPGPolicy(EpsilonGreedyPolicy):
