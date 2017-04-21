@@ -1,19 +1,51 @@
 import numpy as np
-from rl.policy.base_policy import Policy
+from rl.policy.epsilon_greedy import EpsilonGreedyPolicy
 from rl.util import log_self
 
 
-class ArgmaxPolicy(Policy):
+class DPGPolicy(EpsilonGreedyPolicy):
 
     '''
-    The argmax policy for actor critic agents
-    Agent takes the action with the highest
-    action score
+    The DPG  policy for actor critic agents
+    With probability e agent samples randomly
+    from the action space
+    With probability 1 - e agent selects the argmax of
+    the actions
     '''
 
     def __init__(self, env_spec,
-                 **kwargs):  # absorb generic param without breaking
-        super(ArgmaxPolicy, self).__init__(env_spec)
+                            init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
+                            **kwargs):  # absorb generic param without breaking
+        super(DPGPolicy, self).__init__(env_spec, init_e, final_e, 
+                                                                exploration_anneal_episodes)
+        log_self(self)
+
+    def select_action(self, state):
+        agent = self.agent
+        if self.e > np.random.rand():
+            action = np.random.choice(agent.env_spec['actions'])
+        else:
+            state = np.expand_dims(state, axis=0)
+            A_score = agent.actor.predict(state)[0]  # extract from batch predict
+            assert A_score.ndim == 1
+            action = np.argmax(A_score)
+        return action
+
+class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
+
+    '''
+    The DPG softmax policy for actor critic agents
+    With probability e agent samples from softmax 
+    distribution over the action space
+    With probability 1 - e agent selects the argmax of
+    the actions
+    '''
+
+    def __init__(self, env_spec,
+                            init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
+                            **kwargs):  # absorb generic param without breaking
+        super(DPGPolicy, self).__init__(env_spec, init_e, final_e, 
+                                                                exploration_anneal_episodes)
         log_self(self)
 
     def select_action(self, state):
@@ -21,11 +53,18 @@ class ArgmaxPolicy(Policy):
         state = np.expand_dims(state, axis=0)
         A_score = agent.actor.predict(state)[0]  # extract from batch predict
         assert A_score.ndim == 1
-        action = np.argmax(A_score)
+        if self.e > np.random.rand():
+            A_score = A_score.astype('float32')  # fix precision nan issue
+            A_score = A_score - np.amax(A_score)  # prevent overflow
+            exp_values = np.exp(
+                np.clip(A_score, -self.clip_val, self.clip_val))
+            assert not np.isnan(exp_values).any()
+            probs = np.array(exp_values / np.sum(exp_values))
+            probs /= probs.sum()  # renormalize to prevent floating pt error
+            action = np.random.choice(agent.env_spec['actions'], p=probs)
+        else:
+            action = np.argmax(A_score)
         return action
-
-    def update(self, sys_vars):
-        pass
 
 
 class SoftmaxPolicy(Policy):
