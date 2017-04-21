@@ -141,8 +141,9 @@ class Grapher(object):
         ax3.relim()
         ax3.autoscale_view(tight=True, scalex=True, scaley=True)
 
-        self.plt.draw()
-        self.plt.pause(0.01)
+        if not args.mute_plot:
+            self.plt.draw()
+            self.plt.pause(0.01)
         self.save()
         import gc
         gc.collect()

@@ -31,6 +31,12 @@ parser.add_argument("-b", "--blind",
                     dest="render",
                     const=False,
                     default=True)
+parser.add_argument("-m", "--mute_plot",
+                    help="dont live plot chart",
+                    action="store_const",
+                    dest="mute_plot",
+                    const=True,
+                    default=False)
 parser.add_argument("-d", "--debug",
                     help="activate debug log",
                     action="store_const",
