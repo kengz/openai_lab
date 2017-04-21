@@ -1,6 +1,7 @@
 import numpy as np
 from rl.policy.base_policy import Policy
 from rl.policy.epsilon_greedy import EpsilonGreedyPolicy
+from rl.policy.boltzmann import BoltzmannPolicy
 from rl.util import log_self
 
 
@@ -70,8 +71,9 @@ class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                             init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                             **kwargs):  # absorb generic param without breaking
-        super(DPGPolicy, self).__init__(env_spec, init_e, final_e, 
+        super(DPGSoftmaxPolicy, self).__init__(env_spec, init_e, final_e, 
                                                                 exploration_anneal_episodes)
+        self.clip_val = 500
         log_self(self)
 
     def select_action(self, state):
@@ -91,6 +93,58 @@ class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
         else:
             action = np.argmax(A_score)
         return action
+
+
+class DPGBoltzmannPolicy(BoltzmannPolicy):
+
+    '''
+    The DPG softmax policy for actor critic agents
+    With probability e agent samples from softmax 
+    distribution over the action space
+    With probability 1 - e agent selects the argmax of
+    the actions
+    '''
+
+    def __init__(self, env_spec,
+                            init_e=1.0, final_e=0.1, exploration_anneal_episodes_e=20,
+                            init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
+                            **kwargs):  # absorb generic param without breaking
+        super(DPGBoltzmannPolicy, self).__init__(env_spec, init_e, final_e, 
+                                                                exploration_anneal_episodes)
+        self.clip_val = 500
+        self.init_e = init_e
+        self.final_e = final_e
+        self.e = self.init_e
+        self.exploration_anneal_episodes_e = exploration_anneal_episodes_e
+        log_self(self)
+
+    def select_action(self, state):
+        agent = self.agent
+        state = np.expand_dims(state, axis=0)
+        A_score = agent.actor.predict(state)[0]  # extract from batch predict
+        assert A_score.ndim == 1
+        if self.e > np.random.rand():   
+            A_score = A_score.astype('float64')  # fix precision nan issue
+            A_score = A_score - np.amax(A_score)  # prevent overflow
+            exp_values = np.exp(A_score / self.tau) + 0.0001  # prevent underflow
+            assert not np.isnan(exp_values).any()
+            probs = np.array(exp_values / np.sum(exp_values))
+            probs /= probs.sum()  # renormalize to prevent floating pt error
+            action = np.random.choice(agent.env_spec['actions'], p=probs)
+        else:
+            action = np.argmax(A_score)
+        return action
+
+    def update(self, sys_vars):
+        '''strategy to update tau in agent'''
+        epi = sys_vars['epi']
+        rise = self.final_tau - self.init_tau
+        slope = rise / float(self.exploration_anneal_episodes)
+        self.tau = max(slope * epi + self.init_tau, self.final_tau)
+        rise = self.final_e - self.init_e
+        slope = rise / float(self.exploration_anneal_episodes_e)
+        self.e = max(slope * epi + self.init_e, self.final_e)
+        return self.tau
 
 
 class SoftmaxPolicy(Policy):
