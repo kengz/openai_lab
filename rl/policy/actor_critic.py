@@ -30,7 +30,7 @@ class ArgmaxPolicy(Policy):
         pass
 
 
-class DPGPolicy(EpsilonGreedyPolicy):
+class ArgmaxEpsGreedyPolicy(EpsilonGreedyPolicy):
 
     '''
     The DPG  policy for actor critic agents
@@ -43,7 +43,7 @@ class DPGPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                             init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                             **kwargs):  # absorb generic param without breaking
-        super(DPGPolicy, self).__init__(env_spec, init_e, final_e, 
+        super(ArgmaxEpsGreedyPolicy, self).__init__(env_spec, init_e, final_e, 
                                                                 exploration_anneal_episodes)
         log_self(self)
 
@@ -58,7 +58,7 @@ class DPGPolicy(EpsilonGreedyPolicy):
             action = np.argmax(A_score)
         return action
 
-class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
+class ArgmaxSoftmaxPolicy(EpsilonGreedyPolicy):
 
     '''
     The DPG softmax policy for actor critic agents
@@ -71,7 +71,7 @@ class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
     def __init__(self, env_spec,
                             init_e=1.0, final_e=0.1, exploration_anneal_episodes=30,
                             **kwargs):  # absorb generic param without breaking
-        super(DPGSoftmaxPolicy, self).__init__(env_spec, init_e, final_e, 
+        super(ArgmaxSoftmaxPolicy, self).__init__(env_spec, init_e, final_e, 
                                                                 exploration_anneal_episodes)
         self.clip_val = 500
         log_self(self)
@@ -95,7 +95,7 @@ class DPGSoftmaxPolicy(EpsilonGreedyPolicy):
         return action
 
 
-class DPGBoltzmannPolicy(BoltzmannPolicy):
+class ArgmaxBoltzmannPolicy(BoltzmannPolicy):
 
     '''
     The DPG softmax policy for actor critic agents
@@ -109,7 +109,7 @@ class DPGBoltzmannPolicy(BoltzmannPolicy):
                             init_e=1.0, final_e=0.1, exploration_anneal_episodes_e=20,
                             init_tau=5., final_tau=0.5, exploration_anneal_episodes=20,
                             **kwargs):  # absorb generic param without breaking
-        super(DPGBoltzmannPolicy, self).__init__(env_spec, init_e, final_e, 
+        super(ArgmaxBoltzmannPolicy, self).__init__(env_spec, init_e, final_e, 
                                                                 exploration_anneal_episodes)
         self.clip_val = 500
         self.init_e = init_e
