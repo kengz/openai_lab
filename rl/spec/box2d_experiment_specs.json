@@ -253,10 +253,10 @@
     "param": {
       "lr": 0.001,
       "gamma": 0.99,
-      "hidden_layers": [400, 300],
+      "hidden_layers": [400, 200],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 100,
+      "exploration_anneal_episodes": 100
     },
     "param_range": {
       "lr": [0.0005, 0.001, 0.005],
