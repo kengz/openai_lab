@@ -29,7 +29,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
 
         # bump to account for negative terms in reward get_priority
         # and we cannot abs(reward) cuz it's sign sensitive
-        SOLVED_MEAN_REWARD = self.env_spec['problem']['SOLVED_MEAN_REWARD']
+        SOLVED_MEAN_REWARD = self.env_spec['problem']['SOLVED_MEAN_REWARD'] or 10000
         self.min_priority = abs(10 * SOLVED_MEAN_REWARD)
 
     def get_priority(self, error):
