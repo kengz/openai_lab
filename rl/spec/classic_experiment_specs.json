@@ -876,7 +876,7 @@
       "hidden_layers": [400, 300],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "tanh",
-      "max_mem_len": 20000
+      "max_mem_len": 30000
     },
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001],
