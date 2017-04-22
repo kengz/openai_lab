@@ -13,29 +13,29 @@ To learn how to analyze experiment data, refer to [Analysis](#analysis).
 
 A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, sourced from the accepted [solution PRs](https://github.com/kengz/openai_lab/pulls?q=is%3Apr+label%3Asolution+is%3Aclosed). See [Metric](#metrics) for the design of fitness score and generalized metrics.
 
-||DQN|DoubleDQN|Sarsa|OffPolicySarsa|DoubleDQN-PER|ActorCritic|DPG|DDPG|
-|:---|:---|:---|:---|:---|:---|:---|:---|:---|
-|**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|-|[12.98525](https://github.com/kengz/openai_lab/pull/91)|-|[13.90989](https://github.com/kengz/openai_lab/pull/123)|-|-|
-|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|[18.91624](https://github.com/kengz/openai_lab/pull/107)|-|[30.57067](https://github.com/kengz/openai_lab/pull/124)|-|-|
-|**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|-|-|
-|**MountainCar-v0**|-|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|-|-|-|-|-|-|
-|**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
-|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|
-|**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|-|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|-|-|
-|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|*n/a*|-|-|-|
-|**BipedalWalker-v2**|-|-|-|-|-|-|-|-|
-|**BipedalWalkerHardcore-v2**|-|-|-|-|-|-|-|-|
-|**CarRacing-v0**|-|-|-|-|-|-|-|-|
-|**AirRaid-v0**|-|-|-|-|-|-|-|-|
-|**Alien-v0**|-|-|-|-|-|-|-|-|
-|**Assault-v0**|-|-|-|-|-|-|-|-|
-|**Breakout-v0**|-|-|-|-|-|-|-|-|
-|**MsPacman-v0**|-|-|-|-|-|-|-|-|
-|**Pong-v0**|-|-|-|-|-|-|-|-|
-|**Qbert-v0**|-|-|-|-|-|-|-|-|
-|**SpaceInvader-v0**|-|-|-|-|-|-|-|-|
-|**FlappyBird-v0**|-|-|-|-|-|-|-|-|
-|**Snake-v0**|-|-|-|-|-|-|-|-|
+||DQN|DoubleDQN|Sarsa|OffPolicySarsa|ActorCritic|DDPG|
+|:---|:---|:---|:---|:---|:---|:---|
+|**CartPole-v0**|[9.635032](https://github.com/kengz/openai_lab/pull/73)|[10.34826](https://github.com/kengz/openai_lab/pull/78)|-|[12.98525](https://github.com/kengz/openai_lab/pull/91)|[13.90989](https://github.com/kengz/openai_lab/pull/123)|-|
+|**CartPole-v1**|[13.22935](https://github.com/kengz/openai_lab/pull/80)|[16.06697](https://github.com/kengz/openai_lab/pull/82)|-|[18.91624](https://github.com/kengz/openai_lab/pull/107)|[30.57067](https://github.com/kengz/openai_lab/pull/124)|-|
+|**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|-|-|
+|**MountainCar-v0**|-|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|-|-|-|-|
+|**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
+|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|
+|**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|-|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|
+|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
+|**BipedalWalker-v2**|-|-|-|-|-|-|
+|**BipedalWalkerHardcore-v2**|-|-|-|-|-|-|
+|**CarRacing-v0**|-|-|-|-|-|-|
+|**AirRaid-v0**|-|-|-|-|-|-|
+|**Alien-v0**|-|-|-|-|-|-|
+|**Assault-v0**|-|-|-|-|-|-|
+|**Breakout-v0**|-|-|-|-|-|-|
+|**MsPacman-v0**|-|-|-|-|-|-|
+|**Pong-v0**|-|-|-|-|-|-|
+|**Qbert-v0**|-|-|-|-|-|-|
+|**SpaceInvader-v0**|-|-|-|-|-|-|
+|**FlappyBird-v0**|-|-|-|-|-|-|
+|**Snake-v0**|-|-|-|-|-|-|
 
 
 ## <a name="agents-matrix"></a>Agents Fitness Matrix
