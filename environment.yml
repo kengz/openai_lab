@@ -20,4 +20,4 @@ dependencies:
   - cmake==0.6.0
   - tensorflow>=1.0.0
   - Keras>=1.2.2,<2.0.0
-  - "--editable=git+https://github.com/kengz/gym.git#egg=gym[all]"
+  - "--editable=git+https://github.com/openai/gym.git#egg=gym[all]"
