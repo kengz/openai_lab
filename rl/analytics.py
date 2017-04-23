@@ -458,7 +458,8 @@ def analyze_data(experiment_data_or_experiment_id):
             data_df[c] = data_df[c].astype('category')
 
     data_df.sort_values(
-        ['fitness_score'], inplace=True, ascending=False)
+        ['fitness_score'], ascending=False, inplace=True)
+    data_df.reset_index(inplace=True)
 
     trial_id = experiment_data[0]['trial_id']
     save_experiment_data(data_df, trial_id)

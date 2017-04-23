@@ -7,6 +7,7 @@ import multiprocessing as mp
 import numpy as np
 import re
 import sys
+import zipfile
 from datetime import datetime, timedelta
 from os import path, listdir, environ, getpid
 from textwrap import wrap
@@ -424,10 +425,21 @@ def load_data_array_from_experiment_id(id_str):
 
 def save_experiment_data(data_df, trial_id):
     experiment_id = parse_experiment_id(trial_id)
-    filename = './data/{0}/{0}_analysis_data.csv'.format(experiment_id)
-    data_df.round(6).to_csv(filename, index=False)
+    filedir = './data/{0}'.format(experiment_id)
+    filename = '{0}_analysis_data.csv'.format(experiment_id)
+    filepath = '{}/{}'.format(filedir, filename)
+    data_df.round(6).to_csv(filepath, index=False)
+
+    # zip the csv and best trial json for upload to PR
+    zipfile.ZipFile(filepath+'.zip', mode='w').write(
+        filepath, arcname=filename)
+    trial_filename = data_df.loc[0, 'trial_id'] + '.json'
+    trial_filepath = '{}/{}'.format(filedir, trial_filename)
+    zipfile.ZipFile(trial_filepath+'.zip', mode='w').write(
+        trial_filepath, arcname=trial_filename)
+
     logger.info(
-        'experiment data saved to {}'.format(filename))
+        'experiment data saved to {}'.format(filepath))
 
 
 def configure_hardware(RAND_SEED):
