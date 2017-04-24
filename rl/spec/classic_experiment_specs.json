@@ -1128,7 +1128,7 @@
     "problem": "MountainCar-v0",
     "Agent": "ActorCritic",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
+    "Memory": "PrioritizedExperienceReplay",
     "Optimizer": "AdamOptimizer",
     "Policy": "SoftmaxPolicy",
     "PreProcessor": "NoPreProcessor",
@@ -1136,7 +1136,8 @@
       "lr": 0.02,
       "gamma": 0.99,
       "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid"
+      "hidden_layers_activation": "relu",
+      "max_mem_len": 50000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
