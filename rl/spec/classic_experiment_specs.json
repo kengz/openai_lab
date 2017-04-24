@@ -900,7 +900,7 @@
     "param": {
       "batch_size": 64,
       "n_epoch": 1,
-      "tau": 0.001,
+      "tau": 0.005,
       "lr": 0.001,
       "critic_lr": 0.001,
       "exploration_anneal_episodes": 100,
