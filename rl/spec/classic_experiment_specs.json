@@ -1069,13 +1069,13 @@
       ]
     }
   },
-  "mountain_double_dqn_per": {
+  "mountain_dqn_per": {
     "problem": "MountainCar-v0",
-    "Agent": "DoubleDQN",
+    "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "PrioritizedExperienceReplay",
     "Optimizer": "AdamOptimizer",
-    "Policy": "DoubleDQNBoltzmannPolicy",
+    "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "batch_size": 32,
@@ -1084,17 +1084,16 @@
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 200,
-      "epi_change_lr": 500,
-      "max_mem_len": 20000
+      "exploration_anneal_episodes": 50,
+      "epi_change_lr": 150,
+      "max_mem_len": 30000
     },
     "param_range": {
-      "lr": [0.01, 0.02, 0.03, 0.05],
+      "lr": [0.005, 0.01, 0.02, 0.05],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [400],
-        [800],
-        [400, 200]
+        [800]
       ]
     }
   },
@@ -1140,12 +1139,11 @@
       "hidden_layers_activation": "sigmoid"
     },
     "param_range": {
-      "lr": [0.005, 0.01, 0.05, 0.1],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.97, 0.99, 0.999],
       "hidden_layers": [
         [200],
-        [400, 200],
-        [400, 200, 100]
+        [400]
       ]
     }
   }
