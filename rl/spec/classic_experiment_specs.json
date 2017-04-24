@@ -901,11 +901,11 @@
       "batch_size": 64,
       "n_epoch": 1,
       "tau": 0.005,
-      "lr": 0.001,
+      "lr": 0.0005,
       "critic_lr": 0.001,
       "exploration_anneal_episodes": 100,
       "gamma": 0.97,
-      "hidden_layers": [400, 300],
+      "hidden_layers": [400, 200],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "tanh",
       "max_mem_len": 30000
