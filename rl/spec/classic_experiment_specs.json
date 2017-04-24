@@ -1086,7 +1086,7 @@
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
       "epi_change_lr": 150,
-      "max_mem_len": 30000
+      "max_mem_len": 50000
     },
     "param_range": {
       "lr": [0.005, 0.01, 0.02, 0.05],
