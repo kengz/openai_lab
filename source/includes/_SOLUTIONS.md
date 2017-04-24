@@ -20,7 +20,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |**Acrobot-v1**|[-0.1051617](https://github.com/kengz/openai_lab/pull/94)|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-|[-0.1127294](https://github.com/kengz/openai_lab/pull/97)|[-0.1175654](https://github.com/kengz/openai_lab/pull/128)|-|
 |**MountainCar-v0**|-|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|-|-|-|-|
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
-|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|
+|**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|[-0.2696825](https://github.com/kengz/openai_lab/pull/130)|
 |**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|-|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|
 |**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
 |**BipedalWalker-v2**|-|-|-|-|-|-|
@@ -79,7 +79,7 @@ A projection of the Fitness Matrix along the Environments axis. This shows the b
 |Acrobot-v1|[-0.1045992](https://github.com/kengz/openai_lab/pull/98)|-104.34|kengz/lgraesser|acrobot_offpol_sarsa|
 |MountainCar-v0|[-0.03744196](https://github.com/kengz/openai_lab/pull/117)|970|kengz/lgraesser|mountain_double_dqn|
 |MountainCarContinuous-v0|-|-|-|-|
-|Pendulum-v0|[-0.2984732](https://github.com/kengz/openai_lab/pull/125)|-150.8091|kengz/lgraesser|pendulum_ddpg|
+|Pendulum-v0|[-0.2696825](https://github.com/kengz/openai_lab/pull/130)|-137.3549|kengz/lgraesser|pendulum_ddpg_per_linearnoise|
 
 
 ### Box2D Environments
