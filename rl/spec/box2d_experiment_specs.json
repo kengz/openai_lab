@@ -327,5 +327,37 @@
         [800, 400, 200]
       ]
     }
+  },
+  "walker_ddpg_linearnoise_per": {
+    "problem": "BipedalWalker-v2",
+    "Agent": "DDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "LinearNoisePolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "batch_size": 64,
+      "n_epoch": 1,
+      "tau": 0.005,
+      "lr": 0.001,
+      "critic_lr": 0.001,
+      "exploration_anneal_episodes": 100,
+      "gamma": 0.97,
+      "hidden_layers": [400, 300],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh",
+      "max_mem_len": 100000
+    },
+    "param_range": {
+      "lr": [0.0001, 0.0005, 0.001],
+      "critic_lr": [0.001, 0.005, 0.01],
+      "gamma": [0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [400, 300],
+        [600, 300],
+        [800, 400, 200]
+      ]
+    }
   }
 }
