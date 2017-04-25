@@ -242,6 +242,7 @@ class DDPG(DQN):
 
         # train critic
         mu_prime = self.actor.target_predict(minibatch['next_states'])
+        q_val = self.critic.target_predict(minibatch['states'], mu_prime)
         q_prime = self.critic.target_predict(
             minibatch['next_states'], mu_prime)
         # reshape for element-wise multiplication
@@ -249,6 +250,12 @@ class DDPG(DQN):
         y = minibatch['rewards'] + self.gamma * \
             (1 - minibatch['terminals']) * np.reshape(q_prime, (-1))
         y = np.reshape(y, (-1, 1))
+
+        # update memory, needed for PER
+        errors = abs(np.sum(q_val - y, axis=1))
+        assert y.shape == (self.batch_size, 1)
+        assert errors.shape == (self.batch_size, )
+        self.memory.update(errors)
 
         _, _, critic_loss = self.critic.train_tf(
             minibatch['states'], minibatch['actions'], y)

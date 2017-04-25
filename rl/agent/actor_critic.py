@@ -114,7 +114,10 @@ class ActorCritic(DQN):
         actor_delta = Q_next_vals - Q_vals
         loss = self.critic.train_on_batch(minibatch['states'], Q_targets)
 
+        # update memory, needed for PER
         errors = abs(np.sum(Q_vals - Q_targets, axis=1))
+        assert Q_targets.shape == (self.batch_size, 1)
+        assert errors.shape == (self.batch_size, )
         self.memory.update(errors)
         return loss, actor_delta
 

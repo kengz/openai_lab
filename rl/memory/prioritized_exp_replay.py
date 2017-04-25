@@ -27,21 +27,18 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         self.prio_tree = SumTree(self.max_mem_len)
         self.head = 0
 
-        # bump to account for negative terms in reward get_priority
-        # and we cannot abs(reward) cuz it's sign sensitive
-        SOLVED_MEAN_REWARD = self.env_spec['problem']['SOLVED_MEAN_REWARD'] or 10000
-        self.min_priority = abs(10 * SOLVED_MEAN_REWARD)
-
     def get_priority(self, error):
         # add min_priority to prevent root of negative = complex
-        p = (self.min_priority + error + self.e) ** self.alpha
+        p = (error + self.e) ** self.alpha
         assert not np.isnan(p)
         return p
 
     def add_exp(self, action, reward, next_state, terminal):
         '''Round robin memory updating'''
-        # roughly the error between estimated Q and true q is the reward
-        error = reward
+        # init error to reward first, update later
+        error = abs(reward)
+        p = self.get_priority(error)
+
         if self.size() < self.max_mem_len:  # add as usual
             super(PrioritizedExperienceReplay, self).add_exp(
                 action, reward, next_state, terminal)
@@ -59,7 +56,6 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
         if self.head >= self.max_mem_len:
             self.head = 0  # reset for round robin
 
-        p = self.get_priority(error)
         self.prio_tree.add(p)
 
         assert self.head == self.prio_tree.head, 'prio_tree head is wrong'
