@@ -10,7 +10,7 @@ class AdvancedTest(unittest.TestCase):
 
     @classmethod
     def test_sarsa(cls):
-        data_df = run('rand_sarsa')
+        data_df = run('sarsa')
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
