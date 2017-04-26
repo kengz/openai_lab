@@ -6,7 +6,7 @@ from . import conftest
 import pandas as pd
 
 
-class BasicTest(unittest.TestCase):
+class DevTest(unittest.TestCase):
 
     @classmethod
     def test_clean_import(cls):
@@ -46,13 +46,3 @@ class BasicTest(unittest.TestCase):
     # def test_dqn_random_search(cls):
     #     data_df = run('test_dqn_random_search', param_selection=True)
     #     assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_dqn(cls):
-        data_df = run('dqn')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
-    def test_double_dqn(cls):
-        data_df = run('double_dqn')
-        assert isinstance(data_df, pd.DataFrame)
