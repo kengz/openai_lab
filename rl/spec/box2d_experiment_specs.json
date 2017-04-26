@@ -237,11 +237,11 @@
       ]
     }
   },
-  "lunar_ddpg_linearnoise": {
+  "lunar_cont_ddpg_per_linearnoise": {
     "problem": "LunarLanderContinuous-v2",
     "Agent": "DDPG",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
+    "Memory": "PrioritizedExperienceReplay",
     "Optimizer": "AdamOptimizer",
     "Policy": "LinearNoisePolicy",
     "PreProcessor": "NoPreProcessor",
@@ -316,8 +316,7 @@
       "gamma": 0.97,
       "hidden_layers": [400, 200],
       "hidden_layers_activation": "relu",
-      "output_layer_activation": "tanh",
-      "max_mem_len": 10000
+      "output_layer_activation": "tanh"
     },
     "param_range": {
       "lr": [0.0001, 0.0005],
