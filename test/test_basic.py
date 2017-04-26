@@ -53,11 +53,6 @@ class BasicTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
-    def test_dqn(cls):
-        data_df = run('double_dqn_per')
-        assert isinstance(data_df, pd.DataFrame)
-
-    @classmethod
     def test_double_dqn(cls):
         data_df = run('double_dqn')
         assert isinstance(data_df, pd.DataFrame)
