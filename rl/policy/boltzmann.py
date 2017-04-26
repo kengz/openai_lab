@@ -67,7 +67,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
         exp_values = np.exp(
-            np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
+            np.clip(Q_state / float(self.tau), -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
