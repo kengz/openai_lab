@@ -12,8 +12,13 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     memory unit
     '''
 
-    def __init__(self, env_spec, max_mem_len=10000, e=0.01, alpha=0.6,
+    def __init__(self, env_spec, max_mem_len=None, e=0.01, alpha=0.6,
                  **kwargs):
+        if max_mem_len is None:  # auto calculate mem len
+            max_timestep = env_spec['timestep_limit']
+            max_epis = env_spec['problem']['MAX_EPISODES']
+            memory_epi = np.ceil(max_epis / 3.).astype(int)
+            max_mem_len = max(10**6, max_timestep * memory_epi)
         super(PrioritizedExperienceReplay, self).__init__(
             env_spec, max_mem_len)
         self.exp_keys.append('error')
