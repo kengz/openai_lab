@@ -410,6 +410,31 @@
       ]
     }
   },
+  "dqn_per_v1": {
+    "problem": "CartPole-v1",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "exploration_anneal_episodes": 10,
+      "gamma": 0.999,
+      "hidden_layers": [128],
+      "hidden_layers_activation": "sigmoid",
+      "lr": 0.005
+    },
+    "param_range": {
+      "max_mem_len": [5000, 10000, 20000],
+      "alpha": [0.6, 0.8, 1.0],
+      "gamma": [0.99, 0.999],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
   "rand_dqn_v1": {
     "problem": "CartPole-v1",
     "Agent": "DQN",
