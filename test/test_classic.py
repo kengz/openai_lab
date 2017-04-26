@@ -24,6 +24,11 @@ class ClassicTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
+    def test_dqn_per(cls):
+        data_df = run('dqn_per')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
     def test_double_dqn(cls):
         data_df = run('double_dqn')
         assert isinstance(data_df, pd.DataFrame)

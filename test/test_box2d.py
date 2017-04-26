@@ -19,6 +19,11 @@ class Box2DTest(unittest.TestCase):
         assert isinstance(data_df, pd.DataFrame)
 
     @classmethod
+    def test_lunar_freeze(cls):
+        data_df = run('lunar_freeze')
+        assert isinstance(data_df, pd.DataFrame)
+
+    @classmethod
     def test_walker_ddpg_linearnoise(cls):
         data_df = run('walker_ddpg_linearnoise')
         assert isinstance(data_df, pd.DataFrame)
