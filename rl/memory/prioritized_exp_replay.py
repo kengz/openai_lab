@@ -30,7 +30,7 @@ class PrioritizedExperienceReplay(LinearMemoryWithForgetting):
     def get_priority(self, error):
         # add min_priority to prevent root of negative = complex
         p = (error + self.e) ** self.alpha
-        assert not np.isnan(p)
+        assert np.isfinite(p)
         return p
 
     def add_exp(self, action, reward, next_state, terminal):

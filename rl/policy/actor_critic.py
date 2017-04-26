@@ -39,7 +39,7 @@ class SoftmaxPolicy(Policy):
     def __init__(self, env_spec,
                  **kwargs):  # absorb generic param without breaking
         super(SoftmaxPolicy, self).__init__(env_spec)
-        self.clip_val = 500
+        self.clip_val = 500.
         log_self(self)
 
     def select_action(self, state):
@@ -47,11 +47,10 @@ class SoftmaxPolicy(Policy):
         state = np.expand_dims(state, axis=0)
         A_score = agent.actor.predict(state)[0]  # extract from batch predict
         assert A_score.ndim == 1
-        A_score = A_score.astype('float32')  # fix precision nan issue
-        A_score = A_score - np.amax(A_score)  # prevent overflow
+        A_score = A_score.astype('float64')  # fix precision overflow
         exp_values = np.exp(
             np.clip(A_score, -self.clip_val, self.clip_val))
-        assert not np.isnan(exp_values).any()
+        assert np.isfinite(exp_values).all()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
         action = np.random.choice(agent.env_spec['actions'], p=probs)
