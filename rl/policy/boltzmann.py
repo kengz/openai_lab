@@ -18,7 +18,7 @@ class BoltzmannPolicy(Policy):
         self.final_tau = final_tau
         self.tau = self.init_tau
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        self.clip_val = 500
+        self.clip_val = 200
         log_self(self)
 
     def select_action(self, state):
