@@ -48,6 +48,7 @@ class SoftmaxPolicy(Policy):
         A_score = agent.actor.predict(state)[0]  # extract from batch predict
         assert A_score.ndim == 1
         A_score = A_score.astype('float32')  # fix precision nan issue
+        A_score = A_score - np.amax(A_score)  # prevent overflow
         exp_values = np.exp(
             np.clip(A_score, -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()

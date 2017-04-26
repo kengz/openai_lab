@@ -27,8 +27,9 @@ class BoltzmannPolicy(Policy):
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
+        Q_state = Q_state - np.amax(Q_state)  # prevent overflow
         exp_values = np.exp(
-            np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
+            np.clip(Q_state / float(self.tau), -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
@@ -66,6 +67,7 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
         Q_state = Q_state1 + Q_state2
         assert Q_state.ndim == 1
         Q_state = Q_state.astype('float32')  # fix precision nan issue
+        Q_state = Q_state - np.amax(Q_state)  # prevent overflow
         exp_values = np.exp(
             np.clip(Q_state / float(self.tau), -self.clip_val, self.clip_val))
         assert not np.isnan(exp_values).any()
