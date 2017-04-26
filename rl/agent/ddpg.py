@@ -253,7 +253,8 @@ class DDPG(DQN):
 
         # update memory, needed for PER
         errors = abs(np.sum(q_val - y, axis=1))
-        assert y.shape == (self.batch_size, self.env_spec['action_dim'])
+        # Q size is only 1, from critic
+        assert y.shape == (self.batch_size, 1)
         assert errors.shape == (self.batch_size, )
         self.memory.update(errors)
 
