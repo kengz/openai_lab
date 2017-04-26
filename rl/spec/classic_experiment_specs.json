@@ -933,7 +933,7 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "batch_size": 32,
+      "batch_size": 64,
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers": [128, 64],
@@ -941,14 +941,15 @@
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
       "epi_change_lr": 150,
-      "max_mem_len": 50000
+      "max_mem_len": 30000
     },
     "param_range": {
-      "lr": [0.005, 0.01, 0.02, 0.05],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [400],
-        [800]
+        [800],
+        [1200]
       ]
     }
   },
