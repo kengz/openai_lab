@@ -317,9 +317,10 @@ def compose_data(trial):
     }
 
     # param variables for independent vars of trials
+    default_param = trial.experiment_spec['param']
     param_variables = {
-        pv: trial.experiment_spec['param'][pv] for
-        pv in trial.param_variables}
+        pv: default_param[pv] for
+        pv in trial.param_variables if pv in default_param}
 
     trial.data['metrics'].update(metrics)
     trial.data['param_variables'] = param_variables
@@ -459,7 +460,7 @@ def analyze_data(experiment_data_or_experiment_id):
 
     data_df.sort_values(
         ['fitness_score'], ascending=False, inplace=True)
-    data_df.reset_index(inplace=True)
+    data_df.reset_index(drop=True, inplace=True)
 
     trial_id = experiment_data[0]['trial_id']
     save_experiment_data(data_df, trial_id)

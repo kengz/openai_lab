@@ -18,7 +18,7 @@ class BoltzmannPolicy(Policy):
         self.final_tau = final_tau
         self.tau = self.init_tau
         self.exploration_anneal_episodes = exploration_anneal_episodes
-        self.clip_val = 500
+        self.clip_val = 500.
         log_self(self)
 
     def select_action(self, state):
@@ -26,11 +26,10 @@ class BoltzmannPolicy(Policy):
         state = np.expand_dims(state, axis=0)
         Q_state = agent.model.predict(state)[0]  # extract from batch predict
         assert Q_state.ndim == 1
-        Q_state = Q_state.astype('float32')  # fix precision nan issue
-        Q_state = Q_state - np.amax(Q_state)  # prevent overflow
+        Q_state = Q_state.astype('float64')  # fix precision overflow
         exp_values = np.exp(
             np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
-        assert not np.isnan(exp_values).any()
+        assert np.isfinite(exp_values).all()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
         action = np.random.choice(agent.env_spec['actions'], p=probs)
@@ -66,11 +65,10 @@ class DoubleDQNBoltzmannPolicy(BoltzmannPolicy):
         Q_state2 = agent.model_2.predict(state)[0]
         Q_state = Q_state1 + Q_state2
         assert Q_state.ndim == 1
-        Q_state = Q_state.astype('float32')  # fix precision nan issue
-        Q_state = Q_state - np.amax(Q_state)  # prevent overflow
+        Q_state = Q_state.astype('float64')  # fix precision overflow
         exp_values = np.exp(
             np.clip(Q_state / self.tau, -self.clip_val, self.clip_val))
-        assert not np.isnan(exp_values).any()
+        assert np.isfinite(exp_values).all()
         probs = np.array(exp_values / np.sum(exp_values))
         probs /= probs.sum()  # renormalize to prevent floating pt error
         action = np.random.choice(agent.env_spec['actions'], p=probs)

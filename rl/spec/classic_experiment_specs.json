@@ -92,14 +92,11 @@
       "exploration_anneal_episodes": 10
     },
     "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.95, 0.97, 0.99, 0.999],
+      "max_mem_len": [2000, 5000, 10000],
+      "alpha": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
       "hidden_layers": [
-        [16],
-        [32],
         [64],
-        [16, 8],
-        [32, 16]
+        [128]
       ]
     }
   },
@@ -165,35 +162,6 @@
       ]
     }
   },
-  "double_dqn_per": {
-    "problem": "CartPole-v0",
-    "Agent": "DoubleDQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "DoubleDQNBoltzmannPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10,
-      "e": 0.01,
-      "alpha": 0.5,
-      "max_mem_len": 20000
-    },
-    "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers": [
-        [16],
-        [32],
-        [64],
-        [32, 16]
-      ]
-    }
-  },
   "sarsa": {
     "problem": "CartPole-v0",
     "Agent": "DeepSarsa",
@@ -219,68 +187,6 @@
         [64],
         [16, 8],
         [200, 100]
-      ]
-    }
-  },
-  "sarsa_epsilon": {
-    "problem": "CartPole-v0",
-    "Agent": "DeepSarsa",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "EpsilonGreedyPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.02,
-      "gamma": 0.99,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 50,
-      "max_mem_len": 50000
-    },
-    "param_range": {
-      "lr": [0.005, 0.01, 0.02, 0.05],
-      "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers": [
-        [16],
-        [32],
-        [64],
-        [16, 8],
-        [200, 100]
-      ]
-    }
-  },
-  "rand_sarsa": {
-    "problem": "CartPole-v0",
-    "Agent": "DeepSarsa",
-    "HyperOptimizer": "RandomSearch",
-    "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "BoltzmannPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "max_evals": 50,
-      "lr": 0.01,
-      "gamma": 0.99,
-      "hidden_layers": [32],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
-    },
-    "param_range": {
-      "lr": {
-        "min": 0.0005,
-        "max": 0.05
-      },
-      "gamma": {
-        "min": 0.95,
-        "max": 0.999
-      },
-      "hidden_layers": [
-        [16],
-        [32],
-        [64],
-        [16, 8],
-        [32, 16]
       ]
     }
   },
@@ -410,6 +316,31 @@
       ]
     }
   },
+  "dqn_per_v1": {
+    "problem": "CartPole-v1",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "exploration_anneal_episodes": 10,
+      "gamma": 0.999,
+      "hidden_layers": [128],
+      "hidden_layers_activation": "sigmoid",
+      "lr": 0.005
+    },
+    "param_range": {
+      "max_mem_len": [5000, 10000, 20000],
+      "alpha": [0.0, 0.6, 0.8, 1.0],
+      "gamma": [0.99, 0.999],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
   "rand_dqn_v1": {
     "problem": "CartPole-v1",
     "Agent": "DQN",
@@ -468,32 +399,6 @@
         [32],
         [64],
         [16, 8],
-        [32, 16]
-      ]
-    }
-  },
-  "double_dqn_per_v1": {
-    "problem": "CartPole-v1",
-    "Agent": "DoubleDQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "DoubleDQNBoltzmannPolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "lr": 0.02,
-      "gamma": 0.999,
-      "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 10
-    },
-    "param_range": {
-      "lr": [0.001, 0.005, 0.01, 0.02],
-      "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers": [
-        [16],
-        [32],
-        [64],
         [32, 16]
       ]
     }
@@ -596,32 +501,6 @@
       "gamma": [0.95, 0.97, 0.99, 0.999],
       "hidden_layers": [
         [100],
-        [200],
-        [200, 100],
-        [400, 200, 100]
-      ]
-    }
-  },
-  "acrobot_double_dqn_per": {
-    "problem": "Acrobot-v1",
-    "Agent": "DoubleDQN",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "DoubleDQNBoltzmannPolicy",
-    "PreProcessor": "StackStates",
-    "param": {
-      "train_per_n_new_exp": 1,
-      "lr": 0.01,
-      "gamma": 0.99,
-      "hidden_layers": [32],
-      "hidden_layers_activation": "sigmoid",
-      "exploration_anneal_episodes": 200
-    },
-    "param_range": {
-      "lr": [0.001, 0.005, 0.01],
-      "gamma": [0.97, 0.99, 0.999],
-      "hidden_layers": [
         [200],
         [200, 100],
         [400, 200, 100]
@@ -857,26 +736,25 @@
       ]
     }
   },
-  "pendulum_ddpg_per": {
+  "pendulum_ddpg_epsilonnoise": {
     "problem": "Pendulum-v0",
     "Agent": "DDPG",
     "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "NoNoisePolicy",
+    "Policy": "EpsilonGreedyNoisePolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "batch_size": 64,
       "n_epoch": 1,
-      "tau": 0.001,
+      "tau": 0.005,
       "lr": 0.001,
       "critic_lr": 0.001,
       "exploration_anneal_episodes": 50,
       "gamma": 0.97,
       "hidden_layers": [400, 300],
       "hidden_layers_activation": "relu",
-      "output_layer_activation": "tanh",
-      "max_mem_len": 30000
+      "output_layer_activation": "tanh"
     },
     "param_range": {
       "lr": [0.0001, 0.0005, 0.001],
@@ -886,39 +764,6 @@
         [400, 300],
         [800, 400, 200],
         [800, 600, 400, 200]
-      ]
-    }
-  },
-  "pendulum_ddpg_per_linearnoise": {
-    "problem": "Pendulum-v0",
-    "Agent": "DDPG",
-    "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
-    "Optimizer": "AdamOptimizer",
-    "Policy": "LinearNoisePolicy",
-    "PreProcessor": "NoPreProcessor",
-    "param": {
-      "batch_size": 64,
-      "n_epoch": 1,
-      "tau": 0.005,
-      "lr": 0.0005,
-      "critic_lr": 0.001,
-      "exploration_anneal_episodes": 100,
-      "gamma": 0.97,
-      "hidden_layers": [400, 200],
-      "hidden_layers_activation": "relu",
-      "output_layer_activation": "tanh",
-      "max_mem_len": 30000
-    },
-    "param_range": {
-      "lr": [0.0001, 0.0005],
-      "critic_lr": [0.001, 0.005],
-      "gamma": [0.95, 0.97, 0.99],
-      "hidden_layers": [
-        [200, 100],
-        [400, 200],
-        [400, 300],
-        [800, 400]
       ]
     }
   },
@@ -1015,6 +860,71 @@
       ]
     }
   },
+  "pendulum_ddpg_per": {
+    "problem": "Pendulum-v0",
+    "Agent": "DDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "NoNoisePolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "batch_size": 64,
+      "n_epoch": 1,
+      "tau": 0.001,
+      "lr": 0.001,
+      "critic_lr": 0.001,
+      "exploration_anneal_episodes": 50,
+      "gamma": 0.97,
+      "hidden_layers": [400, 300],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh",
+      "max_mem_len": 30000
+    },
+    "param_range": {
+      "lr": [0.0001, 0.0005, 0.001],
+      "critic_lr": [0.001, 0.005],
+      "gamma": [0.95, 0.97, 0.99],
+      "hidden_layers": [
+        [400, 300],
+        [800, 400, 200],
+        [800, 600, 400, 200]
+      ]
+    }
+  },
+  "pendulum_ddpg_per_linearnoise": {
+    "problem": "Pendulum-v0",
+    "Agent": "DDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "PrioritizedExperienceReplay",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "LinearNoisePolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "batch_size": 64,
+      "n_epoch": 1,
+      "tau": 0.005,
+      "lr": 0.0005,
+      "critic_lr": 0.001,
+      "exploration_anneal_episodes": 100,
+      "gamma": 0.97,
+      "hidden_layers": [400, 200],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh",
+      "max_mem_len": 30000
+    },
+    "param_range": {
+      "lr": [0.0001, 0.0005],
+      "critic_lr": [0.001, 0.005],
+      "gamma": [0.95, 0.97, 0.99],
+      "hidden_layers": [
+        [200, 100],
+        [400, 200],
+        [400, 300],
+        [800, 400]
+      ]
+    }
+  },
   "mountain_dqn": {
     "problem": "MountainCar-v0",
     "Agent": "DQN",
@@ -1078,22 +988,22 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "batch_size": 32,
+      "batch_size": 64,
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers": [128, 64],
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
-      "epi_change_lr": 150,
-      "max_mem_len": 30000
+      "epi_change_lr": 150
     },
     "param_range": {
-      "lr": [0.005, 0.01, 0.02, 0.05],
+      "lr": [0.001, 0.005, 0.01],
       "gamma": [0.99, 0.999],
       "hidden_layers": [
         [400],
-        [800]
+        [800],
+        [1200]
       ]
     }
   },
@@ -1128,7 +1038,7 @@
     "problem": "MountainCar-v0",
     "Agent": "ActorCritic",
     "HyperOptimizer": "GridSearch",
-    "Memory": "LinearMemoryWithForgetting",
+    "Memory": "PrioritizedExperienceReplay",
     "Optimizer": "AdamOptimizer",
     "Policy": "SoftmaxPolicy",
     "PreProcessor": "NoPreProcessor",
@@ -1136,7 +1046,8 @@
       "lr": 0.02,
       "gamma": 0.99,
       "hidden_layers": [64],
-      "hidden_layers_activation": "sigmoid"
+      "hidden_layers_activation": "relu",
+      "max_mem_len": 50000
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
