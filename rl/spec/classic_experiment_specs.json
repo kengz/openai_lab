@@ -995,8 +995,7 @@
       "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
-      "epi_change_lr": 150,
-      "max_mem_len": 30000
+      "epi_change_lr": 150
     },
     "param_range": {
       "lr": [0.001, 0.005, 0.01],
