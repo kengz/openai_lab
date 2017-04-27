@@ -2439,11 +2439,34 @@ When developing a new algorithm, use the session graph to immediately see how th
 As the Lab grows, we will add more development guide as needed.
 </aside>
 
-          <h1 id="roadmap"><a name="roadmap"></a>Roadmap</h1>
+<h2 id="roadmap"><a name="roadmap"></a>Roadmap</h2>
 
 <p>Check the latest under the <a href="https://github.com/kengz/openai_lab/projects">Github Projects</a></p>
 
-<h2 id="motivations"><a name="motivations"></a>Motivations</h2>
+          <h1 id="contributing"><a name="contributing"></a>Contributing</h1>
+
+<ul>
+<li>Invented a new algorithm/added some features? Submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request here</a>.</li>
+<li>Created some stronger agents that beats the current results? Read <a href="#solutions">here to submit new solution</a>.</li>
+<li>Wanna just talk? Hit us up on Twitter below.</li>
+</ul>
+
+<h3 id="lab-contributors">Lab Contributors</h3>
+
+<p>See the <a href="https://github.com/kengz/openai_lab/graphs/contributors">full list of contributors here</a>.</p>
+
+<h2 id="authors">Authors</h2>
+
+<p><em>Note: we are not affiliated with OpenAI; OpenAI Lab is not tied to any organizations.</em></p>
+
+<ul>
+<li>Wah Loon Keng. <a href="https://twitter.com/kengzwl">twitter: @kengzwl</a></li>
+<li>Laura Graesser. <a href="https://twitter.com/lgraesser3">twitter: @lgraesser3</a></li>
+</ul>
+
+<p><em>OpenAI we hope you find this useful!</em></p>
+
+          <h1 id="motivations"><a name="motivations"></a>Motivations</h1>
 
 <p><em>This section is more casual, but we thought we&rsquo;d share the motivations behind the Lab.</em></p>
 
@@ -2491,28 +2514,57 @@ As the Lab grows, we will add more development guide as needed.
 <li>the <a href="#generalization">generalization of evaluation metrics</a>, which casts the hyperoptimization problem as one of temperature fields and differential calculus. Also gives the Fitness Fields Matrix.</li>
 </ul>
 
-          <h1 id="contributing"><a name="contributing"></a>Contributing</h1>
+<h2 id="who-should-use-openai-lab"><a name="who-should-use"></a>Who Should Use OpenAI Lab?</h2>
 
-<ul>
-<li>Invented a new algorithm/added some features? Submit a <a href="https://github.com/kengz/openai_lab/pulls">Pull Request here</a>.</li>
-<li>Created some stronger agents that beats the current results? Read <a href="#solutions">here to submit new solution</a>.</li>
-<li>Wanna just talk? Hit us up on Twitter below.</li>
-</ul>
+<p>We think this framework is useful for two types of users, those who are new to RL and RL researchers / advanced RL users.</p>
 
-<h3 id="lab-contributors">Lab Contributors</h3>
+<h3 id="newcomers-to-rl">Newcomers to RL</h3>
 
-<p>See the <a href="https://github.com/kengz/openai_lab/graphs/contributors">full list of contributors here</a>.</p>
+<p>For users that are new to RL, there is a lot to get your head around before you can get started. Understanding the Open AI gym environments and how to work with them, understanding RL algorithms, and understanding neural networks and their role as function approximators. OpenAI Lab reduces the inertia to begin.</p>
 
-<h2 id="authors">Authors</h2>
+<p>We provide a range of implemented algorithms and components, as well as solutions to OpenAI gym environments that can be used out of the box. We also wanted to give new users the flexibility to change as much as possible in their experiments so we parameterized many of the algorithm variables and exposed them through a simple JSON interface.</p>
 
-<p><em>Note: we are not affiliated with OpenAI; OpenAI Lab is not tied to any organizations.</em></p>
+<p>This makes it possible for new users to spend their time experimenting with the different components and parameter settings, understanding what they do and how they affect an agent&rsquo;s performance, instead of going through the time consuming process of having to implement things themselves. </p>
 
-<ul>
-<li>Wah Loon Keng. <a href="https://twitter.com/kengzwl">twitter: @kengzwl</a></li>
-<li>Laura Graesser. <a href="https://twitter.com/lgraesser3">twitter: @lgraesser3</a></li>
-</ul>
+<h3 id="rl-researchers-advanced-users">RL Researchers / Advanced Users</h3>
 
-<p><em>OpenAI we hope you find this useful!</em></p>
+<p>For advanced users or RL researchers, the Lab makes it easier to develop new ideas (a new way of sampling from memory for example) because a user needs to write only that code and can reuse the other components.</p>
+
+<p>It also makes it easier to build on other peoples work. Solutions submitted via the lab&rsquo;s framework encapsulate all of the code and parameter settings, so that the result can be reproduced in just a few lines of code.</p>
+
+<p>Additionally, the experiment framework and analytics allows better measurement of their ideas, and standardization provides meaningful comparisons among algorithms.</p>
+
+<h2 id="main-contributions"><a name="main-contributions"></a>Main Contributions</h2>
+
+<p>We see the main new contributions of the Lab as follows:</p>
+
+<ol>
+<li>It is the first example of a framework to do deep RL that we know of that provides both a simple and unified interface to the OpenAI gym and neural network libraries which are necessary to implement and run RL agents, and out of the box components and algorithms. </li>
+<li>The reusability of components.</li>
+<li>Framework for running hundreds of trials searching multidimensional parameter space in just a few lines of code.</li>
+<li>Automated analytics across all of these experiments making it easier to understand what is happening quickly.</li>
+<li>The <a href="#fitness-matrix">Fitness matrix</a>.</li>
+</ol>
+
+<p>1 - 4 have been covered in the sections above. Here we&rsquo;ll focus on the <a href="#fitness-matrix">Fitness matrix</a></p>
+
+<p>The Fitness Matrix compares algorithms and environments. Tables playing a similar role to this are often seen in RL research papers from DeepMind or OpenAI.</p>
+
+<p>Clearly it would take a lot for an individual to produce something similar - first to implement so many algorithms, then to run them across many environments, which would consume a lot of computational time.</p>
+
+<p>We think the Fitness Matrix could be useful for RL researchers or new users as a benchmark to evaluate their new algorithms. An open source fitness matrix means everyone can use it instead of building one from scratch.</p>
+
+<p>We see this as an extension of OpenAI gym&rsquo;s Evaluation boards (<a href="https://gym.openai.com/envs/CartPole-v0">example: CartPole-v0</a>) in two ways:
+- First, the score is richer; it takes into account not just the speed to solve a problem and the maximum score, but also the stability and consistency of solutions. See <a href="#fitness">Fitness Score</a>.
+- Second, it makes comparison of environments and the comparison of agents across environments possible.</p>
+
+<p>Our long term goal is to build a community of users and contributors around this framework. The more contributors, the more advanced the algorithms that are implemented and comparable wth the Lab. If successful, it could serve as the standardized benchmark for a large class of algorithms and a large class of problems. It becomes a public, living record which can be used by researchers who need to evaluate new algorithms and have no access to detailed benchmarks (unless if you&rsquo;re Google/OpenAI). </p>
+
+<p>With these metrics across multiple environments and agents, we can characterize, say, if an agent is strong (solves many problems); or if a generic component like Prioritized Memory Replay can increase the score of agent across all environments.</p>
+
+<p>We also think the Fitness matrix could be used to further research, e.g. let us study cross-environment evaluation metrics, find patterns, and classify the characteristic of problems and agents. For example, we noticed that some classes of problems require spacial reasoning, or multi-step learning to solve; and there are agents who could or could not do that.</p>
+
+<p>For the formulation of these measurements and more details, see <a href="#generalized-metrics">generalized metrics</a>. Such high level, cross-environment / agent analysis seems fairly new, and could prove useful to researchers. We would like to continue our work on this.</p>
 
       </div>
       <div class="dark-box">
