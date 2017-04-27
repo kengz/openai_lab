@@ -237,6 +237,37 @@
       ]
     }
   },
+  "lunar_cont_ddpg_linearnoise": {
+    "problem": "LunarLanderContinuous-v2",
+    "Agent": "DDPG",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "LinearMemoryWithForgetting",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "LinearNoisePolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "batch_size": 64,
+      "n_epoch": 1,
+      "tau": 0.005,
+      "lr": 0.001,
+      "critic_lr": 0.001,
+      "exploration_anneal_episodes": 100,
+      "gamma": 0.97,
+      "hidden_layers": [400, 300],
+      "hidden_layers_activation": "relu",
+      "output_layer_activation": "tanh"
+    },
+    "param_range": {
+      "lr": [0.0001, 0.0005, 0.001],
+      "critic_lr": [0.001, 0.005, 0.01],
+      "gamma": [0.97, 0.99, 0.999],
+      "hidden_layers": [
+        [400, 300],
+        [600, 300],
+        [800, 400, 200]
+      ]
+    }
+  },
   "lunar_cont_ddpg_per_linearnoise": {
     "problem": "LunarLanderContinuous-v2",
     "Agent": "DDPG",
@@ -289,13 +320,13 @@
       "output_layer_activation": "tanh"
     },
     "param_range": {
-      "lr": [0.0001, 0.0005, 0.001],
-      "critic_lr": [0.001, 0.005, 0.01],
-      "gamma": [0.97, 0.99, 0.999],
+      "lr": [0.0001, 0.0005],
+      "critic_lr": [0.001, 0.005],
+      "gamma": [0.95, 0.97, 0.99],
       "hidden_layers": [
+        [200, 100],
         [400, 300],
-        [600, 300],
-        [800, 400, 200]
+        [800, 400]
       ]
     }
   },
