@@ -1,6 +1,7 @@
 import numpy as np
 from rl.util import log_self
 from rl.policy.base_policy import Policy
+from rl.policy.epsilon_greedy import EpsilonGreedyPolicy
 
 
 class NoNoisePolicy(Policy):
@@ -61,6 +62,26 @@ class LinearNoisePolicy(NoNoisePolicy):
             self.n_step = np.inf  # noise divide to zero
         else:
             self.n_step = sys_vars['epi']
+
+
+class EpsilonGreedyNoisePolicy(EpsilonGreedyPolicy, NoNoisePolicy):
+
+    '''
+    akin to epsilon greedy decay,
+    but return random sample instead
+    '''
+
+    def sample(self):
+        if self.e > np.random.rand():
+            noise = np.random.uniform(
+                0.5 * self.env_spec['action_bound_low'],
+                0.5 * self.env_spec['action_bound_high'])
+        else:
+            noise = 0
+        return noise
+
+    def select_action(self, state):
+        return NoNoisePolicy.select_action(self, state)
 
 
 class AnnealedGaussianPolicy(LinearNoisePolicy):
