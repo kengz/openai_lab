@@ -82,6 +82,9 @@ class GaussianPolicy(Policy):
         a_mean = agent.actor.predict(state)[0]  # extract from batch predict
         action = a_mean + np.random.normal(
             loc=0.0, scale=self.variance, size=a_mean.shape)
+        action = np.clip(action,
+                         self.env_spec['action_bound_low'],
+                         self.env_spec['action_bound_high'])
         return action
 
     def update(self, sys_vars):

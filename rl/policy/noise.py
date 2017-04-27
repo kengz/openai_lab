@@ -25,6 +25,9 @@ class NoNoisePolicy(Policy):
         state = np.expand_dims(state, axis=0)
         if self.env_spec['actions'] == 'continuous':
             action = agent.actor.predict(state)[0] + self.sample()
+            action = np.clip(action,
+                             self.env_spec['action_bound_low'],
+                             self.env_spec['action_bound_high'])
         else:
             Q_state = agent.actor.predict(state)[0]
             assert Q_state.ndim == 1
