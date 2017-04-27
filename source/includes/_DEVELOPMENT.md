@@ -20,3 +20,8 @@ The design of the code is clean enough to simply infer how things work by existi
 <aside class="notice">
 As the Lab grows, we will add more development guide as needed.
 </aside>
+
+
+## <a name="roadmap"></a>Roadmap
+
+Check the latest under the [Github Projects](https://github.com/kengz/openai_lab/projects)

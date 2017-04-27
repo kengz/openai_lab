@@ -20,8 +20,8 @@ includes:
   - ALGORITHMS
   - AGENTS
   - DEVELOPMENT
-  - ROADMAP
   - CONTRIBUTING
+  - MOTIVATIONS
 
 search: true
 ---
