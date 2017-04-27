@@ -317,9 +317,10 @@ def compose_data(trial):
     }
 
     # param variables for independent vars of trials
+    default_param = trial.experiment_spec['param']
     param_variables = {
-        pv: trial.experiment_spec['param'][pv] for
-        pv in trial.param_variables}
+        pv: default_param[pv] for
+        pv in trial.param_variables if pv in default_param}
 
     trial.data['metrics'].update(metrics)
     trial.data['param_variables'] = param_variables
