@@ -21,11 +21,16 @@ class LinearMemory(Memory):
     def encode_action(self, action):
         '''encode action based on continuous/discrete before adding'''
         if self.agent.env_spec['actions'] == 'continuous':
-            return action
-        else:  # do one-hot encoding
-            action_arr = np.zeros(self.agent.env_spec['action_dim'])
-            action_arr[action] = 1
-            return action_arr
+            # continuous problem, keep as is
+            encoded_action = action
+        else:  # discrete problem
+            if np.shape(action) == (self.env_spec['action_dim'], ):
+                # raw action from continuous agent, keep as is
+                encoded_action = action
+            else:  # action from discrete agent, do one-hot encoding
+                encoded_action = np.zeros(self.agent.env_spec['action_dim'])
+                encoded_action[action] = 1
+        return encoded_action
 
     def add_exp(self, action, reward, next_state, terminal):
         '''

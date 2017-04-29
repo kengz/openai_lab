@@ -22,6 +22,7 @@ class PreProcessor(object):
 
     def __init__(self, max_queue_size=4, **kwargs):
         '''Construct externally, and set at Agent.compile()'''
+        self.env_spec = None  # set from preprocess_env_spec
         self.agent = None
         self.state = None
         self.exp_queue = []
@@ -56,10 +57,26 @@ class PreProcessor(object):
             env_spec['state_dim'] = env_spec['state_dim'] * 2
         elif class_name is 'Atari':
             env_spec['state_dim'] = (84, 84, 4)
+        self.env_spec = env_spec
         return env_spec
 
     def preprocess_state(self):
         raise NotImplementedError()
+
+    def preprocess_action(self, action):
+        '''generalize continuous to act on discrete space too'''
+        if self.env_spec['actions'] == 'continuous':
+            # continuous problem, keep as is
+            assert action.shape == (self.env_spec['action_dim'], )
+            processed_action = action
+        else:  # discrete problem
+            if np.shape(action) == (self.env_spec['action_dim'], ):
+                # action is from continuous agent (array), pick max
+                # forces positive value to be strength of action
+                processed_action = np.argmax(action)
+            else:  # already suited for discrete
+                processed_action = action
+        return processed_action
 
     def advance_state(self, next_state):
         self.pre_pre_previous_state = self.pre_previous_state
