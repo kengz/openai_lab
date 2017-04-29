@@ -290,13 +290,13 @@
       ]
     }
   },
-  "cartpole_ddpg_nonoise": {
+  "cartpole_ddpg_epsilonnoise": {
     "problem": "CartPole-v0",
     "Agent": "DDPG",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
-    "Policy": "NoNoisePolicy",
+    "Policy": "EpsilonGreedyNoisePolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
       "n_epoch": 1,

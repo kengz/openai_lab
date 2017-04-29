@@ -24,11 +24,12 @@ class NoNoisePolicy(Policy):
     def select_action(self, state):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
-        action = agent.actor.predict(state)[0] + self.sample()
+        action = agent.actor.predict(state)[0]
         if self.env_spec['actions'] != 'continuous':
-            # rescale from symmetric NN output to non-symmetric,
-            # there's no negative button press for discrete action
-            action = (self.env_spec['action_bound_high'] + action) / 2.
+            # transform for non-symmetric discrete bounds,
+            # analogous to >=0 button-press pressure
+            action = (action + self.env_spec['action_bound_high']) / 2.
+        action += self.sample()
         action = np.clip(action,
                          self.env_spec['action_bound_low'],
                          self.env_spec['action_bound_high'])

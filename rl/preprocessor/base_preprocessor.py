@@ -85,8 +85,7 @@ class PreProcessor(object):
             processed_action = action
         else:  # discrete problem
             if np.shape(action) == (self.env_spec['action_dim'], ):
-                # action is from continuous agent (array), pick max
-                # forces positive value to be strength of action
+                # action from continuous agent (array), pick max strength
                 processed_action = np.argmax(action)
             else:  # already suited for discrete
                 processed_action = action
