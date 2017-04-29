@@ -64,7 +64,21 @@ class PreProcessor(object):
         raise NotImplementedError()
 
     def preprocess_action(self, action):
-        '''generalize continuous to act on discrete space too'''
+        '''
+        generalize continuous to act on discrete space too
+        current implementation is by picking the strongest action
+        action = array [a_1, a_2, ...]
+
+        Usually in the discrete case these are picked by
+        the highest Q(s, a_m) -> a_m, then get index m/one-hot encoding
+        Continuous agent will output [a_1, a_2, ...] by not as an one-hot encoding,
+        but an array of real values, allowing for simultaneous and real-valued actions
+
+        To reduce this to discrete,
+        take the analogy of pressing all buttons on the gaming console (discrete) at once,
+        and only the strongest action gets registered.
+        So, pick np.argmax([a_1, a_2, ...]), but save the real valued arrays in memory for training.
+        '''
         if self.env_spec['actions'] == 'continuous':
             # continuous problem, keep as is
             assert action.shape == (self.env_spec['action_dim'], )
