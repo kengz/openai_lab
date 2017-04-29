@@ -161,7 +161,7 @@ module.exports = function(grunt) {
         }
       },
       finish: `echo "${finishMsg}"`,
-      clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov .coverage* *.xml data/**/ data/*.log config/history.json',
+      clear: 'rm -rf .cache __pycache__ */__pycache__ *egg-info .eggs htmlcov .coverage* *.xml data/**/ data/*.log config/history.json',
     },
 
     concurrent: {
