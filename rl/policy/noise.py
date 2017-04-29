@@ -25,6 +25,10 @@ class NoNoisePolicy(Policy):
         agent = self.agent
         state = np.expand_dims(state, axis=0)
         action = agent.actor.predict(state)[0] + self.sample()
+        if self.env_spec['actions'] != 'continuous':
+            # rescale from symmetric NN output to non-symmetric,
+            # there's no negative button press for discrete action
+            action = (self.env_spec['action_bound_high'] + action) / 2.
         action = np.clip(action,
                          self.env_spec['action_bound_low'],
                          self.env_spec['action_bound_high'])
