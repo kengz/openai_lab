@@ -32,7 +32,9 @@ class DeepSarsa(DQN):
             minibatch, Q_states, Q_next_states_selected)
         loss = self.model.train_on_batch(minibatch['states'], Q_targets)
 
-        errors = abs(np.sum(Q_states - Q_targets, axis=1))
+        # only error in the action taken
+        errors = abs(np.sum(
+            minibatch['actions']*(Q_states - Q_targets), axis=1))
         assert Q_targets.shape == (
             self.batch_size, self.env_spec['action_dim'])
         assert errors.shape == (self.batch_size, )
