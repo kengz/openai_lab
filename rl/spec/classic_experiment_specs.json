@@ -947,8 +947,8 @@
       "lr": [0.005, 0.01, 0.05],
       "gamma": [0.999, 1.0],
       "hidden_layers": [
-        [100],
         [200],
+        [200, 100],
         [400]
       ]
     }
@@ -1017,20 +1017,21 @@
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
-      "batch_size": 32,
+      "batch_size": 64,
       "lr": 0.001,
       "gamma": 0.99,
       "hidden_layers": [128, 64],
-      "hidden_layers_activation": "sigmoid",
+      "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
       "epi_change_lr": 100
     },
     "param_range": {
-      "lr": [0.01, 0.02],
-      "gamma": [0.99, 0.999],
+      "lr": [0.005, 0.01, 0.05],
+      "gamma": [0.999, 1.0],
       "hidden_layers": [
         [200],
+        [200, 100],
         [400]
       ]
     }
@@ -1039,22 +1040,23 @@
     "problem": "MountainCar-v0",
     "Agent": "ActorCritic",
     "HyperOptimizer": "GridSearch",
-    "Memory": "PrioritizedExperienceReplay",
+    "Memory": "LinearMemoryWithForgetting",
     "Optimizer": "AdamOptimizer",
     "Policy": "SoftmaxPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
+      "batch_size": 64,
       "lr": 0.02,
       "gamma": 0.99,
       "hidden_layers": [64],
-      "hidden_layers_activation": "relu",
-      "max_mem_len": 50000
+      "hidden_layers_activation": "relu"
     },
     "param_range": {
-      "lr": [0.001, 0.005, 0.01],
-      "gamma": [0.97, 0.99, 0.999],
+      "lr": [0.005, 0.01, 0.05],
+      "gamma": [0.999, 1.0],
       "hidden_layers": [
         [200],
+        [200, 100],
         [400]
       ]
     }
