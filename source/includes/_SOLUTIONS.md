@@ -22,7 +22,7 @@ A matrix of the best `fitness_score` of **Agents** v.s. **Environments**, source
 |**MountainCarContinuous-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
 |**Pendulum-v0**|*n/a*|*n/a*|*n/a*|*n/a*|-|[-0.2696825](https://github.com/kengz/openai_lab/pull/130)|
 |**LunarLander-v2**|[2.786624](https://github.com/kengz/openai_lab/pull/84)|[2.992104](https://github.com/kengz/openai_lab/pull/87)|-|[3.313421](https://github.com/kengz/openai_lab/pull/96)|-|-|
-|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|-|-|
+|**LunarLanderContinuous-v2**|*n/a*|*n/a*|*n/a*|*n/a*|-|[-0.03972519](https://github.com/kengz/openai_lab/pull/133)|
 |**BipedalWalker-v2**|-|-|-|-|-|-|
 |**BipedalWalkerHardcore-v2**|-|-|-|-|-|-|
 |**CarRacing-v0**|-|-|-|-|-|-|
@@ -87,7 +87,7 @@ A projection of the Fitness Matrix along the Environments axis. This shows the b
 |problem|fitness score|epis before solve / best 100-epi mean|author|experiment_spec|
 |:---|:---|:---|:---|:---|:---|
 |LunarLander-v2|[3.313421](https://github.com/kengz/openai_lab/pull/96)|200|kengz/lgraesser|lunar_offpol_sarsa|
-|LunarLanderContinuous-v2|-|-|-|-|
+|LunarLanderContinuous-v2|[-0.03972519](https://github.com/kengz/openai_lab/pull/133)|503|kengz/lgraesser|lunar_cont_ddpg_linearnoise|
 |BipedalWalker-v2|-|-|-|-|
 |BipedalWalkerHardcore-v2|-|-|-|-|
 |CarRacing-v0|-|-|-|-|
