@@ -100,6 +100,31 @@
       ]
     }
   },
+  "dqn_ranked_per": {
+    "problem": "CartPole-v0",
+    "Agent": "DQN",
+    "HyperOptimizer": "GridSearch",
+    "Memory": "RankedPER",
+    "Optimizer": "AdamOptimizer",
+    "Policy": "BoltzmannPolicy",
+    "PreProcessor": "NoPreProcessor",
+    "param": {
+      "batch_size": 32,
+      "lr": 0.02,
+      "gamma": 0.99,
+      "hidden_layers": [64],
+      "hidden_layers_activation": "sigmoid",
+      "exploration_anneal_episodes": 10
+    },
+    "param_range": {
+      "max_mem_len": [2000, 5000, 10000],
+      "alpha": [0.0, 0.6],
+      "hidden_layers": [
+        [64],
+        [128]
+      ]
+    }
+  },
   "rand_dqn": {
     "problem": "CartPole-v0",
     "Agent": "DQN",
