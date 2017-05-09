@@ -72,13 +72,13 @@ Additionally, the experiment framework and analytics allows better measurement o
 
 ## <a name="main-contributions"></a>Main Contributions
 
-We see the main new contributions of the Lab as follows:
+We see the main new contributions/features of the Lab as follows:
 
-1. It is the first example of a framework to do deep RL that we know of that provides both a simple and unified interface to the OpenAI gym and neural network libraries which are necessary to implement and run RL agents, and out of the box components and algorithms. 
-2. The reusability of components.
-3. Framework for running hundreds of trials searching multidimensional parameter space in just a few lines of code.
-4. Automated analytics across all of these experiments making it easier to understand what is happening quickly.
-5. The [Fitness matrix](#fitness-matrix).
+1. **Unified RL environment and agent interface** using OpenAI Gym, Tensorflow, Keras, so you can focus on developing the algorithms.
+2. **[Implemented core RL algorithms](#agents-matrix), with reusable modular components** for developing deep RL algorithms.
+3. **An experimentation framework** for running hundreds of trials of hyperparameter optimizations, with logs, plots and analytics for testing new RL algorithms. Experimental settings are stored in standardized JSONs for reproducibility and comparisons.
+4. **Automated analytics of the experiments** for evaluating the RL agents and environments, and to help pick the best solution.
+5. **The [Fitness matrix](#fitness-matrix)**, a table of the best scores of RL algorithms v.s. the environments; useful for research.
 
 1 - 4 have been covered in the sections above. Here we'll focus on the [Fitness matrix](#fitness-matrix)
 

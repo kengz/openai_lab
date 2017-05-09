@@ -32,21 +32,27 @@ _An experimentation system for Reinforcement Learning using OpenAI Gym, Tensorfl
 
 _OpenAI Lab_ is created to do Reinforcement Learning (RL) like science - _theorize, experiment_. It provides an easy interface to [OpenAI Gym](https://gym.openai.com/) and [Keras](https://keras.io/), with an automated experiment and evaluation framework.
 
-This is [motivated by the problems we faced in RL research](#motivations): *the difficulty of building upon other's work, the lack of rigor in comparisons of research results, and the inertia to high level vision.*
 
-The Lab aims to make RL research more efficient and to encourage experimentation, by doing three things:
+### Features
 
-1. Handles the basic RL environment and algorithm setups.
-2. Provides a standard, extensible platform with reusable components for developing deep reinforcement learning algorithms.
-3. Provides a rigorous experimentation system with logs, plots and analytics for testing new RL algorithms. Experimental settings are stored in standardized format for reproducibility and comparisons.
+1. **Unified RL environment and agent interface** using OpenAI Gym, Tensorflow, Keras, so you can focus on developing the algorithms.
+2. **[Core RL algorithms implementations](#agents-matrix), with reusable modular components** for developing deep RL algorithms.
+3. **[An experimentation framework](#experiments)** for running hundreds of trials of hyperparameter optimizations, with logs, plots and analytics for testing new RL algorithms. Experimental settings are stored in standardized JSONs for reproducibility and comparisons.
+4. **[Automated analytics of the experiments](#analysis)** for evaluating the RL agents and environments, and to help pick the best solution.
+5. **The [Fitness Matrix](#fitness-matrix)**, a table of the best scores of RL algorithms v.s. the environments; useful for research.
+
 
 With OpenAI Lab, we could focus on researching the essential elements of reinforcement learning such as the algorithm, policy, memory, and parameter tuning. It allows us to build agents efficiently using existing components with the implementations from research ideas. We could then test the research hypotheses systematically by running experiments.
 
-*Ultimately, the Lab is a generalized framework for doing reinforcement learning, agnostic of OpenAI Gym and Keras. Pytorch-based implementations are on the roadmap, for example.*
+*Read more about the research problems the Lab addresses in [Motivations](#motivations). Ultimately, the Lab is a generalized framework for doing reinforcement learning, agnostic of OpenAI Gym and Keras. E.g. Pytorch-based implementations are on the roadmap.*
+
 
 ### Implemented Algorithms
 
-See the **[Fitness Matrix](#fitness-matrix)** for the results of these algorithms below in the OpenAI gym environments.
+A list of the core RL algorithms implemented/planned.
+
+To see their scores against OpenAI gym environments, go to **[Fitness Matrix](#fitness-matrix)**.
+
 
 |algorithm|implementation|eval score (pending)|
 |:---|:---|:---|
