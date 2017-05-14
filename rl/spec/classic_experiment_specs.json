@@ -935,9 +935,9 @@
     "PreProcessor": "NoPreProcessor",
     "param": {
       "batch_size": 64,
-      "lr": 0.001,
-      "gamma": 0.99,
-      "hidden_layers": [128, 64],
+      "lr": 0.005,
+      "gamma": 0.999,
+      "hidden_layers": [200],
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
