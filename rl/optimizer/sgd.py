@@ -16,7 +16,7 @@ class SGDOptimizer(Optimizer):
         from keras.optimizers import SGD
         self.SGD = SGD
 
-        self.optim_param_keys = ['lr', 'momentum', 'decay', 'nesterov']
+        self.optim_param_keys = ['lr', 'clipnorm', 'clipvalue', 'momentum', 'decay', 'nesterov']
         super(SGDOptimizer, self).__init__(**kwargs)
 
     def init_optimizer(self):

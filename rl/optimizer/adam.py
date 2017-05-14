@@ -18,7 +18,7 @@ class AdamOptimizer(Optimizer):
         from keras.optimizers import Adam
         self.Adam = Adam
 
-        self.optim_param_keys = ['lr', 'beta_1', 'beta_2', 'epsilon', 'decay']
+        self.optim_param_keys = ['lr', 'clipnorm', 'clipvalue', 'beta_1', 'beta_2', 'epsilon', 'decay']
         super(AdamOptimizer, self).__init__(**kwargs)
 
     def init_optimizer(self):

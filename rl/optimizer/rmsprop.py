@@ -16,7 +16,7 @@ class RMSpropOptimizer(Optimizer):
         from keras.optimizers import RMSprop
         self.RMSprop = RMSprop
 
-        self.optim_param_keys = ['lr', 'rho', 'decay', 'epsilon']
+        self.optim_param_keys = ['lr', 'clipnorm', 'clipvalue', 'rho', 'decay', 'epsilon']
         super(RMSpropOptimizer, self).__init__(**kwargs)
 
     def init_optimizer(self):
