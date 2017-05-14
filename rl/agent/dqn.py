@@ -115,7 +115,8 @@ class DQN(Agent):
         Compiling does not affect the model weights
         '''
         if self.epi_change_lr is not None:
-            if (sys_vars['epi'] == self.epi_change_lr and
+            if ((sys_vars['epi'] == self.epi_change_lr or
+                 sys_vars['epi'] == 3 * self.epi_change_lr) and
                     sys_vars['t'] == 0):
                 self.lr = self.lr / 10.0
                 self.optimizer.change_optim_param(**{'lr': self.lr})
@@ -202,7 +203,7 @@ class DQN(Agent):
         assert errors.shape == (self.batch_size, )
 
         self.memory.update(errors)
-        return np.sum(errors)
+        return loss
 
     def train(self, sys_vars):
         '''

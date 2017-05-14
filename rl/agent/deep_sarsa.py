@@ -40,6 +40,6 @@ class DeepSarsa(DQN):
             self.batch_size, self.env_spec['action_dim'])
         assert np.shape(minibatch['actions']) == Q_targets.shape
         assert errors.shape == (self.batch_size, )
-        
+
         self.memory.update(errors)
         return loss
