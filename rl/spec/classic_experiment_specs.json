@@ -944,7 +944,7 @@
       "epi_change_lr": 100
     },
     "param_range": {
-      "clipvalue": [1, 100],
+      "clipvalue": [1, 10, 100],
       "lr": [0.005, 0.01, 0.05],
       "hidden_layers": [
         [200],
