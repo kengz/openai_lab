@@ -115,7 +115,8 @@ class DQN(Agent):
         Compiling does not affect the model weights
         '''
         if self.epi_change_lr is not None:
-            if (sys_vars['epi'] == self.epi_change_lr and
+            if ((sys_vars['epi'] == self.epi_change_lr or
+                 sys_vars['epi'] == 3 * self.epi_change_lr) and
                     sys_vars['t'] == 0):
                 self.lr = self.lr / 10.0
                 self.optimizer.change_optim_param(**{'lr': self.lr})
@@ -192,12 +193,17 @@ class DQN(Agent):
             minibatch, Q_states, Q_next_states_max)
         loss = self.model.train_on_batch(minibatch['states'], Q_targets)
 
-        errors = abs(np.sum(Q_states - Q_targets, axis=1))
+        # only error in the action taken, also generalizable to cont
+        errors = np.sum(
+            np.multiply(minibatch['actions'], abs(Q_states - Q_targets)),
+            axis=1)
         assert Q_targets.shape == (
             self.batch_size, self.env_spec['action_dim'])
+        assert np.shape(minibatch['actions']) == Q_targets.shape
         assert errors.shape == (self.batch_size, )
+
         self.memory.update(errors)
-        return loss
+        return np.sum(errors)
 
     def train(self, sys_vars):
         '''
