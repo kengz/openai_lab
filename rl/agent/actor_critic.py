@@ -103,19 +103,19 @@ class ActorCritic(DQN):
                     'Learning rate: {}'.format(self.lr))
 
     def train_critic(self, minibatch):
-        Q_vals = np.clip(self.critic.predict(minibatch['states']),
-                         -self.clip_val, self.clip_val)
-        Q_next_vals = np.clip(self.critic.predict(minibatch['next_states']),
-                              -self.clip_val, self.clip_val)
+        Q_states = np.clip(self.critic.predict(minibatch['states']),
+                           -self.clip_val, self.clip_val)
+        Q_next_states = np.clip(self.critic.predict(minibatch['next_states']),
+                                -self.clip_val, self.clip_val)
         Q_targets = minibatch['rewards'] + self.gamma * \
-            (1 - minibatch['terminals']) * Q_next_vals.squeeze()
+            (1 - minibatch['terminals']) * Q_next_states.squeeze()
         Q_targets = np.expand_dims(Q_targets, axis=1)
 
-        actor_delta = Q_next_vals - Q_vals
+        actor_delta = Q_next_states - Q_states
         loss = self.critic.train_on_batch(minibatch['states'], Q_targets)
 
         # update memory, needed for PER
-        errors = abs(np.sum(Q_vals - Q_targets, axis=1))
+        errors = abs(np.sum(Q_states - Q_targets, axis=1))
         # Q size is only 1, from critic
         assert Q_targets.shape == (self.batch_size, 1)
         assert errors.shape == (self.batch_size, )
