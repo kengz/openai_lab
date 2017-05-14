@@ -938,16 +938,17 @@
       "lr": 0.005,
       "gamma": 0.999,
       "hidden_layers": [200],
-      "hidden_layers_activation": "relu",
+      "hidden_layers_activation": "tanh",
       "output_layer_activation": "linear",
-      "exploration_anneal_episodes": 50,
-      "epi_change_lr": 100
+      "exploration_anneal_episodes": 50
     },
     "param_range": {
-      "lr": [0.005],
-      "gamma": [0.999],
+      "decay": [0.00001, 0],
+      "lr": [0.005, 0.01, 0.05],
       "hidden_layers": [
-        [200]
+        [200],
+        [100, 200, 10],
+        [400]
       ]
     }
   },
