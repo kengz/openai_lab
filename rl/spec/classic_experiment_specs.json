@@ -930,7 +930,7 @@
     "Agent": "DQN",
     "HyperOptimizer": "GridSearch",
     "Memory": "LinearMemoryWithForgetting",
-    "Optimizer": "SGDOptimizer",
+    "Optimizer": "AdamOptimizer",
     "Policy": "BoltzmannPolicy",
     "PreProcessor": "NoPreProcessor",
     "param": {
@@ -941,9 +941,7 @@
       "hidden_layers_activation": "relu",
       "output_layer_activation": "linear",
       "exploration_anneal_episodes": 50,
-      "decay": 0.000001,
-      "momentum": 0.9,
-      "nesterov": true
+      "epi_change_lr": 100
     },
     "param_range": {
       "lr": [0.005, 0.01, 0.05],
