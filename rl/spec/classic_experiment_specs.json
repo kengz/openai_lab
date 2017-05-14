@@ -306,7 +306,7 @@
       "exploration_anneal_episodes": 30,
       "gamma": 0.99,
       "hidden_layers": [400, 300],
-      "hidden_layers_activation": "relu",
+      "hidden_layers_activation": "sigmoid",
       "output_layer_activation": "tanh"
     },
     "param_range": {
