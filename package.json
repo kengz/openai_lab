@@ -9,7 +9,9 @@
   "scripts": {
     "start": "grunt",
     "test": "python3 setup.py test",
-    "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov"
+    "posttest": "rm -rf .cache __pycache__ */__pycache__ *egg-info htmlcov",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,8 @@
     "grunt-sync": "^0.6.2",
     "load-grunt-tasks": "^3.5.2",
     "lodash": "^4.17.4",
-    "resolve-dir": "^1.0.0"
-  }
+    "resolve-dir": "^1.0.0",
+    "snyk": "^1.41.1"
+  },
+  "snyk": true
 }
