@@ -28,6 +28,8 @@ search: true
 
 # OpenAI Lab </br> [![GitHub release](https://img.shields.io/github/release/kengz/openai_lab.svg)](https://github.com/kengz/openai_lab) [![CircleCI](https://circleci.com/gh/kengz/openai_lab.svg?style=shield)](https://circleci.com/gh/kengz/openai_lab) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e55f845b10b4b51b213620bfb98e4b3)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kengz/openai_lab&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/9e55f845b10b4b51b213620bfb98e4b3)](https://www.codacy.com/app/kengzwl/openai_lab?utm_source=github.com&utm_medium=referral&utm_content=kengz/openai_lab&utm_campaign=Badge_Coverage) [![GitHub stars](https://img.shields.io/github/stars/kengz/openai_lab.svg?style=social&label=Star)](https://github.com/kengz/openai_lab) [![GitHub forks](https://img.shields.io/github/forks/kengz/openai_lab.svg?style=social&label=Fork)](https://github.com/kengz/openai_lab)
 
+<p align="center"><b><a href="https://github.com/kengz/SLM-Lab">NOTICE: Please use the next version, SLM-Lab.</a></b></p>
+
 _中文文档在这 [Chinese translation of Lab doc](http://kengz.me/openai_lab_doc_cn/)_
 
 _An experimentation framework for Reinforcement Learning using OpenAI Gym, Tensorflow, and Keras._
@@ -85,4 +87,3 @@ Next, see [Installation](#installation) and jump to [Quickstart](#quickstart).
 <div style="max-width: 100%"><img alt="Timelapse of OpenAI Lab" src="./images/lab_demo_dqn.gif" /></div>
 
 *Timelapse of OpenAI Lab, solving CartPole-v0.*
-
