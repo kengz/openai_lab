@@ -2,6 +2,10 @@
 
 ---
 
+<p align="center"><b><a href="https://github.com/kengz/SLM-Lab">NOTICE: Please use the next version, SLM-Lab.</a></b></p>
+
+---
+
 <p align="center"><b><a href="http://kengz.me/openai_lab">OpenAI Lab Documentation</a></b></p>
 
 ---
